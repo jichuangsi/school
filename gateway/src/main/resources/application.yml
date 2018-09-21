@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway: 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+            - POST
+      default-filters: #--里面可以定义一些共同的filter，对所有路由都起作用
+        - TokenCheck # TokenCheck+GatewayFilterFactory的类及TokenCheckGatewayFilterFactory
+      routes:
+      - id: websocket_sockjs_route
+        uri: lb://bullet
+        predicates:
+        - Path=/bullet/info/**
+      - id: websocket_route
+        uri: lb:ws://bullet
+        predicates:
+        - Path=/bullet/**
+      - id: auth
+        uri: lb://auth
+        predicates:
+        - Path=${server.servlet.context-path}/auth/**
+        filters:
+        - StripPrefix= 2 #--去掉N个前缀，如请求"/api/auth/getToken"则转发路径为"/auth/getToken"
+        #- TokenCheck # TokenCheck+GatewayFilterFactory的类及TokenCheckGatewayFilterFactory
+        #--  - PrefixPath #--请求/hello，最后转发到目标服务的路径变为/mypath/hello
+        - name : Hystrix
+          args: 
+            name: authHystrixCommand #- 在方法上加注解 @HystrixCommand(commandKey="authHystrixCommand")
+            fallbackUri: forward:/hystrixTimeout
+        - name : Retry
+          args:
+            retries: 1 #重试次数，默认3，不包含本次
+            # status: 404 #重试response code，默认没有
+            # statusSeries: 500 #重试response code的系列，100（info），200（success），300（redirect），400（client error），500（server error），默认500
+            # method: GET #重试的request请求，默认GET
+                      
+server:
+  port: 8888
+  http2:
+    enabled: true
+  servlet:
+    context-path: /api #--Finchley版本context-path不起作用，加这个是便于前置nginx根据路径转发
+eureka:
+  instance:
+    prefer-ip-address: true
+    #status-page-url-path: /actuator/info
+    #health-check-url-path: /actuator/health
+  client: 
+    serviceUrl:
+      defaultZone: http://192.168.10.150:8761/eureka/  #http://114.115.207.28:8081/eureka/
+    register-with-eureka: false # 不作为Eureka服务注册   
+      
+hystrix:
+  #threadpool:
+    #default:
+      #maximumSize: 400 #此属性设置最大线程池大小。 这是在不开始拒绝HystrixCommands的情况下可以支持的最大并发数。 请注意，此设置仅在您还设置allowMaximumSizeToDivergeFromCoreSize时才会生效。
+      #allowMaximumSizeToDivergeFromCoreSize: true #此属性允许maximumSize的配置生效。 那么该值可以等于或高于coreSize。 设置coreSize <maximumSize会创建一个线程池，该线程池可以支持maximumSize并发，但在相对不活动期间将向系统返回线程。
+  command: 
+    authHystrixCommand: #--对应Hystrix里args的name，默认是"default"
+      execution:
+        isolation: 
+          thread:
+            timeoutInMilliseconds: 5000 #设置熔断路由的超时时间
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+app: 
+  token:
+    headerName: accessToken # token在header里面的name
+    userInfoHeader: userInfo #重新构建请求时，将用户信息加到请求头里的headname
+    cache:
+      initialCapacity: 500 #token缓存初始大小
+      maximumSize: 100000 #token缓存的最大大小
+      expireAfterAccessWithMinutes: 30 #最后一次访问后间隔多少分钟失效
+    ingoreTokenUrls: /login, /api/auth/getToken #忽略检查token的URL
+    publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCAeUhmjV48K+2cku2LsWXNr7TSKlcRjWxu1B67lAJNe1Tg7xYVI4+hSK/bgm2ekJ8gMhjOTc7NXOR9QFAmXe5AeaeX5Al3kA0UPRxdTSAg0uMjvRdIDslETKhWxG1g5N6Mj++RwsYcNmtgW8B0hN9ojGRNtn5+itflqLKfMKPuBQIDAQAB
+    userInfoKey: userInfo #token里面的用户信息键值
+    
+      
+    
+      
