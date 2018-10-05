@@ -1,4 +1,4 @@
-package com.example.gateway.config;
+package com.jichuansi.gateway.config;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
-import com.example.gateway.util.RSAUtils;
+import com.jichuansi.gateway.util.RSAUtils;
 
 @Configuration
 public class TokenAlgorithmConfig {

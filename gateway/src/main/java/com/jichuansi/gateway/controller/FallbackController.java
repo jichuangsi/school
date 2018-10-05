@@ -1,12 +1,12 @@
-package com.example.gateway.controller;
+package com.jichuansi.gateway.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.gateway.constant.ResultCode;
-import com.example.gateway.model.ResponseModel;
+import com.jichuansi.gateway.constant.ResultCode;
+import com.jichuansi.gateway.model.ResponseModel;
 
 import reactor.core.publisher.Mono;
 

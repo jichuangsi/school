@@ -1,4 +1,4 @@
-package com.example.gateway.util;
+package com.jichuansi.gateway.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -430,7 +430,7 @@ public abstract class RSAUtils{
 	 */
 	public static RSAPrivateKey getPrivateKey(String key) throws Exception {
 		byte[] keyBytes;
-		keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+		keyBytes = Base64.decode(key);
 		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
 		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
 		PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
@@ -443,7 +443,7 @@ public abstract class RSAUtils{
 	 */
 	public static RSAPublicKey getPublicKey(String key) throws Exception {
 		byte[] keyBytes;
-		keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+		keyBytes = Base64.decode(key);
 		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
 		PublicKey publicKey = keyFactory.generatePublic(keySpec);

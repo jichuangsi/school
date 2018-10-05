@@ -1,4 +1,4 @@
-package com.example.gateway.model;
+package com.jichuansi.gateway.model;
 
 public class ResponseModel {
 
