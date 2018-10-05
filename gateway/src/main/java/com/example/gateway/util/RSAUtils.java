@@ -27,7 +27,6 @@ import javax.crypto.Cipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
-import sun.misc.BASE64Decoder;
 
 /**
  * RSA安全编码组件
