@@ -1,4 +1,4 @@
-package com.test.websocket.controller;
+package com.jichuangsi.school.websocket.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -14,9 +14,9 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.test.websocket.model.QuestionForAnswer;
-import com.test.websocket.model.QuestionForPublish;
-import com.test.websocket.model.ResponseModel;
+import com.jichuangsi.school.websocket.model.QuestionForAnswer;
+import com.jichuangsi.school.websocket.model.QuestionForPublish;
+import com.jichuangsi.school.websocket.model.ResponseModel;
 
 @RestController
 public class ClassInteractionController {

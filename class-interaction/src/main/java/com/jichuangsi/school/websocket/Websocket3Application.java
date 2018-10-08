@@ -1,4 +1,4 @@
-package com.test.websocket;
+package com.jichuangsi.school.websocket;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

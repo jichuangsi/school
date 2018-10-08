@@ -1,4 +1,4 @@
-package com.jichuansi.gateway.model;
+package com.jichuangsi.school.gateway.model;
 
 public class ResponseModel {
 

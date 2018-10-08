@@ -1,4 +1,4 @@
-package com.jichuansi.gateway.util;
+package com.jichuangsi.school.gateway.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

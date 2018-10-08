@@ -1,4 +1,4 @@
-package com.test.websocket.interceptor;
+package com.jichuangsi.school.websocket.interceptor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,12 +1,12 @@
-package com.jichuansi.gateway.controller;
+package com.jichuangsi.school.gateway.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jichuansi.gateway.constant.ResultCode;
-import com.jichuansi.gateway.model.ResponseModel;
+import com.jichuangsi.school.gateway.constant.ResultCode;
+import com.jichuangsi.school.gateway.model.ResponseModel;
 
 import reactor.core.publisher.Mono;
 

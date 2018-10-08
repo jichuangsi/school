@@ -1,4 +1,4 @@
-package com.test.websocket.model;
+package com.jichuangsi.school.websocket.model;
 
 public class ResponseModel<T> {
 

@@ -1,6 +1,8 @@
-package com.jichuansi.gateway.filter;
+package com.jichuangsi.school.gateway.filter;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,58 +23,111 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.jichuansi.gateway.constant.ResultCode;
-import com.jichuansi.gateway.model.ResponseModel;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.jichuangsi.school.gateway.constant.ResultCode;
+import com.jichuangsi.school.gateway.model.ResponseModel;
 
 import reactor.core.publisher.Mono;
 
 @Component
-public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class TokenCheckWithUserProcessGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
-	private Log log = LogFactory.getLog(TokenCheckGatewayFilterFactory.class);
+	private Log log = LogFactory.getLog(TokenCheckWithUserProcessGatewayFilterFactory.class);
 
 	@Value("${app.token.headerName}")
 	private String headerName;
 
+	@Value("${app.token.cache.initialCapacity}")
+	private int initialCapacity;
+
+	@Value("${app.token.cache.maximumSize}")
+	private long maximumSize;
+
 	@Value("${app.token.cache.expireAfterAccessWithMinutes}")
 	private long expireAfterAccessWithMinutes;
 
+	private Cache<String, String> manualCache = Caffeine.newBuilder()
+			.expireAfterAccess(expireAfterAccessWithMinutes, TimeUnit.MINUTES).initialCapacity(initialCapacity)
+			.maximumSize(maximumSize).build();
+
 	@Value("${app.token.ingoreTokenUrls}")
 	private String[] ingoreTokenUrls;
+
+	@Value("${app.token.userInfoKey}")
+	private String userKey;
+
+	@Value("${app.token.userInfoHeader}")
+	private String userInfoHeader;
 
 	@Autowired
 	private Algorithm tokenAlgorithm;
 
 	@Override
-	public final GatewayFilter apply(Object config) {
+	public GatewayFilter apply(Object config) {
 
 		return (exchange, chain) -> {
 			try {
 				final ServerHttpRequest request = exchange.getRequest();
 				final ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
 				builder.header("Access-Control-Allow-Origin", "*");// 允许跨域
+				// builder.header("Access-Control-Allow-Methods",
+				// ALLOWED_METHODS);
+				// builder.header("Access-Control-Max-Age", MAX_AGE);
+				// builder.header("Access-Control-Allow-Headers",
+				// ALLOWED_HEADERS);
+				// builder.header("Access-Control-Expose-Headers",
+				// ALLOWED_Expose);
+				// builder.header("Access-Control-Allow-Credentials", "true");
 
 				final String url = request.getURI().getPath();
-				if (null != ingoreTokenUrls && ingoreTokenUrls.length > 0) {
-					for (String ingoreUrl : ingoreTokenUrls) {
-						if (ingoreUrl.equals(url)) {// 对免检查token的url放行
-							return chain.filter(exchange.mutate().request(builder.build()).build());
-						}
+				for (String ingoreUrl : ingoreTokenUrls) {
+					if (ingoreUrl.equals(url)) {// 对免检查token的url放行
+						return chain.filter(exchange.mutate().request(builder.build()).build());
 					}
 				}
 
 				final String accessToken = request.getHeaders().getFirst(headerName);
 				if (!StringUtils.isEmpty(accessToken)) {
-					final JWTVerifier verifier = JWT.require(tokenAlgorithm).build();
-					verifier.verify(accessToken);// 校验有效性
-					// todo 校验有效期
+
+					// get不到的话对同一个key会阻塞，就是说即使多个线程同时请求该值也只会调用一次Function方法。这样可以避免与其他线程的写入竞争
+					final String userInfoJson = manualCache.get(accessToken, key -> {
+
+						try {
+							final JWTVerifier verifier = JWT.require(tokenAlgorithm).build();
+							final DecodedJWT decodedJWT = verifier.verify(accessToken);
+							return decodedJWT.getClaim(userKey).asString();
+						} catch (JWTVerificationException e) {
+							e.printStackTrace();
+							log.error("token检验不通过：" + e.getMessage());
+							return null;
+						} catch (Exception e) {
+							e.printStackTrace();
+							log.error(e.getMessage());
+							return null;
+						}
+
+					});
+
+					if (StringUtils.isEmpty(userInfoJson)) {
+						return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
+					}
+
+					builder.headers(httpHeaders -> {
+						httpHeaders.remove(headerName);// 清除token
+						try {
+							httpHeaders.add(userInfoHeader, URLEncoder.encode(userInfoJson, "UTF-8"));// 将用户信息加入heder
+						} catch (UnsupportedEncodingException e) {
+							log.error("URLEncoder.encode userInfoJson error:" + e.getMessage());
+							throw new RuntimeException("URLEncoder.encode userInfoJson error:" + e.getMessage());
+						}
+					});
+
 					return chain.filter(exchange.mutate().request(builder.build()).build());// 因为加入了header，需重新封装request后转发请求
 				} else {
 					return buildResponse(exchange, ResultCode.TOKEN_MISS, ResultCode.TOKEN_MISS_MSG);
 				}
-			} catch (JWTVerificationException e) {
-				log.error("token检验不通过：" + e.getMessage());
-				return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error(e.getMessage());
@@ -100,6 +155,7 @@ public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory
 					.wrap(JSONObject.toJSONString(new ResponseModel(code, msg)).getBytes());
 			return response.writeWith(Mono.just(bodyDataBuffer));
 		}
+
 	}
 
 }

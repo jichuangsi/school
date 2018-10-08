@@ -1,4 +1,4 @@
-package com.test.websocket.config;
+package com.jichuangsi.school.websocket.config;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

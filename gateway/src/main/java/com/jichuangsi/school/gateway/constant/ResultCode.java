@@ -1,4 +1,4 @@
-package com.jichuansi.gateway.constant;
+package com.jichuangsi.school.gateway.constant;
 
 public class ResultCode {
 	public static final String SUCESS = "0010";//成功
