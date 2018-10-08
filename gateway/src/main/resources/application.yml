@@ -82,7 +82,7 @@ app:
       maximumSize: 100000 #token缓存的最大大小
       expireAfterAccessWithMinutes: 30 #最后一次访问后间隔多少分钟失效
     ingoreTokenUrls: /login, /api/auth/getToken #忽略检查token的URL
-    publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCAeUhmjV48K+2cku2LsWXNr7TSKlcRjWxu1B67lAJNe1Tg7xYVI4+hSK/bgm2ekJ8gMhjOTc7NXOR9QFAmXe5AeaeX5Al3kA0UPRxdTSAg0uMjvRdIDslETKhWxG1g5N6Mj++RwsYcNmtgW8B0hN9ojGRNtn5+itflqLKfMKPuBQIDAQAB
+    publicKey: EC86@34$123c
     userInfoKey: userInfo #token里面的用户信息键值
     
       
