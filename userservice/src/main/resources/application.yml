@@ -1,0 +1,5 @@
+custom:
+  token:
+    jwt:
+      secret: EC86@34$123c
+      userClaim : userInfo
