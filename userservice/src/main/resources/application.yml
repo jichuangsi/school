@@ -1,3 +1,11 @@
+spring:
+  application:
+    name: userservice
+server:
+  port: 8083
+  servlet:
+    context-path: /userservice
+
 custom:
   token:
     jwt:

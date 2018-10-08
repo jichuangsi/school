@@ -1,5 +1,7 @@
 package com.jichuangsi.school.user.model;
 
+import com.jichuangsi.school.user.constant.ResultCode;
+
 public class ResponseModel<T> {
 
 	private String tranId;
@@ -20,15 +22,15 @@ public class ResponseModel<T> {
 	}
 
 	public static<T> ResponseModel<T> sucess(String tranId, T data) {
-		return new ResponseModel<T>(tranId, "0", "成功", data);
+		return new ResponseModel<T>(tranId, ResultCode.SUCESS,ResultCode.SUCESS_MSG, data);
 	}
 
 	public static<T> ResponseModel<T> fail(String tranId) {
-		return fail(tranId, "错误");
+		return fail(tranId, ResultCode.SYS_ERROR_MSG);
 	}
 
 	public static<T> ResponseModel<T> fail(String tranId, String msg) {
-		return new ResponseModel<T>(tranId, "-1", msg, null);
+		return new ResponseModel<T>(tranId, ResultCode.SYS_ERROR, msg, null);
 	}
 
 	public final String getTranId() {
