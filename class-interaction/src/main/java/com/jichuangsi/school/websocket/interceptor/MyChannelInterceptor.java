@@ -1,8 +1,9 @@
 package com.jichuangsi.school.websocket.interceptor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -10,13 +11,24 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-
+import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.jichuangsi.school.websocket.model.UserInfoForToken;
 
 @Component
 public class MyChannelInterceptor implements ChannelInterceptor {
 
-	private static Map<String, String> idMap = new ConcurrentHashMap<>();
-	public static int errCount = 0;
+	private Log log = LogFactory.getLog(MyChannelInterceptor.class);
+	
+	@Value("${custom.token.jwt.userClaim}")
+	private String userClaim;
+
+	@Autowired
+	private Algorithm tokenAlgorithm;
 
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -25,53 +37,52 @@ public class MyChannelInterceptor implements ChannelInterceptor {
 		if (sha.getCommand() == null) {
 			return message;
 		}
+		
+		sha.setSessionAttributes(attributes);
 
 		// 这里的sessionId和accountId对应HttpSessionIdHandshakeInterceptor拦截器的存放key
 		// String sessionId =
 		// sha.getSessionAttributes().get(HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME).toString();
 		// String accountId =
 		// sha.getSessionAttributes().get("accountId").toString();
+		
+		String token;
 		// 判断客户端的连接状态
 		switch (sha.getCommand()) {
 		case CONNECT:
-			// connect(sessionId,accountId);
-			String idc = sha.getNativeHeader("accountId").get(0);
-			if (StringUtils.isEmpty(idc)) {
-				throw new RuntimeException("accountId must in header");
-			}
-			idMap.put(idc, idc);
-			// System.out.println("=======================CONNECT:" +
-			// sha.getNativeHeader("accountId").get(0));
+			token = sha.getNativeHeader("token").get(0);
+			checkToken(token);
+			//todo 检查同一accessToken短时间内反复connect
+			break;
 		case CONNECTED:
 			break;
 		case DISCONNECT:
-			// disconnect(sessionId,accountId,sha);
 			break;
 		case SUBSCRIBE:
-			String ids = sha.getNativeHeader("accountId").get(0);
-			if (StringUtils.isEmpty(ids)) {
-				throw new RuntimeException("accountId must in header");
-			}
-			if (null == idMap.get(ids)) {
-				inc();
-				throw new RuntimeException("no id in server:" + ids);
-			}
-			// throw new RuntimeException("in preSend...");
-			// System.out.println("=======================SUBSCRIBE:" +
-			// sha.getDestination());
-			// System.out.println("=======================SUBSCRIBE:" +
-			// sha.getNativeHeader("accountId").get(0));
-
+			token = sha.getNativeHeader("token").get(0);
+			checkToken(token);
+			//todo 订阅时校验身份（例如学生不能订阅老师的相关主题）
+			//DecodedJWT jwt = JWT.decode(token);
+			//UserInfoForToken userInfo = JSONObject.parseObject(jwt.getClaim(userClaim).asString(),UserInfoForToken.class);
 		default:
 			break;
 		}
 		return message;
 	}
-	
 
-	private static void inc() {
-		synchronized (MyChannelInterceptor.class) {
-			errCount++;
+	// 校验token
+	private void checkToken(String accessToken) {
+		if (StringUtils.isEmpty(accessToken)) {
+			throw new RuntimeException("accountId must in header");
+		}
+		try {
+			JWTVerifier verifier = JWT.require(tokenAlgorithm).build();
+			verifier.verify(accessToken);
+		} catch (JWTVerificationException e) {
+			String msg = "when web socket connect,check accessToken error.";
+			log.error(msg);
+			e.printStackTrace();
+			throw new RuntimeException(msg);
 		}
 	}
 

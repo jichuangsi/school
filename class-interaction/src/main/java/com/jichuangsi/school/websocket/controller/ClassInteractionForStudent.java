@@ -1,3 +1,6 @@
+/**
+ * 课堂交互学生端
+ */
 package com.jichuangsi.school.websocket.controller;
 
 import java.util.List;
@@ -11,16 +14,17 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.school.websocket.model.QuestionForAnswer;
 import com.jichuangsi.school.websocket.model.QuestionForPublish;
 import com.jichuangsi.school.websocket.model.ResponseModel;
 
-@RestController
-public class ClassInteractionController {
-
+/**
+ * @author huangjiajun
+ *
+ */
+public class ClassInteractionForStudent {
 	@Resource
 	private SimpMessagingTemplate template;
 
@@ -54,21 +58,4 @@ public class ClassInteractionController {
 		return ResponseModel.sucess("回答完成", null);
 	}
 
-	// 订阅某堂课的信息——老师
-	@SubscribeMapping("/queue/course/teacher/{baz}")
-	public ResponseModel<Object> subCourseForteacher(@DestinationVariable String baz) {
-		System.out.println("======老师订阅某堂课的信息:" + baz + "-->Thread id:" + Thread.currentThread().getId());
-		return ResponseModel.sucess("", null);
-	}
-
-	// 老师发布题目
-	@MessageMapping("/teacher/course/send")
-	@SendToUser(value = "/user/queue/return", broadcast = false)
-	public ResponseModel<Object> teacherSend(QuestionForPublish questionForPublish) {
-		System.out.println("==================teacherSend:" + Thread.currentThread().getId());
-		questionForPublish.setContent("以下哪项是对的：A B C D");
-		template.convertAndSend("/topic/course/student/" + questionForPublish.getCourseId(),
-				JSONObject.toJSONString(ResponseModel.sucess("", questionForPublish)));
-		return ResponseModel.sucess("发布完成", null);
-	}
 }

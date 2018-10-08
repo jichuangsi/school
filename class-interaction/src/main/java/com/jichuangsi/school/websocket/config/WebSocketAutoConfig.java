@@ -35,42 +35,21 @@ public class WebSocketAutoConfig implements WebSocketMessageBrokerConfigurer {
 	//private String hostIP;
 	//@Value("${msg.stompBrokerRelay.port}")
 	//private int port;
-	
-	//@Resource
-	//private HandshakeInterceptor handshakeInterceptor;
-	//@Resource
-	//private ChannelInterceptor channelInterceptor;
 
-//	private static SocketAddress address1;
-//	private static SocketAddress address2;
-//	private static Map<String, SocketAddress> addressMap;
-
-//	public WebSocketAutoConfig() {
-//		try {
-//			address1 = new InetSocketAddress(InetAddress.getByName("192.168.10.71"), 61613);
-//			address2 = new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 61613);
-//			addressMap = new HashMap<>();
-//			addressMap.put("127.0.0.1", address2);
-//			addressMap.put("192.168.10.71", address1);
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException("fail to connetc MessageBroker:" + e.getMessage());
-//		}
-//	}
+	@Resource
+	private ChannelInterceptor channelInterceptor;
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/course") // 开启/course端点
 				.setAllowedOrigins("*") // 允许跨域访问
-				//.addInterceptors(handshakeInterceptor)//如需拦截seesion，例如判断是否有登录，可自定义
-				//.addInterceptors(new HttpSessionHandshakeInterceptor())
+				//.addInterceptors(new HttpSessionHandshakeInterceptor())//如需拦截seesion，例如判断是否有登录，可自定义实现HandshakeInterceptor接口或继承HttpSessionHandshakeInterceptor
 				.withSockJS(); // 使用sockJS
 	}
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/queue/","/topic/");
-		// //Broker名称，queue对单，topic订阅
+		registry.enableSimpleBroker("/queue/","/topic/");// Broker名称，queue对单，topic订阅
 		// registry.setApplicationDestinationPrefixes("/app"); //客户端发消息时需要加的前缀
 		// registry.enableStompBrokerRelay("/topic/").setTcpClient(createTcpClient());
 		//registry.enableStompBrokerRelay("/queue/","/topic/").setRelayHost(hostIP).setRelayPort(port);
@@ -81,7 +60,7 @@ public class WebSocketAutoConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureClientInboundChannel(ChannelRegistration registration) {
 		// 发送前拦截可在此处处理，或独立定义 ChannelInterceptor实现类注入，如创建连接时的权限控制
-		//registration.interceptors(channelInterceptor);	
+		registration.interceptors(channelInterceptor);	
 	}
 
 	// private TcpOperations<byte[]> createTcpClient() {

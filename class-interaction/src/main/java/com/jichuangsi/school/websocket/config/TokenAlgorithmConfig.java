@@ -1,4 +1,4 @@
-package com.jichuangsi.school.gateway.config;
+package com.jichuangsi.school.websocket.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

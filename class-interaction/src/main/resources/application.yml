@@ -1,5 +1,11 @@
 spring:
   application:
-    name: course
+    name: classinteraction
 server:
   port: 8080
+  
+  
+app:
+  token:
+    publicKey: EC86@34$123c
+    userClaim : userInfo
