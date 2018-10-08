@@ -55,7 +55,7 @@ public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory
 				final String url = request.getURI().getPath();
 				if (null != ingoreTokenUrls && ingoreTokenUrls.length > 0) {
 					for (String ingoreUrl : ingoreTokenUrls) {
-						if (ingoreUrl.equals(url)) {// 对免检查token的url放行
+						if (ingoreUrl.equals(url) || url.startsWith(ingoreUrl)) {// 对免检查token的url放行
 							return chain.filter(exchange.mutate().request(builder.build()).build());
 						}
 					}
