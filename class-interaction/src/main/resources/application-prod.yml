@@ -3,11 +3,6 @@ spring:
     name: classinteraction
   rabbitmq:
     host: 127.0.0.1
-    port: 5672
-    listener:
-      simple:
-        concurrency: 2
-        max-concurrency: 4 
 server:
   port: 8080
   

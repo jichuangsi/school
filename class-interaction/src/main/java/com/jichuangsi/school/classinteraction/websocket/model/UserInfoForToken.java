@@ -1,7 +1,7 @@
 /**
  * 作为jwt token的用户信息封装（因为在token中可能不包含所有用户信息）
  */
-package com.jichuangsi.school.websocket.model;
+package com.jichuangsi.school.classinteraction.websocket.model;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.jichuangsi.school.websocket.constant;
+package com.jichuangsi.school.classinteraction.websocket.constant;
 
 public class ResultCode {
 	public static final String SUCESS = "0010";//成功

@@ -1,4 +1,4 @@
-package com.jichuangsi.school.websocket.model;
+package com.jichuangsi.school.classinteraction.websocket.model;
 
 public class RequestModel<T> {
 	

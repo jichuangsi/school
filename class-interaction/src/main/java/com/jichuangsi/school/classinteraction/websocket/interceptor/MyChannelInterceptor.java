@@ -1,4 +1,4 @@
-package com.jichuangsi.school.websocket.interceptor;
+package com.jichuangsi.school.classinteraction.websocket.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,7 +17,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.jichuangsi.school.websocket.model.UserInfoForToken;
 
 @Component
 public class MyChannelInterceptor implements ChannelInterceptor {
@@ -37,8 +36,6 @@ public class MyChannelInterceptor implements ChannelInterceptor {
 		if (sha.getCommand() == null) {
 			return message;
 		}
-		
-		sha.setSessionAttributes(attributes);
 
 		// 这里的sessionId和accountId对应HttpSessionIdHandshakeInterceptor拦截器的存放key
 		// String sessionId =
