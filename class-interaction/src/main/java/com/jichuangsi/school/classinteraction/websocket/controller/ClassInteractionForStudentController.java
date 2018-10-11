@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.jichuangsi.school.classinteraction.websocket.constant.ResultCode;
 import com.jichuangsi.school.classinteraction.websocket.model.ResponseModel;
@@ -21,7 +22,9 @@ import com.jichuangsi.school.classinteraction.websocket.model.ResponseModel;
  * @author huangjiajun
  *
  */
-public class ClassInteractionForStudent {
+
+@RestController
+public class ClassInteractionForStudentController {
 	@Resource
 	private SimpMessagingTemplate template;
 

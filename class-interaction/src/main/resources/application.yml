@@ -11,9 +11,12 @@ spring:
 server:
   port: 8080
   
-  
-app: 
+
+custom: 
   token: 
     publicKey: EC86@34$123c
     userClaim: userInfo
   ws-endpoint: /course #websocket端点路径
+  mq: 
+    queue-name:
+      course-start: course.start.classinteraction

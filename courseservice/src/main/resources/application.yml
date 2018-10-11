@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: courseservice
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+
+server:
+  port: 8081
+
+mq: 
+  sender:
+    msg: 
+      startcourse: course.start.classinteraction

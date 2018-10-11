@@ -9,12 +9,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 @Configuration
 public class TokenAlgorithmConfig {
 
-	@Value("${app.token.publicKey}")
+	@Value("${custom.token.publicKey}")
 	private String publicKey;
 
 	@Bean
 	public Algorithm getTokenAlgorithm() {
-		return Algorithm.HMAC256(publicKey);
+		return Algorithm.HMAC512(publicKey);
 	}
 
 }

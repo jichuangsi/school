@@ -11,19 +11,17 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Component
 public class MyChannelInterceptor implements ChannelInterceptor {
 
 	private Log log = LogFactory.getLog(MyChannelInterceptor.class);
 	
-	@Value("${custom.token.jwt.userClaim}")
+	@Value("${custom.token.userClaim}")
 	private String userClaim;
 
 	@Autowired
