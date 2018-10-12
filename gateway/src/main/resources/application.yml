@@ -2,13 +2,16 @@ spring:
   application:
     name: gateway
   cloud:
-    gateway: 
+    gateway:
+      discovery:
+        locator:
+          enabled: true
       globalcors:
         corsConfigurations:
           '[/**]':
             allowedOrigins: "*"
-            allowedMethods:
-            - POST
+            allowedMethods: "*"
+            #- POST
       default-filters: #--里面可以定义一些共同的filter，对所有路由都起作用
         - TokenCheck # TokenCheck+GatewayFilterFactory的类，即TokenCheckGatewayFilterFactory
       routes:
@@ -52,7 +55,7 @@ eureka:
     #health-check-url-path: /actuator/health
   client: 
     serviceUrl:
-      defaultZone: http://192.168.10.150:8761/eureka/  #http://114.115.207.28:8081/eureka/
+      defaultZone: http://127.0.0.1:8761/eureka/  #http://114.115.207.28:8081/eureka/
     register-with-eureka: false # 不作为Eureka服务注册   
       
 hystrix:
