@@ -15,7 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketAutoConfig implements WebSocketMessageBrokerConfigurer {
 
-	@Value("${custom.ws-endpoint}")
+	@Value("${custom.ws.endpoint}")
 	private String endpointPath;
 
 	@Resource

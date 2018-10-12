@@ -20,7 +20,7 @@ public class ClassInteractionForTeacherController {
 	private SimpMessagingTemplate template;
 
 	// 订阅某堂课统计并数据更新的消息
-	@SubscribeMapping("/queue/course/teacher/cs/{courseId}")
+	@SubscribeMapping("${custom.ws.sub.csChange}{courseId}")
 	public ResponseModel<Object> csChange(StompHeaderAccessor sha) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}

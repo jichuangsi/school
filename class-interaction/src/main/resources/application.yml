@@ -16,7 +16,13 @@ custom:
   token: 
     publicKey: EC86@34$123c
     userClaim: userInfo
-  ws-endpoint: /course #websocket端点路径
+  ws:
+    endpoint: /course #websocket端点路径
+    sub: 
+      csChange: /queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
+      classInfo: /topic/group/student/ #订阅某个班级的信息前缀
   mq: 
-    queue-name:
-      course-start: course.start.classinteraction
+    receiver: 
+      queue-name:
+        course-start: course.start.classinteraction
+        course-statistics: course.statistics.classinteraction

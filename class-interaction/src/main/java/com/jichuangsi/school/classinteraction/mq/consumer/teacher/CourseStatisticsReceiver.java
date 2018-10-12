@@ -1,7 +1,7 @@
 /**
- * 接收上课消息
+ * 接收课堂统计信息变更消息
  */
-package com.jichuangsi.school.classinteraction.mq.consumer.student;
+package com.jichuangsi.school.classinteraction.mq.consumer.teacher;
 
 import javax.annotation.Resource;
 
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
+import com.jichuangsi.school.classinteraction.websocket.model.CourseStatistics;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentService;
 
 /**
@@ -20,19 +20,17 @@ import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentSe
  *
  */
 @Component
-public class CourseStartReceiver {
-
+public class CourseStatisticsReceiver {
 	@Resource
 	private ISendToStudentService sendToStudentService;
 	
-	@Value("${custom.mq.receiver.queue-name.course-start}")
+	@Value("${custom.mq.receiver.queue-name.course-statistics}")
 	private String queueName;
 
-	@RabbitListener(queues = "${custom.mq.receiver.queue-name.course-start}")
+	@RabbitListener(queues = "${custom.mq.receiver.queue-name.course-statistics}")
 	public void process(String jsonData) {
-		ClassInfoForStudent classInfoForStudent = JSONObject.parseObject(jsonData, ClassInfoForStudent.class);
-		classInfoForStudent.setType(ClassInfoForStudent.TYPE_COURSE_START);
-		sendToStudentService.sendClassInfo(classInfoForStudent);
+		CourseStatistics info = JSONObject.parseObject(jsonData, CourseStatistics.class);
+		sendToStudentService.sendCourseStatisticsInfo(info);
 	}
 
 	@Bean

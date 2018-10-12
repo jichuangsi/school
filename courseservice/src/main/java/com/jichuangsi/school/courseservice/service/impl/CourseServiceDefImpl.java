@@ -24,15 +24,15 @@ public class CourseServiceDefImpl implements ICourseService{
 	@Resource
     private AmqpTemplate rabbitTemplate;
 	
-	@Value("${mq.sender.msg.startcourse}")
-	private String msgName;
+	@Value("${com.jichuangsi.school.mq.courses}")
+	private String startCourseMsgName;
 	
 	@Override
 	public void startCourse(CourseInfoModel courseInfoModel) {
 		//todo修改课程状态
 		
 		//发上课消息
-		rabbitTemplate.convertAndSend(msgName, JSONObject.toJSONString(courseInfoModel));
+		rabbitTemplate.convertAndSend(startCourseMsgName, JSONObject.toJSONString(courseInfoModel));
 	}
 
 }

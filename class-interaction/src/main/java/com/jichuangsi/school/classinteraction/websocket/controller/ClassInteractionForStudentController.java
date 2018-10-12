@@ -29,7 +29,7 @@ public class ClassInteractionForStudentController {
 	private SimpMessagingTemplate template;
 
 	// 订阅某个班级的信息
-	@SubscribeMapping("/topic/group/student/{classId}")
+	@SubscribeMapping("${custom.ws.sub.classInfo}{classId}")
 	public ResponseModel<Object> subClassInfo(@DestinationVariable String classId) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}

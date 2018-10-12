@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: course-statistics
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+
+server:
+  port: 8082
+
+custom: 
+  token: 
+    userClaim: userInfo
+  mq: 
+    sender:
+      queue-name: 
+        courseStatistics: course.statistics.classinteraction

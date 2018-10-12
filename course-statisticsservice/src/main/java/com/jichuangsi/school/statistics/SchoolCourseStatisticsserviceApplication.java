@@ -1,4 +1,4 @@
-package com.jichuangsi.school;
+package com.jichuangsi.school.statistics;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
