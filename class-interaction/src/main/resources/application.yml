@@ -1,5 +1,22 @@
 spring:
   application:
-    name: course
+    name: classinteraction
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    listener:
+      simple:
+        concurrency: 2
+        max-concurrency: 4 
 server:
   port: 8080
+  
+
+custom: 
+  token: 
+    publicKey: EC86@34$123c
+    userClaim: userInfo
+  ws-endpoint: /course #websocket端点路径
+  mq: 
+    queue-name:
+      course-start: course.start.classinteraction

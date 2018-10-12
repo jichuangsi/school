@@ -1,6 +1,4 @@
-package com.jichuangsi.microservice.common.model;
-
-import com.jichuangsi.microservice.common.constant.ResultCode;
+package com.jichuangsi.school.classinteraction.websocket.model;
 
 public class ResponseModel<T> {
 
@@ -10,26 +8,27 @@ public class ResponseModel<T> {
 	private T data;
 
 	public ResponseModel(String tranId, String code, String msg, T data) {
+		super();
 		this.tranId = tranId;
 		this.code = code;
 		this.msg = msg;
 		this.data = data;
 	}
 
-	public static <T> ResponseModel<T> sucessWithEmptyData(String tranId) {
+	public static<T> ResponseModel<T> sucessWithEmptyData(String tranId) {
 		return sucess(tranId, null);
 	}
 
-	public static <T> ResponseModel<T> sucess(String tranId, T data) {
-		return new ResponseModel<T>(tranId, ResultCode.SUCESS, ResultCode.SUCESS_MSG, data);
+	public static<T> ResponseModel<T> sucess(String tranId, T data) {
+		return new ResponseModel<T>(tranId, "0", "成功", data);
 	}
 
-	public static <T> ResponseModel<T> fail(String tranId) {
-		return fail(tranId, ResultCode.SYS_ERROR_MSG);
+	public static<T> ResponseModel<T> fail(String tranId) {
+		return fail(tranId, "错误");
 	}
 
-	public static <T> ResponseModel<T> fail(String tranId, String msg) {
-		return new ResponseModel<T>(tranId, ResultCode.SYS_ERROR, msg, null);
+	public static<T> ResponseModel<T> fail(String tranId, String msg) {
+		return new ResponseModel<T>(tranId, "-1", msg, null);
 	}
 
 	public final String getTranId() {

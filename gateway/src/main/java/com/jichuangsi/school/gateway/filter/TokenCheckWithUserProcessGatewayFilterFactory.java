@@ -1,3 +1,4 @@
+//在网关检查token，同时转换jwt用户数据并缓存--考虑到网关转换效率和内存问题，暂不适用
 package com.jichuangsi.school.gateway.filter;
 
 import java.io.UnsupportedEncodingException;

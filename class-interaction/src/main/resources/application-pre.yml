@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: classinteraction
+  rabbitmq:
+    host: 127.0.0.1
+server:
+  port: 8080
+  
+  
+app: 
+  token: 
+    publicKey: EC86@34$123c
+    userClaim: userInfo
+  ws-endpoint: /course #websocket端点路径
