@@ -4,11 +4,31 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
+    username: guest
+    password: guest
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/school
 
 server:
-  port: 8081
+  port: 8084
 
-mq: 
-  sender:
-    msg: 
-      startcourse: course.start.classinteraction
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+com:
+  jichuangsi:
+    school:
+      mq:
+        courses: course.start.classinteraction
+        questions:  course.start.questionpublish
+        answers:  course.start.answerreply
+        exchange: course.start.exchange
+
+custom:
+  token:
+    jwt:
+      secret: EC86@34$123c
+      userClaim : userInfo
