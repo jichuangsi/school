@@ -12,9 +12,9 @@ public class UserInfoForToken {
 	private String userNum;
 	private String userName;
 	private String classId;
-	private long timeStamp;
+	private String timeStamp;
 
-	public UserInfoForToken(String userId, String userNum, String userName, String classId, long timeStamp) {
+	public UserInfoForToken(String userId, String userNum, String userName, String classId, String timeStamp) {
 		this.userId = userId;
 		this.userNum = userNum;
 		this.userName = userName;
@@ -54,11 +54,11 @@ public class UserInfoForToken {
 		this.classId = classId;
 	}
 
-	public final long getTimeStamp() {
+	public final String getTimeStamp() {
 		return timeStamp;
 	}
 
-	public final void setTimeStamp(long timeStamp) {
+	public final void setTimeStamp(String timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
