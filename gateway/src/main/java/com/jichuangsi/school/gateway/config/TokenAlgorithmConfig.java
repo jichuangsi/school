@@ -14,7 +14,7 @@ public class TokenAlgorithmConfig {
 
 	@Bean
 	public Algorithm getTokenAlgorithm() {
-		return Algorithm.HMAC256(publicKey);
+		return Algorithm.HMAC512(publicKey);
 	}
 
 }
