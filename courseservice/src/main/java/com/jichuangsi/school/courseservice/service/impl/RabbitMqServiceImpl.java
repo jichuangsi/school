@@ -58,7 +58,8 @@ public class RabbitMqServiceImpl implements IMqService{
     }
 
     public void sendMsg4StartCourse(CourseMessageModel courseMsg){
-        rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSONObject.parseObject(JSON.toJSONString(courseMsg), CourseMessageModel.class));
+        //rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSONObject.parseObject(JSON.toJSONString(courseMsg), CourseMessageModel.class));
+        rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSON.toJSONString(courseMsg));
     }
 
     public void sendMsg4PublishQuestion(String courseId, String questionId){
