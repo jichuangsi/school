@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jichuangsi.microservice.common.model.RequestModel;
 import com.jichuangsi.microservice.common.model.ResponseModel;
-import com.jichuangsi.school.courseservice.model.CourseInfoModel;
+import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
 import com.jichuangsi.school.courseservice.service.ICourseService;
 
 /**
@@ -25,7 +25,7 @@ public class ClassInteractionController {
 	private ICourseService courseService; 
 
 	@PostMapping("/courseStart")
-	public ResponseModel<Object> courseStart(@RequestBody RequestModel<CourseInfoModel> request) {
+	public ResponseModel<Object> courseStart(@RequestBody RequestModel<CourseMessageModel> request) {
 		courseService.startCourse(request.getRequestParams());
 		return ResponseModel.sucess("", null);
 	}

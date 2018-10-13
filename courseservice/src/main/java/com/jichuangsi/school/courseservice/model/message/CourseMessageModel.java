@@ -1,13 +1,13 @@
 /**
  * 
  */
-package com.jichuangsi.school.courseservice.model;
+package com.jichuangsi.school.courseservice.model.message;
 
 /**
  * @author huangjiajun
  *
  */
-public class CourseInfoModel {
+public class CourseMessageModel {
 	private String classId;// 班级ID
 	private String courseId;// 课程ID
 	private String courseName;
