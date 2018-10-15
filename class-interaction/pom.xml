@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.jichuangsi.school.classinteraction</groupId>
-	<artifactId>websocket-3</artifactId>
+	<artifactId>school-classinteraction</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>school-classinteraction</name>
-	<description>Demo project for Spring Boot</description>
+	<description>school-classinteraction</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -48,6 +48,12 @@
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>3.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jichuangsi.microservice</groupId>
+			<artifactId>microservice-common-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

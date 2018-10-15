@@ -25,7 +25,6 @@ public class CommonControllerAdvice {
 		if (!StringUtils.isEmpty(accessToken)) {
 			DecodedJWT jwt = JWT.decode(accessToken);
 			String user = jwt.getClaim("userInfo").asString();
-			UserInfoForToken test = JSONObject.parseObject(user,UserInfoForToken.class);
 			model.addAttribute("userInfo", JSONObject.parseObject(user,UserInfoForToken.class));
 		}
 	}

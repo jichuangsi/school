@@ -4,7 +4,8 @@
 package com.jichuangsi.school.classinteraction.websocket.service;
 
 import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
-import com.jichuangsi.school.classinteraction.websocket.model.CourseStatistics;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
 
 /**
  * @author huangjiajun
@@ -18,7 +19,13 @@ public interface ISendToStudentService {
 	void sendClassInfo(ClassInfoForStudent classInfoForStudent);
 	
 	/**
-	 * 推送课堂统计信息
+	 * 推送发布题目信息
 	 */
-	void sendCourseStatisticsInfo(CourseStatistics courseStatistics);
+	void sendPubQuestionInfo(QuestionForPublish questionForPublish);
+	
+	/**
+	 * 推送题目终止作答信息
+	 */
+	void sendQuestionCloseInfo(QuestionClose questionClose);
+	
 }

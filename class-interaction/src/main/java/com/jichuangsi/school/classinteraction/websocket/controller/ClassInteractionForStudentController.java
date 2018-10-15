@@ -14,8 +14,8 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jichuangsi.school.classinteraction.websocket.constant.ResultCode;
-import com.jichuangsi.school.classinteraction.websocket.model.ResponseModel;
+import com.jichuangsi.microservice.common.constant.ResultCode;
+import com.jichuangsi.microservice.common.model.ResponseModel;
 
 
 /**

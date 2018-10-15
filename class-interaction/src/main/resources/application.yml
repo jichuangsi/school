@@ -10,8 +10,6 @@ spring:
         max-concurrency: 4 
 server:
   port: 8080
-  
-
 custom: 
   token: 
     publicKey: EC86@34$123c
@@ -19,10 +17,17 @@ custom:
   ws:
     endpoint: /course #websocket端点路径
     sub: 
-      csChange: /queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
-      classInfo: /topic/group/student/ #订阅某个班级的信息前缀
+      studnet: 
+        classInfoPre: /topic/group/student/ #订阅某个班级的信息前缀
+        courseIntercationPre: /topic/course/student/ #订阅某个课程的信息前缀
+      teacher:
+        csChangePre: /queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
+        qcChangePre: /queue/course/teacher/qs/ #订阅某堂课题目统计数据更新的消息前缀
   mq: 
     receiver: 
       queue-name:
         course-start: course.start.classinteraction
         course-statistics: course.statistics.classinteraction
+        question-pubilish: course.question.pub.classinteraction
+        question-statistics: course.question.statistics.classinteraction
+        question-termin: course.question.termin.classinteraction

@@ -23,6 +23,6 @@ com:
     school:
       mq:
         courses: course.start.classinteraction
-        questions:  course.start.questionpublish
+        questions:  course.question.pub.classinteraction
         answers:  course.start.answerreply
         exchange: course.start.exchange
