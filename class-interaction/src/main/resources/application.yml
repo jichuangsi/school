@@ -14,6 +14,7 @@ custom:
   token: 
     publicKey: EC86@34$123c
     userClaim: userInfo
+    headerKey: token
   ws:
     endpoint: /course #websocket端点路径
     sub: 

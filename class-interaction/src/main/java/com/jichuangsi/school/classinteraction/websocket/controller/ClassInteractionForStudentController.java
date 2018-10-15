@@ -3,9 +3,6 @@
  */
 package com.jichuangsi.school.classinteraction.websocket.controller;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -29,13 +26,13 @@ public class ClassInteractionForStudentController {
 	private SimpMessagingTemplate template;
 
 	// 订阅某个班级的信息
-	@SubscribeMapping("${custom.ws.sub.classInfo}{classId}")
+	@SubscribeMapping("${custom.ws.sub.student.classInfo}{classId}")
 	public ResponseModel<Object> subClassInfo(@DestinationVariable String classId) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}
 
-	// 订阅某堂课新发布题目的信息
-	@SubscribeMapping("/topic/course/student/{courseId}/newqusetion")
+	// 订阅某堂课的信息（包含发布题目和终止作答，两者都属于课堂信息）
+	@SubscribeMapping("${custom.ws.sub.student.courseIntercationPre}{classId}")
 	public ResponseModel<Object> subCourseForStudent(@DestinationVariable String courseId, StompHeaderAccessor sha) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}

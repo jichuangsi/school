@@ -23,6 +23,8 @@ public class MyChannelInterceptor implements ChannelInterceptor {
 	
 	@Value("${custom.token.userClaim}")
 	private String userClaim;
+	@Value("${custom.token.headerKey}")
+	private String headerKey;
 
 	@Autowired
 	private Algorithm tokenAlgorithm;
@@ -45,7 +47,7 @@ public class MyChannelInterceptor implements ChannelInterceptor {
 		// 判断客户端的连接状态
 		switch (sha.getCommand()) {
 		case CONNECT:
-			token = sha.getNativeHeader("token").get(0);
+			token = sha.getNativeHeader(headerKey).get(0);
 			checkToken(token);
 			//todo 检查同一accessToken短时间内反复connect
 			break;
@@ -54,9 +56,9 @@ public class MyChannelInterceptor implements ChannelInterceptor {
 		case DISCONNECT:
 			break;
 		case SUBSCRIBE:
-			token = sha.getNativeHeader("token").get(0);
+			token = sha.getNativeHeader(headerKey).get(0);
 			checkToken(token);
-			//todo 订阅时校验身份（例如学生不能订阅老师的相关主题）
+			//todo 订阅时校验身份（例如学生不能订阅老师的相关主题，不能在controller处理，因为通过controller进入订阅方法后，即使跑异常也能订阅成功，疑似是spring的bug）
 			//DecodedJWT jwt = JWT.decode(token);
 			//UserInfoForToken userInfo = JSONObject.parseObject(jwt.getClaim(userClaim).asString(),UserInfoForToken.class);
 		default:
