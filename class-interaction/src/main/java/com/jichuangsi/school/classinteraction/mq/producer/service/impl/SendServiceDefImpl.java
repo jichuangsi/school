@@ -21,14 +21,14 @@ import com.jichuangsi.school.classinteraction.mq.producer.service.ISendService;
 public class SendServiceDefImpl implements ISendService {
 
 	@Value("${custom.mq.producer.queue-name.course-studentAdd}")
-	private String courseStatisticsMsgName;
+	private String studentAdd;
 
 	@Resource
 	private AmqpTemplate rabbitTemplate;
 
 	@Override
 	public void snedAddToCourse(AddToCourseModel addToCourseModel) {
-		rabbitTemplate.convertAndSend(courseStatisticsMsgName, JSONObject.toJSONString(addToCourseModel));
+		rabbitTemplate.convertAndSend(studentAdd, JSONObject.toJSONString(addToCourseModel));
 	}
 
 }

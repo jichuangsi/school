@@ -5,14 +5,15 @@ package com.jichuangsi.school.statistics.service.impl;
 
 import javax.annotation.Resource;
 
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.school.statistics.model.AddToCourseModel;
 import com.jichuangsi.school.statistics.model.CourseStatisticsModel;
+import com.jichuangsi.school.statistics.model.QuestionStatisticsInfo;
+import com.jichuangsi.school.statistics.model.QuestionStatisticsListModel;
+import com.jichuangsi.school.statistics.model.StudentAnswerModel;
 import com.jichuangsi.school.statistics.mq.producer.service.ICourseStatisticsSender;
+import com.jichuangsi.school.statistics.mq.producer.service.IQuestionStatisticsSender;
 import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
 
 /**
@@ -24,6 +25,8 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 
 	@Resource
 	private ICourseStatisticsSender courseStatisticsSender;
+	@Resource
+	private IQuestionStatisticsSender questionStatisticsSender;
 
 	@Override
 	public AddToCourseModel addToCourse(AddToCourseModel addToCourseModel) {
@@ -43,6 +46,28 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 		model.setCourseId(courseId);
 		model.setStudentCount(1);
 		return model;
+	}
+
+	@Override
+	public QuestionStatisticsListModel getQuestionStatisticsList(String courseId) {
+		
+		return null;
+	}
+
+	@Override
+	public StudentAnswerModel saveStudentAnswer(StudentAnswerModel answerModel) {
+		//todo 更新作答信息
+		
+		QuestionStatisticsInfo info = getQuestionStatisticsInfo(answerModel.getCourseId(),answerModel.getQuestionId());
+		//发送题目统计变更消息
+		questionStatisticsSender.send(info);
+		return null;
+	}
+
+	@Override
+	public QuestionStatisticsInfo getQuestionStatisticsInfo(String courseId, String questionId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

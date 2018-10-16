@@ -15,4 +15,5 @@ public interface ICourseStatisticsSender {
 	 * 发送课堂统计消息
 	 */
 	void send(CourseStatisticsModel courseStatiResponseModel);
+	
 }
