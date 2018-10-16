@@ -24,7 +24,7 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 
 	@Resource
 	private SimpMessagingTemplate messagingTemplate;
-	@Value("${custom.ws.sub.teacher.csChange}")
+	@Value("${custom.ws.sub.teacher.csChangePre}")
 	private String csChangePre;
 	@Value("${custom.ws.sub.teacher.qcChangePre}")
 	private String qcChangePre;

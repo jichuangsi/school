@@ -1,6 +1,6 @@
 spring:
   application:
-    name: course-statistics
+    name: coursestatistics
   rabbitmq:
     host: 127.0.0.1
     port: 5672
@@ -12,6 +12,12 @@ custom:
   token: 
     userClaim: userInfo
   mq: 
-    sender:
+    producer:
       queue-name: 
         courseStatistics: course.statistics.classinteraction
+        questionStatistics: course.question.statistics.classinteraction
+    consumer:
+      queue-name:
+        courseStudentAdd: course.student.add.coursestatistics
+        answerQuestion: course.question.answer.coursestatistics
+        

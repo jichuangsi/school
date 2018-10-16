@@ -7,7 +7,7 @@ package com.jichuangsi.school.statistics.model;
  * @author huangjiajun
  *
  */
-public class CourseStatiResponseModel {
+public class CourseStatisticsModel {
 	private String courseId;
 	private int studentCount;
 

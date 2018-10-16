@@ -26,7 +26,7 @@ public class ClassInteractionForStudentController {
 	private SimpMessagingTemplate template;
 
 	// 订阅某个班级的信息
-	@SubscribeMapping("${custom.ws.sub.student.classInfo}{classId}")
+	@SubscribeMapping("${custom.ws.sub.student.classInfoPre}{classId}")
 	public ResponseModel<Object> subClassInfo(@DestinationVariable String classId) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}

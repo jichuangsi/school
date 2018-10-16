@@ -22,7 +22,7 @@ public class QusetionPublishReceiver {
 	@Resource
 	private ISendToStudentService sendToStudentService;
 
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.receiver.queue-name.question-pubilish}") })
+	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.question-pubilish}") })
 	public void process(String jsonData) {
 		QuestionForPublish questionForPublish = JSONObject.parseObject(jsonData, QuestionForPublish.class);
 		sendToStudentService.sendPubQuestionInfo(questionForPublish);
