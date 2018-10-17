@@ -1,5 +1,5 @@
 /**
- * 
+ * 学生加入课程持久化数据实体
  */
 package com.jichuangsi.school.statistics.entity;
 
@@ -9,11 +9,11 @@ import java.util.Date;
  * @author huangjiajun
  *
  */
-public class CourseStatistics {
-
+public class StudentAddCourseEntity {
 	private String uid;
 	private String courseId;
 	private String userId;
+	private String userName;
 	private Date createdTime;
 
 	public final String getUid() {
@@ -38,6 +38,14 @@ public class CourseStatistics {
 
 	public final void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public final String getUserName() {
+		return userName;
+	}
+
+	public final void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public final Date getCreatedTime() {

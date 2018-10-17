@@ -1,29 +1,11 @@
 package com.jichuangsi.school.classinteraction.websocket.model;
 
 public class QuestionForPublish {
-	private String userId;
-	private String token;
 	private String questionId;
 	private String courseId;
 	private String quType;
 	private String content;
 	private String wsType = "QuestionForPublish";
-
-	public final String getUserId() {
-		return userId;
-	}
-
-	public final void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public final String getToken() {
-		return token;
-	}
-
-	public final void setToken(String token) {
-		this.token = token;
-	}
 
 	public final String getQuestionId() {
 		return questionId;

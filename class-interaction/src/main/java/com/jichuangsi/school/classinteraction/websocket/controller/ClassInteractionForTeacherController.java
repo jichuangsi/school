@@ -5,6 +5,7 @@ package com.jichuangsi.school.classinteraction.websocket.controller;
 
 import javax.annotation.Resource;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -21,13 +22,13 @@ public class ClassInteractionForTeacherController {
 
 	// 订阅某堂课统计并数据更新的消息
 	@SubscribeMapping("${custom.ws.sub.teacher.csChangePre}{courseId}")
-	public ResponseModel<Object> csChange(StompHeaderAccessor sha) {
+	public ResponseModel<Object> csChange(@DestinationVariable String courseId) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}
 	
 	// 订阅某堂课题目统计更新的消息
 	@SubscribeMapping("${custom.ws.sub.teacher.qcChangePre}{courseId}")
-	public ResponseModel<Object> cqsChange(StompHeaderAccessor sha) {
+	public ResponseModel<Object> cqsChange(@DestinationVariable String courseId) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}
 	

@@ -10,7 +10,7 @@ package com.jichuangsi.school.classinteraction.websocket.model;
 public class QuestionStatistics {
 	private String courseId;
 	private String questionId;
-	private float accuracy;// 正确率
+	private float acc;// 正确率
 	private float score;// 分数
 	private int count;// 提交人数
 
@@ -30,12 +30,12 @@ public class QuestionStatistics {
 		this.questionId = questionId;
 	}
 
-	public final float getAccuracy() {
-		return accuracy;
+	public final float getAcc() {
+		return acc;
 	}
 
-	public final void setAccuracy(float accuracy) {
-		this.accuracy = accuracy;
+	public final void setAcc(float acc) {
+		this.acc = acc;
 	}
 
 	public final float getScore() {

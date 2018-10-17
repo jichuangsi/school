@@ -32,7 +32,7 @@ public class ClassInteractionForStudentController {
 	}
 
 	// 订阅某堂课的信息（包含发布题目和终止作答，两者都属于课堂信息）
-	@SubscribeMapping("${custom.ws.sub.student.courseIntercationPre}{classId}")
+	@SubscribeMapping("${custom.ws.sub.student.courseIntercationPre}{courseId}")
 	public ResponseModel<Object> subCourseForStudent(@DestinationVariable String courseId, StompHeaderAccessor sha) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}

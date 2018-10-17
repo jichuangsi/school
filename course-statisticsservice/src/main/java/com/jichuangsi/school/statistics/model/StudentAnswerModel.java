@@ -9,9 +9,6 @@ package com.jichuangsi.school.statistics.model;
  */
 public class StudentAnswerModel {
 
-	public static final String QUESTION_TYPE_SUBJECT = "subjective";
-	public static final String QUESTION_TYPE_OBJECT = "objective";
-
 	private String courseId;
 	private String questionId;
 	private float sorce;//题目得分

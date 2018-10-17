@@ -9,7 +9,8 @@ package com.jichuangsi.school.statistics.model;
  */
 public class QuestionStatisticsInfo {
 	private String questionId;
-	private float score;// 分数
+	private String courseId;
+	private float avgScore;// 平均分
 	private float acc;// 正确率
 	private int count;// 作答人数
 
@@ -21,12 +22,20 @@ public class QuestionStatisticsInfo {
 		this.questionId = questionId;
 	}
 
-	public final float getScore() {
-		return score;
+	public final String getCourseId() {
+		return courseId;
 	}
 
-	public final void setScore(float score) {
-		this.score = score;
+	public final void setCourseId(String courseId) {
+		this.courseId = courseId;
+	}
+
+	public final float getAvgScore() {
+		return avgScore;
+	}
+
+	public final void setAvgScore(float avgScore) {
+		this.avgScore = avgScore;
 	}
 
 	public final float getAcc() {
