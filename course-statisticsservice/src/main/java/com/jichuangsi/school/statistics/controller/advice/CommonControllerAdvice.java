@@ -31,13 +31,15 @@ public class CommonControllerAdvice {
 	private String userClaim;
 
 	@ModelAttribute
-	public void translateHeader(@RequestHeader @Nullable String userInfo, @RequestHeader @Nullable String accessToken,
+	public UserInfoForToken translateHeader(@RequestHeader @Nullable String userInfo, @RequestHeader @Nullable String accessToken,
 			Model model) throws UnsupportedEncodingException {
 		if (!StringUtils.isEmpty(accessToken)) {
 			DecodedJWT jwt = JWT.decode(accessToken);
 			String user = jwt.getClaim(userClaim).asString();
-			model.addAttribute(userClaim, JSONObject.parseObject(user,UserInfoForToken.class));
+			//model.addAttribute(userClaim, JSONObject.parseObject(user,UserInfoForToken.class));
+			return JSONObject.parseObject(user,UserInfoForToken.class);
 		}
+		return null;
 	}
 
 	@ExceptionHandler
