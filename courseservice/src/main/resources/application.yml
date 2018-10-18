@@ -26,3 +26,7 @@ com:
         questions:  course.question.pub.classinteraction
         answers:  course.start.answerreply
         exchange: course.start.exchange
+      token:
+          jwt:
+            secret: EC86@34$123c
+          userClaim : userInfo
