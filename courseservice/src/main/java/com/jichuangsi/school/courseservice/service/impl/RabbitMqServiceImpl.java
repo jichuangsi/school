@@ -12,23 +12,24 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service
 public class RabbitMqServiceImpl implements IMqService{
 
-    @Autowired
+    @Resource
     private AmqpTemplate template;
 
-    @Autowired
+    @Resource
     private RabbitAdmin rabbitAdmin;
 
-    @Autowired
+    @Resource
     private RabbitTemplate rabbitTemplate;
 
-    @Autowired
+    @Resource
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Value("${com.jichuangsi.school.mq.courses}")
@@ -37,7 +38,7 @@ public class RabbitMqServiceImpl implements IMqService{
     @Value("${com.jichuangsi.school.mq.exchange}")
     private String exchange;
 
-    @Autowired
+    @Resource
     private ConnectionFactory connectionFactory;
 
     @Override

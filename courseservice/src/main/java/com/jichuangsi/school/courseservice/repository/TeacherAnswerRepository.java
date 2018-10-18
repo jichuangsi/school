@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface TeacherAnswerRepository extends MongoRepository<TeacherAnswer, String>, TeacherAnswerExtraRepository {
 
-    TeacherAnswer findAllByTeacherIdAndQuestionIdAndStudentAnswerId(String teacherId, String questinoId, String studentAnswerId);
+    TeacherAnswer findFirstByTeacherIdAndQuestionIdAndStudentAnswerId(String teacherId, String questinoId, String studentAnswerId);
 }

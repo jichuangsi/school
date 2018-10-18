@@ -46,4 +46,19 @@ public class CourseExtraRepositoryImpl implements CourseExtraRepository {
 
         return mongoTemplate.find(query, Course.class);
     }
+
+    public List<Course> findCourseByClassIdAndStatus(String classId){
+
+        Criteria criteria = Criteria.where("classId").is(classId).andOperator(Criteria.where("status").ne(Status.FINISH.getName()));
+        Query query = new Query(criteria);
+
+        return mongoTemplate.find(query, Course.class);
+    }
+
+    public List<Course> findHistoryCourseByClassIdAndStatus(String classId){
+        Criteria criteria = Criteria.where("classId").is(classId).andOperator(Criteria.where("status").is(Status.FINISH.getName()));
+        Query query = new Query(criteria);
+
+        return mongoTemplate.find(query, Course.class);
+    }
 }

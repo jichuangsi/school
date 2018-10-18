@@ -1,5 +1,6 @@
 package com.jichuangsi.school.courseservice.service;
 
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.model.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,19 +9,19 @@ import java.util.List;
 
 public interface ITeacherCourseService {
     @Transactional
-    List<CourseForTeacher> getCoursesList(String teacherId) throws TeacherCourseServiceException;
+    List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException;
 
     @Transactional
-    List<CourseForTeacher> getHistoryCoursesList(String teacherId) throws TeacherCourseServiceException;
+    List<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException;
 
     @Transactional
-    List<CourseForTeacher> queryCoursesList(String teacherId, CourseForTeacher course) throws TeacherCourseServiceException;
+    List<CourseForTeacher> queryCoursesList(UserInfoForToken userInfo, CourseForTeacher course) throws TeacherCourseServiceException;
 
     @Transactional
-    CourseForTeacher getParticularCourse(String teacherId, String courseId) throws TeacherCourseServiceException;
+    CourseForTeacher getParticularCourse(UserInfoForToken userInfo, String courseId) throws TeacherCourseServiceException;
 
     @Transactional
-    List<QuestionForTeacher> getQuestionsInParticularCourse(String teacherId, String courseId) throws TeacherCourseServiceException;
+    List<QuestionForTeacher> getQuestionsInParticularCourse(UserInfoForToken userInfo, String courseId) throws TeacherCourseServiceException;
 
     @Transactional
     QuestionForTeacher getParticularQuestion(String questionId) throws TeacherCourseServiceException;
@@ -32,10 +33,10 @@ public interface ITeacherCourseService {
     AnswerForStudent getParticularAnswer(String questionId, String studentId) throws TeacherCourseServiceException;
 
     @Transactional
-    CourseForTeacher saveCourse(CourseForTeacher course);
+    CourseForTeacher saveCourse(UserInfoForToken userInfo, CourseForTeacher course);
 
     @Transactional
-    void deleteCourse(CourseForTeacher course);
+    void deleteCourse(UserInfoForToken userInfo, CourseForTeacher course);
 
     @Transactional
     List<QuestionForTeacher> saveQuestions(String courseId, List<QuestionForTeacher> questions) throws TeacherCourseServiceException;
@@ -50,14 +51,14 @@ public interface ITeacherCourseService {
     void updateParticularQuestionStatus(QuestionForTeacher questionStatus) throws TeacherCourseServiceException;
 
     @Transactional
-    void saveTeacherAnswer(String teacherId, String questinoId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException;
+    void saveTeacherAnswer(UserInfoForToken userInfo, String questinoId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException;
 
     @Transactional
-    AnswerForTeacher uploadTeacherSubjectPic(String teacherId, CourseFile file) throws TeacherCourseServiceException;
+    AnswerForTeacher uploadTeacherSubjectPic(UserInfoForToken userInfo, CourseFile file) throws TeacherCourseServiceException;
 
     @Transactional
-    CourseFile downloadTeacherSubjectPic(String teacherId, String fileName) throws TeacherCourseServiceException;
+    CourseFile downloadTeacherSubjectPic(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
 
     @Transactional
-    void deleteTeacherSubjectPic(String teacherId, String fileName) throws TeacherCourseServiceException;
+    void deleteTeacherSubjectPic(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
 }

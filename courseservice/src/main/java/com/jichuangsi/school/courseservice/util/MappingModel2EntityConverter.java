@@ -1,8 +1,11 @@
 package com.jichuangsi.school.courseservice.util;
 
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
+import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
+import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.AnswerForTeacher;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
@@ -13,14 +16,14 @@ public  final class MappingModel2EntityConverter {
 
     private MappingModel2EntityConverter(){}
 
-    public static final Course ConvertTeacherCourse(CourseForTeacher courseForTeacher){
+    public static final Course ConvertTeacherCourse(UserInfoForToken userInfo, CourseForTeacher courseForTeacher){
         Course course = new Course();
         course.setId(courseForTeacher.getCourseId()==null? UUID.randomUUID().toString().replaceAll("-", ""):courseForTeacher.getCourseId());
         course.setName(courseForTeacher.getCourseName());
         course.setInfo(courseForTeacher.getCourseInfo());
         course.setStatus(courseForTeacher.getCourseStatus()!=null?courseForTeacher.getCourseStatus().getName():null);
-        course.setTeacherId(courseForTeacher.getTeacherId());
-        course.setTeacherName(courseForTeacher.getTeacherName());
+        course.setTeacherId(userInfo.getUserId());
+        course.setTeacherName(userInfo.getUserName());
         course.setClassId(courseForTeacher.getClassId());
         course.setClassName(courseForTeacher.getClassName());
         course.setStartTime(courseForTeacher.getCourseStartTime());
@@ -55,16 +58,30 @@ public  final class MappingModel2EntityConverter {
         return question;
     }
 
-    public static final TeacherAnswer ConvertTeacherAnswer(String teacherId, String questionId, String studentAnswerId, AnswerForTeacher answerForTeacher){
+    public static final TeacherAnswer ConvertTeacherAnswer(UserInfoForToken userInfo, String questionId, String studentAnswerId, AnswerForTeacher answerForTeacher){
         TeacherAnswer teacherAnswer = new TeacherAnswer();
         teacherAnswer.setId(answerForTeacher.getAnswerId()==null?UUID.randomUUID().toString().replaceAll("-", ""):answerForTeacher.getAnswerId());
-        teacherAnswer.setTeacherId(teacherId);
-        teacherAnswer.setTeacherName(answerForTeacher.getTeacherName());
+        teacherAnswer.setTeacherId(userInfo.getUserId());
+        teacherAnswer.setTeacherName(userInfo.getUserName());
         teacherAnswer.setSubjectivePic(answerForTeacher.getPicForSubjective());
         teacherAnswer.setSubjectivePicStub(answerForTeacher.getStubForSubjective());
         teacherAnswer.setSubjectiveScore(answerForTeacher.getScore());
         teacherAnswer.setQuestionId(questionId);
         teacherAnswer.setStudentAnswerId(studentAnswerId);
         return teacherAnswer;
+    }
+
+    public static final StudentAnswer ConvertStudentAnswer(UserInfoForToken userInfo, String questionId, AnswerForStudent answerForStudent){
+        StudentAnswer studentAnswer = new StudentAnswer();
+        studentAnswer.setId(answerForStudent.getAnswerId()==null?UUID.randomUUID().toString().replaceAll("-", ""):answerForStudent.getAnswerId());
+        studentAnswer.setStudentId(userInfo.getUserId());
+        studentAnswer.setStudentName(userInfo.getUserName());
+        studentAnswer.setObjectiveAnswer(answerForStudent.getAnswerForObjective());
+        studentAnswer.setResult(answerForStudent.getResult().getName());
+        studentAnswer.setSubjectivePic(answerForStudent.getPicForSubjective());
+        studentAnswer.setSubjectivePicStub(answerForStudent.getStubForSubjective());
+        //studentAnswer.setSubjectiveScore(answerForStudent.getSubjectiveScore());
+        studentAnswer.setQuestionId(questionId);
+        return studentAnswer;
     }
 }

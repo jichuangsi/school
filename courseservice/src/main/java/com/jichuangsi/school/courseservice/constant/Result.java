@@ -1,7 +1,7 @@
 package com.jichuangsi.school.courseservice.constant;
 
 public enum Result {
-    CORRECT("C", 2), PARTIAL("P", 3), WRONG("W", 4);
+    CORRECT("C", 2), PASS("P", 3), WRONG("W", 4);
     private String name;
     private int index;
 

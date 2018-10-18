@@ -7,4 +7,6 @@ import java.util.List;
 public interface QuestionExtraRepository {
 
     List<Question> findQuestionsByTeacherIdAndCourseId(String teacherId, String courseId);
+
+    List<Question> findHistoryQuestionsByClassIdAndCourseId(String classId, String courseId);
 }

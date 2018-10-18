@@ -5,9 +5,7 @@ import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
-import com.jichuangsi.school.courseservice.model.AnswerForStudent;
-import com.jichuangsi.school.courseservice.model.CourseForTeacher;
-import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
+import com.jichuangsi.school.courseservice.model.*;
 
 import java.util.List;
 
@@ -15,7 +13,7 @@ public final class MappingEntity2ModelConverter {
 
     private MappingEntity2ModelConverter(){}
 
-    public static final CourseForTeacher ConvertCourse(Course course){
+    public static final CourseForTeacher ConvertTeacherCourse(Course course){
         CourseForTeacher courseForTeacher = new CourseForTeacher();
         courseForTeacher.setCourseId(course.getId());
         courseForTeacher.setCourseName(course.getName());
@@ -31,7 +29,23 @@ public final class MappingEntity2ModelConverter {
         return courseForTeacher;
     }
 
-    public static final QuestionForTeacher ConvertQuestion(Question question){
+    public static final CourseForStudent ConvertStudentCourse(Course course){
+        CourseForStudent courseForStudent = new CourseForStudent();
+        courseForStudent.setCourseId(course.getId());
+        courseForStudent.setCourseName(course.getName());
+        courseForStudent.setCourseInfo(course.getInfo());
+        courseForStudent.setCourseStatus(Status.getStatus(course.getStatus()));
+        courseForStudent.setTeacherId(course.getTeacherId());
+        courseForStudent.setTeacherName(course.getTeacherName());
+        courseForStudent.setClassId(course.getClassId());
+        courseForStudent.setClassName(course.getClassName());
+        courseForStudent.setCourseStartTime(course.getStartTime());
+        courseForStudent.setCourseEndTime(course.getEndTime());
+
+        return courseForStudent;
+    }
+
+    public static final QuestionForTeacher ConvertTeacherQuestion(Question question){
         QuestionForTeacher questionForTeacher = new QuestionForTeacher();
         questionForTeacher.setQuestionId(question.getId());
         questionForTeacher.setQuestionContent(question.getContent());
@@ -53,6 +67,28 @@ public final class MappingEntity2ModelConverter {
         return questionForTeacher;
     }
 
+    public static final QuestionForStudent ConvertStudentQuestion(Question question){
+        QuestionForStudent questionForStudent = new QuestionForStudent();
+        questionForStudent.setQuestionId(question.getId());
+        questionForStudent.setQuestionContent(question.getContent());
+        if(question.getOptions().size()>0){
+            question.getOptions().forEach(option -> {
+                questionForStudent.getOptions().add(option);
+            });
+        }
+        questionForStudent.setAnswer(question.getAnswer());
+        questionForStudent.setAnswerDetail(question.getAnswerDetail());
+        questionForStudent.setParse(question.getParse());
+        questionForStudent.setQuesetionType(question.getType());
+        questionForStudent.setDifficulty(question.getDifficulty());
+        questionForStudent.setSubjectId(question.getSubjectId());
+        questionForStudent.setGradeId(question.getGradeId());
+        questionForStudent.setKnowledge(question.getKnowledge());
+        questionForStudent.setQuestionIdMD52(question.getIdMD52());
+        questionForStudent.setQuestionStatus(Status.getStatus(question.getStatus()));
+        return questionForStudent;
+    }
+
     public static final AnswerForStudent ConvertStudentAnswer(StudentAnswer studentAnswer){
         AnswerForStudent answerForStudent = new AnswerForStudent();
         answerForStudent.setAnswerId(studentAnswer.getId());
@@ -61,7 +97,7 @@ public final class MappingEntity2ModelConverter {
         answerForStudent.setAnswerForObjective(studentAnswer.getObjectiveAnswer());
         answerForStudent.setPicForSubjective(studentAnswer.getSubjectivePic());
         answerForStudent.setStubForSubjective(studentAnswer.getSubjectivePicStub());
-        answerForStudent.setObjectiveResult(Result.getResult(studentAnswer.getObjectiveResult()));
+        answerForStudent.setResult(Result.getResult(studentAnswer.getResult()));
         answerForStudent.setSubjectiveScore(studentAnswer.getSubjectiveScore());
         return answerForStudent;
     }

@@ -13,4 +13,8 @@ public interface CourseExtraRepository{
 
     List<Course> findCourseByTeacherIdAndConditions(String teacherId, Course course);
 
+    List<Course> findCourseByClassIdAndStatus(String classId);
+
+    List<Course> findHistoryCourseByClassIdAndStatus(String classId);
+
 }

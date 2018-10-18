@@ -10,7 +10,7 @@ public class AnswerForStudent {
     String picForSubjective;
     String stubForSubjective;
 
-    Result objectiveResult;
+    Result result;
     double subjectiveScore;
 
     public String getAnswerId() {
@@ -61,12 +61,12 @@ public class AnswerForStudent {
         this.studentName = studentName;
     }
 
-    public Result getObjectiveResult() {
-        return objectiveResult;
+    public Result getResult() {
+        return result;
     }
 
-    public void setObjectiveResult(Result objectiveResult) {
-        this.objectiveResult = objectiveResult;
+    public void setResult(Result result) {
+        this.result = result;
     }
 
     public double getSubjectiveScore() {
