@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jichuangsi.school.gateway.constant.ResultCode;
+import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.school.gateway.model.ResponseModel;
 
 import reactor.core.publisher.Mono;

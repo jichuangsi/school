@@ -27,7 +27,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.jichuangsi.school.gateway.constant.ResultCode;
+import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.school.gateway.model.ResponseModel;
 
 import reactor.core.publisher.Mono;

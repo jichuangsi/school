@@ -21,7 +21,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.jichuangsi.school.gateway.constant.ResultCode;
+import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.school.gateway.model.ResponseModel;
 
 import reactor.core.publisher.Mono;

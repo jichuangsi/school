@@ -16,13 +16,13 @@ spring:
         - TokenCheck # TokenCheck+GatewayFilterFactory的类，即TokenCheckGatewayFilterFactory
       routes:
       - id: websocket_sockjs_route
-        uri: lb://bullet
+        uri: lb://classinteraction
         predicates:
-        - Path=/bullet/info/**
+        - Path=/course/info/**
       - id: websocket_route
-        uri: lb:ws://bullet
+        uri: lb:ws://classinteraction
         predicates:
-        - Path=/bullet/**
+        - Path=/course/**
       - id: auth
         uri: lb://auth
         predicates:
