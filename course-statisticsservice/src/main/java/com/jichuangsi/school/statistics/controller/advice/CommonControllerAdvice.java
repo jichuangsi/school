@@ -31,7 +31,7 @@ public class CommonControllerAdvice {
 	private String userClaim;
 
 	@ModelAttribute
-	public UserInfoForToken translateHeader(@RequestHeader @Nullable String userInfo, @RequestHeader @Nullable String accessToken,
+	public UserInfoForToken translateHeader(@RequestHeader @Nullable String accessToken,
 			Model model) throws UnsupportedEncodingException {
 		if (!StringUtils.isEmpty(accessToken)) {
 			DecodedJWT jwt = JWT.decode(accessToken);
