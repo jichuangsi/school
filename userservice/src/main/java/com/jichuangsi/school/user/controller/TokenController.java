@@ -15,6 +15,10 @@ public class TokenController {
 	@Resource
 	private ITokenService tokenService;
 	
+	/**
+	 * 根据用户ID获取token
+	 *
+	 */
 	@GetMapping("/getToken/{userId}")
 	public ResponseModel<String> getToken(@PathVariable String userId) {
 		return ResponseModel.sucess("", tokenService.getToken(userId));
