@@ -55,15 +55,16 @@ public  final class MappingModel2EntityConverter {
         return question;
     }
 
-    public static final TeacherAnswer ConvertTeacherAnswer(String questionId, AnswerForTeacher answerForTeacher){
+    public static final TeacherAnswer ConvertTeacherAnswer(String teacherId, String questionId, String studentAnswerId, AnswerForTeacher answerForTeacher){
         TeacherAnswer teacherAnswer = new TeacherAnswer();
         teacherAnswer.setId(answerForTeacher.getAnswerId()==null?UUID.randomUUID().toString().replaceAll("-", ""):answerForTeacher.getAnswerId());
-        teacherAnswer.setTeacherId(answerForTeacher.getTeacherId());
+        teacherAnswer.setTeacherId(teacherId);
         teacherAnswer.setTeacherName(answerForTeacher.getTeacherName());
         teacherAnswer.setSubjectivePic(answerForTeacher.getPicForSubjective());
         teacherAnswer.setSubjectivePicStub(answerForTeacher.getStubForSubjective());
         teacherAnswer.setSubjectiveScore(answerForTeacher.getScore());
         teacherAnswer.setQuestionId(questionId);
+        teacherAnswer.setStudentAnswerId(studentAnswerId);
         return teacherAnswer;
     }
 }

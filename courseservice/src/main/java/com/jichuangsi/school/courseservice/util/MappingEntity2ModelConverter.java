@@ -1,9 +1,11 @@
 package com.jichuangsi.school.courseservice.util;
 
+import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
+import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
 
@@ -32,6 +34,7 @@ public final class MappingEntity2ModelConverter {
     public static final QuestionForTeacher ConvertQuestion(Question question){
         QuestionForTeacher questionForTeacher = new QuestionForTeacher();
         questionForTeacher.setQuestionId(question.getId());
+        questionForTeacher.setQuestionContent(question.getContent());
         if(question.getOptions().size()>0){
             question.getOptions().forEach(option -> {
                 questionForTeacher.getOptions().add(option);
@@ -48,5 +51,18 @@ public final class MappingEntity2ModelConverter {
         questionForTeacher.setQuestionIdMD52(question.getIdMD52());
         questionForTeacher.setQuestionStatus(Status.getStatus(question.getStatus()));
         return questionForTeacher;
+    }
+
+    public static final AnswerForStudent ConvertStudentAnswer(StudentAnswer studentAnswer){
+        AnswerForStudent answerForStudent = new AnswerForStudent();
+        answerForStudent.setAnswerId(studentAnswer.getId());
+        answerForStudent.setStudentId(studentAnswer.getStudentId());
+        answerForStudent.setStudentName(studentAnswer.getStudentName());
+        answerForStudent.setAnswerForObjective(studentAnswer.getObjectiveAnswer());
+        answerForStudent.setPicForSubjective(studentAnswer.getSubjectivePic());
+        answerForStudent.setStubForSubjective(studentAnswer.getSubjectivePicStub());
+        answerForStudent.setObjectiveResult(Result.getResult(studentAnswer.getObjectiveResult()));
+        answerForStudent.setSubjectiveScore(studentAnswer.getSubjectiveScore());
+        return answerForStudent;
     }
 }

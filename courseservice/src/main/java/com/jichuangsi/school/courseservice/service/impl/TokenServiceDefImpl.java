@@ -24,7 +24,7 @@ import java.util.Date;
 public class TokenServiceDefImpl implements ITokenService {
 	@Resource
 	private Algorithm algorithm;
-	@Value("${custom.token.jwt.userClaim}")
+	@Value("${com.jichuangsi.school.token.userClaim}")
 	private String userClaim;
 
 	@Override

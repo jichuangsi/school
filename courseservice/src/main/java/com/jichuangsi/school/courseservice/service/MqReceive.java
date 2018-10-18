@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MqReceive {
-    @RabbitListener(queues="${com.jichuangsi.school.mq.courses}")    //监听器监听指定的Queue
+    //@RabbitListener(queues="${com.jichuangsi.school.mq.courses}")    //监听器监听指定的Queue
     public void processC(JSONObject str) {
         System.out.println("Receive:"+str.toJSONString());
     }

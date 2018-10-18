@@ -22,7 +22,7 @@ public enum Status {
 
     public static Status getStatus(String name) {
         for (Status c : Status.values()) {
-            if (c.getName() == name) {
+            if (c.getName().equalsIgnoreCase(name)) {
                 return c;
             }
         }

@@ -3,7 +3,7 @@ package com.jichuangsi.school.courseservice.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "school-course-teacher-answer")
+@Document(collection = "school_course_teacher_answer")
 public class TeacherAnswer {
 
     @Id
@@ -14,6 +14,7 @@ public class TeacherAnswer {
     String subjectivePicStub;
     Double subjectiveScore;
     String questionId;
+    String studentAnswerId;
 
     public String getId() {
         return id;
@@ -69,5 +70,13 @@ public class TeacherAnswer {
 
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
+    }
+
+    public String getStudentAnswerId() {
+        return studentAnswerId;
+    }
+
+    public void setStudentAnswerId(String studentAnswerId) {
+        this.studentAnswerId = studentAnswerId;
     }
 }

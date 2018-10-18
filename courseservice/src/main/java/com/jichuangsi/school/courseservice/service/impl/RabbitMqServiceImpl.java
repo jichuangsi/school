@@ -40,6 +40,7 @@ public class RabbitMqServiceImpl implements IMqService{
     @Autowired
     private ConnectionFactory connectionFactory;
 
+    @Override
     public void send(Course course) {
         /*Map<String, Object> argss = new HashMap<String, Object>();
         argss.put("x-message-ttl",5000l);
@@ -57,15 +58,18 @@ public class RabbitMqServiceImpl implements IMqService{
         rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSONObject.parseObject(JSON.toJSONString(course), Course.class));
     }
 
+    @Override
     public void sendMsg4StartCourse(CourseMessageModel courseMsg){
         //rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSONObject.parseObject(JSON.toJSONString(courseMsg), CourseMessageModel.class));
         rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSON.toJSONString(courseMsg));
     }
 
+    @Override
     public void sendMsg4PublishQuestion(String courseId, String questionId){
 
     }
 
+    @Override
     public void sendMsg4SubmitAnswer(String courseId, String questionId, AnswerForStudent answer){
 
     }

@@ -20,6 +20,15 @@ public enum Result {
         return null;
     }
 
+    public static Result getResult(String name) {
+        for (Result c : Result.values()) {
+            if (c.getName().equalsIgnoreCase(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public String getName() {
         return name;
     }
