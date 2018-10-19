@@ -10,11 +10,22 @@ spring:
         max-concurrency: 4 
 server:
   port: 8080
+ 
+eureka:
+  instance:
+    prefer-ip-address: true
+    #status-page-url-path: /actuator/info
+    #health-check-url-path: /actuator/health
+  client: 
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/  #http://114.115.207.28:8081/eureka/
+    register-with-eureka: true # 不作为Eureka服务注册   
+  
 custom: 
   token: 
     publicKey: EC86@34$123c
     userClaim: userInfo
-    headerKey: token
+    headerKey: accessToken
   ws:
     endpoint: /course #websocket端点路径
     sub: 

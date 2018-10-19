@@ -21,6 +21,8 @@ public class QuestionStaticsticsEntity {
 	private float acc;// 正确率
 	private int count;// 作答人数
 
+	
+	
 	private Date createdTime;
 	private Date updatedTime;
 

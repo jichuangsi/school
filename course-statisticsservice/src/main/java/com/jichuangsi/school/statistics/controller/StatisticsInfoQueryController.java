@@ -40,7 +40,7 @@ public class StatisticsInfoQueryController {
 	@GetMapping("/getCourseStatistics/{courseId}")
 	public ResponseModel<CourseStatisticsModel> getCourseStatistics(@PathVariable String courseId,
 			@ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
-		// todo根据用户信息做权限校验，写在这里，可以做拦截
+		// todo根据用户信息做权限校验，不一定写在这里，可以做拦截
 
 		CourseStatisticsModel model = courseStatisticsService.getCourseStatistics(courseId);
 		return ResponseModel.sucess("", model);

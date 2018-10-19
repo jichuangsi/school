@@ -66,7 +66,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 
 	@Override
 	public QuestionStatisticsInfo getQuestionStatisticsInfo(String courseId, String questionId) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
