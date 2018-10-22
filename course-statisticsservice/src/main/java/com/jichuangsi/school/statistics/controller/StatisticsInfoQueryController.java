@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.model.CourseStatisticsModel;
+import com.jichuangsi.school.statistics.model.QuestionStatisticsInfo;
 import com.jichuangsi.school.statistics.model.QuestionStatisticsListModel;
 import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
 
@@ -46,7 +47,7 @@ public class StatisticsInfoQueryController {
 		return ResponseModel.sucess("", model);
 	}
 
-	@ApiOperation(value = "根据课堂id查询课堂中题目的统计信息", notes = "")
+	@ApiOperation(value = "根据课堂id查询课堂中题目的统计信息（列表）", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
 			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
@@ -56,6 +57,20 @@ public class StatisticsInfoQueryController {
 		// todo根据用户信息做权限校验，不一定写在这里，可以做拦截
 
 		QuestionStatisticsListModel model = courseStatisticsService.getQuestionStatisticsList(courseId);
+		return ResponseModel.sucess("", model);
+	}
+
+	@ApiOperation(value = "根据题目id查询课堂中题目的统计信息（单个）", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "题目ID", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
+	@GetMapping("/getQuestionStatisticsInfo/{courseId}/{questionId}")
+	public ResponseModel<QuestionStatisticsInfo> getQuestionStatisticsInfo(@PathVariable String questionId,
+			@PathVariable String courseId, @ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
+		// todo根据用户信息做权限校验，不一定写在这里，可以做拦截
+
+		QuestionStatisticsInfo model = courseStatisticsService.getQuestionStatisticsInfo(courseId,questionId);
 		return ResponseModel.sucess("", model);
 	}
 

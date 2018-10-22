@@ -4,6 +4,11 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
+  data:
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: courseStatistics
 
 server:
   port: 8082

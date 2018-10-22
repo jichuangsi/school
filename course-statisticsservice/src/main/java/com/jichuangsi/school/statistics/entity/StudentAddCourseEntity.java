@@ -5,11 +5,16 @@ package com.jichuangsi.school.statistics.entity;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * @author huangjiajun
  *
  */
+@Document(collection = "course-student-list")
 public class StudentAddCourseEntity {
+	@Id
 	private String uid;
 	private String courseId;
 	private String userId;

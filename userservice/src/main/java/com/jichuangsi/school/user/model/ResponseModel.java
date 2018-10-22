@@ -1,6 +1,6 @@
 package com.jichuangsi.school.user.model;
 
-import com.jichuangsi.school.user.constant.ResultCode;
+import com.jichuangsi.microservice.common.constant.ResultCode;
 
 public class ResponseModel<T> {
 
