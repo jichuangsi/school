@@ -15,22 +15,30 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.classinteraction.model.AddToCourseModel;
 import com.jichuangsi.school.classinteraction.service.IClassInteractionForStudentService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
+
 /**
  * @author huangjiajun
  *
  */
 @RestController
+@Api("ClassInteractionForStudentWithoutWsController相关的api")
 public class ClassInteractionForStudentWithoutWsController {
 
 	@Resource
 	private IClassInteractionForStudentService classInteractionForStudentService;
 
-	/**
-	 * 加入课堂
-	 */
+	@ApiOperation(value = "加入课堂", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
 	@PostMapping("/addToCourse/{courseId}")
 	public ResponseModel<Object> addToCourse(@PathVariable String courseId,
-			@ModelAttribute UserInfoForToken userInfo) {
+			@ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
 		AddToCourseModel addToCourseModel = new AddToCourseModel();
 		addToCourseModel.setCourseId(courseId);
 		addToCourseModel.setUserId(userInfo.getUserId());
