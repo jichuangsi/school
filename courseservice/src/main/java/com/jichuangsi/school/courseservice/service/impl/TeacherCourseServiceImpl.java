@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,9 +163,42 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         if(result.isPresent()){
             Course course2Update = result.get();
             course2Update.setStatus(course.getCourseStatus().getName());
+            course2Update.setUpdateTime(new Date().getTime());
             course2Update = courseRepository.save(course2Update);
         }else{
             throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+        }
+    }
+
+    @Override
+    public void publishQuestion(String courseId, QuestionForTeacher questionStatus) throws TeacherCourseServiceException {
+        if(StringUtils.isEmpty(courseId)
+                || StringUtils.isEmpty(questionStatus.getQuestionId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> result = questionRepository.findById(questionStatus.getQuestionId());
+        if(result.isPresent()){
+            Question question2Update = result.get();
+            question2Update.setStatus(Status.PROGRESS.getName());
+            question2Update.setUpdateTime(new Date().getTime());
+            question2Update = questionRepository.save(question2Update);
+            mqService.sendMsg4PublishQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
+        }else{
+            throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+        }
+    }
+
+    @Override
+    public void terminateQuestion(String courseId, QuestionForTeacher questionStatus)  throws TeacherCourseServiceException {
+        if(StringUtils.isEmpty(courseId)
+                || StringUtils.isEmpty(questionStatus.getQuestionId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> result = questionRepository.findById(questionStatus.getQuestionId());
+        if(result.isPresent()){
+            Question question2Update = result.get();
+            question2Update.setStatus(Status.FINISH.getName());
+            question2Update.setUpdateTime(new Date().getTime());
+            question2Update = questionRepository.save(question2Update);
+            mqService.sendMsg4TermQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
+        }else{
+            throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
         }
     }
 
@@ -176,6 +210,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         if(result.isPresent()){
             Question question2Update = result.get();
             question2Update.setStatus(questionStatus.getQuestionStatus().getName());
+            question2Update.setUpdateTime(new Date().getTime());
             question2Update = questionRepository.save(question2Update);
         }else{
             throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
@@ -190,6 +225,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         if(result.isPresent()){
             Course course2Update = result.get();
             course2Update.setStatus(Status.PROGRESS.getName());
+            course2Update.setUpdateTime(new Date().getTime());
             course2Update = courseRepository.save(course2Update);
             mqService.sendMsg4StartCourse(MappingEntity2MessageConverter.ConvertCourse(course2Update));
         }else{
@@ -209,6 +245,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             answer2Update.setSubjectivePic(revise.getPicForSubjective());
             answer2Update.setSubjectivePicStub(revise.getStubForSubjective());
             answer2Update.setSubjectiveScore(revise.getScore());
+            answer2Update.setUpdateTime(new Date().getTime());
             teacherAnswerRepository.save(answer2Update);
         }else{
             teacherAnswerRepository.save(MappingModel2EntityConverter.ConvertTeacherAnswer(userInfo, questionId, studentAnswerId, revise));
@@ -219,6 +256,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             StudentAnswer answer2Update = resultForStudentAnswer.get();
             answer2Update.setResult(Result.PASS.getName());
             answer2Update.setSubjectiveScore(revise.getScore());
+            answer2Update.setReviseTime(new Date().getTime());
             studentAnswerRepository.save(answer2Update);
         }
     }

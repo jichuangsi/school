@@ -20,6 +20,8 @@ public class Course {
     Long startTime;
     Long endTime;
     List<String> questionIds = new ArrayList<String>();
+    long createTime;
+    long updateTime;
 
     public String getId() {
         return id;
@@ -107,5 +109,21 @@ public class Course {
 
     public void setQuestionIds(List<String> questionIds) {
         this.questionIds = questionIds;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 }

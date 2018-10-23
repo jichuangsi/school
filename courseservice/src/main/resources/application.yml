@@ -23,7 +23,9 @@ com:
     school:
       mq:
         courses: course.start.classinteraction
-        questions:  course.question.pub.classinteraction
+        questions:
+          pubilish: course.question.pub.classinteraction
+          terminate: course.question.termin.classinteraction
         answers:  course.start.answerreply
         exchange: course.start.exchange
       token:

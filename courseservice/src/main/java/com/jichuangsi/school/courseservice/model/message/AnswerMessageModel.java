@@ -1,0 +1,74 @@
+/**
+ * 
+ */
+package com.jichuangsi.school.courseservice.model.message;
+
+/**
+ * @author huangjiajun
+ *
+ */
+public class AnswerMessageModel {
+	private String courseId;
+	private String questionId;
+	private double sorce;//题目得分
+	private boolean isRight;//正确与否
+	private String quType;// 题目类型，主观题，客观题
+	private String answer;// 答案内容
+	private String studentId;//老师批改
+
+	public String getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(String courseId) {
+		this.courseId = courseId;
+	}
+
+	public String getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(String questionId) {
+		this.questionId = questionId;
+	}
+
+	public double getSorce() {
+		return sorce;
+	}
+
+	public void setSorce(double sorce) {
+		this.sorce = sorce;
+	}
+
+	public boolean isRight() {
+		return isRight;
+	}
+
+	public void setRight(boolean right) {
+		isRight = right;
+	}
+
+	public String getQuType() {
+		return quType;
+	}
+
+	public void setQuType(String quType) {
+		this.quType = quType;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	public String getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
+	}
+}

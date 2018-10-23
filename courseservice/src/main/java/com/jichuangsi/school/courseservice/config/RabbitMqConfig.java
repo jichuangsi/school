@@ -19,8 +19,11 @@ public class RabbitMqConfig {
     @Value("${com.jichuangsi.school.mq.courses}")
     private String coursesMq;
 
-    @Value("${com.jichuangsi.school.mq.questions}")
-    private String questionsMq;
+    @Value("${com.jichuangsi.school.mq.questions.pubilish}")
+    private String questionsPubMq;
+
+    @Value("${com.jichuangsi.school.mq.questions.terminate}")
+    private String questionsTermMq;
 
     @Value("${com.jichuangsi.school.mq.answers}")
     private String answersMq;
@@ -49,9 +52,16 @@ public class RabbitMqConfig {
         return courses;
     }
 
-    @Bean(name="questions")
-    public Queue questionsMessage(RabbitAdmin rabbitAdmin) {
-        Queue questions = new Queue(questionsMq,true, false, true);
+    @Bean(name="questionsPub")
+    public Queue questionsPubMessage(RabbitAdmin rabbitAdmin) {
+        Queue questions = new Queue(questionsPubMq,true, false, true);
+        rabbitAdmin.declareQueue(questions);
+        return questions;
+    }
+
+    @Bean(name="questionsTerm")
+    public Queue questionsTermMessage(RabbitAdmin rabbitAdmin) {
+        Queue questions = new Queue(questionsTermMq,true, false, true);
         rabbitAdmin.declareQueue(questions);
         return questions;
     }
@@ -76,8 +86,13 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Binding questionMqBinding(RabbitAdmin rabbitAdmin) {
-        return BindingBuilder.bind(questionsMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(questionsMq);
+    public Binding questionsPubMqBinding(RabbitAdmin rabbitAdmin) {
+        return BindingBuilder.bind(questionsPubMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(questionsPubMq);
+    }
+
+    @Bean
+    public Binding questionsTermMqBinding(RabbitAdmin rabbitAdmin) {
+        return BindingBuilder.bind(questionsTermMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(questionsTermMq);
     }
 
     @Bean

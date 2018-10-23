@@ -179,6 +179,24 @@ public class TeacherCourseController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
+    @ApiOperation(value = "根据id发布问题", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PutMapping("/questionPublish/{courseId}")
+    public ResponseModel<QuestionForTeacher> questionPublish(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @RequestBody QuestionForTeacher questionStatus) throws TeacherCourseServiceException{
+        teacherCourseService.publishQuestion(courseId, questionStatus);
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "根据id终止问题", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PutMapping("/questionTerminate/{courseId}")
+    public ResponseModel<QuestionForTeacher> questionTerminate(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @RequestBody QuestionForTeacher questionStatus) throws TeacherCourseServiceException{
+        teacherCourseService.terminateQuestion(courseId, questionStatus);
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
     //更新问题状态
     @ApiOperation(value = "根据问题id更新问题状态", notes = "")
     @ApiImplicitParams({

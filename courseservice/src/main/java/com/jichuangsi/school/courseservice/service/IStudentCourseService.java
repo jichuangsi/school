@@ -30,5 +30,5 @@ public interface IStudentCourseService {
     void deleteStudentSubjectPic(UserInfoForToken userInfo, String fileName) throws StudentCourseServiceException;
 
     @Transactional
-    void saveStudentAnswer(UserInfoForToken userInfo, String questionId, AnswerForStudent answer) throws StudentCourseServiceException;
+    void saveStudentAnswer(UserInfoForToken userInfo, String courseId, String questionId, AnswerForStudent answer) throws StudentCourseServiceException;
 }

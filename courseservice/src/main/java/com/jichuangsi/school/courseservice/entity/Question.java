@@ -23,6 +23,8 @@ public class Question {
     String knowledge;
     String idMD52;
     String status;
+    long createTime;
+    long updateTime;
 
     public String getId() {
         return id;
@@ -126,5 +128,21 @@ public class Question {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 }

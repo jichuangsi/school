@@ -16,6 +16,9 @@ public class StudentAnswer {
     String result;
     Double subjectiveScore;
     String questionId;
+    long createTime;
+    long updateTime;
+    long reviseTime;
 
     public String getId() {
         return id;
@@ -87,5 +90,29 @@ public class StudentAnswer {
 
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public long getReviseTime() {
+        return reviseTime;
+    }
+
+    public void setReviseTime(long reviseTime) {
+        this.reviseTime = reviseTime;
     }
 }

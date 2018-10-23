@@ -1,18 +1,18 @@
 package com.jichuangsi.school.courseservice.constant;
 
-public enum Result {
-    CORRECT("C", 1), PASS("P", 2), WRONG("W", 3);
+public enum QuestionType {
+    OBJECTIVE("objective", 1), SUBJECTIVE("subjective", 2);
     private String name;
     private int index;
 
     // 构造方法
-    private Result(String name, int index) {
+    private QuestionType(String name, int index) {
         this.name = name;
         this.index = index;
     }
 
     public static String getName(int index) {
-        for (Result c : Result.values()) {
+        for (QuestionType c : QuestionType.values()) {
             if (c.getIndex() == index) {
                 return c.name;
             }
@@ -20,8 +20,8 @@ public enum Result {
         return null;
     }
 
-    public static Result getResult(String name) {
-        for (Result c : Result.values()) {
+    public static QuestionType getResult(String name) {
+        for (QuestionType c : QuestionType.values()) {
             if (c.getName().equalsIgnoreCase(name)) {
                 return c;
             }

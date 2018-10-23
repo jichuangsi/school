@@ -99,11 +99,11 @@ public class StudentCourseController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
 			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
-	@PostMapping("/sendAnswer/{questionId}")
-	public ResponseModel<AnswerForStudent> sendAnswer(@ModelAttribute UserInfoForToken userInfo,
+	@PostMapping("/sendAnswer/{courseId}/{questionId}")
+	public ResponseModel<AnswerForStudent> sendAnswer(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId,
 													  @PathVariable String questionId,
 													  @RequestBody AnswerForStudent answer) throws StudentCourseServiceException{
-		studentCourseService.saveStudentAnswer(userInfo, questionId, answer);
+		studentCourseService.saveStudentAnswer(userInfo, courseId, questionId, answer);
 		return ResponseModel.sucessWithEmptyData("");
 	}
 }

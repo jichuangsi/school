@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.Course;
 import com.jichuangsi.school.courseservice.model.Question;
+import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
 import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
+import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -38,6 +40,15 @@ public class RabbitMqServiceImpl implements IMqService{
     @Value("${com.jichuangsi.school.mq.exchange}")
     private String exchange;
 
+    @Value("${com.jichuangsi.school.mq.questions.pubilish}")
+    private String questionsPubMq;
+
+    @Value("${com.jichuangsi.school.mq.questions.terminate}")
+    private String questionsTermMq;
+
+    @Value("${com.jichuangsi.school.mq.answers}")
+    private String answersMq;
+
     @Resource
     private ConnectionFactory connectionFactory;
 
@@ -66,13 +77,18 @@ public class RabbitMqServiceImpl implements IMqService{
     }
 
     @Override
-    public void sendMsg4PublishQuestion(String courseId, String questionId){
-
+    public void sendMsg4PublishQuestion(QuestionMessageModel questionMsg){
+        rabbitMessagingTemplate.convertAndSend(exchange, questionsPubMq, JSON.toJSONString(questionMsg));
     }
 
     @Override
-    public void sendMsg4SubmitAnswer(String courseId, String questionId, AnswerForStudent answer){
+    public void sendMsg4TermQuestion(QuestionMessageModel questionMsg) {
+        rabbitMessagingTemplate.convertAndSend(exchange, questionsTermMq, JSON.toJSONString(questionMsg));
+    }
 
+    @Override
+    public void sendMsg4SubmitAnswer(AnswerMessageModel answerMsg){
+        rabbitMessagingTemplate.convertAndSend(exchange, answersMq, JSON.toJSONString(answerMsg));
     }
 
 }

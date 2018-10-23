@@ -15,7 +15,9 @@ import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
 import com.jichuangsi.school.courseservice.service.IAutoVerifyAnswerService;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
+import com.jichuangsi.school.courseservice.service.IMqService;
 import com.jichuangsi.school.courseservice.service.IStudentCourseService;
+import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,15 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class StudentCourseServiceImpl implements IStudentCourseService{
+
+    @Resource
+    private IMqService mqService;
 
     @Resource
     private CourseRepository courseRepository;
@@ -100,8 +106,9 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     }
 
     @Override
-    public void saveStudentAnswer(UserInfoForToken userInfo, String questionId, AnswerForStudent answer) throws StudentCourseServiceException {
+    public void saveStudentAnswer(UserInfoForToken userInfo, String courseId, String questionId, AnswerForStudent answer) throws StudentCourseServiceException {
         if(StringUtils.isEmpty(userInfo.getUserId())
+                || StringUtils.isEmpty(courseId)
                 || StringUtils.isEmpty(questionId)
                 || (StringUtils.isEmpty(answer.getAnswerForObjective()) && StringUtils.isEmpty(answer.getStubForSubjective())))
             throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
@@ -111,16 +118,19 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
             answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
         }
         Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentId(questionId, userInfo.getUserId()));
+        StudentAnswer answer2Return = null;
         if(result.isPresent()){
             StudentAnswer answer2Update = result.get();
             answer2Update.setSubjectivePic(answer.getPicForSubjective());
             answer2Update.setSubjectivePicStub(answer.getStubForSubjective());
             answer2Update.setObjectiveAnswer(answer.getAnswerForObjective());
-            answer2Update.setResult(answer.getResult().getName());
-            studentAnswerRepository.save(answer2Update);
+            answer2Update.setResult(StringUtils.isEmpty(answer.getResult())?null:answer.getResult().getName());
+            answer2Update.setUpdateTime(new Date().getTime());
+            answer2Return = studentAnswerRepository.save(answer2Update);
         }else{
-            studentAnswerRepository.save(MappingModel2EntityConverter.ConvertStudentAnswer(userInfo, questionId, answer));
+            answer2Return = studentAnswerRepository.save(MappingModel2EntityConverter.ConvertStudentAnswer(userInfo, questionId, answer));
         }
+        if(Optional.ofNullable(answer2Return).isPresent()) mqService.sendMsg4SubmitAnswer(MappingEntity2MessageConverter.ConvertAnswer(courseId, answer2Return));
     }
 
     private List<CourseForStudent> convertCourseList(List<Course> courses){

@@ -51,6 +51,12 @@ public interface ITeacherCourseService {
     void updateParticularQuestionStatus(QuestionForTeacher questionStatus) throws TeacherCourseServiceException;
 
     @Transactional
+    void publishQuestion(String courseId, QuestionForTeacher questionStatus)  throws TeacherCourseServiceException;
+
+    @Transactional
+    void terminateQuestion(String courseId, QuestionForTeacher questionStatus)  throws TeacherCourseServiceException;
+
+    @Transactional
     void saveTeacherAnswer(UserInfoForToken userInfo, String questinoId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException;
 
     @Transactional
