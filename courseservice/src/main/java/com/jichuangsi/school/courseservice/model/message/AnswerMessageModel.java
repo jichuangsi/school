@@ -10,7 +10,7 @@ package com.jichuangsi.school.courseservice.model.message;
 public class AnswerMessageModel {
 	private String courseId;
 	private String questionId;
-	private double sorce;//题目得分
+	private double score;//题目得分
 	private boolean isRight;//正确与否
 	private String quType;// 题目类型，主观题，客观题
 	private String answer;// 答案内容
@@ -32,12 +32,12 @@ public class AnswerMessageModel {
 		this.questionId = questionId;
 	}
 
-	public double getSorce() {
-		return sorce;
+	public double getScore() {
+		return score;
 	}
 
-	public void setSorce(double sorce) {
-		this.sorce = sorce;
+	public void setScore(double score) {
+		this.score = score;
 	}
 
 	public boolean isRight() {

@@ -38,7 +38,7 @@ public final class MappingEntity2MessageConverter {
         AnswerMessageModel answerMessageModel = new AnswerMessageModel();
         answerMessageModel.setCourseId(courseId);
         answerMessageModel.setQuestionId(answer.getQuestionId());
-        answerMessageModel.setSorce(StringUtils.isEmpty(answer.getSubjectiveScore())?0d:answer.getSubjectiveScore());
+        answerMessageModel.setScore(StringUtils.isEmpty(answer.getSubjectiveScore())?0d:answer.getSubjectiveScore());
         answerMessageModel.setRight(Result.CORRECT.getName().equalsIgnoreCase(answer.getResult())?true:false);
         answerMessageModel.setQuType(StringUtils.isEmpty(answer.getObjectiveAnswer())? QuestionType.SUBJECTIVE.getName():QuestionType.OBJECTIVE.getName());
         answerMessageModel.setAnswer(answer.getObjectiveAnswer());
