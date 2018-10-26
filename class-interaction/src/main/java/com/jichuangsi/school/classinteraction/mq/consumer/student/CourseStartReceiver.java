@@ -24,7 +24,7 @@ public class CourseStartReceiver {
 	private ISendToStudentService sendToStudentService;
 
 	
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-start}") })
+	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-start}", autoDelete = "true") })
 	public void process(String jsonData) {
 		ClassInfoForStudent classInfoForStudent = JSONObject.parseObject(jsonData, ClassInfoForStudent.class);
 		classInfoForStudent.setType(ClassInfoForStudent.TYPE_COURSE_START);

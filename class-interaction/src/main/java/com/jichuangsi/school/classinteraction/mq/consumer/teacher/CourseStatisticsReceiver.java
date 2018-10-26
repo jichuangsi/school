@@ -21,7 +21,7 @@ public class CourseStatisticsReceiver {
 	@Resource
 	private ISendToTeacherService sendToTeacherService;
 
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-statistics}") })
+	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-statistics}", autoDelete = "true") })
 	public void process(String jsonData) {
 		CourseStatistics info = JSONObject.parseObject(jsonData, CourseStatistics.class);
 		sendToTeacherService.sendCourseStatisticsInfo(info);
