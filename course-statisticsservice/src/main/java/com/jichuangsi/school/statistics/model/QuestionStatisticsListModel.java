@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class QuestionStatisticsListModel {
 	private String courseId;
-	private List<QuestionStatisticsInfo> list;
+	private List<QuestionStatisticsInfoModel> list;
 
 	public final String getCourseId() {
 		return courseId;
@@ -21,11 +21,11 @@ public class QuestionStatisticsListModel {
 		this.courseId = courseId;
 	}
 
-	public final List<QuestionStatisticsInfo> getList() {
+	public final List<QuestionStatisticsInfoModel> getList() {
 		return list;
 	}
 
-	public final void setList(List<QuestionStatisticsInfo> list) {
+	public final void setList(List<QuestionStatisticsInfoModel> list) {
 		this.list = list;
 	}
 

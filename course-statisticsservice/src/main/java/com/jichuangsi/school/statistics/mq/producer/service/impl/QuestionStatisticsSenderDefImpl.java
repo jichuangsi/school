@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jichuangsi.school.statistics.model.QuestionStatisticsInfo;
+import com.jichuangsi.school.statistics.model.QuestionStatisticsInfoModel;
 import com.jichuangsi.school.statistics.mq.producer.service.IQuestionStatisticsSender;
 
 /**
@@ -26,7 +26,7 @@ public class QuestionStatisticsSenderDefImpl implements IQuestionStatisticsSende
 	private String questionStatistics;
 
 	@Override
-	public void send(QuestionStatisticsInfo questionStatisticsInfo) {
+	public void send(QuestionStatisticsInfoModel questionStatisticsInfo) {
 		rabbitTemplate.convertAndSend(questionStatistics, JSONObject.toJSONString(questionStatisticsInfo));
 	}
 }

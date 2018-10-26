@@ -7,12 +7,15 @@ package com.jichuangsi.school.statistics.model;
  * @author huangjiajun
  *
  */
-public class QuestionStatisticsInfo {
+public class QuestionStatisticsInfoModel {
 	private String questionId;
 	private String courseId;
 	private float avgScore;// 平均分
 	private float acc;// 正确率
 	private int count;// 作答人数
+
+	private boolean rightFlag;// 统计是分开正确错误统计，但最终返回数据不需要这个属性
+	private float totalScore;// 统计是分开正确错误统计，但最终返回数据不需要这个属性
 
 	public final String getQuestionId() {
 		return questionId;
@@ -52,6 +55,22 @@ public class QuestionStatisticsInfo {
 
 	public final void setCount(int count) {
 		this.count = count;
+	}
+
+	public final boolean isRightFlag() {
+		return rightFlag;
+	}
+
+	public final void setRightFlag(boolean rightFlag) {
+		this.rightFlag = rightFlag;
+	}
+
+	public final float getTotalScore() {
+		return totalScore;
+	}
+
+	public final void setTotalScore(float totalScore) {
+		this.totalScore = totalScore;
 	}
 
 }

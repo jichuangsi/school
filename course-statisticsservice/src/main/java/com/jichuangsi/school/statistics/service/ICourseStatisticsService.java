@@ -5,7 +5,7 @@ package com.jichuangsi.school.statistics.service;
 
 import com.jichuangsi.school.statistics.model.AddToCourseModel;
 import com.jichuangsi.school.statistics.model.CourseStatisticsModel;
-import com.jichuangsi.school.statistics.model.QuestionStatisticsInfo;
+import com.jichuangsi.school.statistics.model.QuestionStatisticsInfoModel;
 import com.jichuangsi.school.statistics.model.QuestionStatisticsListModel;
 import com.jichuangsi.school.statistics.model.StudentAnswerModel;
 
@@ -31,9 +31,9 @@ public interface ICourseStatisticsService {
 	StudentAnswerModel saveStudentAnswer(StudentAnswerModel answerModel);
 	
 	/**
-	 * 获取课堂中所有某条题目的统计数据
+	 * 获取课堂单个题目的统计数据
 	 */
-	QuestionStatisticsInfo getQuestionStatisticsInfo(String courseId,String questionId);
+	QuestionStatisticsInfoModel getQuestionStatisticsInfo(String courseId,String questionId);
 	
 	/**
 	 * 获取课堂中所有已发布题目的统计数据
