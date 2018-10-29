@@ -3,23 +3,19 @@
  */
 package com.jichuangsi.school.statistics.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.util.CloseableIterator;
 import org.springframework.stereotype.Service;
 
 import com.jichuangsi.school.statistics.entity.CourseStatisticsEntity;
 import com.jichuangsi.school.statistics.entity.QuestionAnswersEntity;
-import com.jichuangsi.school.statistics.entity.QuestionStaticsticsEntity;
 import com.jichuangsi.school.statistics.entity.StudentAddCourseEntity;
 import com.jichuangsi.school.statistics.entity.StudentAnswerEntity;
 import com.jichuangsi.school.statistics.model.AddToCourseModel;
@@ -54,14 +50,12 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 	@Resource
 	private MongoTemplate mongoTemplate;
 
-	private static int count = 0;
-
 	@Override
 	public AddToCourseModel addToCourse(AddToCourseModel addToCourseModel) {
 		final String courseId = addToCourseModel.getCourseId();
 		final String userId = addToCourseModel.getUserId();
 
-		synchronized (userId.intern()) {// 防止同一个并发用户重复加入，todo集群需要用分布式锁
+		synchronized (userId.intern()) {// 防止同一个并发用户并发重复加入，todo集群需要用分布式锁
 			StudentAddCourseEntity studentAddCourseEntity = studentAddCourseRepository
 					.findOneByUserIdAndCourseId(userId, courseId);
 			if (null == studentAddCourseEntity) {
@@ -96,8 +90,18 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 
 	@Override
 	public QuestionStatisticsListModel getQuestionStatisticsList(String courseId) {
-
-		return null;
+		List<QuestionAnswersEntity> entityList = questionAnswersRepository.findByCourseId(courseId);
+		QuestionStatisticsListModel questionStatisticsListModel = new QuestionStatisticsListModel();
+		List<QuestionStatisticsInfoModel> innerList = new ArrayList<QuestionStatisticsInfoModel>(entityList.size());
+		QuestionStatisticsInfoModel model;
+		for (QuestionAnswersEntity questionAnswersEntity : entityList) {
+			model = new QuestionStatisticsInfoModel();
+			fillQuestionStatisticsInfoModel(questionAnswersEntity, model);
+			innerList.add(model);
+		}
+		questionStatisticsListModel.setCourseId(courseId);
+		questionStatisticsListModel.setList(innerList);
+		return questionStatisticsListModel;
 	}
 
 	@Override
@@ -111,66 +115,82 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 		Query query = new Query();
 		query.addCriteria(Criteria.where("courseId").is(courseId).and("questionId").is(questionId)
 				.and("studentAnswers.studentId").is(studentId));
-		QuestionAnswersEntity questionAnswersEntity = mongoTemplate.findOne(query, QuestionAnswersEntity.class);
-		Update update = new Update();
-		if (null == questionAnswersEntity) {
-			Query query1 = new Query();
-			query1.addCriteria(Criteria.where("courseId").is(courseId).and("questionId").is(questionId));
-			// addToSet存在则不加，不存在则加,push不管是否存在都加，这里用addToSet
-			update.addToSet("studentAnswers", studentAnswerEntity);
-			mongoTemplate.upsert(query1, update, QuestionAnswersEntity.class);
-		} else {
-			update.set("studentAnswers.$.score", studentAnswerEntity.getScore());
-			update.set("studentAnswers.$.answer", studentAnswerEntity.getAnswer());
-			update.set("studentAnswers.$.isRight", studentAnswerEntity.getIsRight());
-			update.set("studentAnswers.$.quType", studentAnswerEntity.getQuType());
-			mongoTemplate.updateFirst(query, update, QuestionAnswersEntity.class);
+
+		// 防止同一个并发用户并发重复加入，todo集群需要用分布式锁
+		synchronized (studentId.intern()) {
+			QuestionAnswersEntity questionAnswersEntity = mongoTemplate.findOne(query, QuestionAnswersEntity.class);
+			Update update = new Update();
+			if (null == questionAnswersEntity) {
+				Query query1 = new Query();
+				query1.addCriteria(Criteria.where("courseId").is(courseId).and("questionId").is(questionId));
+
+				update.set("quType", answerModel.getQuType());
+				update.inc("totalScore", answerModel.getScore());
+				update.inc("count", 1);
+				if (studentAnswerEntity.getIsRight()) {
+					update.inc("accCount", 1);
+				}
+				// addToSet存在则不加，不存在则加,push不管是否存在都加，这里用addToSet
+				update.addToSet("studentAnswers", studentAnswerEntity);
+				mongoTemplate.upsert(query1, update, QuestionAnswersEntity.class);
+			} else {
+				StudentAnswerEntity oldstudentAnswerEntity = null;
+				for (StudentAnswerEntity temp : questionAnswersEntity.getStudentAnswers()) {
+					if (temp.getStudentId().equals(studentId)) {
+						oldstudentAnswerEntity = temp;
+						break;
+					}
+				}
+				if (null != oldstudentAnswerEntity) {
+					update.inc("totalScore", studentAnswerEntity.getScore() - oldstudentAnswerEntity.getScore());// 前后得分差
+					if (!oldstudentAnswerEntity.getIsRight() && studentAnswerEntity.getIsRight()) {
+						// 旧作答错误，新作答正确时
+						update.inc("accCount", 1);
+					}
+					if (oldstudentAnswerEntity.getIsRight() && !studentAnswerEntity.getIsRight()) {
+						// 旧作答正确，新作答错误时
+						update.inc("accCount", -1);
+					}
+					update.set("studentAnswers.$.score", studentAnswerEntity.getScore());
+					update.set("studentAnswers.$.answer", studentAnswerEntity.getAnswer());
+					update.set("studentAnswers.$.isRight", studentAnswerEntity.getIsRight());
+					mongoTemplate.updateFirst(query, update, QuestionAnswersEntity.class);
+				}
+
+			}
 		}
 
 		// 获取统计信息
 		QuestionStatisticsInfoModel info = getQuestionStatisticsInfo(answerModel.getCourseId(),
 				answerModel.getQuestionId());
 		// 发送题目统计变更消息
-		// questionStatisticsSender.send(info);
+		questionStatisticsSender.send(info);
 		return answerModel;
 	}
 
 	@Override
 	public QuestionStatisticsInfoModel getQuestionStatisticsInfo(String courseId, String questionId) {
-		QuestionStatisticsInfoModel info = null;
-		info = new QuestionStatisticsInfoModel();
-		info.setCourseId(courseId);
-		info.setQuestionId(questionId);
-		info.setAcc(0);
-		info.setAvgScore(0);
-		info.setCount(0);
 
-		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.match(Criteria.where("courseId").is(courseId).and("questionId").is(questionId)),
-				Aggregation.unwind("studentAnswers"),
-				Aggregation.group("studentAnswers.isRight").first("studentAnswers.isRight").as("rightFlag")
-						.first("questionId").as("questionId").first("courseId").as("courseId")
-						.sum("studentAnswers.score").as("totalScore").count().as("count"));//按正确与错误统计，最终统计出来是两条记录
-		CloseableIterator<QuestionStatisticsInfoModel> aggRes = mongoTemplate.aggregateStream(aggregation,
-				QuestionAnswersEntity.class, QuestionStatisticsInfoModel.class);
-
-		if (null == aggRes) {
-			return info;
+		QuestionAnswersEntity entity = questionAnswersRepository.findOneByCourseIdAndQuestionId(courseId, questionId);
+		QuestionStatisticsInfoModel info = new QuestionStatisticsInfoModel();
+		if (null == entity) {
+			info.setCourseId(courseId);
+			info.setQuestionId(questionId);
+			info.setAcc(0);
+			info.setAvgScore(0);
+			info.setCount(0);
+		} else {
+			fillQuestionStatisticsInfoModel(entity, info);
 		}
-		QuestionStatisticsInfoModel temp;
-		int rightCount = 0;// 正确计数
-		while (aggRes.hasNext()) {
-			temp = aggRes.next();
-			info.setTotalScore(temp.getTotalScore() + info.getTotalScore());
-			info.setCount(temp.getCount() + info.getCount());
-			if (temp.isRightFlag()) {
-				rightCount = temp.getCount();
-			}
-		}
-		info.setAcc(rightCount / (float) info.getCount());
-		info.setAvgScore(info.getTotalScore() / info.getCount());
-
 		return info;
+	}
+
+	private void fillQuestionStatisticsInfoModel(QuestionAnswersEntity entity, QuestionStatisticsInfoModel info) {
+		info.setCourseId(entity.getCourseId());
+		info.setQuestionId(entity.getQuestionId());
+		info.setAcc((float) entity.getAccCount() / entity.getCount());
+		info.setAvgScore(entity.getTotalScore() / entity.getCount());
+		info.setCount(entity.getCount());
 	}
 
 }

@@ -18,6 +18,10 @@ public class QuestionAnswersEntity {
 	private String uid;
 	private String courseId;
 	private String questionId;
+	private String quType;//题目类型
+	private float totalScore;//总分
+	private int accCount;//正确人数
+	private int count;//作答人数
 	private Set<StudentAnswerEntity> studentAnswers;
 
 	public final String getUid() {
@@ -50,6 +54,38 @@ public class QuestionAnswersEntity {
 
 	public final void setStudentAnswers(Set<StudentAnswerEntity> studentAnswers) {
 		this.studentAnswers = studentAnswers;
+	}
+
+	public final String getQuType() {
+		return quType;
+	}
+
+	public final void setQuType(String quType) {
+		this.quType = quType;
+	}
+
+	public final float getTotalScore() {
+		return totalScore;
+	}
+
+	public final void setTotalScore(float totalScore) {
+		this.totalScore = totalScore;
+	}
+
+	public final int getAccCount() {
+		return accCount;
+	}
+
+	public final void setAccCount(int accCount) {
+		this.accCount = accCount;
+	}
+
+	public final int getCount() {
+		return count;
+	}
+
+	public final void setCount(int count) {
+		this.count = count;
 	}
 
 }

@@ -20,7 +20,7 @@ public class StudentAnswerModel {
 	private String studentId;// 学生ID
 
 	public StudentAnswerEntity genStudentAnswerEntity() {
-		return new StudentAnswerEntity(score, isRight, quType, answer, studentId);
+		return new StudentAnswerEntity(score, isRight, answer, studentId);
 	}
 
 	public final String getCourseId() {

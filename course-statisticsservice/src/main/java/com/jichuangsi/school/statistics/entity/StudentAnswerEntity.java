@@ -12,7 +12,6 @@ public class StudentAnswerEntity {
 
 	private float score;// 题目得分
 	private boolean isRight;// 正确与否
-	private String quType;// 题目类型，主观题，客观题
 	private String answer;// 答案内容
 	private String studentId;// 学生ID
 
@@ -44,11 +43,10 @@ public class StudentAnswerEntity {
 		return true;
 	}
 
-	public StudentAnswerEntity(float score, boolean isRight, String quType, String answer, String studentId) {
+	public StudentAnswerEntity(float score, boolean isRight, String answer, String studentId) {
 		super();
 		this.score = score;
 		this.isRight = isRight;
-		this.quType = quType;
 		this.answer = answer;
 		this.studentId = studentId;
 	}
@@ -67,14 +65,6 @@ public class StudentAnswerEntity {
 
 	public final void setIsRight(boolean isRight) {
 		this.isRight = isRight;
-	}
-
-	public final String getQuType() {
-		return quType;
-	}
-
-	public final void setQuType(String quType) {
-		this.quType = quType;
 	}
 
 	public final String getAnswer() {

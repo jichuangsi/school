@@ -57,8 +57,7 @@ public class StatisticsInfoQueryController {
 	@GetMapping("/getQuestionStatisticsList/{courseId}")
 	public ResponseModel<QuestionStatisticsListModel> getQuestionStatisticsList(@PathVariable String courseId,
 			@ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
-		// todo根据用户信息做权限校验，不一定写在这里，可以做拦截
-
+		// todo根据用户信息做权限校验，不一定写在这里，可以做拦
 		QuestionStatisticsListModel model = courseStatisticsService.getQuestionStatisticsList(courseId);
 		return ResponseModel.sucess("", model);
 	}
@@ -72,7 +71,6 @@ public class StatisticsInfoQueryController {
 	public ResponseModel<QuestionStatisticsInfoModel> getQuestionStatisticsInfo(@PathVariable String questionId,
 			@PathVariable String courseId, @ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
 		// todo根据用户信息做权限校验，不一定写在这里，可以做拦截
-
 		QuestionStatisticsInfoModel model = courseStatisticsService.getQuestionStatisticsInfo(courseId, questionId);
 		return ResponseModel.sucess("", model);
 	}
