@@ -24,5 +24,7 @@ custom:
     consumer:
       queue-name:
         courseStudentAdd: course.student.add.coursestatistics
-        answerQuestion: course.question.answer.coursestatistics
+        answerQuestion: course.question.answer.coursestatistics      
+  swagger:
+    enable: true
         
