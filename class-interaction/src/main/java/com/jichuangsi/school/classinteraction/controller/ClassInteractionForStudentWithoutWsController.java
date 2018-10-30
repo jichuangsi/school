@@ -32,7 +32,7 @@ public class ClassInteractionForStudentWithoutWsController {
 	@Resource
 	private IClassInteractionForStudentService classInteractionForStudentService;
 
-	@ApiOperation(value = "加入课堂", notes = "")
+	@ApiOperation(value = "学生加入课堂", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
 			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
