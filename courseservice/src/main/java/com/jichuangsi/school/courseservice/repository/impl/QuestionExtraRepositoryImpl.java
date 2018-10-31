@@ -46,12 +46,12 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
     }
 
     @Override
-    public List<Question> findHistoryQuestionsByClassIdAndCourseId(String classId, String courseId) {
+    public List<Question> findQuestionsByClassIdAndCourseId(String classId, String courseId) {
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("_id").is(courseId).andOperator(Criteria.where("classId").is(classId))),
                 unwind("questionIds","questionIndex", true),
                 lookup("school_course_question","questionIds","_id","question"),
-                match(Criteria.where("question.status").is(Status.FINISH.getName())),
+                //match(Criteria.where("question.status").is(Status.FINISH.getName())),
                 unwind("question", true),
                 sort(ASC, "questionIndex"),
                 project().and("question._id").as("_id")

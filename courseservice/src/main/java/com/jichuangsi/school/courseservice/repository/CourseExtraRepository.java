@@ -9,12 +9,12 @@ public interface CourseExtraRepository{
 
     List<Course> findCourseByTeacherIdAndStatus(String teacherId);
 
-    List<Course> findHistoryCourseByTeacherIdAndStatus(String teacherId);
+    List<Course> findHistoryCourseByTeacherIdAndStatus(String teacherId, int pageNum, int pageSize);
 
     List<Course> findCourseByTeacherIdAndConditions(String teacherId, Course course);
 
     List<Course> findCourseByClassIdAndStatus(String classId);
 
-    List<Course> findHistoryCourseByClassIdAndStatus(String classId);
+    List<Course> findHistoryCourseByClassIdAndStatus(String classId, int pageNum, int pageSize);
 
 }

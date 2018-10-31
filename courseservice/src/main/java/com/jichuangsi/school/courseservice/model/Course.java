@@ -14,6 +14,9 @@ public class Course {
     long courseStartTime;
     long courseEndTime;
 
+    int pageNum;
+    int pageSize;
+
     public String getCourseId() {
         return courseId;
     }
@@ -92,5 +95,21 @@ public class Course {
 
     public void setCourseEndTime(long courseEndTime) {
         this.courseEndTime = courseEndTime;
+    }
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 }

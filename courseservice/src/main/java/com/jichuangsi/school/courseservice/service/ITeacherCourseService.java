@@ -12,7 +12,7 @@ public interface ITeacherCourseService {
     List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException;
 
     @Transactional
-    List<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException;
+    List<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo, CourseForTeacher pageInform) throws TeacherCourseServiceException;
 
     @Transactional
     List<CourseForTeacher> queryCoursesList(UserInfoForToken userInfo, CourseForTeacher course) throws TeacherCourseServiceException;

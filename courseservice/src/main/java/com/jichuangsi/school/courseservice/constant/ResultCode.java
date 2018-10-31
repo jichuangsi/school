@@ -9,4 +9,5 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
 	public static final String FILE_NOT_EXISTED = "文件不存在";
 	public static final String FILE_DOWNLOAD_ERROR = "文件下载错误";
 	public static final String FILE_REMOVE_ERROR = "文件下载错误";
+	public static final String QUESTION_COMPLETE = "所指问题已完结";
 }

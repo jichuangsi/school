@@ -20,6 +20,7 @@ import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
 import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -31,6 +32,9 @@ import java.util.Optional;
 
 @Service
 public class TeacherCourseServiceImpl implements ITeacherCourseService {
+
+    @Value("${com.jichuangsi.school.result.page-size}")
+    private int defaultPageSize;
 
     @Resource
     private IMqService mqService;
@@ -58,9 +62,10 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public List<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException{
+    public List<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo, CourseForTeacher pageInform) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        List<Course> courses = courseRepository.findHistoryCourseByTeacherIdAndStatus(userInfo.getUserId());
+        List<Course> courses = courseRepository.findHistoryCourseByTeacherIdAndStatus(userInfo.getUserId(), pageInform.getPageNum(),
+                StringUtils.isEmpty(pageInform.getPageSize())||pageInform.getPageSize()==0?defaultPageSize:pageInform.getPageSize());
         return convertCourseList(courses);
     }
 

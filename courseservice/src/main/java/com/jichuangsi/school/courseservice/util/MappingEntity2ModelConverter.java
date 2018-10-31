@@ -5,6 +5,7 @@ import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
+import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.model.*;
 
 import java.util.List;
@@ -100,5 +101,15 @@ public final class MappingEntity2ModelConverter {
         answerForStudent.setResult(Result.getResult(studentAnswer.getResult()));
         answerForStudent.setSubjectiveScore(studentAnswer.getSubjectiveScore());
         return answerForStudent;
+    }
+
+    public static final AnswerForTeacher ConvertTeacherAnswer(TeacherAnswer teacherAnswer){
+        AnswerForTeacher answerForTeacher = new AnswerForTeacher();
+        answerForTeacher.setAnswerId(teacherAnswer.getId());
+        answerForTeacher.setTeacherId(teacherAnswer.getTeacherId());
+        answerForTeacher.setTeacherName(teacherAnswer.getTeacherName());
+        answerForTeacher.setPicForSubjective(teacherAnswer.getSubjectivePic());
+        answerForTeacher.setStubForSubjective(teacherAnswer.getSubjectivePicStub());
+        return answerForTeacher;
     }
 }

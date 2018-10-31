@@ -2,7 +2,9 @@ package com.jichuangsi.school.courseservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
+import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
+import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
@@ -13,6 +15,7 @@ import com.jichuangsi.school.courseservice.model.QuestionForStudent;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
+import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
 import com.jichuangsi.school.courseservice.service.IAutoVerifyAnswerService;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IMqService;
@@ -20,6 +23,7 @@ import com.jichuangsi.school.courseservice.service.IStudentCourseService;
 import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -32,6 +36,9 @@ import java.util.Optional;
 @Service
 public class StudentCourseServiceImpl implements IStudentCourseService{
 
+    @Value("${com.jichuangsi.school.result.page-size}")
+    private int defaultPageSize;
+
     @Resource
     private IMqService mqService;
 
@@ -43,6 +50,9 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
 
     @Resource
     private StudentAnswerRepository studentAnswerRepository;
+
+    @Resource
+    private TeacherAnswerRepository teacherAnswerRepository;
 
     @Resource
     private IFileStoreService fileStoreService;
@@ -58,9 +68,10 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     }
 
     @Override
-    public List<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException {
+    public List<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException {
         if(StringUtils.isEmpty(userInfo.getClassId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        List<Course> courses = courseRepository.findHistoryCourseByClassIdAndStatus(userInfo.getClassId());
+        List<Course> courses = courseRepository.findHistoryCourseByClassIdAndStatus(userInfo.getClassId(), pageInform.getPageNum(),
+                StringUtils.isEmpty(pageInform.getPageSize())||pageInform.getPageSize()==0?defaultPageSize:pageInform.getPageSize());
         return convertCourseList(courses);
     }
 
@@ -68,9 +79,20 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     public CourseForStudent getParticularCourse(UserInfoForToken userInfo, String courseId) throws StudentCourseServiceException {
         if(StringUtils.isEmpty(courseId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
         Course course = courseRepository.findFirstByIdAndClassId(courseId, userInfo.getClassId());
-        List<Question> questions = questionRepository.findHistoryQuestionsByClassIdAndCourseId(userInfo.getClassId(), courseId);
+        List<Question> questions = questionRepository.findQuestionsByClassIdAndCourseId(userInfo.getClassId(), courseId);
         CourseForStudent courseForStudent = MappingEntity2ModelConverter.ConvertStudentCourse(course);
         courseForStudent.getQuestions().addAll(convertQuestionList(questions));
+        courseForStudent.getQuestions().forEach(question ->{
+            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentId(question.getQuestionId(), userInfo.getUserId()));
+            if(result.isPresent()){
+                question.setAnswerForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
+                if(Result.PASS.getName().equalsIgnoreCase(result.get().getResult())){
+                    question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
+                            teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerId(course.getTeacherId(), question.getQuestionId(), result.get().getId())
+                    ));
+                }
+            }
+        });
         return courseForStudent;
     }
 
@@ -112,9 +134,10 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
                 || StringUtils.isEmpty(questionId)
                 || (StringUtils.isEmpty(answer.getAnswerForObjective()) && StringUtils.isEmpty(answer.getStubForSubjective())))
             throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> question = questionRepository.findById(questionId);
+        if(!question.isPresent()) throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+        if(Status.FINISH.getName().equalsIgnoreCase(question.get().getStatus())) throw new StudentCourseServiceException(ResultCode.QUESTION_COMPLETE);
         if(!StringUtils.isEmpty(answer.getAnswerForObjective())){
-            Optional<Question> question = questionRepository.findById(questionId);
-            if(!question.isPresent()) throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
             answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
         }
         Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentId(questionId, userInfo.getUserId()));

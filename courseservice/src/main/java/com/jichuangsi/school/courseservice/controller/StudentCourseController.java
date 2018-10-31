@@ -44,10 +44,10 @@ public class StudentCourseController {
 	@ApiOperation(value = "根据班级id获取历史学生课堂列表信息", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-	@GetMapping("/getHistory")
-	public ResponseModel<List<CourseForStudent>> getHistory(@ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
+	@PostMapping("/getHistory")
+	public ResponseModel<List<CourseForStudent>> getHistory(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForStudent pageInform) throws StudentCourseServiceException {
 
-		return ResponseModel.sucess("",  studentCourseService.getHistoryCoursesList(userInfo));
+		return ResponseModel.sucess("",  studentCourseService.getHistoryCoursesList(userInfo, pageInform));
 	}
 
 	//获取指定课堂基本信息

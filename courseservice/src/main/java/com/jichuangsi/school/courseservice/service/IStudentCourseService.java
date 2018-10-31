@@ -15,7 +15,7 @@ public interface IStudentCourseService {
     List<CourseForStudent> getCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 
     @Transactional
-    List<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException;
+    List<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException;
 
     @Transactional
     CourseForStudent getParticularCourse(UserInfoForToken userInfo, String courseId) throws StudentCourseServiceException;
