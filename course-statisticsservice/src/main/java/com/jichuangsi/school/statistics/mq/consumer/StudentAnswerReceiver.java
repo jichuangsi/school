@@ -21,8 +21,9 @@ import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
 public class StudentAnswerReceiver {
 	@Resource
 	private ICourseStatisticsService courseStatisticsService;
-	
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.answerQuestion}") })
+
+	@RabbitListener(queuesToDeclare = {
+			@Queue(value = "${custom.mq.consumer.queue-name.answerQuestion}", autoDelete = "true") })
 	public void process(String jsonData) {
 		StudentAnswerModel model = JSONObject.parseObject(jsonData, StudentAnswerModel.class);
 		courseStatisticsService.saveStudentAnswer(model);

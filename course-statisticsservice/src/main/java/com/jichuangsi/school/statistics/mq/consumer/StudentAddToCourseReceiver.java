@@ -19,14 +19,15 @@ import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
  */
 @Component
 public class StudentAddToCourseReceiver {
-	
+
 	@Resource
 	private ICourseStatisticsService courseStatisticsService;
-	
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.courseStudentAdd}") })
+
+	@RabbitListener(queuesToDeclare = {
+			@Queue(value = "${custom.mq.consumer.queue-name.courseStudentAdd}", autoDelete = "true") })
 	public void process(String jsonData) {
 		AddToCourseModel addToCourseModel = JSONObject.parseObject(jsonData, AddToCourseModel.class);
 		courseStatisticsService.addToCourse(addToCourseModel);
 	}
-	
+
 }
