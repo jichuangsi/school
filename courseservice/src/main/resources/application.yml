@@ -28,7 +28,7 @@ com:
         questions:
           pubilish: course.question.pub.classinteraction
           terminate: course.question.termin.classinteraction
-        answers:  course.start.answerreply
+        answers:  course.question.answer.coursestatistics
         exchange: course.start.exchange
       token:
           jwt:
