@@ -21,6 +21,8 @@ eureka:
 com:
   jichuangsi:
     school:
+      result:
+        page-size: 10
       mq:
         courses: course.start.classinteraction
         questions:
