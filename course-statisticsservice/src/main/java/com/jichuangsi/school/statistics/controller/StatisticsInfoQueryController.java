@@ -8,8 +8,6 @@ import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
@@ -17,7 +15,6 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.model.CourseStatisticsModel;
 import com.jichuangsi.school.statistics.model.QuestionStatisticsInfoModel;
 import com.jichuangsi.school.statistics.model.QuestionStatisticsListModel;
-import com.jichuangsi.school.statistics.model.StudentAnswerModel;
 import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
 
 import io.swagger.annotations.Api;
@@ -75,10 +72,10 @@ public class StatisticsInfoQueryController {
 		return ResponseModel.sucess("", model);
 	}
 
-	@PostMapping("/saveAnswer")
-	public ResponseModel<StudentAnswerModel> saveAnswer(@RequestBody StudentAnswerModel model) {
-
-		return ResponseModel.sucess("", courseStatisticsService.saveStudentAnswer(model));
-	}
+//	@PostMapping("/saveAnswer")
+//	public ResponseModel<StudentAnswerModel> saveAnswer(@RequestBody StudentAnswerModel model) {
+//
+//		return ResponseModel.sucess("", courseStatisticsService.saveStudentAnswer(model));
+//	}
 
 }

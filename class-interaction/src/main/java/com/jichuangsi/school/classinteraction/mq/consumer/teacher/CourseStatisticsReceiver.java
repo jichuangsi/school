@@ -4,6 +4,9 @@
 package com.jichuangsi.school.classinteraction.mq.consumer.teacher;
 
 import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,8 @@ import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherSe
 public class CourseStatisticsReceiver {
 	@Resource
 	private ISendToTeacherService sendToTeacherService;
+	
+	private Log log =LogFactory.getLog(this.getClass());
 
 	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-statistics}", autoDelete = "true") })
 	public void process(String jsonData) {
