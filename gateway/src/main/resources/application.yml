@@ -11,6 +11,9 @@ spring:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
+            allowedHeaders: "*" #Set the list of headers that a pre-flight request can list as allowed for use during an actual request.
+            allowCredentials: true #是否允许cookie随请求发送
+            maxAge: 1800
             #- POST
       default-filters: #--里面可以定义一些共同的filter，对所有路由都起作用
         - TokenCheck # TokenCheck+GatewayFilterFactory的类，即TokenCheckGatewayFilterFactory

@@ -49,14 +49,12 @@ public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory
 		return (exchange, chain) -> {
 			try {
 				final ServerHttpRequest request = exchange.getRequest();
-				final ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
-				builder.header("Access-Control-Allow-Origin", "*");// 允许跨域
 
 				final String url = request.getURI().getPath();
 				if (null != ingoreTokenUrls && ingoreTokenUrls.length > 0) {
 					for (String ingoreUrl : ingoreTokenUrls) {
 						if (ingoreUrl.equals(url) || url.startsWith(ingoreUrl)) {// 对免检查token的url放行
-							return chain.filter(exchange.mutate().request(builder.build()).build());
+							return chain.filter(exchange);
 						}
 					}
 				}
@@ -66,7 +64,7 @@ public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory
 					final JWTVerifier verifier = JWT.require(tokenAlgorithm).build();
 					verifier.verify(accessToken);// 校验有效性
 					// todo 校验有效期
-					return chain.filter(exchange.mutate().request(builder.build()).build());// 因为加入了header，需重新封装request后转发请求
+					return chain.filter(exchange);
 				} else {
 					return buildResponse(exchange, ResultCode.TOKEN_MISS, ResultCode.TOKEN_MISS_MSG);
 				}
