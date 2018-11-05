@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: coursestatistics
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+  data:
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: courseStatistics
+
+server:
+  port: 8082 
+
+custom: 
+  token: 
+    userClaim: userInfo
+  mq: 
+    producer:
+      queue-name: 
+        courseStatistics: course.statistics.classinteraction
+        questionStatistics: course.question.statistics.classinteraction
+    consumer:
+      queue-name:
+        courseStudentAdd: course.student.add.coursestatistics
+        answerQuestion: course.question.answer.coursestatistics      
+  swagger:
+    enable: true
+        
