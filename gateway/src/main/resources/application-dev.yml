@@ -17,6 +17,7 @@ spring:
             #- POST
       default-filters: #--里面可以定义一些共同的filter，对所有路由都起作用
         - TokenCheck # TokenCheck+GatewayFilterFactory的类，即TokenCheckGatewayFilterFactory
+        - Hystrix=authHystrixCommand
       routes:
       - id: websocket_sockjs_route
         uri: lb://classinteraction
