@@ -9,6 +9,8 @@ import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
 import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
 import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
 import com.jichuangsi.school.courseservice.service.IMqService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -52,6 +54,8 @@ public class RabbitMqServiceImpl implements IMqService{
     @Resource
     private ConnectionFactory connectionFactory;
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public void send(Course course) {
         /*Map<String, Object> argss = new HashMap<String, Object>();
@@ -73,22 +77,30 @@ public class RabbitMqServiceImpl implements IMqService{
     @Override
     public void sendMsg4StartCourse(CourseMessageModel courseMsg){
         //rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSONObject.parseObject(JSON.toJSONString(courseMsg), CourseMessageModel.class));
+        logger.debug("Send " + coursesMq + " messgae:" + courseMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSON.toJSONString(courseMsg));
+        logger.debug("Send " + coursesMq + "  messgae sucess");
     }
 
     @Override
     public void sendMsg4PublishQuestion(QuestionMessageModel questionMsg){
+        logger.debug("Send " + questionsPubMq + " messgae:" + questionMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, questionsPubMq, JSON.toJSONString(questionMsg));
+        logger.debug("Send " + questionsPubMq + "  messgae sucess");
     }
 
     @Override
     public void sendMsg4TermQuestion(QuestionMessageModel questionMsg) {
+        logger.debug("Send " + questionsTermMq + " messgae:" + questionMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, questionsTermMq, JSON.toJSONString(questionMsg));
+        logger.debug("Send " + questionsTermMq + "  messgae sucess");
     }
 
     @Override
     public void sendMsg4SubmitAnswer(AnswerMessageModel answerMsg){
+        logger.debug("Send " + answersMq + " messgae:" + answerMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, answersMq, JSON.toJSONString(answerMsg));
+        logger.debug("Send " + answersMq + "  messgae sucess");
     }
 
 }

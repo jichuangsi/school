@@ -71,4 +71,11 @@ public class AnswerMessageModel {
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
 	}
+
+	@Override
+	public String toString(){
+		StringBuffer objectInfo = new StringBuffer();
+		objectInfo.append("courseId:" + courseId + "questionId:" + questionId + ",quType:" + quType + ",score:" + score + ",isRight:" + isRight + ",answer:" + answer + ",studentId:" + studentId);
+		return objectInfo.toString();
+	}
 }

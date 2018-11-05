@@ -55,4 +55,10 @@ public class CourseMessageModel {
 		this.classId = classId;
 	}
 
+	@Override
+	public String toString(){
+		StringBuffer objectInfo = new StringBuffer();
+		objectInfo.append("classId:" + classId + ",courseId:" + courseId + ",courseName:" + courseName);
+		return objectInfo.toString();
+	}
 }

@@ -44,4 +44,11 @@ public class QuestionMessageModel {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	@Override
+	public String toString(){
+		StringBuffer objectInfo = new StringBuffer();
+		objectInfo.append("courseId:" + courseId + ",questionId:" + questionId + ",quType:" + quType + ",content:" + content);
+		return objectInfo.toString();
+	}
 }
