@@ -17,6 +17,10 @@ spring:
             #- POST
       default-filters: #--里面可以定义一些共同的filter，对所有路由都起作用
         - TokenCheck # TokenCheck+GatewayFilterFactory的类，即TokenCheckGatewayFilterFactory
+        - name : Hystrix
+          args: 
+            name: authHystrixCommand
+            fallbackUri: forward:/hystrixTimeout
       routes:
       - id: websocket_sockjs_route
         uri: lb://classinteraction
@@ -94,7 +98,3 @@ app:
     ingoreTokenUrls: /api/auth/login, /api/auth/getToken, /websocket/course/ #忽略检查token的URL
     publicKey: EC86@34$123c
     userInfoKey: userInfo #token里面的用户信息键值
-    
-      
-    
-      

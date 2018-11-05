@@ -26,7 +26,7 @@ custom:
         courseStudentAdd: course.student.add.coursestatistics
         answerQuestion: course.question.answer.coursestatistics      
   swagger:
-    enable: true
+    enable: false
   log: 
     path: E:/logback/${spring.application.name}/${spring.profiles.active}
         
