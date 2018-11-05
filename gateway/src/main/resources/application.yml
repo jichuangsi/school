@@ -31,7 +31,7 @@ spring:
         filters:
         - StripPrefix= 1
       - id: auth
-        uri: lb://auth
+        uri: lb://userservice
         predicates:
         - Path=${server.servlet.context-path}/auth/**
         filters:
@@ -91,7 +91,7 @@ app:
       initialCapacity: 500 #token缓存初始大小
       maximumSize: 100000 #token缓存的最大大小
       expireAfterAccessWithMinutes: 30 #最后一次访问后间隔多少分钟失效
-    ingoreTokenUrls: /login, /api/auth/getToken, /websocket/course/ #忽略检查token的URL
+    ingoreTokenUrls: /api/auth/login, /api/auth/getToken, /websocket/course/ #忽略检查token的URL
     publicKey: EC86@34$123c
     userInfoKey: userInfo #token里面的用户信息键值
     
