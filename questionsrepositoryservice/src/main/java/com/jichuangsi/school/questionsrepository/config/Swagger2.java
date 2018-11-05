@@ -3,6 +3,7 @@
  */
 package com.jichuangsi.school.questionsrepository.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -21,9 +22,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class Swagger2 {
 	// swagger2的配置文件，这里可以配置swagger2的一些基本的内容，比如扫描的包等等
+
+	@Value("${com.jichuangsi.school.swagger.enable}")
+	private boolean enableSwagger;
+
 	@Bean
 	public Docket createRestApi() {
-		return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
+		return new Docket(DocumentationType.SWAGGER_2).enable(enableSwagger).apiInfo(apiInfo()).select()
 				// 为当前包路径
 				.apis(RequestHandlerSelectors.basePackage("com.jichuangsi.school.questionsrepository.controller"))
 				.paths(PathSelectors.any()).build();
