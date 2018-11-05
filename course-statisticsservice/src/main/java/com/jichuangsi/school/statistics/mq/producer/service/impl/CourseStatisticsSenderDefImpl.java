@@ -35,7 +35,7 @@ public class CourseStatisticsSenderDefImpl implements ICourseStatisticsSender {
 		String msg = JSONObject.toJSONString(courseStatiResponseModel);
 		logger.debug("Send " + courseStatisticsMsgName + " messgae:" + msg);
 		rabbitTemplate.convertAndSend(courseStatisticsMsgName, msg);
-		logger.info("Send " + courseStatisticsMsgName + " messgae sucess");
+		logger.debug("Send " + courseStatisticsMsgName + " messgae sucess");
 	}
 
 }

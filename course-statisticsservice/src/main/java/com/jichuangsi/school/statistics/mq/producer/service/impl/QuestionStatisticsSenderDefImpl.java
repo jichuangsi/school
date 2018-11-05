@@ -34,6 +34,6 @@ public class QuestionStatisticsSenderDefImpl implements IQuestionStatisticsSende
 		String msg = JSONObject.toJSONString(questionStatisticsInfo);
 		logger.debug("Send " + questionStatistics + " messgae:" + msg);
 		rabbitTemplate.convertAndSend(questionStatistics, msg);
-		logger.info("Send " + questionStatistics + " messgae sucess");
+		logger.debug("Send " + questionStatistics + " messgae sucess");
 	}
 }

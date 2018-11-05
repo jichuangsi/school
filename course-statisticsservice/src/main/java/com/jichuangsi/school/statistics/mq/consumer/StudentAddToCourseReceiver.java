@@ -33,7 +33,7 @@ public class StudentAddToCourseReceiver {
 		AddToCourseModel addToCourseModel = JSONObject.parseObject(jsonData, AddToCourseModel.class);
 		logger.debug("Receive courseStudentAdd messgae:" + jsonData);
 		courseStatisticsService.addToCourse(addToCourseModel);
-		logger.info("courseStudentAdd messgae procss sucess.");
+		logger.debug("courseStudentAdd messgae procss sucess.");
 	}
 
 }

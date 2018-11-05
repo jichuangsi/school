@@ -32,6 +32,6 @@ public class StudentAnswerReceiver {
 		StudentAnswerModel model = JSONObject.parseObject(jsonData, StudentAnswerModel.class);
 		logger.debug("Receive answerQuestion messgae:" + jsonData);
 		courseStatisticsService.saveStudentAnswer(model);
-		logger.info("answerQuestion messgae procss sucess.");
+		logger.debug("answerQuestion messgae procss sucess.");
 	}
 }

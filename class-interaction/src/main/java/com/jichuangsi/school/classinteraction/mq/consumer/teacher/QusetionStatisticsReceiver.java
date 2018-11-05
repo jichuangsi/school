@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jichuangsi.school.classinteraction.mq.consumer.AbstractReceiver;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionStatistics;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherService;
 
@@ -18,13 +19,20 @@ import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherSe
  *
  */
 @Component
-public class QusetionStatisticsReceiver {
+public class QusetionStatisticsReceiver extends AbstractReceiver {
 	@Resource
 	private ISendToTeacherService sendToTeacherService;
 
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.question-statistics}", autoDelete = "true") })
+	@Override
 	public void process(String jsonData) {
 		QuestionStatistics info = JSONObject.parseObject(jsonData, QuestionStatistics.class);
 		sendToTeacherService.sendQuestionStatisticsInfo(info);
+	}
+
+	@Override
+	@RabbitListener(queuesToDeclare = {
+			@Queue(value = "${custom.mq.consumer.queue-name.question-statistics}", autoDelete = "true") })
+	public void processWithLog(String jsonData) {
+		super.processWithLog(jsonData);
 	}
 }

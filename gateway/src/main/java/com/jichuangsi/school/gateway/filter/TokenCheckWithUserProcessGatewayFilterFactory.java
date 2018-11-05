@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -35,7 +37,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class TokenCheckWithUserProcessGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
-	private Log log = LogFactory.getLog(TokenCheckWithUserProcessGatewayFilterFactory.class);
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Value("${app.token.headerName}")
 	private String headerName;
@@ -101,11 +103,11 @@ public class TokenCheckWithUserProcessGatewayFilterFactory extends AbstractGatew
 							return decodedJWT.getClaim(userKey).asString();
 						} catch (JWTVerificationException e) {
 							e.printStackTrace();
-							log.error("token检验不通过：" + e.getMessage());
+							logger.error("token检验不通过：" + e.getMessage());
 							return null;
 						} catch (Exception e) {
 							e.printStackTrace();
-							log.error(e.getMessage());
+							logger.error(e.getMessage());
 							return null;
 						}
 
@@ -120,7 +122,7 @@ public class TokenCheckWithUserProcessGatewayFilterFactory extends AbstractGatew
 						try {
 							httpHeaders.add(userInfoHeader, URLEncoder.encode(userInfoJson, "UTF-8"));// 将用户信息加入heder
 						} catch (UnsupportedEncodingException e) {
-							log.error("URLEncoder.encode userInfoJson error:" + e.getMessage());
+							logger.error("URLEncoder.encode userInfoJson error:" + e.getMessage());
 							throw new RuntimeException("URLEncoder.encode userInfoJson error:" + e.getMessage());
 						}
 					});
@@ -131,7 +133,7 @@ public class TokenCheckWithUserProcessGatewayFilterFactory extends AbstractGatew
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				log.error(e.getMessage());
+				logger.error(e.getMessage());
 				return buildResponse(exchange, ResultCode.SYS_ERROR, ResultCode.SYS_ERROR_MSG);
 			}
 
@@ -151,7 +153,7 @@ public class TokenCheckWithUserProcessGatewayFilterFactory extends AbstractGatew
 					.wrap(JSONObject.toJSONString(new ResponseModel(code, msg)).getBytes("UTF-8"));
 			return response.writeWith(Mono.just(bodyDataBuffer));
 		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage());
+			logger.error(e.getMessage());
 			bodyDataBuffer = response.bufferFactory()
 					.wrap(JSONObject.toJSONString(new ResponseModel(code, msg)).getBytes());
 			return response.writeWith(Mono.just(bodyDataBuffer));
