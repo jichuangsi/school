@@ -5,13 +5,12 @@ package com.jichuangsi.school.classinteraction.mq.consumer.teacher;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jichuangsi.school.classinteraction.mq.consumer.AbstractReceiver;
 import com.jichuangsi.school.classinteraction.websocket.model.CourseStatistics;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherService;
 
@@ -20,16 +19,20 @@ import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherSe
  *
  */
 @Component
-public class CourseStatisticsReceiver {
+public class CourseStatisticsReceiver extends AbstractReceiver{
 	@Resource
 	private ISendToTeacherService sendToTeacherService;
-	
-	private Log log =LogFactory.getLog(this.getClass());
 
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-statistics}", autoDelete = "true") })
+	@Override
 	public void process(String jsonData) {
 		CourseStatistics info = JSONObject.parseObject(jsonData, CourseStatistics.class);
 		sendToTeacherService.sendCourseStatisticsInfo(info);
+	}
+	
+	@Override
+	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.course-statistics}", autoDelete = "true") })
+	public void processWithLog(String jsonData) {
+		super.processWithLog(jsonData);
 	}
 
 }

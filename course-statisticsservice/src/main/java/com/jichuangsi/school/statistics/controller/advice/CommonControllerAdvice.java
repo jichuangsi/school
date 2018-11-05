@@ -5,6 +5,8 @@ package com.jichuangsi.school.statistics.controller.advice;
 
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.ui.Model;
@@ -29,6 +31,8 @@ public class CommonControllerAdvice {
 	
 	@Value("${custom.token.userClaim}")
 	private String userClaim;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@ModelAttribute
 	public UserInfoForToken translateHeader(@RequestHeader @Nullable String accessToken,
@@ -44,6 +48,7 @@ public class CommonControllerAdvice {
 
 	@ExceptionHandler
 	public ResponseModel<Object> handler(Exception e) {
+		logger.error(e.getCause() + ":" + e.getMessage());
 		return ResponseModel.fail("", e.getMessage());
 
 	}

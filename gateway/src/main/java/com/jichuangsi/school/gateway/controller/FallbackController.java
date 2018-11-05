@@ -1,7 +1,7 @@
 package com.jichuangsi.school.gateway.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,11 +12,11 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class FallbackController {
-	protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@RequestMapping("/hystrixTimeout")
 	public Mono<ResponseModel> hystrixTimeout() {
-		log.error("触发了断路由");
+		logger.error("触发了断路由");
 		return Mono.just(new ResponseModel(ResultCode.SYS_BUSY, ResultCode.SYS_BUSY_MSG));
 	}
 

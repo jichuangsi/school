@@ -2,8 +2,8 @@ package com.jichuangsi.school.gateway.filter;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
-	private Log log = LogFactory.getLog(TokenCheckGatewayFilterFactory.class);
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Value("${app.token.headerName}")
 	private String headerName;
@@ -69,11 +69,11 @@ public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory
 					return buildResponse(exchange, ResultCode.TOKEN_MISS, ResultCode.TOKEN_MISS_MSG);
 				}
 			} catch (JWTVerificationException e) {
-				log.error("token检验不通过：" + e.getMessage());
+				logger.error("token检验不通过：" + e.getMessage());
 				return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
 			} catch (Exception e) {
 				e.printStackTrace();
-				log.error(e.getMessage());
+				logger.error(e.getMessage());
 				return buildResponse(exchange, ResultCode.SYS_ERROR, ResultCode.SYS_ERROR_MSG);
 			}
 
@@ -93,7 +93,7 @@ public class TokenCheckGatewayFilterFactory extends AbstractGatewayFilterFactory
 					.wrap(JSONObject.toJSONString(new ResponseModel(code, msg)).getBytes("UTF-8"));
 			return response.writeWith(Mono.just(bodyDataBuffer));
 		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage());
+			logger.error(e.getMessage());
 			bodyDataBuffer = response.bufferFactory()
 					.wrap(JSONObject.toJSONString(new ResponseModel(code, msg)).getBytes());
 			return response.writeWith(Mono.just(bodyDataBuffer));
