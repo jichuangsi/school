@@ -7,9 +7,7 @@ import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
-import com.jichuangsi.school.courseservice.model.QuestionForStudent;
 import com.jichuangsi.school.courseservice.service.IStudentCourseService;
-import com.jichuangsi.school.courseservice.service.ITokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
