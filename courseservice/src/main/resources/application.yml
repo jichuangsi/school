@@ -18,7 +18,7 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
 
-com:
+com: 
   jichuangsi:
     school:
       result:
@@ -34,3 +34,5 @@ com:
           jwt:
             secret: EC86@34$123c
           userClaim : userInfo
+      swagger: 
+        enable: true
