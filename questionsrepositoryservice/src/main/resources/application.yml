@@ -1,34 +1,3 @@
 spring:
-  application:
-    name: questionsrepository
-  cache:
-    cache-names:
-      - questions
-    caffeine:
-      spec: maximumSize=500,expireAfterAccess=1200s
-
-server:
-  port: 8085
-    
-eureka: 
-  client:    
-    serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
-  #instance:
-    #ip-address: 114.115.207.28
-    #prefer-ip-address: true
-
-com:
-  jichuangsi:
-    school:
-      token:
-          userClaim : userInfo
-      tiku:
-        schema: http
-        host: 127.0.0.1
-        accessKey: 9229eb41327ec6385c28baf45469f988
-        subjectEditionApi: subjectEditionApi
-        otherBasicApi: getOtherBasic
-        chapterApi: chapterApi
-        questionApi: getQuestions
-        answerApi: getAnswer
+  profiles:
+    active: dev
