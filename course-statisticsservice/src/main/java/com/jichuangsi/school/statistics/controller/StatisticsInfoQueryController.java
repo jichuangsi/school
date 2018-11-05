@@ -72,10 +72,10 @@ public class StatisticsInfoQueryController {
 		return ResponseModel.sucess("", model);
 	}
 
-//	@PostMapping("/saveAnswer")
-//	public ResponseModel<StudentAnswerModel> saveAnswer(@RequestBody StudentAnswerModel model) {
-//
-//		return ResponseModel.sucess("", courseStatisticsService.saveStudentAnswer(model));
-//	}
+	@PostMapping("/saveAnswer")
+	public ResponseModel<StudentAnswerModel> saveAnswer(@RequestBody StudentAnswerModel model) {
+
+		return ResponseModel.sucess("", courseStatisticsService.saveStudentAnswer(model));
+	}
 
 }
