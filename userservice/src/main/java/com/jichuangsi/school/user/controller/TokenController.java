@@ -2,11 +2,11 @@ package com.jichuangsi.school.user.controller;
 
 import javax.annotation.Resource;
 
+import com.jichuangsi.microservice.common.model.ResponseModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jichuangsi.school.user.model.ResponseModel;
 import com.jichuangsi.school.user.service.ITokenService;
 
 @RestController

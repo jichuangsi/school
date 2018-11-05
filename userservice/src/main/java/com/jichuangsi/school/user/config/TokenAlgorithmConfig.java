@@ -9,7 +9,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 @Configuration
 public class TokenAlgorithmConfig {
 
-	@Value("${custom.token.jwt.secret}")
+	@Value("${com.jichuangsi.school.token.jwt.secret}")
 	private String secret;
 
 	@Bean

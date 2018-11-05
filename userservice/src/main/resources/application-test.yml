@@ -21,5 +21,3 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
-      log:
-        path: E:/logback/${spring.application.name}/${spring.profiles.active}
