@@ -6,9 +6,9 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 
 @EnableHystrix
 @SpringBootApplication
-public class WebsocketTestGatewayApplication {
+public class SchoolGatewayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WebsocketTestGatewayApplication.class, args);
+		SpringApplication.run(SchoolGatewayApplication.class, args);
 	}
 }
