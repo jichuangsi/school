@@ -27,7 +27,7 @@ public class StudentAnswerReceiver {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@RabbitListener(queuesToDeclare = {
-			@Queue(value = "${custom.mq.consumer.queue-name.answerQuestion}", autoDelete = "true") })
+			@Queue(value = "${custom.mq.consumer.queue-name.answerQuestion}") })
 	public void process(String jsonData) {
 		StudentAnswerModel model = JSONObject.parseObject(jsonData, StudentAnswerModel.class);
 		logger.debug("Receive answerQuestion messgae:" + jsonData);

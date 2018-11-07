@@ -34,7 +34,7 @@ public class QusetionCloseReceiver extends AbstractReceiver {
 	@Override
 	// queuesToDeclare会在队列不存在时自动创建；若使用queues，则会在队列不存在时报错（使用queues可以防止订阅的队列不存在，但需先启动生产者，调式部署时不便）
 	@RabbitListener(queuesToDeclare = {
-			@Queue(value = "${custom.mq.consumer.queue-name.question-termin}", autoDelete = "true") })
+			@Queue(value = "${custom.mq.consumer.queue-name.question-termin}") })
 	public void processWithLog(String jsonData) {
 		super.processWithLog(jsonData);
 	}
