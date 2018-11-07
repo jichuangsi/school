@@ -47,28 +47,28 @@ public class RabbitMqConfig {
     public Queue coursesMessage(RabbitAdmin rabbitAdmin) {
         /*Map<String, Object> argss = new HashMap<String, Object>();
         argss.put("x-message-ttl",5000l);*/
-        Queue courses = new Queue(coursesMq,true, false, true);
+        Queue courses = new Queue(coursesMq,true, false, false);
         rabbitAdmin.declareQueue(courses);
         return courses;
     }
 
     @Bean(name="questionsPub")
     public Queue questionsPubMessage(RabbitAdmin rabbitAdmin) {
-        Queue questions = new Queue(questionsPubMq,true, false, true);
+        Queue questions = new Queue(questionsPubMq,true, false, false);
         rabbitAdmin.declareQueue(questions);
         return questions;
     }
 
     @Bean(name="questionsTerm")
     public Queue questionsTermMessage(RabbitAdmin rabbitAdmin) {
-        Queue questions = new Queue(questionsTermMq,true, false, true);
+        Queue questions = new Queue(questionsTermMq,true, false, false);
         rabbitAdmin.declareQueue(questions);
         return questions;
     }
 
     @Bean(name="answers")
     public Queue answersMessage(RabbitAdmin rabbitAdmin) {
-        Queue answers = new Queue(answersMq,true, false, true);
+        Queue answers = new Queue(answersMq,true, false, false);
         rabbitAdmin.declareQueue(answers);
         return answers;
     }

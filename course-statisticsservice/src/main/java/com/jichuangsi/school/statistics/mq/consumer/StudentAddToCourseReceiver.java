@@ -28,7 +28,7 @@ public class StudentAddToCourseReceiver {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@RabbitListener(queuesToDeclare = {
-			@Queue(value = "${custom.mq.consumer.queue-name.courseStudentAdd}", autoDelete = "true") })
+			@Queue(value = "${custom.mq.consumer.queue-name.courseStudentAdd}") })
 	public void process(String jsonData) {
 		AddToCourseModel addToCourseModel = JSONObject.parseObject(jsonData, AddToCourseModel.class);
 		logger.debug("Receive courseStudentAdd messgae:" + jsonData);

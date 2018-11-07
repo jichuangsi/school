@@ -30,7 +30,7 @@ public class QusetionPublishReceiver extends AbstractReceiver{
 	}
 	
 	@Override
-	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.question-pubilish}", autoDelete = "true") })
+	@RabbitListener(queuesToDeclare = { @Queue(value = "${custom.mq.consumer.queue-name.question-pubilish}") })
 	public void processWithLog(String jsonData) {
 		super.processWithLog(jsonData);
 	}
