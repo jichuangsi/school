@@ -17,18 +17,20 @@ import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
+import com.jichuangsi.school.courseservice.util.CollectionsTools;
 import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TeacherCourseServiceImpl implements ITeacherCourseService {
@@ -53,6 +55,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Resource
     private IFileStoreService fileStoreService;
+
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException{
@@ -149,10 +154,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                     course.getQuestionIds().add(question.getId());
                 });
                 courseRepository.save(course);
-                oldQuestionIds.forEach(questionId -> {
-                    questionRepository.deleteById(questionId);
+                Arrays.asList(CollectionsTools.getC(oldQuestionIds.toArray(), course.getQuestionIds().toArray())).forEach(cid -> {
+                    if(oldQuestionIds.contains(cid)) questionRepository.deleteById((String)cid);
                 });
-
                 return convertQuestionList(questionsList2Trans);
             }
             throw new TeacherCourseServiceException(ResultCode.QUESTIONS_TO_SAVE_IS_EMPTY);
@@ -320,4 +324,6 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         });
         return AnswerForStudents;
     }
+
+
 }
