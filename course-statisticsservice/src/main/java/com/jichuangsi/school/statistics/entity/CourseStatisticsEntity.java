@@ -17,7 +17,7 @@ public class CourseStatisticsEntity {
 	@Id
 	private String uid;
 	private String courseId;
-	private int count;
+	private int studentCount;
 	private Date createdTime;
 	private Date updatedTime;
 
@@ -45,12 +45,12 @@ public class CourseStatisticsEntity {
 		this.createdTime = createdTime;
 	}
 
-	public final int getCount() {
-		return count;
+	public final int getStudentCount() {
+		return studentCount;
 	}
 
-	public final void setCount(int count) {
-		this.count = count;
+	public final void setStudentCount(int studentCount) {
+		this.studentCount = studentCount;
 	}
 
 	public final Date getUpdatedTime() {

@@ -4,6 +4,7 @@
 package com.jichuangsi.school.statistics.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -63,6 +64,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 				studentAddCourseEntity.setCourseId(courseId);
 				studentAddCourseEntity.setUserId(userId);
 				studentAddCourseEntity.setUserName(addToCourseModel.getUserName());
+				studentAddCourseEntity.setCreatedTime(new Date());
 				// 保存学生参与课堂信息
 				studentAddCourseRepository.save(studentAddCourseEntity);
 				// 更新统计信息，inc是原子性操作，并发处理时没问题。
@@ -84,7 +86,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 		CourseStatisticsEntity entity = courseStatisticsRepository.findOneByCourseId(courseId);
 		CourseStatisticsModel model = new CourseStatisticsModel();
 		model.setCourseId(courseId);
-		model.setStudentCount(null == entity ? 0 : entity.getCount());
+		model.setStudentCount(null == entity ? 0 : entity.getStudentCount());
 		return model;
 	}
 
