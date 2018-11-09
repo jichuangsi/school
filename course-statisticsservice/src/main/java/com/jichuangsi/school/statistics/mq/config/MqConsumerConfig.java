@@ -1,4 +1,4 @@
-package com.jichuangsi.school.classinteraction.mq.consumer.config;
+package com.jichuangsi.school.statistics.mq.config;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
