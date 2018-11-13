@@ -37,6 +37,7 @@ public class FileStoreMongoServiceImpl implements IFileStoreService {
             GridFsResource resource = gridFsOperations.getResource(result.getFilename());
             CourseFile downloadFile = new CourseFile();
             downloadFile.setName(resource.getFilename());
+            downloadFile.setOriginalName(resource.getFilename());
             downloadFile.setContentType(resource.getContentType());
             try{
                 ByteArrayOutputStream out = new ByteArrayOutputStream();

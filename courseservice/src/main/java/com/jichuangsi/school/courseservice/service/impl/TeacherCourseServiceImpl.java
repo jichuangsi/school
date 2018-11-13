@@ -180,10 +180,10 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public void publishQuestion(String courseId, QuestionForTeacher questionStatus) throws TeacherCourseServiceException {
+    public void publishQuestion(String courseId, String questionId) throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(courseId)
-                || StringUtils.isEmpty(questionStatus.getQuestionId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Question> result = questionRepository.findById(questionStatus.getQuestionId());
+                || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> result = questionRepository.findById(questionId);
         if(result.isPresent()){
             Question question2Update = result.get();
             question2Update.setStatus(Status.PROGRESS.getName());
@@ -196,10 +196,10 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public void terminateQuestion(String courseId, QuestionForTeacher questionStatus)  throws TeacherCourseServiceException {
+    public void terminateQuestion(String courseId, String questionId)  throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(courseId)
-                || StringUtils.isEmpty(questionStatus.getQuestionId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Question> result = questionRepository.findById(questionStatus.getQuestionId());
+                || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> result = questionRepository.findById(questionId);
         if(result.isPresent()){
             Question question2Update = result.get();
             question2Update.setStatus(Status.FINISH.getName());
@@ -227,8 +227,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public void startCourse(CourseForTeacher course) throws TeacherCourseServiceException{
-        String courseId = course.getCourseId();
+    public void startCourse(String courseId) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(courseId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         Optional<Course> result = courseRepository.findById(courseId);
         if(result.isPresent()){

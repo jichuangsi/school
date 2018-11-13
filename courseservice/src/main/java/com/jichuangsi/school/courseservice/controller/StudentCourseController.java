@@ -75,7 +75,7 @@ public class StudentCourseController {
 	@ApiOperation(value = "根据学生id和文件名下载指定的文件", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-	@PutMapping("/getSubjectPic")
+	@PostMapping("/getSubjectPic")
 	public ResponseModel<CourseFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent answer) throws StudentCourseServiceException{
 
 		return  ResponseModel.sucess("", studentCourseService.downloadStudentSubjectPic(userInfo, answer.getStubForSubjective()));
@@ -85,7 +85,7 @@ public class StudentCourseController {
 	@ApiOperation(value = "根据学生id和文件名删除指定文件", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-	@PutMapping("/remoreSubjectPic")
+	@DeleteMapping("/remoreSubjectPic")
 	public ResponseModel<CourseFile> remoreSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent answer) throws StudentCourseServiceException{
 		studentCourseService.deleteStudentSubjectPic(userInfo, answer.getStubForSubjective());
 		return ResponseModel.sucessWithEmptyData("");

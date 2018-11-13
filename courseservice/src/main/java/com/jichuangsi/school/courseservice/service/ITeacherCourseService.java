@@ -42,7 +42,7 @@ public interface ITeacherCourseService {
     List<QuestionForTeacher> saveQuestions(String courseId, List<QuestionForTeacher> questions) throws TeacherCourseServiceException;
 
     @Transactional
-    void startCourse(CourseForTeacher course) throws TeacherCourseServiceException;
+    void startCourse(String courseId) throws TeacherCourseServiceException;
 
     @Transactional
     void updateParticularCourseStatus(CourseForTeacher course) throws TeacherCourseServiceException;
@@ -51,10 +51,10 @@ public interface ITeacherCourseService {
     void updateParticularQuestionStatus(QuestionForTeacher questionStatus) throws TeacherCourseServiceException;
 
     @Transactional
-    void publishQuestion(String courseId, QuestionForTeacher questionStatus)  throws TeacherCourseServiceException;
+    void publishQuestion(String courseId, String questionId)  throws TeacherCourseServiceException;
 
     @Transactional
-    void terminateQuestion(String courseId, QuestionForTeacher questionStatus)  throws TeacherCourseServiceException;
+    void terminateQuestion(String courseId, String questionId)  throws TeacherCourseServiceException;
 
     @Transactional
     void saveTeacherAnswer(UserInfoForToken userInfo, String questinoId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException;

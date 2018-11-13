@@ -1,6 +1,7 @@
 package com.jichuangsi.school.courseservice.util;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.courseservice.constant.QuestionType;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
@@ -53,7 +54,7 @@ public  final class MappingModel2EntityConverter {
         question.setAnswer(questionForTeacher.getAnswer());
         question.setAnswerDetail(questionForTeacher.getAnswerDetail());
         question.setParse(questionForTeacher.getParse());
-        question.setType(questionForTeacher.getQuesetionType());
+        question.setType(translateQuestionType(questionForTeacher.getQuesetionType()).getName());
         question.setDifficulty(questionForTeacher.getDifficulty());
         question.setSubjectId(questionForTeacher.getSubjectId());
         question.setGradeId(questionForTeacher.getGradeId());
@@ -94,5 +95,12 @@ public  final class MappingModel2EntityConverter {
         if(StringUtils.isEmpty(answerForStudent.getAnswerId())) studentAnswer.setCreateTime(new Date().getTime());
         studentAnswer.setUpdateTime(new Date().getTime());
         return studentAnswer;
+    }
+
+    private static QuestionType translateQuestionType(String quTypeInChinese) {
+        switch (quTypeInChinese){
+            case "选择题" : return QuestionType.OBJECTIVE;
+            default: return QuestionType.SUBJECTIVE;
+        }
     }
 }

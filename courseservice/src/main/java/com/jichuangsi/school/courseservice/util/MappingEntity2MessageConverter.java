@@ -29,7 +29,7 @@ public final class MappingEntity2MessageConverter {
         QuestionMessageModel questionMessageModel = new QuestionMessageModel();
         questionMessageModel.setQuestionId(question.getId());
         questionMessageModel.setCourseId(courseId);
-        questionMessageModel.setQuType(translateQuestionType(question.getType()).getName());
+        questionMessageModel.setQuType(question.getType());
         questionMessageModel.setContent(null);
         return questionMessageModel;
     }
@@ -44,12 +44,5 @@ public final class MappingEntity2MessageConverter {
         answerMessageModel.setAnswer(answer.getObjectiveAnswer());
         answerMessageModel.setStudentId(answer.getStudentId());
         return answerMessageModel;
-    }
-
-    private static QuestionType translateQuestionType(String quTypeInChinese) {
-        switch (quTypeInChinese){
-            case "选择题" : return QuestionType.OBJECTIVE;
-            default: return QuestionType.SUBJECTIVE;
-        }
     }
 }

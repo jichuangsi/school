@@ -130,7 +130,7 @@ public class TeacherCourseController {
     @ApiOperation(value = "根据老师id和文件名下载指定的文件", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/getSubjectPic")
+    @PostMapping("/getSubjectPic")
     public ResponseModel<CourseFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
 
         return  ResponseModel.sucess("", teacherCourseService.downloadTeacherSubjectPic(userInfo, revise.getStubForSubjective()));
@@ -140,7 +140,7 @@ public class TeacherCourseController {
     @ApiOperation(value = "根据老师id和文件名删除指定文件", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/remoreSubjectPic")
+    @DeleteMapping("/remoreSubjectPic")
     public ResponseModel<CourseFile> remoreSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
         teacherCourseService.deleteTeacherSubjectPic(userInfo, revise.getStubForSubjective());
         return ResponseModel.sucessWithEmptyData("");
@@ -164,7 +164,7 @@ public class TeacherCourseController {
     @ApiOperation(value = "根据课堂id更新课堂状态", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/changeCourseStatus")
+    @PostMapping("/changeCourseStatus")
     public ResponseModel<CourseForTeacher> changeCourseStatus(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseStatus) throws TeacherCourseServiceException{
         teacherCourseService.updateParticularCourseStatus(courseStatus);
         return ResponseModel.sucessWithEmptyData("");
@@ -174,27 +174,27 @@ public class TeacherCourseController {
     @ApiOperation(value = "根据课堂id开始上课", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PostMapping("/courseStart")
-    public ResponseModel<CourseForTeacher> courseStart(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher course) throws TeacherCourseServiceException{
-        teacherCourseService.startCourse(course);
+    @PostMapping("/courseStart/{courseId}")
+    public ResponseModel<CourseForTeacher> courseStart(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId) throws TeacherCourseServiceException{
+        teacherCourseService.startCourse(courseId);
         return ResponseModel.sucessWithEmptyData("");
     }
 
     @ApiOperation(value = "根据id发布问题", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/questionPublish/{courseId}")
-    public ResponseModel<QuestionForTeacher> questionPublish(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @RequestBody QuestionForTeacher questionStatus) throws TeacherCourseServiceException{
-        teacherCourseService.publishQuestion(courseId, questionStatus);
+    @PostMapping("/questionPublish/{courseId}/{questionId}")
+    public ResponseModel<QuestionForTeacher> questionPublish(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @PathVariable String questionId) throws TeacherCourseServiceException{
+        teacherCourseService.publishQuestion(courseId, questionId);
         return ResponseModel.sucessWithEmptyData("");
     }
 
     @ApiOperation(value = "根据id终止问题", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/questionTerminate/{courseId}")
-    public ResponseModel<QuestionForTeacher> questionTerminate(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @RequestBody QuestionForTeacher questionStatus) throws TeacherCourseServiceException{
-        teacherCourseService.terminateQuestion(courseId, questionStatus);
+    @PostMapping("/questionTerminate/{courseId}/{questionId}")
+    public ResponseModel<QuestionForTeacher> questionTerminate(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @PathVariable String questionId) throws TeacherCourseServiceException{
+        teacherCourseService.terminateQuestion(courseId, questionId);
         return ResponseModel.sucessWithEmptyData("");
     }
 
@@ -202,7 +202,7 @@ public class TeacherCourseController {
     @ApiOperation(value = "根据问题id更新问题状态", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/changeQuestionStatus")
+    @PostMapping("/changeQuestionStatus")
     public ResponseModel<QuestionForTeacher> changeQuestionStatus(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionForTeacher questionStatus) throws TeacherCourseServiceException{
         teacherCourseService.updateParticularQuestionStatus(questionStatus);
         return ResponseModel.sucessWithEmptyData("");
@@ -222,7 +222,7 @@ public class TeacherCourseController {
     @ApiOperation(value = "删除课堂信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PutMapping("/removeCourse")
+    @DeleteMapping("/removeCourse")
     public ResponseModel<CourseForTeacher> removeCourse(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher course){
         teacherCourseService.deleteCourse(userInfo, course);
         return ResponseModel.sucessWithEmptyData("");
