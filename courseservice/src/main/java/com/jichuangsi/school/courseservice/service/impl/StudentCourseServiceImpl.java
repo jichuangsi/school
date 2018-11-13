@@ -78,17 +78,17 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     @Override
     public CourseForStudent getParticularCourse(UserInfoForToken userInfo, String courseId) throws StudentCourseServiceException {
         if(StringUtils.isEmpty(courseId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Course course = courseRepository.findFirstByIdAndClassId(courseId, userInfo.getClassId());
+        Course course = courseRepository.findFirstByIdAndClassIdOrderByUpdateTimeDesc(courseId, userInfo.getClassId());
         List<Question> questions = questionRepository.findQuestionsByClassIdAndCourseId(userInfo.getClassId(), courseId);
         CourseForStudent courseForStudent = MappingEntity2ModelConverter.ConvertStudentCourse(course);
         courseForStudent.getQuestions().addAll(convertQuestionList(questions));
         courseForStudent.getQuestions().forEach(question ->{
-            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentId(question.getQuestionId(), userInfo.getUserId()));
+            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), userInfo.getUserId()));
             if(result.isPresent()){
                 question.setAnswerForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
                 if(Result.PASS.getName().equalsIgnoreCase(result.get().getResult())){
                     question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
-                            teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerId(course.getTeacherId(), question.getQuestionId(), result.get().getId())
+                            teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(course.getTeacherId(), question.getQuestionId(), result.get().getId())
                     ));
                 }
             }
@@ -140,7 +140,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         if(!StringUtils.isEmpty(answer.getAnswerForObjective())){
             answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
         }
-        Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentId(questionId, userInfo.getUserId()));
+        Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userInfo.getUserId()));
         StudentAnswer answer2Return = null;
         if(result.isPresent()){
             StudentAnswer answer2Update = result.get();

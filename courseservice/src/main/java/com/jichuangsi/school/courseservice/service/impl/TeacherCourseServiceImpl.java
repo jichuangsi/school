@@ -85,7 +85,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     @Override
     public CourseForTeacher getParticularCourse(UserInfoForToken userInfo, String courseId) throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(courseId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Course course = courseRepository.findFirstByIdAndTeacherId(courseId, userInfo.getUserId());
+        Course course = courseRepository.findFirstByIdAndTeacherIdOrderByUpdateTimeDesc(courseId, userInfo.getUserId());
         List<Question> questions = questionRepository.findQuestionsByTeacherIdAndCourseId(userInfo.getUserId(), courseId);
         CourseForTeacher courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(course);
         courseForTeacher.getQuestions().addAll(convertQuestionList(questions));
@@ -122,7 +122,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     @Override
     public AnswerForStudent getParticularAnswer(String questionId, String studentId) throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(questionId) || StringUtils.isEmpty(studentId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentId(questionId, studentId);
+        StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, studentId);
         return MappingEntity2ModelConverter.ConvertStudentAnswer(studentAnswer);
     }
 
@@ -247,7 +247,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                 || StringUtils.isEmpty(questionId)
                 || StringUtils.isEmpty(studentAnswerId)
                 || StringUtils.isEmpty(revise.getStubForSubjective())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<TeacherAnswer> resultForTeacherAnswer = Optional.ofNullable(teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerId(userInfo.getUserId(), questionId, studentAnswerId));
+        Optional<TeacherAnswer> resultForTeacherAnswer = Optional.ofNullable(teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), questionId, studentAnswerId));
         if(resultForTeacherAnswer.isPresent()){
             TeacherAnswer answer2Update = resultForTeacherAnswer.get();
             answer2Update.setSubjectivePic(revise.getPicForSubjective());
