@@ -8,10 +8,7 @@ import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
-import com.jichuangsi.school.courseservice.model.AnswerForStudent;
-import com.jichuangsi.school.courseservice.model.CourseFile;
-import com.jichuangsi.school.courseservice.model.CourseForStudent;
-import com.jichuangsi.school.courseservice.model.QuestionForStudent;
+import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
@@ -68,11 +65,16 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     }
 
     @Override
-    public List<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException {
+    public PageHolder<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException {
         if(StringUtils.isEmpty(userInfo.getClassId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        PageHolder<CourseForStudent> pageHolder = new PageHolder<CourseForStudent>();
+        pageHolder.setTotal(courseRepository.findByClassIdAndStatus(userInfo.getClassId(),Status.FINISH.getName()).size());
+        pageHolder.setPageNum(pageInform.getPageNum());
+        pageHolder.setPageSize(StringUtils.isEmpty(pageInform.getPageSize())||pageInform.getPageSize()==0?defaultPageSize:pageInform.getPageSize());
         List<Course> courses = courseRepository.findHistoryCourseByClassIdAndStatus(userInfo.getClassId(), pageInform.getPageNum(),
                 StringUtils.isEmpty(pageInform.getPageSize())||pageInform.getPageSize()==0?defaultPageSize:pageInform.getPageSize());
-        return convertCourseList(courses);
+        pageHolder.setContent(convertCourseList(courses));
+        return pageHolder;
     }
 
     @Override

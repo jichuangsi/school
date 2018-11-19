@@ -14,4 +14,8 @@ public interface CourseRepository extends MongoRepository<Course, String>, Cours
     Course findFirstByIdAndTeacherIdOrderByUpdateTimeDesc(String courseId, String teacherId);
 
     Course findFirstByIdAndClassIdOrderByUpdateTimeDesc(String courseId, String classId);
+
+    List<Course> findByClassIdAndStatus(String classId, String status);
+
+    List<Course> findByTeacherIdAndStatus(String teacherId, String status);
 }

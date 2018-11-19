@@ -67,11 +67,16 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public List<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo, CourseForTeacher pageInform) throws TeacherCourseServiceException{
+    public PageHolder<CourseForTeacher> getHistoryCoursesList(UserInfoForToken userInfo, CourseForTeacher pageInform) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        PageHolder<CourseForTeacher> pageHolder = new PageHolder<CourseForTeacher>();
+        pageHolder.setTotal(courseRepository.findByTeacherIdAndStatus(userInfo.getUserId(),Status.FINISH.getName()).size());
+        pageHolder.setPageNum(pageInform.getPageNum());
+        pageHolder.setPageSize(StringUtils.isEmpty(pageInform.getPageSize())||pageInform.getPageSize()==0?defaultPageSize:pageInform.getPageSize());
         List<Course> courses = courseRepository.findHistoryCourseByTeacherIdAndStatus(userInfo.getUserId(), pageInform.getPageNum(),
                 StringUtils.isEmpty(pageInform.getPageSize())||pageInform.getPageSize()==0?defaultPageSize:pageInform.getPageSize());
-        return convertCourseList(courses);
+        pageHolder.setContent(convertCourseList(courses));
+        return pageHolder;
     }
 
     @Override

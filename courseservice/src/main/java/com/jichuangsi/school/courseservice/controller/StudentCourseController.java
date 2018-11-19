@@ -7,6 +7,7 @@ import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
+import com.jichuangsi.school.courseservice.model.PageHolder;
 import com.jichuangsi.school.courseservice.service.IStudentCourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -42,7 +43,7 @@ public class StudentCourseController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@PostMapping("/getHistory")
-	public ResponseModel<List<CourseForStudent>> getHistory(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForStudent pageInform) throws StudentCourseServiceException {
+	public ResponseModel<PageHolder<CourseForStudent>> getHistory(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForStudent pageInform) throws StudentCourseServiceException {
 
 		return ResponseModel.sucess("",  studentCourseService.getHistoryCoursesList(userInfo, pageInform));
 	}

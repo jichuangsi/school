@@ -40,7 +40,7 @@ public class TeacherCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getHistory")
-    public ResponseModel<List<CourseForTeacher>> getHistory(@ModelAttribute UserInfoForToken userInfo,
+    public ResponseModel<PageHolder<CourseForTeacher>> getHistory(@ModelAttribute UserInfoForToken userInfo,
                                                             @RequestBody CourseForTeacher pageInform) throws TeacherCourseServiceException{
 
         return ResponseModel.sucess("",  teacherCourseService.getHistoryCoursesList(userInfo, pageInform));

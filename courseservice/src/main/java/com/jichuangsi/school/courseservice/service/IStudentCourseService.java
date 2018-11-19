@@ -5,6 +5,7 @@ import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceExcepti
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
+import com.jichuangsi.school.courseservice.model.PageHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface IStudentCourseService {
     List<CourseForStudent> getCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 
     @Transactional
-    List<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException;
+    PageHolder<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException;
 
     @Transactional
     CourseForStudent getParticularCourse(UserInfoForToken userInfo, String courseId) throws StudentCourseServiceException;
