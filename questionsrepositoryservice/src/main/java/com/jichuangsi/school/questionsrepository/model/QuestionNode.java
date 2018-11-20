@@ -1,6 +1,8 @@
 package com.jichuangsi.school.questionsrepository.model;
 
-public class QuestionNode {
+import java.io.Serializable;
+
+public class QuestionNode implements Serializable {
 
     private String title;
     private String option_a;
@@ -10,12 +12,18 @@ public class QuestionNode {
     private String qtpye;
     private String diff;
     private String year;
+    private String area;
     private String source;
     private String subjectId;
     private String paperTpye;
     private String qid;
     private String isSub;
     private String isNormal;
+
+    private String pageNum;
+    private String pageSize;
+    private String total;
+    private String pageCount;
 
     public String getTitle() {
         return title;
@@ -127,5 +135,45 @@ public class QuestionNode {
 
     public void setIsNormal(String isNormal) {
         this.isNormal = isNormal;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(String pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public String getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(String pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public String getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(String pageCount) {
+        this.pageCount = pageCount;
     }
 }

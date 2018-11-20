@@ -1,6 +1,8 @@
 package com.jichuangsi.school.questionsrepository.model;
 
-public class QuestionTypeNode {
+import java.io.Serializable;
+
+public class QuestionTypeNode implements Serializable {
 
     private String id;
     private String subjectId;

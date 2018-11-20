@@ -44,7 +44,7 @@ public class QuestionsRepositoryController {
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getTreeForSubjectEditionInfo(userInfo)));
     }
 
-    @ApiOperation(value = "获取题型、难易度、试卷类型信息", notes = "")
+    @ApiOperation(value = "获取题型、难易度、试卷类型、年份、地区信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/getOtherBasicInfo")

@@ -2,10 +2,10 @@ package com.jichuangsi.school.questionsrepository.model;
 
 import java.io.Serializable;
 
-public class PaperTypeNode implements Serializable{
+public class YearNode implements Serializable {
 
     private String id;
-    private String paper;
+    private String year;
 
     public String getId() {
         return id;
@@ -15,11 +15,11 @@ public class PaperTypeNode implements Serializable{
         this.id = id;
     }
 
-    public String getPaper() {
-        return paper;
+    public String getYear() {
+        return year;
     }
 
-    public void setPaper(String paper) {
-        this.paper = paper;
+    public void setYear(String year) {
+        this.year = year;
     }
 }

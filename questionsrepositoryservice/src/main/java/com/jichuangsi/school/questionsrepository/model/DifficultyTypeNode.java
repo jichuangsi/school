@@ -1,9 +1,11 @@
 package com.jichuangsi.school.questionsrepository.model;
 
-public class DifficultyTypeNode {
+import java.io.Serializable;
+
+public class DifficultyTypeNode  implements Serializable {
 
     private String id;
-    private String name;
+    private String difficulty;
 
     public String getId() {
         return id;
@@ -13,11 +15,11 @@ public class DifficultyTypeNode {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDifficulty() {
+        return difficulty;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
     }
 }

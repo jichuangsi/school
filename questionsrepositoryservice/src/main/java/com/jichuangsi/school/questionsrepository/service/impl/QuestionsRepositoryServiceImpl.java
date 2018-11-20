@@ -97,11 +97,13 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
             Optional<String> result = resp.blockOptional();
             if(result.isPresent()) {
                 PHPResponseModel2 phpResponseModel2 = JSONObject.parseObject(resp.block(),
-                        new TypeReference<PHPResponseModel2<QuestionTypeNode,PaperTypeNode,DifficultyTypeNode>>() {}.getType());
+                        new TypeReference<PHPResponseModel2<QuestionTypeNode,PaperTypeNode,DifficultyTypeNode,YearNode,AreaNode>>() {}.getType());
                 Map<String, List> result2 = new HashMap<String, List>();
                 result2.put("questionType", phpResponseModel2.getQtypes());
                 result2.put("paperType", phpResponseModel2.getPaperTypes());
                 result2.put("difficultyType", phpResponseModel2.getDiffTypes());
+                result2.put("years", phpResponseModel2.getYears());
+                result2.put("areas", phpResponseModel2.getAreas());
                 return result2;
             }
         }catch (Exception exp){
@@ -148,7 +150,7 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     }
 
     @Override
-    @Cacheable(unless="#result.isEmpty()", keyGenerator = "questionsKeyGenerator")
+    //@Cacheable(unless="#result.isEmpty()", keyGenerator = "questionsKeyGenerator")
     public List<QuestionNode> getListForQuestionsByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("accessKey",accessKey);
@@ -157,7 +159,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
         formData.add("paperType",questionQueryModel.getPaperType());
         formData.add("diff",questionQueryModel.getDiff());
         formData.add("year",questionQueryModel.getYear());
+        formData.add("area",questionQueryModel.getArea());
         formData.add("page",questionQueryModel.getPage());
+        formData.add("pageSize",questionQueryModel.getPageSize());
 
         try{
             Mono<String> resp = webClientFormRequest(questionApi, formData);

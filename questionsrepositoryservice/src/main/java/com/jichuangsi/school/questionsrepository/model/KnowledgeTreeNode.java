@@ -1,9 +1,10 @@
 package com.jichuangsi.school.questionsrepository.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnowledgeTreeNode {
+public class KnowledgeTreeNode implements Serializable {
     String id;
     String name;
     String pid;

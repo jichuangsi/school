@@ -2,10 +2,10 @@ package com.jichuangsi.school.questionsrepository.model;
 
 import java.io.Serializable;
 
-public class PaperTypeNode implements Serializable{
+public class AreaNode implements Serializable {
 
     private String id;
-    private String paper;
+    private String area;
 
     public String getId() {
         return id;
@@ -15,11 +15,11 @@ public class PaperTypeNode implements Serializable{
         this.id = id;
     }
 
-    public String getPaper() {
-        return paper;
+    public String getArea() {
+        return area;
     }
 
-    public void setPaper(String paper) {
-        this.paper = paper;
+    public void setArea(String area) {
+        this.area = area;
     }
 }

@@ -7,7 +7,9 @@ public class QuestionQueryModel {
     private String paperType;//试卷类型
     private String diff;//难度
     private String year;//年份
+    private String area;//年份
     private String page;//分页
+    private String pageSize;//页面数量
 
     public String getKnowledgeId() {
         return knowledgeId;
@@ -55,5 +57,21 @@ public class QuestionQueryModel {
 
     public void setPage(String page) {
         this.page = page;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(String pageSize) {
+        this.pageSize = pageSize;
     }
 }

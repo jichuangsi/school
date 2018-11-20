@@ -1,6 +1,8 @@
 package com.jichuangsi.school.questionsrepository.model;
 
-public class AnswerNode {
+import java.io.Serializable;
+
+public class AnswerNode implements Serializable {
 
     private String answer1;
     private String answer2;

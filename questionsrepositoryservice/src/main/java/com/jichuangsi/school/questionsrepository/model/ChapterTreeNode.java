@@ -1,9 +1,10 @@
 package com.jichuangsi.school.questionsrepository.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChapterTreeNode {
+public class ChapterTreeNode implements Serializable {
 
     private String id;
     private String name;
