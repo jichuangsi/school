@@ -75,7 +75,7 @@ public class QuestionsRepositoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getQuestionsByKnowledge")
-    public Mono<ResponseModel<List<QuestionNode>>> getQuestionsByKnowledge(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException{
+    public Mono<ResponseModel<PageHolder<QuestionNode>>> getQuestionsByKnowledge(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException{
 
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getListForQuestionsByKnowledge(userInfo, questionQueryModel)));
     }

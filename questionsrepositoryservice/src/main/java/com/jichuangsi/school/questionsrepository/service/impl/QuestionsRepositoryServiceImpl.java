@@ -26,6 +26,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.jichuangsi.school.questionsrepository.constant.ResultCode.PHP_CORRECT_CODE;
+
 
 @Service
 @CacheConfig(cacheNames = {"questions"})
@@ -77,6 +79,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
             if(result.isPresent()) {
                 PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
                         new TypeReference<PHPResponseModel<EditionTreeNode>>() {}.getType());
+                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())){
+                    throw new QuestionRepositoryServiceException(phpResponseModel.getErrorCode());
+                }
                 return phpResponseModel.getData();
             }
         }catch (Exception exp){
@@ -98,6 +103,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
             if(result.isPresent()) {
                 PHPResponseModel2 phpResponseModel2 = JSONObject.parseObject(resp.block(),
                         new TypeReference<PHPResponseModel2<QuestionTypeNode,PaperTypeNode,DifficultyTypeNode,YearNode,AreaNode>>() {}.getType());
+                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel2.getErrorCode())){
+                    throw new QuestionRepositoryServiceException(phpResponseModel2.getErrorCode());
+                }
                 Map<String, List> result2 = new HashMap<String, List>();
                 result2.put("questionType", phpResponseModel2.getQtypes());
                 result2.put("paperType", phpResponseModel2.getPaperTypes());
@@ -140,6 +148,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
             if(result.isPresent()) {
                 PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
                         new TypeReference<PHPResponseModel<ChapterTreeNode>>() {}.getType());
+                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())){
+                    throw new QuestionRepositoryServiceException(phpResponseModel.getErrorCode());
+                }
                 return phpResponseModel.getData();
             }
         }catch(Exception exp){
@@ -151,7 +162,7 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
 
     @Override
     //@Cacheable(unless="#result.isEmpty()", keyGenerator = "questionsKeyGenerator")
-    public List<QuestionNode> getListForQuestionsByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
+    public PageHolder<QuestionNode> getListForQuestionsByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("accessKey",accessKey);
         formData.add("knowledgeId",questionQueryModel.getKnowledgeId());
@@ -167,9 +178,12 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
             Mono<String> resp = webClientFormRequest(questionApi, formData);
             Optional<String> result = resp.blockOptional();
             if(result.isPresent()) {
-                PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
-                        new TypeReference<PHPResponseModel<QuestionNode>>() {}.getType());
-                return phpResponseModel.getData();
+                PHPResponseModel3<PageHolder<QuestionNode>> phpResponseModel3 = JSONObject.parseObject(resp.block(),
+                        new TypeReference<PHPResponseModel3<PageHolder<QuestionNode>>>() {}.getType());
+                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel3.getErrorCode())){
+                    throw new QuestionRepositoryServiceException(phpResponseModel3.getErrorCode());
+                }
+                return phpResponseModel3.getData();
             }
         }catch(Exception exp){
             throw new QuestionRepositoryServiceException(exp.getMessage());
@@ -191,6 +205,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
             if(result.isPresent()) {
                 PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
                         new TypeReference<PHPResponseModel<AnswerNode>>() {}.getType());
+                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())){
+                    throw new QuestionRepositoryServiceException(phpResponseModel.getErrorCode());
+                }
                 return phpResponseModel.getData();
             }
         }catch(Exception exp){
