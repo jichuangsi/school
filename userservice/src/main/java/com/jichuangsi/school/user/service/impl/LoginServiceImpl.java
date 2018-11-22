@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserRepository userRepository;
-    @Value("${custom.token.jwt.userClaim}")
+    @Value("${com.jichuangsi.school.token.userClaim}")
     private String userClaim;
     @Resource
     private Algorithm algorithm;
