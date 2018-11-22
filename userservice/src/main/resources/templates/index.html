@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>首页</title>
+</head>
+<body>
+
+<p class="title">用户名：<span class="userId" th:text="${user.userId}"></span>已登录</p>
+
+<a href="/index/logout" id="login">退出登录</a>
+
+<script type="text/javascript" th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<script type="text/javascript">
+    if($(".userId").text() == "##errors##"){
+        $(".title").text("未登录");
+        $("#login").attr("href","/index/oplogin");
+        $("#login").text("点击登陆");
+    }
+    /**
+     * 判断非空
+     *
+     * @param val
+     * @returns {Boolean}
+     */
+    function isEmpty(val) {
+        val = $.trim(val);
+        if (val == null)
+            return true;
+        if (val == undefined || val == 'undefined')
+            return true;
+        if (val == "")
+            return true;
+        if (val.length == 0)
+            return true;
+        if (!/[^(^\s*)|(\s*$)]/.test(val))
+            return true;
+        return false;
+    }
+</script>
+</body>
+</html>

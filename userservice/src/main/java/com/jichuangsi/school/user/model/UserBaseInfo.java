@@ -1,23 +1,30 @@
 package com.jichuangsi.school.user.model;
 
 public class UserBaseInfo {
+    private String userId;
+    private String Pwd;
 
-    private String userName;
-    private String userPwd;
-
-    public String getUserName() {
-        return userName;
+    public UserBaseInfo() {
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getUserPwd() {
-        return userPwd;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
+    public String getPwd() {
+        return Pwd;
+    }
+
+    public void setPwd(String pwd) {
+        Pwd = pwd;
+    }
+
+    public UserBaseInfo(String userId, String pwd) {
+        this.userId = userId;
+        this.Pwd = pwd;
     }
 }

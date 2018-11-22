@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js原生实现ajax</title>
+    <script type="text/javascript">
+        function sendRequest() {
+            //发送异步请求
+            //1.创建Ajax引擎对象
+            var xmlHttp = new XMLHttpRequest();
+            //2.设置回调函数（ajax引擎与后端服务器交互的监听连接状态改变事件，连接状态发送改变就会调用）
+            xmlHttp.onreadystatechange = function () {
+                //目的就是获取服务器返回的数据，进行js操作dom更新页面局部位置
+                if(xmlHttp.readyState==4 && xmlHttp.status==200){
+                    //readyState保证服务器响应数据结束
+                    //status保证是正确获取了服务器数据
+
+                    //获取结果
+                    var result = xmlHttp.responseText;
+                    alert(result);
+                    
+                }
+            };
+
+            //3.设置请求方法与请求路径
+            //xmlHttp.open(method,url)
+            //  method，请求的方法，get或post
+            //  url，请求路径
+            xmlHttp.open("get","/brand/findAll")
+            //4.发送异步请求
+            xmlHttp.send();
+        }
+    </script>
+</head>
+<body>
+<input type="button" value="发送异步请求" onclick="sendRequest()">
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="#" th:action="@{/api/uregister}" th:object="${userInfo}" method="post">
+    <div class="form-group">
+        <label for="operator">操作人</label>
+        <input type="text" class="form-control" id="operator" placeholder="操作人" th:value="yangmin" th:field="*{operator}" />
+
+        <label for="payAccountNo">付款账号</label>
+        <input type="text" class="form-control" id="payAccountNo" placeholder="付款账号" th:field="*{payAccountNo}" />
+
+</html>

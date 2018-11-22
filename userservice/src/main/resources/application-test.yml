@@ -1,9 +1,12 @@
 spring:
   application:
     name: userservice
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/school
 server:
   port: 8083
-    
+
 eureka: 
   client:    
     serviceUrl:
