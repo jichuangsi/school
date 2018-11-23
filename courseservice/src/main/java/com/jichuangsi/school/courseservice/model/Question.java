@@ -21,9 +21,6 @@ public class Question {
     String questionIdMD52;
     Status questionStatus;
 
-    int pageNum;
-    int pageSize;
-
     public String getQuestionId() {
         return questionId;
     }
@@ -128,19 +125,4 @@ public class Question {
         this.questionStatus = questionStatus;
     }
 
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
 }

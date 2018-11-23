@@ -22,11 +22,28 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
 
     @Override
     public List<Question> findQuestionsByTeacherIdAndCourseId(String teacherId, String courseId) {
+        /**
+         db.getCollection('school_course').aggregate(
+         [
+         {$match:{$and:[{"_id":"fa015ba0052241e483d86465373845bc"},{"teacherId":"123"}]}},
+         {$unwind:{path:"$questionIds",includeArrayIndex:"questionIndex",preserveNullAndEmptyArrays:false}},
+         {
+         $lookup:{
+         from: "school_course_question",
+         localField: "questionIds",
+         foreignField: "_id",
+         as: "question"
+         }
+         },
+         {$unwind:{path:"$question",preserveNullAndEmptyArrays:false}}
+         ]
+         )
+         */
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("_id").is(courseId).andOperator(Criteria.where("teacherId").is(teacherId))),
-                unwind("questionIds","questionIndex", true),
+                unwind("questionIds","questionIndex", false),
                 lookup("school_course_question","questionIds","_id","question"),
-                unwind("question", true),
+                unwind("question", false),
                 sort(ASC, "questionIndex"),
                 project().and("question._id").as("_id")
                         .and("question.content").as("content")
@@ -49,10 +66,10 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
     public List<Question> findQuestionsByClassIdAndCourseId(String classId, String courseId) {
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("_id").is(courseId).andOperator(Criteria.where("classId").is(classId))),
-                unwind("questionIds","questionIndex", true),
+                unwind("questionIds","questionIndex", false),
                 lookup("school_course_question","questionIds","_id","question"),
                 //match(Criteria.where("question.status").is(Status.FINISH.getName())),
-                unwind("question", true),
+                unwind("question", false),
                 sort(ASC, "questionIndex"),
                 project().and("question._id").as("_id")
                         .and("question.content").as("content")
