@@ -1,5 +1,6 @@
 package com.jichuangsi.school.courseservice.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
@@ -117,13 +118,21 @@ public class TeacherCourseController {
     @ApiOperation(value = "根据老师id保存上传的文件", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PostMapping("/sendSubjectPic")
-    public ResponseModel<AnswerForTeacher> sendSubjectPic(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) throws TeacherCourseServiceException{
+    @PostMapping("/sendSubjectPicByFile")
+    public ResponseModel<AnswerForTeacher> sendSubjectPicByFile(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) throws TeacherCourseServiceException{
         try{
             return ResponseModel.sucess("",  teacherCourseService.uploadTeacherSubjectPic(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
         }catch (IOException ioExp){
             throw new TeacherCourseServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
+    }
+
+    @ApiOperation(value = "根据学生id保存上传的文件", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PostMapping("/sendSubjectPicByString")
+    public ResponseModel<AnswerForTeacher> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody String content) throws TeacherCourseServiceException{
+        return ResponseModel.sucess("",  teacherCourseService.uploadTeacherSubjectPic(userInfo, new CourseFile("mock.jpg", "image/jpeg", JSONObject.parseObject(content).getBytes("file"))));
     }
 
     //获取指定文件名图片
