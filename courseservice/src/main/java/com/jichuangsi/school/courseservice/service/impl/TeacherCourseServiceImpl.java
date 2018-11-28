@@ -189,7 +189,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         if(StringUtils.isEmpty(courseId)
                 || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         Optional<Question> result = questionRepository.findById(questionId);
-        if(result.isPresent()){
+        if(result.isPresent()){//需要增加判断重复发布题目
             Question question2Update = result.get();
             question2Update.setStatus(Status.PROGRESS.getName());
             question2Update.setUpdateTime(new Date().getTime());

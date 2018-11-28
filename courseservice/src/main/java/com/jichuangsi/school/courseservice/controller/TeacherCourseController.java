@@ -131,8 +131,8 @@ public class TeacherCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/sendSubjectPicByString")
-    public ResponseModel<AnswerForTeacher> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody String content) throws TeacherCourseServiceException{
-        return ResponseModel.sucess("",  teacherCourseService.uploadTeacherSubjectPic(userInfo, new CourseFile("mock.jpg", "image/jpeg", JSONObject.parseObject(content).getBytes("file"))));
+    public ResponseModel<AnswerForTeacher> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody Base64TransferFile file) throws TeacherCourseServiceException{
+        return ResponseModel.sucess("",  teacherCourseService.uploadTeacherSubjectPic(userInfo, new CourseFile(file.getName(), file.getContentType(), file.getContent().getBytes())));
     }
 
     //获取指定文件名图片

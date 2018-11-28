@@ -5,10 +5,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
-import com.jichuangsi.school.courseservice.model.AnswerForStudent;
-import com.jichuangsi.school.courseservice.model.CourseFile;
-import com.jichuangsi.school.courseservice.model.CourseForStudent;
-import com.jichuangsi.school.courseservice.model.PageHolder;
+import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.service.IStudentCourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -77,8 +74,8 @@ public class StudentCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/sendSubjectPicByString")
-    public ResponseModel<AnswerForStudent> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody String content) throws StudentCourseServiceException{
-		return ResponseModel.sucess("",  studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile("mock.jpg", "image/jpeg", JSONObject.parseObject(content).getBytes("file"))));
+    public ResponseModel<AnswerForStudent> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody Base64TransferFile file) throws StudentCourseServiceException{
+		return ResponseModel.sucess("",  studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile(file.getName(), file.getContentType(), file.getContent().getBytes())));
     }
 
 	//获取指定文件名图片
