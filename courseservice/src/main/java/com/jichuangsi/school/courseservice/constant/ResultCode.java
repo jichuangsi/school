@@ -10,4 +10,10 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
 	public static final String FILE_DOWNLOAD_ERROR = "文件下载错误";
 	public static final String FILE_REMOVE_ERROR = "文件下载错误";
 	public static final String QUESTION_COMPLETE = "所指问题已完结";
+	public static final String COURSE_ALREADY_EXISTED="课程已经存在";
+	public static final String COURSE_DELETE_FAIL="课程删除失败";
+	public static final String COURSE_ALREADY_BEGIN="课程已经开始";
+	public static final String COURSE_FAIL_SAVE = "保存课程失败";
+	public static final String QUESTION_FAIL_SAVE = "保存试题失败";
+
 }

@@ -2,6 +2,7 @@ package com.jichuangsi.school.courseservice.util;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.constant.QuestionType;
+import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
@@ -24,7 +25,7 @@ public  final class MappingModel2EntityConverter {
         course.setId(StringUtils.isEmpty(courseForTeacher.getCourseId())? UUID.randomUUID().toString().replaceAll("-", ""):courseForTeacher.getCourseId());
         course.setName(courseForTeacher.getCourseName());
         course.setInfo(courseForTeacher.getCourseInfo());
-        course.setStatus(courseForTeacher.getCourseStatus()!=null?courseForTeacher.getCourseStatus().getName():null);
+        course.setStatus(courseForTeacher.getCourseStatus()!=null?courseForTeacher.getCourseStatus().getName():Status.NOTSTART.getName());
         course.setTeacherId(userInfo.getUserId());
         course.setTeacherName(userInfo.getUserName());
         course.setClassId(courseForTeacher.getClassId());
@@ -54,13 +55,14 @@ public  final class MappingModel2EntityConverter {
         question.setAnswer(questionForTeacher.getAnswer());
         question.setAnswerDetail(questionForTeacher.getAnswerDetail());
         question.setParse(questionForTeacher.getParse());
-        question.setType(translateQuestionType(questionForTeacher.getQuesetionType()).getName());
+        question.setType(questionForTeacher.getQuesetionType()!=null?translateQuestionType(questionForTeacher.getQuesetionType()).getName(): null);
         question.setDifficulty(questionForTeacher.getDifficulty());
         question.setSubjectId(questionForTeacher.getSubjectId());
         question.setGradeId(questionForTeacher.getGradeId());
         question.setKnowledge(questionForTeacher.getKnowledge());
         question.setIdMD52(questionForTeacher.getQuestionIdMD52());
-        question.setStatus(questionForTeacher.getQuestionStatus()!=null?questionForTeacher.getQuestionStatus().getName():null);
+        question.setStatus(questionForTeacher.getQuestionStatus()!=null?questionForTeacher.getQuestionStatus().getName(): Status.NOTSTART.getName());
+        question.setPic(questionForTeacher.getQuestionPic());
         if(StringUtils.isEmpty(questionForTeacher.getQuestionId())) question.setCreateTime(new Date().getTime());
         question.setUpdateTime(new Date().getTime());
         return question;

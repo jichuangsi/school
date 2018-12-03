@@ -23,6 +23,7 @@ public class Question {
     String knowledge;
     String idMD52;
     String status;
+    String pic;
     long createTime;
     long updateTime;
 
@@ -144,5 +145,13 @@ public class Question {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
     }
 }

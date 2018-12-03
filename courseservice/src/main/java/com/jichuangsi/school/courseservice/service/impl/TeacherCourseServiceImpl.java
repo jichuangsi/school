@@ -10,22 +10,12 @@ import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.model.*;
-import com.jichuangsi.school.courseservice.repository.CourseRepository;
-import com.jichuangsi.school.courseservice.repository.QuestionRepository;
-import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
-import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
+import com.jichuangsi.school.courseservice.repository.*;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
-import com.jichuangsi.school.courseservice.util.CollectionsTools;
-import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
-import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
-import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import com.jichuangsi.school.courseservice.util.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,9 +45,6 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Resource
     private IFileStoreService fileStoreService;
-
-    @Resource
-    private MongoTemplate mongoTemplate;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException{
@@ -328,6 +315,5 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         });
         return AnswerForStudents;
     }
-
 
 }

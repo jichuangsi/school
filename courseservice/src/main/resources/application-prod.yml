@@ -23,6 +23,9 @@ com:
     school:
       result:
         page-size: 10
+        date-format1: yyyy-MM-dd hh:mm:ss
+        date-format2: yyyy年MM月dd日 HH:mm
+        course-period: 45
       mq:
         courses: course.start.classinteraction
         questions:

@@ -20,6 +20,7 @@ public class Question {
     String knowledge;
     String questionIdMD52;
     Status questionStatus;
+    private String questionPic;
 
     public String getQuestionId() {
         return questionId;
@@ -125,4 +126,11 @@ public class Question {
         this.questionStatus = questionStatus;
     }
 
+    public String getQuestionPic() {
+        return questionPic;
+    }
+
+    public void setQuestionPic(String questionPic) {
+        this.questionPic = questionPic;
+    }
 }
