@@ -2,12 +2,14 @@ package com.jichuangsi.school.questionsrepository.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.questionsrepository.entity.QuestionStatistics;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.*;
+import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
+import com.jichuangsi.school.questionsrepository.repository.QuestionStatisticsRepository;
 import com.jichuangsi.school.questionsrepository.service.IQuestionsRepositoryService;
+import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,17 +23,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Type;
-import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.jichuangsi.school.questionsrepository.constant.ResultCode.PHP_CORRECT_CODE;
 
 
 @Service
 @CacheConfig(cacheNames = {"questions"})
-public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryService{
+public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryService {
 
     @Value("${com.jichuangsi.school.tiku.schema}")
     private String schema;
@@ -57,12 +56,18 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     @Value("${com.jichuangsi.school.tiku.answerApi}")
     private String answerApi;
 
+    @Resource
+    private IUserInfoService userInfoService;
+
+    @Resource
+    private QuestionStatisticsRepository questionStatisticsRepository;
+
     @Override
     @Cacheable(key = "#root.methodName", unless="#result.isEmpty()")
-    public List<EditionTreeNode> getTreeForSubjectEditionInfo(UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
+    public List<EditionTreeNode> getTreeForSubjectEditionInfo(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("accessKey",accessKey);
+        formData.add("accessKey", accessKey);
 
         /*resp.subscribe(text -> phpResponseModel = JSONObject.parseObject(text,
                 new TypeReference<PHPResponseModel<EditionTreeNode>>() {}.getType()));
@@ -73,37 +78,47 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
         }
         return phpResponseModel.getData();*/
 
-        try{
+        try {
             Mono<String> resp = webClientFormRequest(subjectEditionApi, formData);
             Optional<String> result = resp.blockOptional();
-            if(result.isPresent()) {
+            if (result.isPresent()) {
                 PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
-                        new TypeReference<PHPResponseModel<EditionTreeNode>>() {}.getType());
-                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())){
+                        new TypeReference<PHPResponseModel<EditionTreeNode>>() {
+                        }.getType());
+                if (!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())) {
                     throw new QuestionRepositoryServiceException(phpResponseModel.getErrorCode());
                 }
                 return phpResponseModel.getData();
             }
-        }catch (Exception exp){
+        } catch (Exception exp) {
             throw new QuestionRepositoryServiceException(exp.getMessage());
         }
         return null;
     }
 
     @Override
-    @Cacheable(key = "#root.methodName", unless="#result.isEmpty()")
+    public List<EditionTreeNode> getTreeForSubjectEditionInfoByTeacher(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
+        List<EditionTreeNode> editionTreeNodes =  getTreeForSubjectEditionInfo(userInfo);
+        if(editionTreeNodes == null) return null;
+
+        return getEditionsByTeacherInfo(userInfo, editionTreeNodes);
+    }
+
+    @Override
+    @Cacheable(key = "#root.methodName", unless = "#result.isEmpty()")
     public Map<String, List> getMapForOtherBasicInfo(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("accessKey",accessKey);
+        formData.add("accessKey", accessKey);
 
-        try{
+        try {
             Mono<String> resp = webClientFormRequest(otherBasicApi, formData);
             Optional<String> result = resp.blockOptional();
-            if(result.isPresent()) {
+            if (result.isPresent()) {
                 PHPResponseModel2 phpResponseModel2 = JSONObject.parseObject(resp.block(),
-                        new TypeReference<PHPResponseModel2<QuestionTypeNode,PaperTypeNode,DifficultyTypeNode,YearNode,AreaNode>>() {}.getType());
-                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel2.getErrorCode())){
+                        new TypeReference<PHPResponseModel2<QuestionTypeNode, PaperTypeNode, DifficultyTypeNode, YearNode, AreaNode>>() {
+                        }.getType());
+                if (!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel2.getErrorCode())) {
                     throw new QuestionRepositoryServiceException(phpResponseModel2.getErrorCode());
                 }
                 Map<String, List> result2 = new HashMap<String, List>();
@@ -114,15 +129,15 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
                 result2.put("areas", phpResponseModel2.getAreas());
                 return result2;
             }
-        }catch (Exception exp){
+        } catch (Exception exp) {
             throw new QuestionRepositoryServiceException(exp.getMessage());
         }
         return null;
     }
 
     @Override
-    @Cacheable(key = "#root.methodName", unless="#result.isEmpty()")
-    public Map<String, List> getAllBasicInfoForQuestionSelection(UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
+    @Cacheable(key = "#root.methodName", unless = "#result.isEmpty()")
+    public Map<String, List> getAllBasicInfoForQuestionSelection(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
         Map<String, List> allBasicInfo = new HashMap<String, List>();
 
         allBasicInfo.put("subjectEditionTree", this.getTreeForSubjectEditionInfo(userInfo));
@@ -133,27 +148,28 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     }
 
     @Override
-    @Cacheable(unless="#result.isEmpty()", keyGenerator = "chaptersKeyGenerator")
+    @Cacheable(unless = "#result.isEmpty()", keyGenerator = "chaptersKeyGenerator")
     public List<ChapterTreeNode> getTreeForChapterInfo(UserInfoForToken userInfoForToken, ChapterQueryModel chapterQueryModel) throws QuestionRepositoryServiceException {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("accessKey",accessKey);
-        formData.add("pharseId",chapterQueryModel.getPharseId());
-        formData.add("gradeId",chapterQueryModel.getGradeId());
-        formData.add("subjectId",chapterQueryModel.getSubjectId());
-        formData.add("editionId",chapterQueryModel.getEditionId());
+        formData.add("accessKey", accessKey);
+        formData.add("pharseId", chapterQueryModel.getPharseId());
+        formData.add("gradeId", chapterQueryModel.getGradeId());
+        formData.add("subjectId", chapterQueryModel.getSubjectId());
+        formData.add("editionId", chapterQueryModel.getEditionId());
 
-        try{
+        try {
             Mono<String> resp = webClientFormRequest(chapterApi, formData);
             Optional<String> result = resp.blockOptional();
-            if(result.isPresent()) {
+            if (result.isPresent()) {
                 PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
-                        new TypeReference<PHPResponseModel<ChapterTreeNode>>() {}.getType());
-                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())){
+                        new TypeReference<PHPResponseModel<ChapterTreeNode>>() {
+                        }.getType());
+                if (!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())) {
                     throw new QuestionRepositoryServiceException(phpResponseModel.getErrorCode());
                 }
                 return phpResponseModel.getData();
             }
-        }catch(Exception exp){
+        } catch (Exception exp) {
             throw new QuestionRepositoryServiceException(exp.getMessage());
         }
 
@@ -164,32 +180,60 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     //@Cacheable(unless="#result.isEmpty()", keyGenerator = "questionsKeyGenerator")
     public PageHolder<QuestionNode> getListForQuestionsByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("accessKey",accessKey);
-        formData.add("knowledgeId",questionQueryModel.getKnowledgeId());
-        formData.add("qtypeId",questionQueryModel.getQtypeId());
-        formData.add("paperType",questionQueryModel.getPaperType());
-        formData.add("diff",questionQueryModel.getDiff());
-        formData.add("year",questionQueryModel.getYear());
-        formData.add("area",questionQueryModel.getArea());
-        formData.add("page",questionQueryModel.getPage());
-        formData.add("pageSize",questionQueryModel.getPageSize());
+        formData.add("accessKey", accessKey);
+        formData.add("knowledgeId", questionQueryModel.getKnowledgeId());
+        formData.add("qtypeId", questionQueryModel.getQtypeId());
+        formData.add("paperType", questionQueryModel.getPaperType());
+        formData.add("diff", questionQueryModel.getDiff());
+        formData.add("year", questionQueryModel.getYear());
+        formData.add("area", questionQueryModel.getArea());
+        formData.add("page", questionQueryModel.getPage());
+        formData.add("pageSize", questionQueryModel.getPageSize());
 
-        try{
+        try {
             Mono<String> resp = webClientFormRequest(questionApi, formData);
             Optional<String> result = resp.blockOptional();
-            if(result.isPresent()) {
+            if (result.isPresent()) {
                 PHPResponseModel3<PageHolder<QuestionNode>> phpResponseModel3 = JSONObject.parseObject(resp.block(),
-                        new TypeReference<PHPResponseModel3<PageHolder<QuestionNode>>>() {}.getType());
-                if(!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel3.getErrorCode())){
+                        new TypeReference<PHPResponseModel3<PageHolder<QuestionNode>>>() {
+                        }.getType());
+                if (!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel3.getErrorCode())) {
                     throw new QuestionRepositoryServiceException(phpResponseModel3.getErrorCode());
                 }
                 return phpResponseModel3.getData();
             }
-        }catch(Exception exp){
+        } catch (Exception exp) {
             throw new QuestionRepositoryServiceException(exp.getMessage());
         }
 
         return null;
+    }
+
+    @Override
+    public PageHolder<QuestionExtraNode> getListForQuestionsExtraByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException{
+        PageHolder<QuestionNode> questionNodes = this.getListForQuestionsByKnowledge(userInfoForToken, questionQueryModel);
+        if(questionNodes == null) return null;
+
+        PageHolder<QuestionExtraNode> questionExtraNodes = new PageHolder<QuestionExtraNode>();
+        List<QuestionExtraNode> content = new ArrayList<QuestionExtraNode>();
+        questionNodes.getContent().forEach(q -> {
+            QuestionExtraNode questionExtraNode = new QuestionExtraNode();
+            questionExtraNode.setQuestionNode(q);
+            QuestionStatistics qs = questionStatisticsRepository.findOneByQidMD52(q.getQid());
+            if(qs != null){
+                questionExtraNode.setAddPapercount(qs.getAddPapercount());
+                questionExtraNode.setAnswerCount(qs.getAnswerCount());
+                questionExtraNode.setAverage(qs.getAverage());
+            }
+            content.add(questionExtraNode);
+        });
+        questionExtraNodes.setPageCount(questionNodes.getPageCount());
+        questionExtraNodes.setPageNum(questionNodes.getPageNum());
+        questionExtraNodes.setPageSize(questionNodes.getPageSize());
+        questionExtraNodes.setTotal(questionNodes.getTotal());
+        questionExtraNodes.setContent(content);
+
+        return questionExtraNodes;
     }
 
     @Override
@@ -217,6 +261,39 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
         return null;
     }
 
+    /*@Override
+    public PageHolder<Map> SortByAddPapercount(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
+        PageHolder<QuestionNode> listForQuestionsByKnowledge = getListForQuestionsByKnowledge(userInfoForToken, questionQueryModel);
+        List<QuestionNode> content = listForQuestionsByKnowledge.getContent();
+        PageHolder<Map> pageHolder=null;
+        TreeMap<QuestionNode,Integer> map=null;
+        for (QuestionNode q:content
+                ) {
+            QuestionStatistics oneByIdMD52 = questionStatisticsRepository.findOneByQidMD52(q.getQid());
+            map.put(q,oneByIdMD52.getAddPapercount());
+            pageHolder.getContent().add(map);
+
+        }
+        return pageHolder;
+    }
+
+    //@Cacheable(unless="#result.isEmpty()", keyGenerator = "questionsKeyGenerator")
+    //根据回到次数.
+    @Override
+    public PageHolder<Map<QuestionNode,Integer>> SortByAnswerCount(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
+        PageHolder<QuestionNode> listForQuestionsByKnowledge = getListForQuestionsByKnowledge(userInfoForToken, questionQueryModel);
+        List<QuestionNode> content = listForQuestionsByKnowledge.getContent();
+        Map<QuestionNode ,Integer> map=new TreeMap<>();
+        PageHolder<Map<QuestionNode,Integer>> pageHolder=null;
+        for (QuestionNode q:content
+                ) {
+            QuestionStatistics oneByIdMD52 = questionStatisticsRepository.findOneByQidMD52(q.getQid());
+            map.put(q,oneByIdMD52.getAnswerCount());
+            pageHolder.getContent().add(map);
+        }
+        return pageHolder;
+    }*/
+
     private Mono<String> webClientFormRequest(String api, MultiValueMap formData) throws Exception {
         Mono<String> resp = WebClient.create().post().uri(uriBuilder -> uriBuilder
                 .scheme(schema)
@@ -229,5 +306,24 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
                 .retrieve().bodyToMono(String.class);
 
         return resp;
+    }
+
+    private List<EditionTreeNode> getEditionsByTeacherInfo(UserInfoForToken userInfo, List<EditionTreeNode> editions) {
+        TransferTeacher teacher = userInfoService.getUserForTeacherById(userInfo.getUserId());
+
+        for (int i = editions.size() - 1; i >= 0; i--) {
+            if (!editions.get(i).getCode().equals(teacher.getPhraseId())) {
+                editions.remove(editions.get(i));
+                continue;
+            }
+            for (EditionTreeNode node2 : editions.get(i).getChild()) {
+                for (int j = node2.getChild().size() - 1; j >= 0; j--) {
+                    if (!node2.getChild().get(j).getCode().equals(teacher.getSubjectId())) {
+                        node2.getChild().remove(node2.getChild().get(j));
+                    }
+                }
+            }
+        }
+        return editions;
     }
 }

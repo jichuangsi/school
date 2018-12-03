@@ -19,11 +19,9 @@ public class QuestionNode implements Serializable {
     private String qid;
     private String isSub;
     private String isNormal;
-
-    private String pageNum;
-    private String pageSize;
-    private String total;
-    private String pageCount;
+    private String answer1;
+    private String answer2;
+    private String parse;
 
     public String getTitle() {
         return title;
@@ -145,35 +143,27 @@ public class QuestionNode implements Serializable {
         this.area = area;
     }
 
-    public String getPageNum() {
-        return pageNum;
+    public String getAnswer1() {
+        return answer1;
     }
 
-    public void setPageNum(String pageNum) {
-        this.pageNum = pageNum;
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
     }
 
-    public String getPageSize() {
-        return pageSize;
+    public String getAnswer2() {
+        return answer2;
     }
 
-    public void setPageSize(String pageSize) {
-        this.pageSize = pageSize;
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
     }
 
-    public String getTotal() {
-        return total;
+    public String getParse() {
+        return parse;
     }
 
-    public void setTotal(String total) {
-        this.total = total;
-    }
-
-    public String getPageCount() {
-        return pageCount;
-    }
-
-    public void setPageCount(String pageCount) {
-        this.pageCount = pageCount;
+    public void setParse(String parse) {
+        this.parse = parse;
     }
 }

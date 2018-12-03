@@ -29,7 +29,7 @@ public class CommonControllerAdvice {
 		if (!StringUtils.isEmpty(accessToken)) {
 			DecodedJWT jwt = JWT.decode(accessToken);
 			String user = jwt.getClaim(userClaim).asString();
-			//model.addAttribute(userClaim, JSONObject.parseObject(user,UserInfoForToken.class));
+			//model.addAttribute(userClaim, JSONObject.parseObject(roles,UserInfoForToken.class));
 			return JSONObject.parseObject(user,UserInfoForToken.class);
 		}
 		return null;

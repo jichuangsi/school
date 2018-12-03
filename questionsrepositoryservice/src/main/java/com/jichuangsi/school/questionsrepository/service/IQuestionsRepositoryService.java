@@ -27,5 +27,17 @@ public interface IQuestionsRepositoryService {
     PageHolder<QuestionNode> getListForQuestionsByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException;
 
     @Transactional
+    PageHolder<QuestionExtraNode> getListForQuestionsExtraByKnowledge(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException;
+
+    @Transactional
     List<AnswerNode> getListForAnswersByQuestionId(UserInfoForToken userInfo, AnswerQueryModel answerQueryModel) throws QuestionRepositoryServiceException;
+
+    @Transactional
+    List<EditionTreeNode> getTreeForSubjectEditionInfoByTeacher(UserInfoForToken userInfo) throws QuestionRepositoryServiceException;
+
+    /*@Transactional
+    PageHolder<Map<QuestionNode,Integer>> SortByAnswerCount(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException;
+
+    @Transactional
+    PageHolder SortByAddPapercount(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException;*/
 }

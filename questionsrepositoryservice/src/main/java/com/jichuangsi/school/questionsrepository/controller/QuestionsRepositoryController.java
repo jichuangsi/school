@@ -21,6 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/question")
+@CrossOrigin
 @Api("QuestionsRepositoryController相关的api")
 public class QuestionsRepositoryController {
 
@@ -42,6 +43,15 @@ public class QuestionsRepositoryController {
     public Mono<ResponseModel<List<EditionTreeNode>>> getSubjectEditionInfo(@ModelAttribute UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
 
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getTreeForSubjectEditionInfo(userInfo)));
+    }
+
+    @ApiOperation(value = "根据老师信息获取学段、学科、年级、版本信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/getSubjectEditionInfoByTeacher")
+    public Mono<ResponseModel<List<EditionTreeNode>>> getSubjectEditionInfoByTeacher(@ModelAttribute UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
+
+        return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getTreeForSubjectEditionInfoByTeacher(userInfo)));
     }
 
     @ApiOperation(value = "获取题型、难易度、试卷类型、年份、地区信息", notes = "")
@@ -80,6 +90,15 @@ public class QuestionsRepositoryController {
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getListForQuestionsByKnowledge(userInfo, questionQueryModel)));
     }
 
+    @ApiOperation(value = "根据知识点id，题型，试卷类型，难度，年份，分页获取试题以及试题的统计数据", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PostMapping("/getQuestionsExtraByKnowledge")
+    public Mono<ResponseModel<PageHolder<QuestionExtraNode>>> getQuestionsExtraByKnowledge(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException{
+
+        return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getListForQuestionsExtraByKnowledge(userInfo, questionQueryModel)));
+    }
+
     @ApiOperation(value = "根据试题id获取试题答案", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
@@ -88,4 +107,24 @@ public class QuestionsRepositoryController {
 
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getListForAnswersByQuestionId(userInfo, answerQueryModel)));
     }
+
+    /*@ApiOperation(value = "根据组卷次数进行排序", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @CrossOrigin
+    @PostMapping("/SortByAddPapercount")
+    public Mono<ResponseModel<PageHolder<Map<QuestionNode, Integer>>>> SortByAddPapercount(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
+
+        return Mono.just(ResponseModel.sucess("", questionsRepositoryService.SortByAddPapercount(userInfo, questionQueryModel)));
+    }
+
+    @ApiOperation(value = "根据回答次数进行排序", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @CrossOrigin
+    @PostMapping("/SortByAnswerCount")
+    public Mono<ResponseModel<PageHolder<Map<QuestionNode, Integer>>>> SortByAnswerCount(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException {
+
+        return Mono.just(ResponseModel.sucess("", questionsRepositoryService.SortByAnswerCount(userInfo, questionQueryModel)));
+    }*/
 }

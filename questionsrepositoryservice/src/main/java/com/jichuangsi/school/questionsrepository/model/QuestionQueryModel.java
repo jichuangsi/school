@@ -11,6 +11,8 @@ public class QuestionQueryModel {
     private String page;//分页
     private String pageSize;//页面数量
 
+    private String sort;
+
     public String getKnowledgeId() {
         return knowledgeId;
     }
@@ -73,5 +75,13 @@ public class QuestionQueryModel {
 
     public void setPageSize(String pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
     }
 }
