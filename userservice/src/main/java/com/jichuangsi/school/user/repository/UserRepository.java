@@ -7,5 +7,5 @@ import com.jichuangsi.school.user.entity.UserInfo;
 
 //@Repository
 public interface UserRepository extends MongoRepository<UserInfo, String>{
-	UserInfo findOneByUserId(String userId);
+	UserInfo findOneByAccount(String account);
 }

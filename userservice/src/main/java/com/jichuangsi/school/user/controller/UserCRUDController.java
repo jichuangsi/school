@@ -5,14 +5,18 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.exception.UserServiceException;
+import com.jichuangsi.school.user.model.System.Role;
+import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -26,7 +30,7 @@ import java.util.List;
 @Api("UserCRUDController相关的api")
 public class UserCRUDController {
 
-    @Autowired
+    @Resource
     private UserInfoService userInfoService;
 
     //获取所有用户
@@ -34,7 +38,7 @@ public class UserCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/findAll")
-    public @ResponseBody ResponseModel<List<UserInfo>> findAll(@ModelAttribute UserInfoForToken userInfo)throws UserServiceException{
+    public @ResponseBody ResponseModel<List<User>> findAll(@ModelAttribute UserInfoForToken userInfo)throws UserServiceException{
         return ResponseModel.sucess("",userInfoService.findAllUser()) ;
     }
 
@@ -43,7 +47,7 @@ public class UserCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/findOne/{id}")
-    public   ResponseModel<UserInfo> findOne(@ModelAttribute UserInfoForToken userInfo, @PathVariable String id) throws UserServiceException {
+    public   ResponseModel<User> findOne(@ModelAttribute UserInfoForToken userInfo, @PathVariable String id) throws UserServiceException {
         return ResponseModel.sucess("",userInfoService.findUserInfo(id));
 
     }
@@ -53,7 +57,9 @@ public class UserCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/save")
-    public ResponseModel<UserInfo> save(@ModelAttribute UserInfoForToken userInfo, @RequestBody UserInfo user) throws UserServiceException{
+    public ResponseModel<User> save(@ModelAttribute UserInfoForToken userInfo, @ModelAttribute List<Role> userRoles, @RequestBody User user) throws UserServiceException{
+        user.getRoles().clear();
+        user.getRoles().addAll(userRoles);
         return ResponseModel.sucess("", userInfoService.saveUserInfo(user));
     }
 
@@ -62,30 +68,28 @@ public class UserCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PutMapping("/update")
-    public ResponseModel update(@ModelAttribute UserInfoForToken userInfo, @RequestBody UserInfo user) throws UserServiceException{
-
+    public ResponseModel<User> update(@ModelAttribute UserInfoForToken userInfo, @ModelAttribute List<Role> userRoles, @RequestBody User user) throws UserServiceException{
+        user.getRoles().clear();
+        user.getRoles().addAll(userRoles);
         return ResponseModel.sucess("",userInfoService.UpdateUserInfo(user));
-
-
     }
 
     //批量删除用户信息
     @ApiOperation(value = "批量删除用户信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @GetMapping("/delete")
-    public ResponseModel<List<String>> delete(@ModelAttribute UserInfoForToken userInfo, String[] ids)throws UserServiceException {
-        return ResponseModel.sucess("",userInfoService.deleteUserInfo(ids));
+    @DeleteMapping("/delete")
+    public ResponseModel<String> delete(@ModelAttribute UserInfoForToken userInfo, String[] ids)throws UserServiceException {
+        return ResponseModel.sucess("", String.valueOf(userInfoService.deleteUserInfo(ids)));
     }
 
     //根据用户id删除用户信息
     @ApiOperation(value = "根据用户账号删除用户信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @GetMapping("/deleteById/{id}")
-    public ResponseModel<String> delete (@ModelAttribute UserInfoForToken userInfo, @PathVariable String id) throws UserServiceException {
-        System.out.println(id);
-        return ResponseModel.sucess("",userInfoService.delteById(id));
+    @DeleteMapping("/deleteById/{id}")
+    public ResponseModel<String> delete (@ModelAttribute UserInfoForToken userInfo, @PathVariable String id) throws UserServiceException {        ;
+        return ResponseModel.sucess("", String.valueOf(userInfoService.deleteById(id)));
     }
 
     //根据用户id恢复用户信息
@@ -93,8 +97,8 @@ public class UserCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/restoreById/{id}")
-    public ResponseModel<String> RestoreById (@ModelAttribute UserInfoForToken userInfo, @PathVariable String id)throws UserServiceException {
-        return ResponseModel.sucess("",userInfoService.RestoreById(id)) ;
+    public ResponseModel<String> RestoreById (@ModelAttribute UserInfoForToken userInfo, @PathVariable String id)throws UserServiceException {        ;
+        return ResponseModel.sucess("", String.valueOf(userInfoService.restoreById(id)));
     }
 
     //根据用户id批量恢复用户信息
@@ -102,9 +106,7 @@ public class UserCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/restore")
-    public void RestoreUsers(@ModelAttribute UserInfoForToken userInfo, String[] ids)throws UserServiceException {
-
-        userInfoService.RestoreUsers(ids);
-
+    public ResponseModel<String> RestoreUsers(@ModelAttribute UserInfoForToken userInfo, String[] ids)throws UserServiceException {        ;
+        return ResponseModel.sucess("", String.valueOf(userInfoService.restoreUsers(ids)));
     }
 }

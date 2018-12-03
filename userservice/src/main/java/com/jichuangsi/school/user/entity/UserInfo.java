@@ -1,40 +1,24 @@
 package com.jichuangsi.school.user.entity;
 
-//import javax.persistence.Id;
-/**
- *@NoArgsConstructor: 自动生成无参数构造函数。
-  @AllArgsConstructor: 自动生成全参数构造函数。
-  @Data: 自动为所有字段添加@ToString, @EqualsAndHashCode, @Getter方法，
-         为非final字段添加@Setter,和@RequiredArgsConstructor
- */
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Document(collection = "school_user")
 public class UserInfo {
 	@Id
 	private String id;
-	private String userId;
-	private String userNum;
-	private String userName;
+	private String account;
+	private String name;
 	private String pwd;
-	private String classId;
-	private String flag;
+	private String sex;
+	private List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
+	private String status;
 	private long createTime;
 	private long updateTime;
-
-	public UserInfo() {
-	}
-
-	public UserInfo(String userId, String userNum, String userName, String pwd, String classId, String flag) {
-		this.userId = userId;
-		this.userNum = userNum;
-		this.userName = userName;
-		this.pwd = pwd;
-		this.classId = classId;
-		this.flag = flag;
-	}
 
 	public String getId() {
 		return id;
@@ -44,28 +28,20 @@ public class UserInfo {
 		this.id = id;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getAccount() {
+		return account;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setAccount(String account) {
+		this.account = account;
 	}
 
-	public String getUserNum() {
-		return userNum;
+	public String getName() {
+		return name;
 	}
 
-	public void setUserNum(String userNum) {
-		this.userNum = userNum;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPwd() {
@@ -76,20 +52,28 @@ public class UserInfo {
 		this.pwd = pwd;
 	}
 
-	public String getClassId() {
-		return classId;
+	public String getSex() {
+		return sex;
 	}
 
-	public void setClassId(String classId) {
-		this.classId = classId;
+	public void setSex(String sex) {
+		this.sex = sex;
 	}
 
-	public String getFlag() {
-		return flag;
+	public List<RoleInfo> getRoleInfos() {
+		return roleInfos;
 	}
 
-	public void setFlag(String flag) {
-		this.flag = flag;
+	public void setRoleInfos(List<RoleInfo> roleInfos) {
+		this.roleInfos = roleInfos;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public long getCreateTime() {
@@ -106,17 +90,5 @@ public class UserInfo {
 
 	public void setUpdateTime(long updateTime) {
 		this.updateTime = updateTime;
-	}
-
-	@Override
-	public String toString() {
-		return "UserInfo{" +
-				"userId='" + userId + '\'' +
-				", userNum='" + userNum + '\'' +
-				", userName='" + userName + '\'' +
-				", pwd='" + pwd + '\'' +
-				", classId='" + classId + '\'' +
-				", flag='" + flag + '\'' +
-				'}';
 	}
 }

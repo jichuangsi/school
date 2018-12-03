@@ -1,6 +1,7 @@
 package com.jichuangsi.school.user.commons;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 写一个MD5算法,运行结果与MySQL的md5()函数相同
@@ -12,13 +13,17 @@ public final class Md5Util {
 	/**
 	 * 将明文密码转成MD5密码 
 	 */
-	public static String encodeByMd5(String password) throws Exception{
-		//Java中MessageDigest类封装了MD5和SHA算法，今天我们只要MD5算法
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		//调用MD5算法，即返回16个byte类型的值
-		byte[] byteArray = md5.digest(password.getBytes());
-		//注意：MessageDigest只能将String转成byte[]，接下来的事情，由我们程序员来完成
-		return byteArrayToHexString(byteArray);
+	public static String encodeByMd5(String password){
+		try{
+			//Java中MessageDigest类封装了MD5和SHA算法，今天我们只要MD5算法
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			//调用MD5算法，即返回16个byte类型的值
+			byte[] byteArray = md5.digest(password.getBytes());
+			//注意：MessageDigest只能将String转成byte[]，接下来的事情，由我们程序员来完成
+			return byteArrayToHexString(byteArray);
+		}catch (NoSuchAlgorithmException exp){
+			return null;
+		}
 	}
 	/**
 	 * 将byte[]转在16进制字符串 

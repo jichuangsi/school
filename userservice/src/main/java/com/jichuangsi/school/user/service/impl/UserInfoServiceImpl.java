@@ -1,17 +1,23 @@
 package com.jichuangsi.school.user.service.impl;
 
-import ch.qos.logback.core.joran.conditional.ElseAction;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.commons.Md5Util;
 import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.school.user.model.System.User;
+import com.jichuangsi.school.user.model.transfer.TransferClass;
+import com.jichuangsi.school.user.model.transfer.TransferSchool;
+import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.UserInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
+import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
+import com.mongodb.client.result.UpdateResult;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -23,15 +29,15 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.*;
 
-import com.jichuangsi.school.user.commons.MyResultCode;
+import com.jichuangsi.school.user.constant.MyResultCode;
 
 
 @Service
 @Transactional
 public class UserInfoServiceImpl implements UserInfoService {
-    @Autowired
+    @Resource
     private MongoTemplate mongoTemplate;
-    @Autowired
+    @Resource
     private UserRepository userRepository;
     @Resource
     private Algorithm algorithm;
@@ -42,17 +48,17 @@ public class UserInfoServiceImpl implements UserInfoService {
      * 根据用户ID获取用户信息
      */
     @Override
-    public UserInfo findUserInfo(String userId) throws UserServiceException {
+    public User findUserInfo(String userId) throws UserServiceException {
         try {
             //是否输入userId
             if (StringUtils.isEmpty(userId)) {
                 throw new UserServiceException(MyResultCode.PARAM_MISS_MSG);
             } else {
-                Query query = new Query(Criteria.where("flag").is("0").and("id").is(userId));
+                Query query = new Query(Criteria.where("status").is(Status.ACTIVATE.getName()).and("id").is(userId));
                 UserInfo one = mongoTemplate.findOne(query, UserInfo.class);
                 //检查是否存在
                 if (one != null) {
-                    return one;
+                    return MappingEntity2ModelConverter.ConvertUser(one);
                 } else {
                     throw new UserServiceException(MyResultCode.USER_UNEXITS);
                 }
@@ -64,14 +70,15 @@ public class UserInfoServiceImpl implements UserInfoService {
     /**
      * 查询全部用户
      */
-    public List<UserInfo> findAllUser() throws UserServiceException {
+    @Override
+    public List<User> findAllUser() throws UserServiceException {
         try {
-            Query query = new Query(new Criteria("flag").is("0"));
+            Query query = new Query(Criteria.where("status").ne(Status.DELETE.getName()));
             List<UserInfo> userInfos = mongoTemplate.find(query, UserInfo.class);
-            if (userInfos == null) {
+            if (userInfos == null || userInfos.size() == 0) {
                 throw new UserServiceException(MyResultCode.USER_UNEXITS);
             } else {
-                return userInfos;
+                return convertQuestionList(userInfos);
             }
         } catch (Exception e) {
             throw new UserServiceException(e.getMessage());
@@ -79,67 +86,70 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<UserInfo> findUser(String id) throws UserServiceException {
+    public User findUser(String id) throws UserServiceException {
         List<UserInfo> userInfos = new ArrayList<>();
-        if (id == null || id.trim() == "") {
-            List<UserInfo> all = userRepository.findAll();
-            return all;
+        if (StringUtils.isEmpty(id)) {
+            throw new UserServiceException(MyResultCode.PARAM_MISS_MSG);
         }
-        userInfos.add(userRepository.findOneByUserId(id));
-        return userInfos;
+        Optional<UserInfo> userInfo = userRepository.findById(id);
+        if(!userInfo.isPresent()) throw new UserServiceException(MyResultCode.USER_UNEXITS);
+        return MappingEntity2ModelConverter.ConvertUser(userInfo.get());
     }
 
     /**
      * 根据Id进行删除
      *
-     * @param Id
+     * @param id
      */
     @Override
-    public String delteById(String Id) throws UserServiceException {
-        try {
+    public long deleteById(String id) throws UserServiceException {
+        UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").is(id)), new Update().set("status", Status.DELETE.getName()), UserInfo.class);
+        return result.getModifiedCount();
+        /*try {
             Query query = new Query(Criteria.where("id").is(Id));
             UserInfo one = mongoTemplate.findOne(query, UserInfo.class);
             if (one == null) {
                 throw new UserServiceException (MyResultCode.USER_UNEXITS);
             } else {
-                if (one.getFlag().equals("1")) {
+                if (Status.DELETE.getName().equals(one.getStatus())) {
                     throw new  UserServiceException(MyResultCode.DELETE_FAILED_FLAG);
                 } else {
-                    Update update = new Update().set("flag", "1");
+                    Update update = new Update().set("status", Status.DELETE.getName());
                     mongoTemplate.updateFirst(query, update, UserInfo.class);
-                    throw new UserServiceException(MyResultCode.DELETE_SUCCESS);
                 }
             }
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
-        }
+        }*/
 
     }
     /**
      * 根据Id进行恢复操作
      *
-     * @param Id
+     * @param id
      */
     @Override
-    public String RestoreById(String Id) throws  UserServiceException{
-        try {
+    public long restoreById(String id) throws  UserServiceException{
+        UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").is(id)), new Update().set("status", Status.ACTIVATE.getName()), UserInfo.class);
+        return result.getModifiedCount();
+        /*try {
             Query query = new Query(Criteria.where("id").is(Id));
             UserInfo one = mongoTemplate.findOne(query, UserInfo.class);
             if (one == null) {
                 throw new UserServiceException (MyResultCode.USER_UNEXITS);
             } else {
-                if (one.getFlag().equals("0")) {
+                if (Status.ACTIVATE.getName().equals(one.getStatus())) {
                     throw new  UserServiceException(MyResultCode.RESTORE_FAILED);
                 } else {
-                    Update update = new Update().set("flag", "0");
+                    Update update = new Update().set("status", Status.ACTIVATE.getName());
                     mongoTemplate.updateFirst(query, update, UserInfo.class);
-                    throw new UserServiceException(MyResultCode.SUCESS_MSG);
                 }
             }
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
-        }
+        }*/
     }
+
     @Override
     public PageResult findByPage(Integer page, Integer rows) {
         try {
@@ -147,7 +157,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                     .doSelectPageInfo(new ISelect() {
                         @Override
                         public void doSelect() {
-                            Query query = new Query(new Criteria("flag").is("0"));
+                            Query query = new Query(new Criteria("status").is(Status.ACTIVATE.getName()));
                             mongoTemplate.find(query, UserInfo.class);
                         }
                     });
@@ -160,57 +170,54 @@ public class UserInfoServiceImpl implements UserInfoService {
     /*
      * 根据用户Id批量删除用户
      * */
-    public List<String> deleteUserInfo(String[] ids) throws UserServiceException {
+    public long deleteUserInfo(String[] ids) throws UserServiceException {
+        UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").in(ids)), new Update().set("status", Status.DELETE.getName()), UserInfo.class);
+        return result.getModifiedCount();
+        /*List<String> fail = new ArrayList<String>();
         try {
             for (String id : ids) {
                 Query query =new Query(Criteria.where("id").is(id));
                 UserInfo one = mongoTemplate.findOne(query, UserInfo.class);
-                if (one.getFlag().equals("1")) {//输入的Id不符合删除需求
-                    throw new UserServiceException("用户" + id + MyResultCode.DELETE_FAILED);
+                if (Status.DELETE.getName().equals(one.getStatus())) {//输入的Id不符合删除需求
+                    //throw new UserServiceException("用户" + id + MyResultCode.DELETE_FAILED);
+                    fail.add(one.getId());
                 } else {//更新操作
-
-                    Update update = new Update().set("flag", "1");
+                    Update update = new Update().set("status", Status.ACTIVATE.getName());
                     mongoTemplate.updateFirst(query, update, UserInfo.class);
-                    throw new UserServiceException("用户" + id + MyResultCode.DELETE_SUCCESS);
                 }
             }
-            throw new UserServiceException(MyResultCode.SYS_ERROR_MSG);
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
         }
+        return fail;*/
     }
     /**
      * 新建用户
      *
-     * @param userInfo
+     * @param user
      * @return
      */
-    public UserInfo saveUserInfo(UserInfo userInfo) throws UserServiceException {
+    public User saveUserInfo(User user) throws UserServiceException {
         try {
-            if (StringUtils.isEmpty(userInfo.getId()))//新建
+            if (StringUtils.isEmpty(user.getUserId()))//新建
             {
-                if(userRepository.findOneByUserId(userInfo.getUserId()) != null){
+                if(userRepository.findOneByAccount(user.getUserAccount()) != null){
                     throw new UserServiceException(MyResultCode.USER_EXISTED);
                 }
-                userInfo.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-                userInfo.setCreateTime(new Date().getTime());
             }
             else {//修改
-                Optional<UserInfo> userInStore = userRepository.findById(userInfo.getUserId());
-                System.out.println(userInStore);
+                Optional<UserInfo> userInStore = userRepository.findById(user.getUserId());
                 if(!userInStore.isPresent()) throw new UserServiceException(MyResultCode.USER_UNEXITS);
-                if(!StringUtils.isEmpty(userInStore.get().getUserId())&&!userInStore.get().getUserId().equalsIgnoreCase(userInfo.getUserId())){
-                    if(userRepository.findOneByUserId(userInfo.getUserId()) != null){
+                if(!StringUtils.isEmpty(userInStore.get().getAccount())&&!userInStore.get().getAccount().equalsIgnoreCase(user.getUserAccount())){
+                    if(userRepository.findOneByAccount(user.getUserAccount()) != null){
                         throw new UserServiceException(MyResultCode.USER_EXISTED);
                     }
                 }
             }
-            userInfo.setFlag("0");
-            String pwd = Md5Util.encodeByMd5(userInfo.getPwd());
-            userInfo.setPwd(pwd);
-            userInfo.setUpdateTime(new Date().getTime());
-            UserInfo save = userRepository.save(userInfo);
-            return save;
+            user.setUserStatus(Status.ACTIVATE);
+            user.setUserPwd(Md5Util.encodeByMd5(user.getUserPwd()));
+            UserInfo userInfo = userRepository.save(MappingModel2EntityConverter.ConvertUser(user));
+            return MappingEntity2ModelConverter.ConvertUser(userInfo);
 
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
@@ -223,48 +230,75 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param ids
      */
     @Override
-    public void RestoreUsers(String[] ids) throws UserServiceException {
+    public long restoreUsers(String[] ids) throws UserServiceException {
+
+        UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").in(ids)), new Update().set("status", Status.ACTIVATE.getName()), UserInfo.class);
+        return result.getModifiedCount();
+        /*List<String> fail = new ArrayList<String>();
         try {
             for (String id : ids) {
                 Query query =new Query(Criteria.where("id").is(id));
                 UserInfo one = mongoTemplate.findOne(query, UserInfo.class);
-                if (one.getFlag().equals("1")) {//输入的Id不符合删除需求
-                    throw new UserServiceException("用户" + id + MyResultCode.RESTORE_FAILED);
+                if (Status.ACTIVATE.getName().equals(one.getStatus())) {//输入的Id不符合删除需求
+                    //throw new UserServiceException("用户" + id + MyResultCode.RESTORE_FAILED);
+                    fail.add(one.getId());
                 } else {//更新操作
-
                     Update update = new Update().set("flag", "0");
                     mongoTemplate.updateFirst(query, update, UserInfo.class);
-                    throw new UserServiceException("用户" + id + MyResultCode.SUCESS_MSG);
                 }
             }
-            throw new UserServiceException(MyResultCode.SYS_ERROR_MSG);
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
         }
+        return fail;*/
     }
 
     /**
      * 编辑用户信息
      *
-     * @param userInfo
+     * @param user
      * @return
      */
-    public UserInfo UpdateUserInfo(UserInfo userInfo) throws UserServiceException {
+    @Override
+    public User UpdateUserInfo(User user) throws UserServiceException {
         try {
-            if (userRepository.findOneByUserId(userInfo.getId()) == null) {
-                throw new UserServiceException(MyResultCode.UPDATE_FAILED);
+            if (userRepository.findById(user.getUserId()) == null) {
+                throw new UserServiceException(MyResultCode.USER_UNEXITS);
             } else {
-                userInfo.setUpdateTime(new Date().getTime());
-                return userRepository.save(userInfo);
+                return MappingEntity2ModelConverter.ConvertUser(userRepository.save(MappingModel2EntityConverter.ConvertUser(user)));
             }
         } catch (Exception e) {
             throw new UserServiceException(e.getMessage());
         }
-
     }
-    public  void test(String id){
-        Query query= new Query(Criteria.where("userId").is("0"));
-        UserInfo byId = mongoTemplate.findById(id, UserInfo.class);
 
+    @Override
+    public TransferTeacher getTeacherById(String teacherId) {
+        Criteria criteria = Criteria.where("id").is(teacherId);
+        Query query = new Query(criteria);
+        UserInfo userInfo  = mongoTemplate.findOne(query,UserInfo.class);
+        return MappingEntity2ModelConverter.ConvertTransferTeacher(userInfo);
+    }
+
+    @Override
+    public List<TransferClass> getTeacherClass(String id) {
+        Optional<UserInfo> result  = userRepository.findById(id);
+        if(!result.isPresent()) return null;
+        return MappingEntity2ModelConverter.TransferClassInfoFromTeacher(result.get());
+    }
+
+    @Override
+    public TransferSchool getSchoolInfoById(String id) {
+        Optional<UserInfo> result  = userRepository.findById(id);
+        if(!result.isPresent()) return null;
+        return MappingEntity2ModelConverter.TransferSchoolInfoFromTeacher(result.get());
+    }
+
+    private List<User> convertQuestionList(List<UserInfo> userInfos){
+        List<User> users = new ArrayList<User>();
+        userInfos.forEach(userInfo -> {
+            users.add(MappingEntity2ModelConverter.ConvertUser(userInfo));
+        });
+        return users;
     }
 }
