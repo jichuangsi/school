@@ -140,9 +140,13 @@ public class TeacherCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getSubjectPic")
-    public ResponseModel<CourseFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
-
-        return  ResponseModel.sucess("", teacherCourseService.downloadTeacherSubjectPic(userInfo, revise.getStubForSubjective()));
+    public ResponseModel<Base64TransferFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
+        Base64TransferFile base64TransferFile = new Base64TransferFile();
+        CourseFile courseFile =  teacherCourseService.downloadTeacherSubjectPic(userInfo, revise.getStubForSubjective());
+        base64TransferFile.setName(courseFile.getName());
+        base64TransferFile.setContentType(courseFile.getContentType());
+        base64TransferFile.setContent(new String(courseFile.getContent()));
+        return  ResponseModel.sucess("", base64TransferFile);
     }
 
     //删除指定文件名图片
