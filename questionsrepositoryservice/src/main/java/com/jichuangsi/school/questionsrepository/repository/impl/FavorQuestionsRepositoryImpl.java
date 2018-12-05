@@ -5,7 +5,6 @@ import com.jichuangsi.school.questionsrepository.entity.FavorQuestions;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.repository.IFavorQuestionsRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -78,5 +77,12 @@ public class FavorQuestionsRepositoryImpl<T> implements IFavorQuestionsRepositor
     public void findAllAndRemove(DeleteQueryModel deleteQueryModel) {
         Criteria criteria = Criteria.where("id").in(deleteQueryModel.getIds());
         mongoTemplate.findAllAndRemove(new Query(criteria),FavorQuestions.class);
+    }
+
+    @Override
+    public FavorQuestions findFavorByMD52(String teacherId, String MD52) {
+        Criteria criteria = Criteria.where("teacherId").is(teacherId)
+                .and("questionIdMD52").is(MD52);
+        return mongoTemplate.findOne(new Query(criteria),FavorQuestions.class);
     }
 }

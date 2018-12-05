@@ -6,8 +6,8 @@ import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
-import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
+import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.repository.ISelfQuestionsRepository;
 import com.jichuangsi.school.questionsrepository.service.IFileStoreService;
@@ -33,6 +33,9 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
     @Resource
     private ISelfQuestionsRepository selfQuestionsRepository;
+
+    /*@Resource
+    private IUserInfoService userInfoService;*/
 
     @Resource
     private MongoTemplate mongoTemplate;
@@ -70,6 +73,9 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
     @Override
     public void addSelfQuestion(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) {
+        /*TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        selfQuestion.setGradeId(transferTeacher.getGradeId());
+        selfQuestion.setSubjectId(transferTeacher.getSubjectId());*/
         SelfQuestions selfQuestions = MappingModel2EntityConverter.ConverterSelfQuestion(userInfoForToken,selfQuestion);
         mongoTemplate.save(selfQuestions);
     }
