@@ -44,5 +44,6 @@ com:
         chapterApi: chapterApi
         questionApi: getQuestions
         answerApi: getAnswer
+        knowledgeApi: knowledgeApi
       swagger:
         enable: true
