@@ -13,6 +13,7 @@ public class QuestionStatisticsInfoModel {
 	private float avgScore;// 平均分
 	private float acc;// 正确率
 	private int count;// 作答人数
+	private String mostError;// 最多错误答案
 
 	public final String getQuestionId() {
 		return questionId;
@@ -52,6 +53,14 @@ public class QuestionStatisticsInfoModel {
 
 	public final void setCount(int count) {
 		this.count = count;
+	}
+
+	public String getMostError() {
+		return mostError;
+	}
+
+	public void setMostError(String mostError) {
+		this.mostError = mostError;
 	}
 
 }

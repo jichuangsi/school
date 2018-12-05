@@ -3,6 +3,7 @@
  */
 package com.jichuangsi.school.statistics.entity;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -18,11 +19,11 @@ public class QuestionAnswersEntity {
 	private String uid;
 	private String courseId;
 	private String questionId;
-	private String quType;//题目类型
-	private float totalScore;//总分
-	private int accCount;//正确人数
-	private int count;//作答人数
-	private Set<StudentAnswerEntity> studentAnswers;
+	private String quType;// 题目类型
+	private float totalScore;// 总分
+	private int accCount;// 正确人数
+	private int count;// 作答人数
+	private List<StudentAnswerEntity> studentAnswers;
 
 	public final String getUid() {
 		return uid;
@@ -48,11 +49,11 @@ public class QuestionAnswersEntity {
 		this.questionId = questionId;
 	}
 
-	public final Set<StudentAnswerEntity> getStudentAnswers() {
+	public final List<StudentAnswerEntity> getStudentAnswers() {
 		return studentAnswers;
 	}
 
-	public final void setStudentAnswers(Set<StudentAnswerEntity> studentAnswers) {
+	public final void setStudentAnswers(List<StudentAnswerEntity> studentAnswers) {
 		this.studentAnswers = studentAnswers;
 	}
 

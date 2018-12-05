@@ -11,16 +11,19 @@ import com.jichuangsi.school.statistics.entity.StudentAnswerEntity;
  */
 public class StudentAnswerModel {
 
+	public static final String QUTYPE_OBJECTIVE = "objective";
+	public static final String QUTYPE_SUBJECTIVE = "subjective";
+
 	private String courseId;
 	private String questionId;
 	private float score;// 题目得分
-	private boolean isRight;// 正确与否
+	private boolean right;// 正确与否
 	private String quType;// 题目类型，主观题，客观题
 	private String answer;// 答案内容
 	private String studentId;// 学生ID
 
 	public StudentAnswerEntity genStudentAnswerEntity() {
-		return new StudentAnswerEntity(score, isRight, answer, studentId);
+		return new StudentAnswerEntity(score, right, answer, studentId);
 	}
 
 	public final String getCourseId() {
@@ -63,12 +66,12 @@ public class StudentAnswerModel {
 		this.score = score;
 	}
 
-	public final boolean getIsRight() {
-		return isRight;
+	public boolean getRight() {
+		return right;
 	}
 
-	public final void setIsRight(boolean isRight) {
-		this.isRight = isRight;
+	public void setRight(boolean right) {
+		this.right = right;
 	}
 
 	public final String getStudentId() {

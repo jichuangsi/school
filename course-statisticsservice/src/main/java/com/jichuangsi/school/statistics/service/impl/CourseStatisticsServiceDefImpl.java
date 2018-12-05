@@ -5,7 +5,12 @@ package com.jichuangsi.school.statistics.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -160,13 +165,14 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 				}
 
 			}
+
+			// 获取统计信息
+			QuestionStatisticsInfoModel info = getQuestionStatisticsInfo(answerModel.getCourseId(),
+					answerModel.getQuestionId());
+			// 发送题目统计变更消息
+			questionStatisticsSender.send(info);
 		}
 
-		// 获取统计信息
-		QuestionStatisticsInfoModel info = getQuestionStatisticsInfo(answerModel.getCourseId(),
-				answerModel.getQuestionId());
-		// 发送题目统计变更消息
-		questionStatisticsSender.send(info);
 		return answerModel;
 	}
 
@@ -181,6 +187,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 			info.setAcc(0);
 			info.setAvgScore(0);
 			info.setCount(0);
+			info.setMostError("");
 		} else {
 			fillQuestionStatisticsInfoModel(entity, info);
 		}
@@ -193,6 +200,35 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 		info.setAcc((float) entity.getAccCount() / entity.getCount());
 		info.setAvgScore(entity.getTotalScore() / entity.getCount());
 		info.setCount(entity.getCount());
+
+		// 不是全部人答对
+		if (entity.getAccCount() < entity.getCount()) {
+			// 获取最多错误答案
+			// 统计出各个错误答案的出现次数
+			Map<String, Long> countMap = entity.getStudentAnswers().stream().filter(studentAnswer -> {
+				if (studentAnswer.getIsRight()) {
+					return false;
+				} else {
+					return true;
+				}
+			}).collect(Collectors.groupingBy(StudentAnswerEntity::getAnswer, Collectors.counting()));
+
+			if (!countMap.isEmpty()) {
+				// 找出出现次数最多的错误答案
+				Optional<Entry<String, Long>> op = countMap.entrySet().stream().max((a1, a2) -> {
+					return a1.getValue().intValue() - a2.getValue().intValue();
+				});
+				info.setMostError(op.get().getKey());
+			}
+
+		} else {
+			info.setMostError("");
+		}
+
+	}
+
+	public static void main(String[] args) {
+
 	}
 
 }
