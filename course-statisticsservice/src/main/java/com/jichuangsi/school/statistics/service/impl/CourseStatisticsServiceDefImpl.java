@@ -201,8 +201,8 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 		info.setAvgScore(entity.getTotalScore() / entity.getCount());
 		info.setCount(entity.getCount());
 
-		// 不是全部人答对
-		if (entity.getAccCount() < entity.getCount()) {
+		// 不是全部人答对，且题目是客观题
+		if (StudentAnswerModel.QUTYPE_OBJECTIVE.equals(entity.getQuType()) && entity.getAccCount() < entity.getCount()) {
 			// 获取最多错误答案
 			// 统计出各个错误答案的出现次数
 			Map<String, Long> countMap = entity.getStudentAnswers().stream().filter(studentAnswer -> {
