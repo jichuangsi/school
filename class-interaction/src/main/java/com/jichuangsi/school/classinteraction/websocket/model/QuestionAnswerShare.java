@@ -3,8 +3,6 @@
  */
 package com.jichuangsi.school.classinteraction.websocket.model;
 
-import com.alibaba.fastjson.JSONObject;
-
 /**
  * @author huangjiajun
  *
