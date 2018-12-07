@@ -4,6 +4,7 @@
 package com.jichuangsi.school.classinteraction.websocket.service;
 
 import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionAnswerShare;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
 
@@ -27,5 +28,10 @@ public interface ISendToStudentService {
 	 * 推送题目终止作答信息
 	 */
 	void sendQuestionCloseInfo(QuestionClose questionClose);
+	
+	/**
+	 * 推送题目答案共享信息
+	 */
+	void sendQuestionAnswerShareInfo(QuestionAnswerShare answerShare);
 	
 }

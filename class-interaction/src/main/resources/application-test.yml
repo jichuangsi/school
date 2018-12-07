@@ -43,6 +43,7 @@ custom:
         question-pubilish: course.question.pub.classinteraction
         question-statistics: course.question.statistics.classinteraction
         question-termin: course.question.termin.classinteraction
+        answer-share: course.question.answer.share.classinteraction
     producer: 
       queue-name:
         course-studentAdd: course.student.add.coursestatistics
