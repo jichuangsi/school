@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: eaxmservice
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/school
+
+server:
+  port: 8089
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+com:
+  jichuangsi:
+    school:
+      mq:
+        courses: course.start.classinteraction
+        questions:
+          pubilish: course.question.pub.classinteraction
+          terminate: course.question.termin.classinteraction
+        answers:  course.question.answer.coursestatistics
+        exchange: course.start.exchange
+      token:
+          jwt:
+            secret: EC86@34$123c
+          userClaim : userInfo
+      swagger:
+        enable: true

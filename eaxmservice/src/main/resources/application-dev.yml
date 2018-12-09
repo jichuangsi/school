@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: examservice
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/school
+
+server:
+  port: 8089
+
+ribbon:
+  eureka:
+    enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+com:
+  jichuangsi:
+    school:
+      token:
+          jwt:
+            secret: EC86@34$123c
+          userClaim : userInfo
+      swagger:
+        enable: true
