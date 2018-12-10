@@ -3,9 +3,13 @@ spring:
     name: userservice
   data:
     mongodb:
-      uri: mongodb://localhost:27017/school
+      uri: mongodb://localhost:27017/Students
+  devtools:
+    freemarker:
+      cache:false
 server:
   port: 8083
+
 
 eureka: 
   client:    

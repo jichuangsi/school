@@ -23,20 +23,20 @@ app.service('baseService', function($http){
         return this.sendGet(url, "id=" + id);
     };
 
-    /** 分页查询(带查询条件或不带查询条件) */
-    this.findByPage = function(url, page, rows, data){
-        /** 定义分页URL */
-        url += '?page='+ page +'&rows=' + rows;
-        if (data && JSON.stringify(data) != "{}"){
-            return $http({
-                method : 'get',
-                url : url,
-                params : data
-            });
-        }else{
-            return this.sendGet(url);
-        }
-    };
+    // /** 分页查询(带查询条件或不带查询条件) */
+    // this.findByPage = function(url, page, rows, data){
+    //     /** 定义分页URL */
+    //     url += '?page='+ page +'&rows=' + rows;
+    //     if (data && JSON.stringify(data) != "{}"){
+    //         return $http({
+    //             method : 'get',
+    //             url : url,
+    //             params : data
+    //         });
+    //     }else{
+    //         return this.sendGet(url);
+    //     }
+    // };
 
     /** 删除或批量删除 */
     this.deleteById = function(url, ids){

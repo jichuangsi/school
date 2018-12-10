@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jichuangsi.school.user.entity.UserInfo;
 
-//@Repository
+@Repository
 public interface UserRepository extends MongoRepository<UserInfo, String>{
 	UserInfo findOneByAccount(String account);
 }

@@ -17,6 +17,7 @@ import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -204,24 +205,26 @@ public class UserInfoServiceImpl implements UserInfoService {
                 if(userRepository.findOneByAccount(user.getUserAccount()) != null){
                     throw new UserServiceException(MyResultCode.USER_EXISTED);
                 }
+                user.setUserId(UUID.randomUUID().toString());
+            }else {
+//            else {//修改
+//                Optional<UserInfo> userInStore = userRepository.findById(user.getUserId());
+//                if(!userInStore.isPresent()) throw new UserServiceException(MyResultCode.USER_UNEXITS);
+//                if(!StringUtils.isEmpty(userInStore.get().getAccount())&&!userInStore.get().getAccount().equalsIgnoreCase(user.getUserAccount())){
+//                    if(userRepository.findOneByAccount(user.getUserAccount()) != null){
+//                        throw new UserServeException(MyResultCode.USER_EXISTED);
+//                    }
+//                }
+//            }
+                user.setUserStatus(Status.ACTIVATE);
+                user.setUserPwd(Md5Util.encodeByMd5(user.getUserPwd()));
+                UserInfo userInfo = userRepository.save(MappingModel2EntityConverter.ConvertUser(user));
+                return MappingEntity2ModelConverter.ConvertUser(userInfo);
             }
-            else {//修改
-                Optional<UserInfo> userInStore = userRepository.findById(user.getUserId());
-                if(!userInStore.isPresent()) throw new UserServiceException(MyResultCode.USER_UNEXITS);
-                if(!StringUtils.isEmpty(userInStore.get().getAccount())&&!userInStore.get().getAccount().equalsIgnoreCase(user.getUserAccount())){
-                    if(userRepository.findOneByAccount(user.getUserAccount()) != null){
-                        throw new UserServiceException(MyResultCode.USER_EXISTED);
-                    }
-                }
-            }
-            user.setUserStatus(Status.ACTIVATE);
-            user.setUserPwd(Md5Util.encodeByMd5(user.getUserPwd()));
-            UserInfo userInfo = userRepository.save(MappingModel2EntityConverter.ConvertUser(user));
-            return MappingEntity2ModelConverter.ConvertUser(userInfo);
-
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
         }
+        return null;
     }
 
     /**
@@ -265,7 +268,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             if (userRepository.findById(user.getUserId()) == null) {
                 throw new UserServiceException(MyResultCode.USER_UNEXITS);
             } else {
-                return MappingEntity2ModelConverter.ConvertUser(userRepository.save(MappingModel2EntityConverter.ConvertUser(user)));
+                User user1 = MappingEntity2ModelConverter.ConvertUser(userRepository.save(MappingModel2EntityConverter.ConvertUser(user)));
+                return user1;
             }
         } catch (Exception e) {
             throw new UserServiceException(e.getMessage());
@@ -293,6 +297,50 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(!result.isPresent()) return null;
         return MappingEntity2ModelConverter.TransferSchoolInfoFromTeacher(result.get());
     }
+
+    @Override
+    public List<User> findAllForDelete()throws UserServiceException {
+        try {
+            Query query = new Query(Criteria.where("status").is(Status.DELETE.getName()));
+            List<UserInfo> userInfos = mongoTemplate.find(query, UserInfo.class);
+            if (userInfos == null || userInfos.size() == 0) {
+                throw new UserServiceException(MyResultCode.USER_UNEXITS);
+            } else {
+                return convertQuestionList(userInfos);
+            }
+        } catch (Exception e) {
+            throw new UserServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public User findDeleteOne(String id)throws UserServiceException  {
+        try {
+            //是否输入userId
+            if (StringUtils.isEmpty(id)) {
+                throw new UserServiceException(MyResultCode.PARAM_MISS_MSG);
+            } else {
+                Query query = new Query(Criteria.where("status").ne(Status.ACTIVATE.getName()).and("id").is(id));
+                UserInfo one = mongoTemplate.findOne(query, UserInfo.class);
+                //检查是否存在
+                if (one != null) {
+                    return MappingEntity2ModelConverter.ConvertUser(one);
+                } else {
+                    throw new UserServiceException(MyResultCode.USER_UNEXITS);
+                }
+            }
+        } catch (Exception e) {
+            throw new UserServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Long TrulyDeleted(String[] ids) throws UserServiceException{
+        DeleteResult result = mongoTemplate.remove(new Query(Criteria.where("id").in(ids)), UserInfo.class);
+        long deletedCount = result.getDeletedCount();
+        return deletedCount;
+    }
+
 
     private List<User> convertQuestionList(List<UserInfo> userInfos){
         List<User> users = new ArrayList<User>();

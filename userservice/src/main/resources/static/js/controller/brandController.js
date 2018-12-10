@@ -8,13 +8,11 @@ app.controller('TestController', function($scope, $controller, baseService){
     $scope.searchEntity = {};
     /** 分页查询(查询条件) */
     $scope.search = function(page, rows){
-        baseService.findByPage("/brand1/findByPage", page,
-			rows, $scope.searchEntity)
+        baseService.findByPage("/findAll"
+			)
             .then(function(response){
                 /** 获取分页查询结果 */
-                $scope.dataList = response.data.rows;
-                /** 更新分页总记录数 */
-                $scope.paginationConf.totalItems = response.data.total;
+                $scope.dataList = response.data;
             });
     };
 
@@ -25,7 +23,7 @@ app.controller('TestController', function($scope, $controller, baseService){
             url = "update";
         }
         /** 发送post请求 */
-        baseService.sendPost("/brand1/" + url, $scope.entity)
+        baseService.sendPost(url, $scope.entity)
             .then(function(response){
                 if (response.data){
                     /** 重新加载数据 */
@@ -45,7 +43,7 @@ app.controller('TestController', function($scope, $controller, baseService){
     /** 批量删除 */
     $scope.delete = function(){
         if ($scope.ids.length > 0){
-            baseService.deleteById("/brand1/delete", $scope.ids)
+            baseService.deleteById("/delete", $scope.ids)
                 .then(function(response){
                     if (response.data){
                         /** 重新加载数据 */

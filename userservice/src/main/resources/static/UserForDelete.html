@@ -27,7 +27,7 @@
             // 查询全部品牌
             $scope.findAll = function () {
                 // 发送异步请求
-                $http.get("/findAll").then(function(response){
+                $http.get("/findAllForDelete").then(function(response){
                     // alert(response.data)
                     // 获取响应数据
                     $scope.brandList = response.data.data;
@@ -55,41 +55,23 @@
 
             // 定义封装查询条件的对象
 
-
+            //
             // 分页查询品牌
             $scope.search = function(){
                 // 发送异步请求
                 $scope.brandList={};
                 $http({
                     method : 'get', // 请求方式
-                    url : "/findOne?id="+$scope.userId, // 请求URL
+                    url : "/findDeleteOne?id="+$scope.userId, // 请求URL
                 }).then(function(response){
                     // 获取响应数据 {'rows' : [{},{}], 'total' : 100}
-                   // $scope.brandList = response.data;
-                   //  console.log(response.data.data)
+                    // $scope.brandList = response.data;
+                    //  console.log(response.data.data)
                     var a = []
                     a.push(response.data.data)
                     // console.log(a)
                     $scope.brandList = a
 
-                });
-            };
-
-            // 添加或修改品牌
-            $scope.saveOrUpdate = function(){
-                var url = "save"; // 添加
-                if ($scope.entity.id){
-                    url = "update"; // 修改
-                }
-                // 发送异步请求
-                $http.post(url, $scope.entity).then(function(response){
-                    if (response.data){
-                        alert("操作成功！");
-                        // 重新加载数据
-                        $scope.reload();
-                    }else{
-                        alert("操作失败！")
-                    }
                 });
             };
             // 修改按钮点击事件
@@ -135,13 +117,43 @@
                     }
                 }
             };
-
+            var c=0;
+            $scope.sure=function () {
+                c=1;
+            }
             // 批量删除
-            $scope.delete = function(){
+            $scope.delete = function() {
+                // var q = document.getElementsByClassName('warning')
+                // document.getElementsByClassName('warning').className  = 'as'
+                // console.log(q)
+                document.getElementById("warning").style.display = 'block'
+                if ($scope.ids.length > 0) {
+                    // 发送异步请求
+                    if (c == 1) {
+                        $http.get("/TrulyDeleted?ids=" + $scope.ids).then(function (response) {
+                            // alert(response)
+                            if (response.data) {
+                                alert(response.data)
+                                // 重新加载数据
+                                $scope.reload();
+                                // 清空数组
+                                $scope.ids = [];
+                            } else {
+                                alert("删除失败！");
+                            }
+                        });
+
+                    } else {
+                        alert("请选择要删除的用户！");
+                    }
+                };
+            }
+            // 批量恢复
+            $scope.restore = function(){
                 if ($scope.ids.length > 0){
                     alert($scope.ids)
                     // 发送异步请求
-                    $http.get("/delete?ids=" + $scope.ids).then(function(response){
+                    $http.get("/restore?ids=" + $scope.ids).then(function(response){
                         // alert(response)
                         if (response.data){
                             alert(response.data)
@@ -150,12 +162,12 @@
                             // 清空数组
                             $scope.ids = [];
                         }else{
-                            alert("删除失败！");
+                            alert("恢复失败！");
                         }
                     });
 
                 }else{
-                    alert("请选择要删除的用户！");
+                    alert("请选择要恢复的用户！");
                 }
             };
 
@@ -180,7 +192,12 @@
 <div class="box-header with-border">
     <h3 class="box-title">用户管理</h3>
 </div>
-
+<!--弹窗警告-->
+<div id="warning" style="display:none; border: 1px solid #000; position: fixed; top: 10px;left: 620px;margin-left: -75px; background-color: #fff; width: 300px; height: 150px; text-align: center">
+    <p style="color: red;">警告</p>
+    <input type="button" value="取消">
+        <input type="button" value="确定" ng-click="">
+</div>
 <div class="box-body" >
     <!-- 数据表格 -->
     <div class="table-box">
@@ -191,6 +208,9 @@
                     <button type="button" class="btn btn-default" title="删除"
                             ng-click="delete();">
                         <i class="fa fa-trash-o"></i> 删除</button>
+                    <button type="button" class="btn btn-default" title="恢复"
+                            ng-click="restore();">
+                        <i class="fa fa-trash-o"></i> 恢复</button>
                     <button type="button" class="btn btn-default" title="刷新"
                             onclick="window.location.reload();">
                         <i class="fa fa-refresh"></i> 刷新</button>
@@ -203,11 +223,11 @@
                 <table>
                     <tr>
                         <td><input class="form-control"
-                                    placeholder="用户Id" ng-model="userId">
+                                   placeholder="用户Id" ng-model="userId">
                         </td>
                         <td>
                             <button type="button" class="btn btn-default"
-                                     ng-click="search();">
+                                    ng-click="search();">
                                 <i class="fa fa-trash-o"></i> 查询
                             </button>
                         </td>
@@ -288,14 +308,14 @@
         <div class="modal-content" style="width:1200px;margin-left:-254px">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="myModalLabel">用户编辑</h3>
+                <h3 >用户编辑</h3>
             </div>
             <div class="modal-body" >
                 <table class="table table-bordered table-striped"  width="800px">
                     <tr>
                         <td>Id</td>
                         <td ><input  class="form-control" ng-model="entity.userId"
-                                    placeholder="Id" >  </td>
+                                     placeholder="Id" >  </td>
                         <td>名字</td>
                         <td><input  class="form-control" ng-model="entity.userName"
                                     placeholder="名字" >  </td>
@@ -312,87 +332,87 @@
                         <td><input  class="form-control" ng-model="entity.userStatus"
                                     placeholder="状态" >  </td>
                     </tr>
-                   <a >以上为基本信息</a>
+                    <a >以上为基本信息</a>
                     <table class="table table-bordered table-striped"  width="800px" ng-repeat="school in entity.roles" >
-                    <tr>
-                        <td>次要年级</td>
-                        <td><input  class="form-control" ng-model="school.secondaryGrades"
-                                    placeholder="次要年级" >  </td>
-                        <td>次要科目</td>
-                        <td><input  class="form-control" ng-model="school.secondarySubjects"
-                                    placeholder="次要科目" >  </td>
-                        <td>次级班级<input  class="form-control" ng-model="school.secondaryClass"
-                                    placeholder="次级班级" >  </td>
-                        <!--<td>教师Id</td>-->
-                        <!--<td><input  class="form-control" ng-model="school.roleId"-->
-                                    <!--placeholder="教师Id" >  </td>-->
-                        <!--<td>教师名字:</td>-->
-                        <td><input  class="form-control" ng-model="school.roleName"
-                                    placeholder="教师名字" >  </td>
-                        <td>权限:</td>
-                        <td><input  class="form-control" ng-model="school.privileges"
-                                    placeholder="权限" >  </td>
-                    </tr>
+                        <tr>
+                            <td>次要年级</td>
+                            <td><input  class="form-control" ng-model="school.secondaryGrades"
+                                        placeholder="次要年级" >  </td>
+                            <td>次要科目</td>
+                            <td><input  class="form-control" ng-model="school.secondarySubjects"
+                                        placeholder="次要科目" >  </td>
+                            <td>次级班级<input  class="form-control" ng-model="school.secondaryClass"
+                                            placeholder="次级班级" >  </td>
+                            <!--<td>教师Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.roleId"-->
+                            <!--placeholder="教师Id" >  </td>-->
+                            <!--<td>教师名字:</td>-->
+                            <td><input  class="form-control" ng-model="school.roleName"
+                                        placeholder="教师名字" >  </td>
+                            <td>权限:</td>
+                            <td><input  class="form-control" ng-model="school.privileges"
+                                        placeholder="权限" >  </td>
+                        </tr>
 
-                    <tr>
-                        <!--<td>学校Id</td>-->
-                        <!--<td><input  class="form-control" ng-model="school.school.schoolId"-->
-                                    <!--placeholder="学校Id" >  </td>-->
-                        <td>学校名字</td>
-                        <td><input  class="form-control" ng-model="school.school.schoolName"
-                                    placeholder="学校名字" >  </td>
-                        <td>学校地址</td>
-                        <td><input  class="form-control" ng-model="school.school.address"
-                                    placeholder="学校地址" >  </td>
-                    </tr>
+                        <tr>
+                            <!--<td>学校Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.school.schoolId"-->
+                            <!--placeholder="学校Id" >  </td>-->
+                            <td>学校名字</td>
+                            <td><input  class="form-control" ng-model="school.school.schoolName"
+                                        placeholder="学校名字" >  </td>
+                            <td>学校地址</td>
+                            <td><input  class="form-control" ng-model="school.school.address"
+                                        placeholder="学校地址" >  </td>
+                        </tr>
                         <!--<tr>-->
                         <!--<td>年段Id:</td>-->
                         <!--<td><input  class="form-control" ng-model="school.phrase.phraseId"-->
-                                    <!--placeholder="年段Id" >  </td>-->
+                        <!--placeholder="年段Id" >  </td>-->
                         <td>年段名</td>
                         <td><input  class="form-control" ng-model="school.phrase.phraseName"
                                     placeholder="年段名" >  </td>
-                    </tr>
-                    <tr>
-                        <!--<td>班级Id:</td>-->
-                        <!--<td><input  class="form-control" ng-model="school.primaryClass.classId"-->
-                                    <!--placeholder="班级Id" >  </td>-->
-                        <td>班级名</td>
-                        <td><input  class="form-control" ng-model="school.primaryClass.className"
-                                    placeholder="班级名" >  </td>
-                    </tr>
-                    <tr>
-                        <!--<td>小学年级</td>-->
-                        <!--<td>年段Id</td>-->
-                        <!--<td><input  class="form-control" ng-model="school.primaryGrade.gradeId"-->
-                                    <!--placeholder="年段Id" >  </td>-->
-                        <td>小学班级</td>
-                        <td><input  class="form-control" ng-model="school.primaryGrade.classes"
-                                    placeholder="小学班级" >  </td>
-                        <td>年段名</td>
-                        <td><input  class="form-control" ng-model="school.primaryGrade.gradeName"
-                                    placeholder="年段名" >  </td>
-                    </tr>
-                    <tr>
-                        <td>职教科目</td>
-                        <!--<td>科目Id</td>-->
-                        <!--<td><input  class="form-control" ng-model="school.primarySubject.subjectId"-->
-                                    <!--placeholder="科目Id" >  </td>-->
-                        <td>科目名字</td>
-                        <td><input  class="form-control" ng-model="school.primarySubject.subjectName"
-                                    placeholder="科目名字" >  </td>
-                    </tr>
+                        </tr>
+                        <tr>
+                            <!--<td>班级Id:</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.primaryClass.classId"-->
+                            <!--placeholder="班级Id" >  </td>-->
+                            <td>班级名</td>
+                            <td><input  class="form-control" ng-model="school.primaryClass.className"
+                                        placeholder="班级名" >  </td>
+                        </tr>
+                        <tr>
+                            <!--<td>小学年级</td>-->
+                            <!--<td>年段Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.primaryGrade.gradeId"-->
+                            <!--placeholder="年段Id" >  </td>-->
+                            <td>小学班级</td>
+                            <td><input  class="form-control" ng-model="school.primaryGrade.classes"
+                                        placeholder="小学班级" >  </td>
+                            <td>年段名</td>
+                            <td><input  class="form-control" ng-model="school.primaryGrade.gradeName"
+                                        placeholder="年段名" >  </td>
+                        </tr>
+                        <tr>
+                            <td>职教科目</td>
+                            <!--<td>科目Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.primarySubject.subjectId"-->
+                            <!--placeholder="科目Id" >  </td>-->
+                            <td>科目名字</td>
+                            <td><input  class="form-control" ng-model="school.primarySubject.subjectName"
+                                        placeholder="科目名字" >  </td>
+                        </tr>
 
-                    <!--<tr>-->
+                        <!--<tr>-->
                         <!--<td>新建时间</td>-->
                         <!--<td><input  class="form-control" ng-model="entity.createTime"-->
-                                    <!--placeholder="新建时间" >  </td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
+                        <!--placeholder="新建时间" >  </td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
                         <!--<td>最近修改时间</td>-->
                         <!--<td><input  class="form-control" ng-model="entity.updateTime"-->
-                                    <!--placeholder="最近修改时间" >  </td>-->
-                </table>
+                        <!--placeholder="最近修改时间" >  </td>-->
+                    </table>
                 </table>
             </div>
             <div class="modal-footer">
@@ -401,9 +421,9 @@
                 <button class="btn btn-default" data-dismiss="modal"
                         aria-hidden="true">关闭</button>
             </div>
-            </div>
         </div>
     </div>
+</div>
 </div>
 <!--详情窗口-->
 <div class="modal fade" id="Details" tabindex="-1" role="dialog"

@@ -35,6 +35,7 @@ public final class MappingEntity2ModelConverter {
         user.setUserName(userInfo.getName());
         user.setUserSex(Sex.getSex(userInfo.getSex()));
         user.setRoles(ConvertRole(userInfo.getRoleInfos()));
+        user.setUserPwd(userInfo.getPwd());
         user.setCreateTime(userInfo.getCreateTime());
         user.setUpdateTime(userInfo.getUpdateTime());
 

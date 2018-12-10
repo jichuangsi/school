@@ -29,7 +29,8 @@ public  final class MappingModel2EntityConverter {
         userInfo.setPwd(user.getUserPwd());
         userInfo.setSex(user.getUserSex().getName());
         userInfo.setStatus(user.getUserStatus().getName());
-        userInfo.setRoleInfos(ConvertRole(user.getRoles()));
+        List<RoleInfo> roleInfos = ConvertRole(user.getRoles());
+        userInfo.setRoleInfos(roleInfos);
 
         if(StringUtils.isEmpty(user.getUserId())) userInfo.setCreateTime(new Date().getTime());
         userInfo.setUpdateTime(new Date().getTime());

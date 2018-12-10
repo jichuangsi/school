@@ -2,13 +2,11 @@ package com.jichuangsi.school.user.service;
 
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.commons.PageResult;
-import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import org.springframework.transaction.annotation.Transactional;
-import com.jichuangsi.school.user.model.org.Class;
 
 import java.util.List;
 
@@ -70,15 +68,61 @@ public interface UserInfoService {
     @Transactional
     User saveUserInfo(User user)  throws UserServiceException;
 
+    /**
+     * 批量恢复
+     * @param ids
+     * @return
+     * @throws UserServiceException
+     */
     @Transactional
     long restoreUsers(String[] ids)throws UserServiceException;
 
+    /**
+     * 通过老师ID获取老师信息
+     * @param teacherId
+     * @return
+     */
     @Transactional
     TransferTeacher getTeacherById(String teacherId);
 
+    /**
+     * 通过班级Id获取班级
+     * @param id
+     * @return
+     */
     @Transactional
     List<TransferClass> getTeacherClass(String id);
 
+    /**
+     * 通过学校Id获取学习
+     * @param id
+     * @return
+     */
     @Transactional
     TransferSchool getSchoolInfoById(String id);
+
+    /**
+     * 获取所有被删的信息
+     * @return
+     * @throws UserServiceException
+     */
+    @Transactional
+    List<User> findAllForDelete()throws UserServiceException;
+
+    /**
+     * 通过Id获取被删的信息
+     * @param id
+     * @return
+     * @throws UserServiceException
+     */
+    @Transactional
+    User findDeleteOne(String id) throws UserServiceException ;
+
+    /**
+     * 通过Id批量真正删除信息
+     * @param ids
+     * @return
+     * @throws UserServiceException
+     */
+    Long TrulyDeleted(String[] ids)throws UserServiceException;
 }

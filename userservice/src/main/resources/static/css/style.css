@@ -140,5 +140,10 @@
     border-color: #ccc;
     text-decoration: none
 }
+#warning {
+	position: absolute;
+	top: 50%;
+	height: 50%;
+}
 
 

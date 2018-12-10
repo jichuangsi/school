@@ -15,7 +15,7 @@ public class UserInfo {
 	private String name;
 	private String pwd;
 	private String sex;
-	private List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
+	private List<RoleInfo> roleInfos=new ArrayList<RoleInfo>();
 	private String status;
 	private long createTime;
 	private long updateTime;
