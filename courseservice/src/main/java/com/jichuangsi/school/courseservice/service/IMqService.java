@@ -6,6 +6,7 @@ import com.jichuangsi.school.courseservice.model.Question;
 import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
 import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
 import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
+import com.jichuangsi.school.courseservice.model.message.ShareAnswerMessageModel;
 
 public interface IMqService {
     void send(Course course);
@@ -13,4 +14,5 @@ public interface IMqService {
     void sendMsg4PublishQuestion(QuestionMessageModel questionMsg);
     void sendMsg4TermQuestion(QuestionMessageModel questionMsg);
     void sendMsg4SubmitAnswer(AnswerMessageModel answerMsg);
+    void sendMsg4ShareAnswer(ShareAnswerMessageModel shareAnswerMsg);
 }

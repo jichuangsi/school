@@ -63,6 +63,7 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
     @Override
     public void saveNewCourse(UserInfoForToken userInfoForToken, CourseForTeacher courseForTeacher) throws TeacherCourseServiceException {
         DateFormateUtil dfu  = new DateFormateUtil(defaultDateFormat1);
+        TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
         Course course = MappingModel2EntityConverter.ConvertTeacherCourse(userInfoForToken,courseForTeacher);
         if(course.getStartTime() > 0) course.setEndTime(dfu.getEndTime(course.getStartTime(), coursePeriod));
         //course.setStatus(Status.NOTSTART.getName());
@@ -72,6 +73,8 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         }
         List<String> questionIds = new ArrayList<String>();
         for (QuestionForTeacher questionForTeacher: courseForTeacher.getQuestions() ) {
+            questionForTeacher.setGradeId(transferTeacher.getGradeId());
+            questionForTeacher.setSubjectId(transferTeacher.getSubjectId());
             Question question = MappingModel2EntityConverter.ConvertTeacherQuestion(questionForTeacher);
             question = (Question) courseConsoleRepository.save(question);
             if (question==null){

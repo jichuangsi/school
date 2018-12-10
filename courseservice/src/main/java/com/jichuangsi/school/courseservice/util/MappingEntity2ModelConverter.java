@@ -98,7 +98,7 @@ public final class MappingEntity2ModelConverter {
         answerForStudent.setStudentId(studentAnswer.getStudentId());
         answerForStudent.setStudentName(studentAnswer.getStudentName());
         answerForStudent.setAnswerForObjective(studentAnswer.getObjectiveAnswer());
-        answerForStudent.setPicForSubjective(studentAnswer.getSubjectivePic());
+        //answerForStudent.setPicForSubjective(studentAnswer.getSubjectivePic());
         answerForStudent.setStubForSubjective(studentAnswer.getSubjectivePicStub());
         answerForStudent.setResult(Result.getResult(studentAnswer.getResult()));
         answerForStudent.setSubjectiveScore(null==studentAnswer.getSubjectiveScore()?0:studentAnswer.getSubjectiveScore());

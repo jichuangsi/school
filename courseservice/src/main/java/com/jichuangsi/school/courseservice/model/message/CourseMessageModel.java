@@ -58,7 +58,7 @@ public class CourseMessageModel {
 	@Override
 	public String toString(){
 		StringBuffer objectInfo = new StringBuffer();
-		objectInfo.append("classId:" + classId + ",courseId:" + courseId + ",courseName:" + courseName);
+		objectInfo.append("{classId:" + classId + ",courseId:" + courseId + ",courseName:" + courseName+"}");
 		return objectInfo.toString();
 	}
 }

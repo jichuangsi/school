@@ -8,6 +8,7 @@ import com.jichuangsi.school.courseservice.model.Question;
 import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
 import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
 import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
+import com.jichuangsi.school.courseservice.model.message.ShareAnswerMessageModel;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,11 @@ public class RabbitMqServiceImpl implements IMqService{
     @Value("${com.jichuangsi.school.mq.questions.terminate}")
     private String questionsTermMq;
 
-    @Value("${com.jichuangsi.school.mq.answers}")
-    private String answersMq;
+    @Value("${com.jichuangsi.school.mq.answers.statistics}")
+    private String answersStatisticsMq;
+
+    @Value("${com.jichuangsi.school.mq.answers.share}")
+    private String answersShareMq;
 
     @Resource
     private ConnectionFactory connectionFactory;
@@ -98,9 +102,16 @@ public class RabbitMqServiceImpl implements IMqService{
 
     @Override
     public void sendMsg4SubmitAnswer(AnswerMessageModel answerMsg){
-        logger.debug("Send " + answersMq + " messgae:" + answerMsg.toString());
-        rabbitMessagingTemplate.convertAndSend(exchange, answersMq, JSON.toJSONString(answerMsg));
-        logger.debug("Send " + answersMq + "  messgae sucess");
+        logger.debug("Send " + answersStatisticsMq + " messgae:" + answerMsg.toString());
+        rabbitMessagingTemplate.convertAndSend(exchange, answersStatisticsMq, JSON.toJSONString(answerMsg));
+        logger.debug("Send " + answersStatisticsMq + "  messgae sucess");
+    }
+
+    @Override
+    public void sendMsg4ShareAnswer(ShareAnswerMessageModel shareAnswerMsg){
+        logger.debug("Send " + answersShareMq + " messgae:" + shareAnswerMsg.toString());
+        rabbitMessagingTemplate.convertAndSend(exchange, answersShareMq, JSON.toJSONString(shareAnswerMsg));
+        logger.debug("Send " + answersShareMq + "  messgae sucess");
     }
 
 }

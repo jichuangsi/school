@@ -70,7 +70,7 @@ public class StudentCourseController {
 		}
 	}
 
-	@ApiOperation(value = "根据学生id保存上传的文件", notes = "")
+	@ApiOperation(value = "根据学生id保存上传的字符串", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/sendSubjectPicByString")

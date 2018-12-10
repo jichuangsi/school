@@ -25,8 +25,11 @@ public class RabbitMqConfig {
     @Value("${com.jichuangsi.school.mq.questions.terminate}")
     private String questionsTermMq;
 
-    @Value("${com.jichuangsi.school.mq.answers}")
-    private String answersMq;
+    @Value("${com.jichuangsi.school.mq.answers.statistics}")
+    private String answersStatisticsMq;
+
+    @Value("${com.jichuangsi.school.mq.answers.share}")
+    private String answersShareMq;
 
     @Value("${com.jichuangsi.school.mq.exchange}")
     private String exchange;
@@ -66,9 +69,16 @@ public class RabbitMqConfig {
         return questions;
     }
 
-    @Bean(name="answers")
-    public Queue answersMessage(RabbitAdmin rabbitAdmin) {
-        Queue answers = new Queue(answersMq,true, false, false);
+    @Bean(name="answersStatistics")
+    public Queue answersStatisticsMessage(RabbitAdmin rabbitAdmin) {
+        Queue answers = new Queue(answersStatisticsMq,true, false, false);
+        rabbitAdmin.declareQueue(answers);
+        return answers;
+    }
+
+    @Bean(name="answersShare")
+    public Queue answersShareMessage(RabbitAdmin rabbitAdmin) {
+        Queue answers = new Queue(answersShareMq,true, false, false);
         rabbitAdmin.declareQueue(answers);
         return answers;
     }
@@ -96,8 +106,13 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Binding answerMqBinding(RabbitAdmin rabbitAdmin) {
-        return BindingBuilder.bind(answersMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(answersMq);
+    public Binding answersStatisticsMqBinding(RabbitAdmin rabbitAdmin) {
+        return BindingBuilder.bind(answersStatisticsMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(answersStatisticsMq);
+    }
+
+    @Bean
+    public Binding answersShareMqBinding(RabbitAdmin rabbitAdmin) {
+        return BindingBuilder.bind(answersShareMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(answersShareMq);
     }
 
     /*@Bean
