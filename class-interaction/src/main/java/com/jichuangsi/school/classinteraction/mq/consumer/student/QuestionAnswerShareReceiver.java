@@ -26,7 +26,7 @@ public class QuestionAnswerShareReceiver extends AbstractReceiver{
 	
 	@Override
 	@RabbitListener(queuesToDeclare = {
-			@Queue(value = "${course.question.answer.share.classinteraction}") })
+			@Queue(value = "${custom.mq.consumer.queue-name.answer-share}") })
 	public void processWithLog(String jsonData) {
 		super.processWithLog(jsonData);
 	}
