@@ -7,20 +7,22 @@ import java.util.List;
 
 public class Question {
     //题目基本信息
-    String questionId;
-    String questionContent;
-    List<String> options = new ArrayList<String>();
-    String answer;
-    String answerDetail;
-    String parse;
-    String quesetionType;
-    String difficulty;
-    String subjectId;
-    String gradeId;
-    String knowledge;
-    String questionIdMD52;
-    Status questionStatus;
+    private String questionId;
+    private String questionContent;
+    private List<String> options = new ArrayList<String>();
+    private String answer;
+    private String answerDetail;
+    private String parse;
+    private String quesetionType;
+    private String difficulty;
+    private String subjectId;
+    private String gradeId;
+    private String knowledge;
+    private String questionIdMD52;
+    private Status questionStatus;
     private String questionPic;
+    private long createTime;
+    private long updateTime;
 
     public String getQuestionId() {
         return questionId;
@@ -132,5 +134,21 @@ public class Question {
 
     public void setQuestionPic(String questionPic) {
         this.questionPic = questionPic;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 }

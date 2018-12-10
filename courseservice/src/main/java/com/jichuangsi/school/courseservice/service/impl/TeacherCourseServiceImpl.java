@@ -354,23 +354,32 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public void shareTeacherAnswer(UserInfoForToken userInfo, String questionId, AnswerForTeacher revise) throws TeacherCourseServiceException{
+    public void shareTeacherAnswer(UserInfoForToken userInfo, String questionId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())
                 || StringUtils.isEmpty(questionId)
+                || StringUtils.isEmpty(studentAnswerId)
                 || StringUtils.isEmpty(revise.getStubForSubjective())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         synchronized (questionId.intern()){//需要实现分布式锁
             Course course = courseRepository.findCourseByTeacherIdAndQuestionId(userInfo.getUserId(), questionId);
             if(course!=null){
                 if(Status.NOTSTART.getName().equalsIgnoreCase(course.getStatus())){
                     throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
-                }else if(Status.FINISH.getName().equalsIgnoreCase(course.getStatus())){
+                }else {
                     //throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
+                    Optional<TeacherAnswer> resultForTeacherAnswer = Optional.ofNullable(teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), questionId, studentAnswerId));
+                    if(resultForTeacherAnswer.isPresent()){
+                        TeacherAnswer answer2Share = resultForTeacherAnswer.get();
+                        answer2Share.setShare(true);
+                        answer2Share.setShareTime(new Date().getTime());
+                        teacherAnswerRepository.save(answer2Share);
+                        mqService.sendMsg4ShareAnswer(MappingEntity2MessageConverter.ConvertShareAnswer(course==null?"":course.getId(), questionId, revise.getStubForSubjective()));
+                    }else{
+                        throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+                    }
                 }
             }else{
                 throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
             }
-
-            mqService.sendMsg4ShareAnswer(MappingEntity2MessageConverter.ConvertShareAnswer(course==null?"":course.getId(), questionId, revise.getStubForSubjective()));
         }
     }
 

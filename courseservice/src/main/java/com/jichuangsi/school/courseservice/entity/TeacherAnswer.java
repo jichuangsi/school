@@ -7,16 +7,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class TeacherAnswer {
 
     @Id
-    String id;
-    String teacherId;
-    String teacherName;
-    String subjectivePic;
-    String subjectivePicStub;
-    Double subjectiveScore;
-    String questionId;
-    String studentAnswerId;
-    long createTime;
-    long updateTime;
+    private String id;
+    private String teacherId;
+    private String teacherName;
+    private String subjectivePic;
+    private String subjectivePicStub;
+    private Double subjectiveScore;
+    private String questionId;
+    private String studentAnswerId;
+    private boolean isShare;
+    private long createTime;
+    private long updateTime;
+    private long shareTime;
 
     public String getId() {
         return id;
@@ -96,5 +98,21 @@ public class TeacherAnswer {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public boolean isShare() {
+        return isShare;
+    }
+
+    public void setShare(boolean share) {
+        isShare = share;
+    }
+
+    public long getShareTime() {
+        return shareTime;
+    }
+
+    public void setShareTime(long shareTime) {
+        this.shareTime = shareTime;
     }
 }

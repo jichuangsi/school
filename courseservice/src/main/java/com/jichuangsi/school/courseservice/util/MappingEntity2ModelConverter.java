@@ -26,7 +26,8 @@ public final class MappingEntity2ModelConverter {
         courseForTeacher.setClassName(course.getClassName());
         courseForTeacher.setCourseStartTime(course.getStartTime());
         courseForTeacher.setCourseEndTime(course.getEndTime());
-
+        courseForTeacher.setCreateTime(course.getCreateTime());
+        courseForTeacher.setUpdateTime(course.getUpdateTime());
         return courseForTeacher;
     }
 
@@ -42,7 +43,8 @@ public final class MappingEntity2ModelConverter {
         courseForStudent.setClassName(course.getClassName());
         courseForStudent.setCourseStartTime(course.getStartTime());
         courseForStudent.setCourseEndTime(course.getEndTime());
-
+        courseForStudent.setCreateTime(course.getCreateTime());
+        courseForStudent.setUpdateTime(course.getUpdateTime());
         return courseForStudent;
     }
 
@@ -66,6 +68,8 @@ public final class MappingEntity2ModelConverter {
         questionForTeacher.setQuestionIdMD52(question.getIdMD52());
         questionForTeacher.setQuestionStatus(Status.getStatus(question.getStatus()));
         questionForTeacher.setQuestionPic(question.getPic());
+        questionForTeacher.setCreateTime(question.getCreateTime());
+        questionForTeacher.setUpdateTime(question.getUpdateTime());
         return questionForTeacher;
     }
 
@@ -89,6 +93,8 @@ public final class MappingEntity2ModelConverter {
         questionForStudent.setQuestionIdMD52(question.getIdMD52());
         questionForStudent.setQuestionStatus(Status.getStatus(question.getStatus()));
         questionForStudent.setQuestionPic(question.getPic());
+        questionForStudent.setCreateTime(question.getCreateTime());
+        questionForStudent.setUpdateTime(question.getUpdateTime());
         return questionForStudent;
     }
 
@@ -102,6 +108,9 @@ public final class MappingEntity2ModelConverter {
         answerForStudent.setStubForSubjective(studentAnswer.getSubjectivePicStub());
         answerForStudent.setResult(Result.getResult(studentAnswer.getResult()));
         answerForStudent.setSubjectiveScore(null==studentAnswer.getSubjectiveScore()?0:studentAnswer.getSubjectiveScore());
+        answerForStudent.setCreateTime(studentAnswer.getCreateTime());
+        answerForStudent.setUpdateTime(studentAnswer.getUpdateTime());
+        answerForStudent.setReviseTime(studentAnswer.getReviseTime());
         return answerForStudent;
     }
 
@@ -112,6 +121,10 @@ public final class MappingEntity2ModelConverter {
         answerForTeacher.setTeacherName(teacherAnswer.getTeacherName());
         answerForTeacher.setPicForSubjective(teacherAnswer.getSubjectivePic());
         answerForTeacher.setStubForSubjective(teacherAnswer.getSubjectivePicStub());
+        answerForTeacher.setShare(teacherAnswer.isShare());
+        answerForTeacher.setCreateTime(teacherAnswer.getCreateTime());
+        answerForTeacher.setUpdateTime(teacherAnswer.getUpdateTime());
+        answerForTeacher.setShareTime(teacherAnswer.getShareTime());
         return answerForTeacher;
     }
 }

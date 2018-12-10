@@ -13,6 +13,8 @@ public class Course {
     String className;
     long courseStartTime;
     long courseEndTime;
+    long createTime;
+    long updateTime;
 
     int pageNum;
     int pageSize;
@@ -111,5 +113,21 @@ public class Course {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 }

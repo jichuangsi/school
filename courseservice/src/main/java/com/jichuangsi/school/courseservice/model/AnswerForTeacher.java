@@ -1,11 +1,15 @@
 package com.jichuangsi.school.courseservice.model;
 
 public class AnswerForTeacher {
-    String answerId;
-    String teacherId;
-    String teacherName;
-    String picForSubjective;
-    String stubForSubjective;
+    private String answerId;
+    private String teacherId;
+    private String teacherName;
+    private String picForSubjective;
+    private String stubForSubjective;
+    private boolean isShare;
+    private long createTime;
+    private long updateTime;
+    private long shareTime;
 
     double score;
 
@@ -55,5 +59,37 @@ public class AnswerForTeacher {
 
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
+    }
+
+    public boolean isShare() {
+        return isShare;
+    }
+
+    public void setShare(boolean share) {
+        isShare = share;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public long getShareTime() {
+        return shareTime;
+    }
+
+    public void setShareTime(long shareTime) {
+        this.shareTime = shareTime;
     }
 }

@@ -37,7 +37,10 @@ public  final class MappingModel2EntityConverter {
                 course.getQuestionIds().add(question.getQuestionId());
             });
         }
-        if(StringUtils.isEmpty(courseForTeacher.getCourseId())) course.setCreateTime(new Date().getTime());
+        if(StringUtils.isEmpty(courseForTeacher.getCourseId()))
+            course.setCreateTime(new Date().getTime());
+        else
+            course.setCreateTime(courseForTeacher.getCreateTime());
         course.setUpdateTime(new Date().getTime());
 
         return course;
@@ -63,7 +66,10 @@ public  final class MappingModel2EntityConverter {
         question.setIdMD52(questionForTeacher.getQuestionIdMD52());
         question.setStatus(questionForTeacher.getQuestionStatus()!=null?questionForTeacher.getQuestionStatus().getName(): Status.NOTSTART.getName());
         question.setPic(questionForTeacher.getQuestionPic());
-        if(StringUtils.isEmpty(questionForTeacher.getQuestionId())) question.setCreateTime(new Date().getTime());
+        if(StringUtils.isEmpty(questionForTeacher.getQuestionId()))
+            question.setCreateTime(new Date().getTime());
+        else
+            question.setCreateTime(questionForTeacher.getCreateTime());
         question.setUpdateTime(new Date().getTime());
         return question;
     }
@@ -78,8 +84,13 @@ public  final class MappingModel2EntityConverter {
         teacherAnswer.setSubjectiveScore(answerForTeacher.getScore());
         teacherAnswer.setQuestionId(questionId);
         teacherAnswer.setStudentAnswerId(studentAnswerId);
-        if(StringUtils.isEmpty(answerForTeacher.getAnswerId())) teacherAnswer.setCreateTime(new Date().getTime());
+        teacherAnswer.setShare(answerForTeacher.isShare());
+        if(StringUtils.isEmpty(answerForTeacher.getAnswerId()))
+            teacherAnswer.setCreateTime(new Date().getTime());
+        else
+            teacherAnswer.setCreateTime(answerForTeacher.getCreateTime());
         teacherAnswer.setUpdateTime(new Date().getTime());
+        teacherAnswer.setShareTime(answerForTeacher.getShareTime());
         return teacherAnswer;
     }
 
@@ -94,7 +105,10 @@ public  final class MappingModel2EntityConverter {
         studentAnswer.setSubjectivePicStub(answerForStudent.getStubForSubjective());
         //studentAnswer.setSubjectiveScore(answerForStudent.getSubjectiveScore());
         studentAnswer.setQuestionId(questionId);
-        if(StringUtils.isEmpty(answerForStudent.getAnswerId())) studentAnswer.setCreateTime(new Date().getTime());
+        if(StringUtils.isEmpty(answerForStudent.getAnswerId()))
+            studentAnswer.setCreateTime(new Date().getTime());
+        else
+            studentAnswer.setCreateTime(answerForStudent.getCreateTime());
         studentAnswer.setUpdateTime(new Date().getTime());
         return studentAnswer;
     }

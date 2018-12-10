@@ -12,6 +12,9 @@ public class AnswerForStudent {
 
     Result result;
     double subjectiveScore;
+    long createTime;
+    long updateTime;
+    long reviseTime;
 
     public String getAnswerId() {
         return answerId;
@@ -75,5 +78,29 @@ public class AnswerForStudent {
 
     public void setSubjectiveScore(double subjectiveScore) {
         this.subjectiveScore = subjectiveScore;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public long getReviseTime() {
+        return reviseTime;
+    }
+
+    public void setReviseTime(long reviseTime) {
+        this.reviseTime = reviseTime;
     }
 }

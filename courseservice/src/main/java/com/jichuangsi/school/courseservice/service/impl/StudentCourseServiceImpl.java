@@ -2,6 +2,7 @@ package com.jichuangsi.school.courseservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
+import com.jichuangsi.school.courseservice.constant.QuestionType;
 import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.constant.Status;
@@ -88,11 +89,17 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
             Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), userInfo.getUserId()));
             if(result.isPresent()){
                 question.setAnswerForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
-                if(Result.PASS.getName().equalsIgnoreCase(result.get().getResult())){
-                    question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
-                            teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(course.getTeacherId(), question.getQuestionId(), result.get().getId())
-                    ));
+                if(QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(question.getQuesetionType())){
+                    if(Result.PASS.getName().equalsIgnoreCase(result.get().getResult())){
+                        question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
+                                teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(course.getTeacherId(), question.getQuestionId(), result.get().getId())
+                        ));
+                    }
                 }
+            }
+            if(question.getAnswerForTeacher()==null){
+                question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
+                        teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndIsShareOrderByShareTimeDesc(course.getTeacherId(), question.getQuestionId(), true)));
             }
         });
         return courseForStudent;

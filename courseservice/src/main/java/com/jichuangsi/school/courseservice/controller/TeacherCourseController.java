@@ -216,10 +216,11 @@ public class TeacherCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
             @ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
-    @PostMapping("/shareAnswer/{questionId}")
-    public ResponseModel<AnswerForTeacher> sendAnswer(@ModelAttribute UserInfoForToken userInfo,
-                                                      @PathVariable String questionId,  @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
-        teacherCourseService.shareTeacherAnswer(userInfo, questionId, revise);
+    @PostMapping("/shareAnswer/{questionId}/{studentAnswerId}")
+    public ResponseModel shareAnswer(@ModelAttribute UserInfoForToken userInfo,
+                                                      @PathVariable String questionId,  @PathVariable String studentAnswerId,
+                                                      @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
+        teacherCourseService.shareTeacherAnswer(userInfo, questionId, studentAnswerId, revise);
         return ResponseModel.sucessWithEmptyData("");
     }
 

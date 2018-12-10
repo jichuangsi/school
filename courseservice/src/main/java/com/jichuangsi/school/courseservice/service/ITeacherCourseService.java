@@ -71,6 +71,6 @@ public interface ITeacherCourseService {
     void deleteTeacherSubjectPic(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
 
     @Transactional
-    void shareTeacherAnswer(UserInfoForToken userInfo, String questinoId, AnswerForTeacher revise) throws TeacherCourseServiceException;
+    void shareTeacherAnswer(UserInfoForToken userInfo, String questinoId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException;
 
 }
