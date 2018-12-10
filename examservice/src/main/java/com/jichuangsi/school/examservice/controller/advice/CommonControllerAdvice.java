@@ -5,6 +5,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.ui.Model;
@@ -22,6 +24,8 @@ public class CommonControllerAdvice {
 	@Value("${com.jichuangsi.school.token.userClaim}")
 	private String userClaim;
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	@ModelAttribute
 	public UserInfoForToken translateHeader(@RequestHeader @Nullable String userInfo, @RequestHeader @Nullable String accessToken,
                                             Model model) throws UnsupportedEncodingException {
@@ -37,6 +41,7 @@ public class CommonControllerAdvice {
 
 	@ExceptionHandler
 	public ResponseModel<Object> handler(Exception e) {
+		logger.error(e.getCause() + ":" + e.getMessage());
 		return ResponseModel.fail("", e.getMessage());
 
 	}

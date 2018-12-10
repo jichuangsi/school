@@ -1,8 +1,8 @@
 package com.jichuangsi.school.examservice.service;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
-import com.jichuangsi.school.courseservice.model.PageHolder;
-import com.jichuangsi.school.courseservice.model.transfer.TransferExam;
+import com.jichuangsi.school.examservice.Model.PageHolder;
+import com.jichuangsi.school.examservice.Model.transfer.TransferExam;
 import com.jichuangsi.school.examservice.Model.DeleteQueryModel;
 import com.jichuangsi.school.examservice.Model.ExamModel;
 import com.jichuangsi.school.examservice.Model.QuestionModel;

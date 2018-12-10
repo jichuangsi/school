@@ -1,6 +1,6 @@
 package com.jichuangsi.school.examservice.controller;
 
-import com.jichuangsi.school.courseservice.model.transfer.TransferExam;
+import com.jichuangsi.school.examservice.Model.transfer.TransferExam;
 import com.jichuangsi.school.examservice.service.IExamService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

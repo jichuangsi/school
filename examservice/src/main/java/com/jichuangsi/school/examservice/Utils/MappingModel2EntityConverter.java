@@ -15,17 +15,17 @@ public final  class MappingModel2EntityConverter {
 
     public final static Exam converterForExamModel(UserInfoForToken userInfo, ExamModel eaxmModel,
                                                    List<String> qids){
-        Exam eaxm = new Exam();
+        Exam exam = new Exam();
         if(eaxmModel.getExamId()==null){
-            eaxm.setExamId( UUID.randomUUID().toString().replace("-",""));
-        }else {eaxm.setExamId(eaxmModel.getExamId());}
-        eaxm.setExamName(eaxmModel.getExamName());
-        eaxm.setCreateTime(eaxmModel.getCreateTime()==0?new Date().getTime():eaxmModel.getCreateTime());
-        eaxm.setTeacherId(userInfo.getUserId());
-        eaxm.setTeacherName(userInfo.getUserName());
-        eaxm.setUpdateTime(new Date().getTime());
-        eaxm.setQuestionIds(qids);
-        return eaxm;
+            exam.setExamId( UUID.randomUUID().toString().replace("-",""));
+        }else {exam.setExamId(eaxmModel.getExamId());}
+        exam.setExamName(eaxmModel.getExamName());
+        exam.setCreateTime(eaxmModel.getCreateTime()==0?new Date().getTime():eaxmModel.getCreateTime());
+        exam.setTeacherId(userInfo.getUserId());
+        exam.setTeacherName(userInfo.getUserName());
+        exam.setUpdateTime(new Date().getTime());
+        exam.setQuestionIds(qids);
+        return exam;
     }
 
     public final  static Question converterForQuestionModel(QuestionModel questionModel){
