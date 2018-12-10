@@ -1,14 +1,18 @@
 package com.jichuangsi.school.questionsrepository.controller;
 
+import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.*;
+import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
 import com.jichuangsi.school.questionsrepository.service.IQuestionsRepositoryService;
+import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -25,6 +29,8 @@ import java.util.Map;
 @Api("QuestionsRepositoryController相关的api")
 public class QuestionsRepositoryController {
 
+    @Resource
+    private IUserInfoService userInfoService;
 
     @Resource
     private IQuestionsRepositoryService questionsRepositoryService;
@@ -106,6 +112,16 @@ public class QuestionsRepositoryController {
     public Mono<ResponseModel<List<AnswerNode>>> getAnswerViaQuestions(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerQueryModel answerQueryModel) throws QuestionRepositoryServiceException{
 
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getListForAnswersByQuestionId(userInfo, answerQueryModel)));
+    }
+
+    @ApiOperation(value = "根据老师科目，学段信息获取知识点信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/getKnowledgeInfoByTeacher")
+    public Mono<ResponseModel<List<KnowledgeTreeNode>>> getKnowledgeInfoByTeacher(@ModelAttribute UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
+        TransferTeacher teacher = userInfoService.getUserForTeacherById(userInfo.getUserId());
+        if(StringUtils.isEmpty(teacher.getPhraseId()) || StringUtils.isEmpty(teacher.getSubjectId())) throw new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
+        return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getTreeForKnowledgeInfoByTeacher(teacher.getPhraseId(), teacher.getSubjectId())));
     }
 
     /*@ApiOperation(value = "根据组卷次数进行排序", notes = "")

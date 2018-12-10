@@ -35,6 +35,9 @@ public interface IQuestionsRepositoryService {
     @Transactional
     List<EditionTreeNode> getTreeForSubjectEditionInfoByTeacher(UserInfoForToken userInfo) throws QuestionRepositoryServiceException;
 
+    @Transactional
+    List<KnowledgeTreeNode> getTreeForKnowledgeInfoByTeacher(String phraseId, String subjectId) throws QuestionRepositoryServiceException;
+
     /*@Transactional
     PageHolder<Map<QuestionNode,Integer>> SortByAnswerCount(UserInfoForToken userInfoForToken, QuestionQueryModel questionQueryModel) throws QuestionRepositoryServiceException;
 

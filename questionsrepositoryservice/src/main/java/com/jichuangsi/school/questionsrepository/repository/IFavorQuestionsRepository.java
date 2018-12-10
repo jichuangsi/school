@@ -15,4 +15,6 @@ public interface IFavorQuestionsRepository<T> {
     long getFavorQuestionCount(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel);
 
     void findAllAndRemove(DeleteQueryModel deleteQueryModel);
+
+    FavorQuestions findFavorByMD52(String teacherId,String MD52);
 }

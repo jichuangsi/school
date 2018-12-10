@@ -75,7 +75,7 @@ public class AnswerMessageModel {
 	@Override
 	public String toString(){
 		StringBuffer objectInfo = new StringBuffer();
-		objectInfo.append("courseId:" + courseId + "questionId:" + questionId + ",quType:" + quType + ",score:" + score + ",isRight:" + isRight + ",answer:" + answer + ",studentId:" + studentId);
+		objectInfo.append("{courseId:" + courseId + ",questionId:" + questionId + ",quType:" + quType + ",score:" + score + ",isRight:" + isRight + ",answer:" + answer + ",studentId:" + studentId+"}");
 		return objectInfo.toString();
 	}
 }

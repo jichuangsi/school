@@ -136,26 +136,28 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
                 || StringUtils.isEmpty(questionId)
                 || (StringUtils.isEmpty(answer.getAnswerForObjective()) && StringUtils.isEmpty(answer.getStubForSubjective())))
             throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Question> question = questionRepository.findById(questionId);
-        if(!question.isPresent()) throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
-        if(Status.FINISH.getName().equalsIgnoreCase(question.get().getStatus())) throw new StudentCourseServiceException(ResultCode.QUESTION_COMPLETE);
-        if(!StringUtils.isEmpty(answer.getAnswerForObjective())){
-            answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
+        synchronized (userInfo.getUserId().intern()){//需要实现分布式锁
+            Optional<Question> question = questionRepository.findById(questionId);
+            if(!question.isPresent()) throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+            if(Status.FINISH.getName().equalsIgnoreCase(question.get().getStatus())) throw new StudentCourseServiceException(ResultCode.QUESTION_COMPLETE);
+            if(!StringUtils.isEmpty(answer.getAnswerForObjective())){
+                answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
+            }
+            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userInfo.getUserId()));
+            StudentAnswer answer2Return = null;
+            if(result.isPresent()){
+                StudentAnswer answer2Update = result.get();
+                //answer2Update.setSubjectivePic(answer.getReviseForSubjective());
+                answer2Update.setSubjectivePicStub(answer.getStubForSubjective());
+                answer2Update.setObjectiveAnswer(answer.getAnswerForObjective());
+                answer2Update.setResult(StringUtils.isEmpty(answer.getResult())?null:answer.getResult().getName());
+                answer2Update.setUpdateTime(new Date().getTime());
+                answer2Return = studentAnswerRepository.save(answer2Update);
+            }else{
+                answer2Return = studentAnswerRepository.save(MappingModel2EntityConverter.ConvertStudentAnswer(userInfo, questionId, answer));
+            }
+            if(Optional.ofNullable(answer2Return).isPresent()) mqService.sendMsg4SubmitAnswer(MappingEntity2MessageConverter.ConvertAnswer(courseId, answer2Return));
         }
-        Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userInfo.getUserId()));
-        StudentAnswer answer2Return = null;
-        if(result.isPresent()){
-            StudentAnswer answer2Update = result.get();
-            answer2Update.setSubjectivePic(answer.getPicForSubjective());
-            answer2Update.setSubjectivePicStub(answer.getStubForSubjective());
-            answer2Update.setObjectiveAnswer(answer.getAnswerForObjective());
-            answer2Update.setResult(StringUtils.isEmpty(answer.getResult())?null:answer.getResult().getName());
-            answer2Update.setUpdateTime(new Date().getTime());
-            answer2Return = studentAnswerRepository.save(answer2Update);
-        }else{
-            answer2Return = studentAnswerRepository.save(MappingModel2EntityConverter.ConvertStudentAnswer(userInfo, questionId, answer));
-        }
-        if(Optional.ofNullable(answer2Return).isPresent()) mqService.sendMsg4SubmitAnswer(MappingEntity2MessageConverter.ConvertAnswer(courseId, answer2Return));
     }
 
     private List<CourseForStudent> convertCourseList(List<Course> courses){

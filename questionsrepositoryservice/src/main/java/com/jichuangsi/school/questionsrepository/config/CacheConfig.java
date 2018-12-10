@@ -75,4 +75,25 @@ public class CacheConfig {
         };
     }
 
+    @Bean("editionKeyGenerator")
+    public KeyGenerator editionKeyGenerator() {
+        return (o, method, objects) -> {
+            return "Editiondata";
+        };
+    }
+
+    @Bean("basicInfoKeyGenerator")
+    public KeyGenerator basicInfoKeyGenerator() {
+        return (o, method, objects) -> {
+            return "Basicinfodata";
+        };
+    }
+
+    @Bean("knowledgeKeyGenerator")
+    public KeyGenerator knowledgeKeyGenerator() {
+        return (o, method, objects) -> {
+            return "Knowledgedata-"+(String)objects[0]+"-"+(String)objects[1];
+        };
+    }
+
 }

@@ -17,4 +17,5 @@ public interface CourseExtraRepository{
 
     List<Course> findHistoryCourseByClassIdAndStatus(String classId, int pageNum, int pageSize);
 
+    Course findCourseByTeacherIdAndQuestionId(String teacherId, String questionId);
 }

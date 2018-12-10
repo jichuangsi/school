@@ -5,112 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KnowledgeTreeNode implements Serializable {
-    String id;
-    String name;
-    String pid;
-    String subjectId;
-    String pharseId;
-    String editionId;
-    String gradeId;
-    String sort;
-    String oldId;
-    String month;
-    String level;
-    List<KnowledgeTreeNode> child = new ArrayList<KnowledgeTreeNode>();
+    private String knowledgeName;
+    private String kid;
+    private List<KnowledgeTreeNode> data = new ArrayList<KnowledgeTreeNode>();
 
-    public String getId() {
-        return id;
+    public String getKnowledgeName() {
+        return knowledgeName;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setKnowledgeName(String knowledgeName) {
+        this.knowledgeName = knowledgeName;
     }
 
-    public String getName() {
-        return name;
+    public String getKid() {
+        return kid;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setKid(String kid) {
+        this.kid = kid;
     }
 
-    public String getPid() {
-        return pid;
+    public List<KnowledgeTreeNode> getData() {
+        return data;
     }
 
-    public void setPid(String pid) {
-        this.pid = pid;
-    }
-
-    public String getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(String subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public String getPharseId() {
-        return pharseId;
-    }
-
-    public void setPharseId(String pharseId) {
-        this.pharseId = pharseId;
-    }
-
-    public String getEditionId() {
-        return editionId;
-    }
-
-    public void setEditionId(String editionId) {
-        this.editionId = editionId;
-    }
-
-    public String getGradeId() {
-        return gradeId;
-    }
-
-    public void setGradeId(String gradeId) {
-        this.gradeId = gradeId;
-    }
-
-    public String getSort() {
-        return sort;
-    }
-
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
-
-    public String getOldId() {
-        return oldId;
-    }
-
-    public void setOldId(String oldId) {
-        this.oldId = oldId;
-    }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-    public List<KnowledgeTreeNode> getChild() {
-        return child;
-    }
-
-    public void setChild(List<KnowledgeTreeNode> child) {
-        this.child = child;
+    public void setData(List<KnowledgeTreeNode> data) {
+        this.data = data;
     }
 }

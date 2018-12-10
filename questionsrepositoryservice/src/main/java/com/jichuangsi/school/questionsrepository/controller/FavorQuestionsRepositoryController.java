@@ -3,12 +3,12 @@ package com.jichuangsi.school.questionsrepository.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
-import com.jichuangsi.school.questionsrepository.entity.FavorQuestions;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.favor.FavorQuestion;
+import com.jichuangsi.school.questionsrepository.model.favor.IncludeInfo;
 import com.jichuangsi.school.questionsrepository.service.IFavorQuestionsRepositoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -61,5 +61,20 @@ public class FavorQuestionsRepositoryController {
         favorQuestionsRepositoryService.deleteFavorQuestion(fqs);*/
         favorQuestionsRepositoryService.deleteFavorQuestions(deleteQueryModel);
         return ResponseModel.sucessWithEmptyData("");
+    }
+
+
+    //取消指定个人收藏题目
+    @ApiOperation(value = "判断是否存在指定个人收藏题目", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/isExistFavor")
+    public ResponseModel<IncludeInfo> isExistFavor(@ModelAttribute UserInfoForToken userInfo, @RequestParam String MD52){
+        IncludeInfo info = new IncludeInfo();
+        info.setResult("none");
+        if(favorQuestionsRepositoryService.isExistFavor(userInfo,MD52)){
+            info.setResult("include");
+        }
+        return ResponseModel.sucess("",info);
     }
 }

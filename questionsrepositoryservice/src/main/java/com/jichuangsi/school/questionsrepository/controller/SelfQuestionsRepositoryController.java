@@ -3,7 +3,6 @@ package com.jichuangsi.school.questionsrepository.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
-import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
@@ -15,7 +14,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

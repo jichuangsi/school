@@ -2,6 +2,7 @@ package com.jichuangsi.school.questionsrepository.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.entity.QuestionStatistics;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
@@ -56,6 +57,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     @Value("${com.jichuangsi.school.tiku.answerApi}")
     private String answerApi;
 
+    @Value("${com.jichuangsi.school.tiku.knowledgeApi}")
+    private String knowledgeApi;
+
     @Resource
     private IUserInfoService userInfoService;
 
@@ -63,7 +67,7 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     private QuestionStatisticsRepository questionStatisticsRepository;
 
     @Override
-    @Cacheable(key = "#root.methodName", unless="#result.isEmpty()")
+    @Cacheable(unless="#result.isEmpty()", keyGenerator = "editionKeyGenerator")
     public List<EditionTreeNode> getTreeForSubjectEditionInfo(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -105,7 +109,7 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     }
 
     @Override
-    @Cacheable(key = "#root.methodName", unless = "#result.isEmpty()")
+    @Cacheable(unless = "#result.isEmpty()", keyGenerator = "basicInfoKeyGenerator")
     public Map<String, List> getMapForOtherBasicInfo(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -136,7 +140,7 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     }
 
     @Override
-    @Cacheable(key = "#root.methodName", unless = "#result.isEmpty()")
+    //@Cacheable(key = "#root.methodName", unless = "#result.isEmpty()")
     public Map<String, List> getAllBasicInfoForQuestionSelection(UserInfoForToken userInfo) throws QuestionRepositoryServiceException {
         Map<String, List> allBasicInfo = new HashMap<String, List>();
 
@@ -259,6 +263,34 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
         }
 
         return null;
+    }
+
+    @Override
+    @Cacheable(unless = "#result.isEmpty()", keyGenerator = "knowledgeKeyGenerator")
+    public List<KnowledgeTreeNode> getTreeForKnowledgeInfoByTeacher(String phraseId, String subjectId) throws QuestionRepositoryServiceException{
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("accessKey", accessKey);
+        formData.add("pharseId", phraseId);
+        formData.add("subjectId", subjectId);
+
+        try {
+            Mono<String> resp = webClientFormRequest(knowledgeApi, formData);
+            Optional<String> result = resp.blockOptional();
+            if (result.isPresent()) {
+                PHPResponseModel phpResponseModel = JSONObject.parseObject(resp.block(),
+                        new TypeReference<PHPResponseModel<KnowledgeTreeNode>>() {
+                        }.getType());
+                if (!PHP_CORRECT_CODE.equalsIgnoreCase(phpResponseModel.getErrorCode())) {
+                    throw new QuestionRepositoryServiceException(phpResponseModel.getErrorCode());
+                }
+                return phpResponseModel.getData();
+            }
+        } catch (Exception exp) {
+            throw new QuestionRepositoryServiceException(exp.getMessage());
+        }
+
+        return null;
+
     }
 
     /*@Override

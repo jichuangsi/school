@@ -87,7 +87,7 @@ public class TeacherCourseController {
     @GetMapping("/getQuestion/{questionId}")
     public ResponseModel<QuestionForTeacher> getQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws TeacherCourseServiceException{
 
-        return ResponseModel.sucess("",  teacherCourseService.getParticularQuestion(questionId));
+        return ResponseModel.sucess("",  teacherCourseService.getParticularQuestion(userInfo, questionId));
     }
 
     //获取指定题目的答案列表
@@ -140,9 +140,13 @@ public class TeacherCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getSubjectPic")
-    public ResponseModel<CourseFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
-
-        return  ResponseModel.sucess("", teacherCourseService.downloadTeacherSubjectPic(userInfo, revise.getStubForSubjective()));
+    public ResponseModel<Base64TransferFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
+        Base64TransferFile base64TransferFile = new Base64TransferFile();
+        CourseFile courseFile =  teacherCourseService.downloadTeacherSubjectPic(userInfo, revise.getStubForSubjective());
+        base64TransferFile.setName(courseFile.getName());
+        base64TransferFile.setContentType(courseFile.getContentType());
+        base64TransferFile.setContent(new String(courseFile.getContent()));
+        return  ResponseModel.sucess("", base64TransferFile);
     }
 
     //删除指定文件名图片
@@ -170,12 +174,12 @@ public class TeacherCourseController {
     }
 
     //更新课堂状态
-    @ApiOperation(value = "根据课堂id更新课堂状态", notes = "")
+    @ApiOperation(value = "根据课堂id结束课堂", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PostMapping("/changeCourseStatus")
-    public ResponseModel<CourseForTeacher> changeCourseStatus(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseStatus) throws TeacherCourseServiceException{
-        teacherCourseService.updateParticularCourseStatus(courseStatus);
+    @PostMapping("/courseEnd/{courseId}")
+    public ResponseModel<CourseForTeacher> courseEnd(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId) throws TeacherCourseServiceException{
+        teacherCourseService.endCourse(courseId);
         return ResponseModel.sucessWithEmptyData("");
     }
 
@@ -204,6 +208,18 @@ public class TeacherCourseController {
     @PostMapping("/questionTerminate/{courseId}/{questionId}")
     public ResponseModel<QuestionForTeacher> questionTerminate(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @PathVariable String questionId) throws TeacherCourseServiceException{
         teacherCourseService.terminateQuestion(courseId, questionId);
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    //分享老师批改
+    @ApiOperation(value = "根据老师id，问题id分享老师的批改", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
+    @PostMapping("/shareAnswer/{questionId}")
+    public ResponseModel<AnswerForTeacher> sendAnswer(@ModelAttribute UserInfoForToken userInfo,
+                                                      @PathVariable String questionId,  @RequestBody AnswerForTeacher revise) throws TeacherCourseServiceException{
+        teacherCourseService.shareTeacherAnswer(userInfo, questionId, revise);
         return ResponseModel.sucessWithEmptyData("");
     }
 

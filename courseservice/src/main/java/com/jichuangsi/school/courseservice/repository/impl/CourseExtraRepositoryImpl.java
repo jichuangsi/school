@@ -71,4 +71,9 @@ public class CourseExtraRepositoryImpl implements CourseExtraRepository {
         query.skip((pageNum-1)*pageSize).limit(pageSize);
         return mongoTemplate.find(query, Course.class);
     }
+
+    @Override
+    public Course findCourseByTeacherIdAndQuestionId(String teacherId, String questionId){
+        return mongoTemplate.findOne(new Query(Criteria.where("teacherId").is(teacherId).andOperator(Criteria.where("questionIds").is(questionId))), Course.class);
+    }
 }

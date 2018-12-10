@@ -7,7 +7,7 @@ public class AnswerForStudent {
     String studentId;
     String studentName;
     String answerForObjective;
-    String picForSubjective;
+    String reviseForSubjective;
     String stubForSubjective;
 
     Result result;
@@ -29,12 +29,12 @@ public class AnswerForStudent {
         this.answerForObjective = answerForObjective;
     }
 
-    public String getPicForSubjective() {
-        return picForSubjective;
+    public String getReviseForSubjective() {
+        return reviseForSubjective;
     }
 
-    public void setPicForSubjective(String picForSubjective) {
-        this.picForSubjective = picForSubjective;
+    public void setReviseForSubjective(String reviseForSubjective) {
+        this.reviseForSubjective = reviseForSubjective;
     }
 
     public String getStubForSubjective() {

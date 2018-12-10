@@ -2,10 +2,10 @@ spring:
   application:
     name: questionsrepository
   cache:
-    cache-names:
-      - questions
+    cache-names: questions
     caffeine:
       spec: maximumSize=500,expireAfterAccess=1200s
+    type: caffeine
     multi:
       caffeine:
         expireAfterAccess: 300000
@@ -37,12 +37,13 @@ com:
           userClaim : userInfo
       tiku:
         schema: http
-        host: 127.0.0.1
+        host: 192.168.31.108
         accessKey: 9229eb41327ec6385c28baf45469f988
         subjectEditionApi: subjectEditionApi
         otherBasicApi: getOtherBasic
         chapterApi: chapterApi
         questionApi: getQuestions
         answerApi: getAnswer
+        knowledgeApi: knowledgeApi
       swagger:
         enable: true

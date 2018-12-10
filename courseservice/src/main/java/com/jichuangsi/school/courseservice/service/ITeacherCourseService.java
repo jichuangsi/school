@@ -26,7 +26,7 @@ public interface ITeacherCourseService {
     List<QuestionForTeacher> getQuestionsInParticularCourse(UserInfoForToken userInfo, String courseId) throws TeacherCourseServiceException;
 
     @Transactional
-    QuestionForTeacher getParticularQuestion(String questionId) throws TeacherCourseServiceException;
+    QuestionForTeacher getParticularQuestion(UserInfoForToken userInfo, String questionId) throws TeacherCourseServiceException;
 
     @Transactional
     List<AnswerForStudent> getAnswersInPaticularCourse(String questionId) throws TeacherCourseServiceException;
@@ -47,7 +47,7 @@ public interface ITeacherCourseService {
     void startCourse(String courseId) throws TeacherCourseServiceException;
 
     @Transactional
-    void updateParticularCourseStatus(CourseForTeacher course) throws TeacherCourseServiceException;
+    void endCourse(String courseId) throws TeacherCourseServiceException;
 
     @Transactional
     void updateParticularQuestionStatus(QuestionForTeacher questionStatus) throws TeacherCourseServiceException;
@@ -69,5 +69,8 @@ public interface ITeacherCourseService {
 
     @Transactional
     void deleteTeacherSubjectPic(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
+
+    @Transactional
+    void shareTeacherAnswer(UserInfoForToken userInfo, String questinoId, AnswerForTeacher revise) throws TeacherCourseServiceException;
 
 }

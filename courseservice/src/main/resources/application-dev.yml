@@ -31,7 +31,9 @@ com:
         questions:
           pubilish: course.question.pub.classinteraction
           terminate: course.question.termin.classinteraction
-        answers:  course.question.answer.coursestatistics
+        answers:
+          statistics: course.question.answer.coursestatistics
+          share: course.question.answer.share.classinteraction
         exchange: course.start.exchange
       token:
           jwt:

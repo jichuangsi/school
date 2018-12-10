@@ -8,6 +8,7 @@ import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
 import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
 import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
+import com.jichuangsi.school.courseservice.model.message.ShareAnswerMessageModel;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -44,5 +45,13 @@ public final class MappingEntity2MessageConverter {
         answerMessageModel.setAnswer(answer.getObjectiveAnswer());
         answerMessageModel.setStudentId(answer.getStudentId());
         return answerMessageModel;
+    }
+
+    public static final ShareAnswerMessageModel ConvertShareAnswer(String courseId, String questionId, String picPath){
+        ShareAnswerMessageModel shareAnswerMessageModel = new ShareAnswerMessageModel();
+        shareAnswerMessageModel.setCourseId(courseId);
+        shareAnswerMessageModel.setQuestionId(questionId);
+        shareAnswerMessageModel.setPicPath(picPath);
+        return shareAnswerMessageModel;
     }
 }

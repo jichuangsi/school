@@ -14,6 +14,7 @@ import com.jichuangsi.school.courseservice.repository.*;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
+import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Resource
     private IFileStoreService fileStoreService;
+
+    @Resource
+    private IUserInfoService userInfoService;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException{
@@ -81,6 +85,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         List<Question> questions = questionRepository.findQuestionsByTeacherIdAndCourseId(userInfo.getUserId(), courseId);
         CourseForTeacher courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(course);
         courseForTeacher.getQuestions().addAll(convertQuestionList(questions));
+        courseForTeacher.getStudents().addAll(userInfoService.getStudentsForClassById(course.getClassId()));
         return courseForTeacher;
     }
 
@@ -92,13 +97,17 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public QuestionForTeacher getParticularQuestion(String questionId) throws TeacherCourseServiceException {
-        if(StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+    public QuestionForTeacher getParticularQuestion(UserInfoForToken userInfo, String questionId) throws TeacherCourseServiceException {
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         Optional<Question> result = questionRepository.findById(questionId);
         if(result.isPresent()){
             List<StudentAnswer> answers = studentAnswerRepository.findAllByQuestionId(questionId);
             QuestionForTeacher questionForTeacher =  MappingEntity2ModelConverter.ConvertTeacherQuestion(result.get());
             questionForTeacher.getAnswerForStudent().addAll(convertStudentAnswerList(answers));
+            questionForTeacher.getAnswerForStudent().forEach(a -> {
+                TeacherAnswer teacherAnswer = teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), questionId, a.getAnswerId());
+                if(teacherAnswer!=null) a.setReviseForSubjective(teacherAnswer.getSubjectivePicStub());
+            });
             return questionForTeacher;
         }
         throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
@@ -157,17 +166,26 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public void updateParticularCourseStatus(CourseForTeacher course) throws TeacherCourseServiceException {
-        String courseId = course.getCourseId();
-        if(StringUtils.isEmpty(courseId) || StringUtils.isEmpty(course.getCourseStatus())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Course> result = courseRepository.findById(courseId);
-        if(result.isPresent()){
-            Course course2Update = result.get();
-            course2Update.setStatus(course.getCourseStatus().getName());
-            course2Update.setUpdateTime(new Date().getTime());
-            course2Update = courseRepository.save(course2Update);
-        }else{
-            throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+    public void endCourse(String courseId) throws TeacherCourseServiceException {
+        if(StringUtils.isEmpty(courseId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        synchronized (courseId.intern()){//需要实现分布式锁
+            Optional<Course> result = courseRepository.findById(courseId);
+            if(result.isPresent()){
+                if(Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())){
+                    Course course2Update = result.get();
+                    course2Update.setStatus(Status.FINISH.getName());
+                    course2Update.setUpdateTime(new Date().getTime());
+                    course2Update = courseRepository.save(course2Update);
+                }else if(Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
+                }else if(Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
+                }else{
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+                }
+            }else{
+                throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            }
         }
     }
 
@@ -175,15 +193,28 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     public void publishQuestion(String courseId, String questionId) throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(courseId)
                 || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Question> result = questionRepository.findById(questionId);
-        if(result.isPresent()){//需要增加判断重复发布题目
-            Question question2Update = result.get();
-            question2Update.setStatus(Status.PROGRESS.getName());
-            question2Update.setUpdateTime(new Date().getTime());
-            question2Update = questionRepository.save(question2Update);
-            mqService.sendMsg4PublishQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
-        }else{
-            throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+        synchronized (questionId.intern()){//需要实现分布式锁
+            Optional<Course> c = courseRepository.findById(courseId);
+            if(!c.isPresent()) throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            if(Status.FINISH.getName().equalsIgnoreCase(c.get().getStatus())) throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
+            Optional<Question> result = questionRepository.findById(questionId);
+            if(result.isPresent()){//需要增加判断重复发布题目
+                if(Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())){
+                    Question question2Update = result.get();
+                    question2Update.setStatus(Status.PROGRESS.getName());
+                    question2Update.setUpdateTime(new Date().getTime());
+                    question2Update = questionRepository.save(question2Update);
+                    mqService.sendMsg4PublishQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
+                }else if(Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_COMPLETE);
+                }else if(Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_PROGRESS);
+                }else{
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_STATUS_EXCEPTION);
+                }
+            }else{
+                throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+            }
         }
     }
 
@@ -191,15 +222,28 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     public void terminateQuestion(String courseId, String questionId)  throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(courseId)
                 || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Question> result = questionRepository.findById(questionId);
-        if(result.isPresent()){
-            Question question2Update = result.get();
-            question2Update.setStatus(Status.FINISH.getName());
-            question2Update.setUpdateTime(new Date().getTime());
-            question2Update = questionRepository.save(question2Update);
-            mqService.sendMsg4TermQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
-        }else{
-            throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+        synchronized (questionId.intern()){
+            Optional<Course> c = courseRepository.findById(courseId);
+            if(!c.isPresent()) throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            if(Status.FINISH.getName().equalsIgnoreCase(c.get().getStatus())) throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
+            Optional<Question> result = questionRepository.findById(questionId);
+            if(result.isPresent()){
+                if(Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())){
+                    Question question2Update = result.get();
+                    question2Update.setStatus(Status.FINISH.getName());
+                    question2Update.setUpdateTime(new Date().getTime());
+                    question2Update = questionRepository.save(question2Update);
+                    mqService.sendMsg4TermQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
+                }else if(Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_NOTSTART);
+                }else if(Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_COMPLETE);
+                }else{
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_STATUS_EXCEPTION);
+                }
+            }else{
+                throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+            }
         }
     }
 
@@ -207,29 +251,41 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     public void updateParticularQuestionStatus(QuestionForTeacher questionStatus) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(questionStatus.getQuestionId())
                 || StringUtils.isEmpty(questionStatus.getQuestionStatus())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Question> result = questionRepository.findById(questionStatus.getQuestionId());
-        if(result.isPresent()){
-            Question question2Update = result.get();
-            question2Update.setStatus(questionStatus.getQuestionStatus().getName());
-            question2Update.setUpdateTime(new Date().getTime());
-            question2Update = questionRepository.save(question2Update);
-        }else{
-            throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+        synchronized (questionStatus.getQuestionId().intern()){
+            Optional<Question> result = questionRepository.findById(questionStatus.getQuestionId());
+            if(result.isPresent()){
+                Question question2Update = result.get();
+                question2Update.setStatus(questionStatus.getQuestionStatus().getName());
+                question2Update.setUpdateTime(new Date().getTime());
+                question2Update = questionRepository.save(question2Update);
+            }else{
+                throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+            }
         }
     }
 
     @Override
     public void startCourse(String courseId) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(courseId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<Course> result = courseRepository.findById(courseId);
-        if(result.isPresent()){
-            Course course2Update = result.get();
-            course2Update.setStatus(Status.PROGRESS.getName());
-            course2Update.setUpdateTime(new Date().getTime());
-            course2Update = courseRepository.save(course2Update);
-            mqService.sendMsg4StartCourse(MappingEntity2MessageConverter.ConvertCourse(course2Update));
-        }else{
-            throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+        synchronized (courseId.intern()){
+            Optional<Course> result = courseRepository.findById(courseId);
+            if(result.isPresent()){
+                if(Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())){
+                    Course course2Update = result.get();
+                    course2Update.setStatus(Status.PROGRESS.getName());
+                    course2Update.setUpdateTime(new Date().getTime());
+                    course2Update = courseRepository.save(course2Update);
+                    mqService.sendMsg4StartCourse(MappingEntity2MessageConverter.ConvertCourse(course2Update));
+                }else if(Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_PROGRESS);
+                }else if(Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
+                }else{
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+                }
+            }else{
+                throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            }
         }
     }
 
@@ -239,25 +295,30 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                 || StringUtils.isEmpty(questionId)
                 || StringUtils.isEmpty(studentAnswerId)
                 || StringUtils.isEmpty(revise.getStubForSubjective())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        Optional<TeacherAnswer> resultForTeacherAnswer = Optional.ofNullable(teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), questionId, studentAnswerId));
-        if(resultForTeacherAnswer.isPresent()){
-            TeacherAnswer answer2Update = resultForTeacherAnswer.get();
-            answer2Update.setSubjectivePic(revise.getPicForSubjective());
-            answer2Update.setSubjectivePicStub(revise.getStubForSubjective());
-            answer2Update.setSubjectiveScore(revise.getScore());
-            answer2Update.setUpdateTime(new Date().getTime());
-            teacherAnswerRepository.save(answer2Update);
-        }else{
-            teacherAnswerRepository.save(MappingModel2EntityConverter.ConvertTeacherAnswer(userInfo, questionId, studentAnswerId, revise));
-        }
+        synchronized (questionId.intern()){//需要实现分布式锁
+            Optional<TeacherAnswer> resultForTeacherAnswer = Optional.ofNullable(teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), questionId, studentAnswerId));
+            if(resultForTeacherAnswer.isPresent()){
+                TeacherAnswer answer2Update = resultForTeacherAnswer.get();
+                answer2Update.setSubjectivePic(revise.getPicForSubjective());
+                answer2Update.setSubjectivePicStub(revise.getStubForSubjective());
+                answer2Update.setSubjectiveScore(revise.getScore());
+                answer2Update.setUpdateTime(new Date().getTime());
+                teacherAnswerRepository.save(answer2Update);
+            }else{
+                teacherAnswerRepository.save(MappingModel2EntityConverter.ConvertTeacherAnswer(userInfo, questionId, studentAnswerId, revise));
+            }
 
-        Optional<StudentAnswer> resultForStudentAnswer = studentAnswerRepository.findById(studentAnswerId);
-        if(resultForStudentAnswer.isPresent()){
-            StudentAnswer answer2Update = resultForStudentAnswer.get();
-            answer2Update.setResult(Result.PASS.getName());
-            answer2Update.setSubjectiveScore(revise.getScore());
-            answer2Update.setReviseTime(new Date().getTime());
-            studentAnswerRepository.save(answer2Update);
+            Optional<StudentAnswer> resultForStudentAnswer = studentAnswerRepository.findById(studentAnswerId);
+            if(resultForStudentAnswer.isPresent()){
+                StudentAnswer answer2Update = resultForStudentAnswer.get();
+                answer2Update.setResult(Result.PASS.getName());
+                answer2Update.setSubjectiveScore(revise.getScore());
+                answer2Update.setReviseTime(new Date().getTime());
+                studentAnswerRepository.save(answer2Update);
+            }
+
+            //Course course = courseRepository.findCourseByTeacherIdAndQuestionId(userInfo.getUserId(), questionId);
+            //mqService.sendMsg4ShareAnswer(MappingEntity2MessageConverter.ConvertShareAnswer(course==null?"":course.getId(), questionId, revise.getStubForSubjective()));
         }
     }
 
@@ -289,6 +350,27 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             fileStoreService.deleteCourseFile(fileName);
         }catch (Exception exp){
             throw new TeacherCourseServiceException(exp.getMessage());
+        }
+    }
+
+    @Override
+    public void shareTeacherAnswer(UserInfoForToken userInfo, String questionId, AnswerForTeacher revise) throws TeacherCourseServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId())
+                || StringUtils.isEmpty(questionId)
+                || StringUtils.isEmpty(revise.getStubForSubjective())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        synchronized (questionId.intern()){//需要实现分布式锁
+            Course course = courseRepository.findCourseByTeacherIdAndQuestionId(userInfo.getUserId(), questionId);
+            if(course!=null){
+                if(Status.NOTSTART.getName().equalsIgnoreCase(course.getStatus())){
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
+                }else if(Status.FINISH.getName().equalsIgnoreCase(course.getStatus())){
+                    //throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
+                }
+            }else{
+                throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            }
+
+            mqService.sendMsg4ShareAnswer(MappingEntity2MessageConverter.ConvertShareAnswer(course==null?"":course.getId(), questionId, revise.getStubForSubjective()));
         }
     }
 
