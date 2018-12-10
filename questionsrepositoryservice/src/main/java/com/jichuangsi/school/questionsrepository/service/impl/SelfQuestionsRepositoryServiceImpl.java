@@ -9,9 +9,11 @@ import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
+import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
 import com.jichuangsi.school.questionsrepository.repository.ISelfQuestionsRepository;
 import com.jichuangsi.school.questionsrepository.service.IFileStoreService;
 import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositoryService;
+import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
 import com.jichuangsi.school.questionsrepository.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.questionsrepository.util.MappingModel2EntityConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +36,8 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     @Resource
     private ISelfQuestionsRepository selfQuestionsRepository;
 
-    /*@Resource
-    private IUserInfoService userInfoService;*/
+    @Resource
+    private IUserInfoService userInfoService;
 
     @Resource
     private MongoTemplate mongoTemplate;
@@ -73,9 +75,9 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
     @Override
     public void addSelfQuestion(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) {
-        /*TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
         selfQuestion.setGradeId(transferTeacher.getGradeId());
-        selfQuestion.setSubjectId(transferTeacher.getSubjectId());*/
+        selfQuestion.setSubjectId(transferTeacher.getSubjectId());
         SelfQuestions selfQuestions = MappingModel2EntityConverter.ConverterSelfQuestion(userInfoForToken,selfQuestion);
         mongoTemplate.save(selfQuestions);
     }
