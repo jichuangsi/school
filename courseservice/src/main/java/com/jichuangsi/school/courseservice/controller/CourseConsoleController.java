@@ -148,7 +148,7 @@ public class CourseConsoleController {
         /*Teacher teacher = teacherCourseService.getTeacher(String teacherId);*///暂时不获取teacher
 
         /*eaxmAndClass.setsTransferClasses( teacherCourseService.getTeachClass(userInfo.getUserId()) );//暂时全班级数据*/
-        //eaxmAndClass.setTransferExams( examInfoService.getExamForTeacherById(userInfo.getUserId()) );
+        eaxmAndClass.setTransferExams( examInfoService.getExamForTeacherById(userInfo.getUserId()) );
         eaxmAndClass.setTransferClasses(userInfoService.getClassForTeacherById(userInfo.getUserId()));
         return ResponseModel.sucess("",eaxmAndClass);
     }
