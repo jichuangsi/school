@@ -22,6 +22,8 @@ public class QuestionNode implements Serializable {
     private String answer1;
     private String answer2;
     private String parse;
+    private String knowledges;
+    private String gradeId;
 
     public String getTitle() {
         return title;
@@ -165,5 +167,21 @@ public class QuestionNode implements Serializable {
 
     public void setParse(String parse) {
         this.parse = parse;
+    }
+
+    public String getKnowledges() {
+        return knowledges;
+    }
+
+    public void setKnowledges(String knowledges) {
+        this.knowledges = knowledges;
+    }
+
+    public String getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(String gradeId) {
+        this.gradeId = gradeId;
     }
 }
