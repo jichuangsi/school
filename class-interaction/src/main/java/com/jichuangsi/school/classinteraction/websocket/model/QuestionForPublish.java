@@ -1,50 +1,28 @@
 package com.jichuangsi.school.classinteraction.websocket.model;
 
-public class QuestionForPublish {
-	private String questionId;
-	private String courseId;
+public class QuestionForPublish extends AbstractQustionNotifyForStudentModel{
+
 	private String quType;
 	private String content;
-	private String wsType = "QuestionForPublish";
-
-	public final String getQuestionId() {
-		return questionId;
+	
+	public QuestionForPublish() {
+		this.wsType = AbstractQustionNotifyForStudentModel.WS_TYPE_QUESTION_PUBLISH;
 	}
 
-	public final void setQuestionId(String questionId) {
-		this.questionId = questionId;
-	}
-
-	public final String getCourseId() {
-		return courseId;
-	}
-
-	public final void setCourseId(String courseId) {
-		this.courseId = courseId;
-	}
-
-	public final String getQuType() {
+	public String getQuType() {
 		return quType;
 	}
 
-	public final void setQuType(String quType) {
+	public void setQuType(String quType) {
 		this.quType = quType;
 	}
 
-	public final String getContent() {
+	public String getContent() {
 		return content;
 	}
 
-	public final void setContent(String content) {
+	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public final String getWsType() {
-		return wsType;
-	}
-
-	public final void setWsType(String wsType) {
-		this.wsType = wsType;
 	}
 
 }

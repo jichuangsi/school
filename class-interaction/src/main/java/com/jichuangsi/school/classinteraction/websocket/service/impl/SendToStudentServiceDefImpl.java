@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionAnswerShare;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentService;
@@ -46,6 +47,13 @@ public class SendToStudentServiceDefImpl implements ISendToStudentService {
 	public void sendQuestionCloseInfo(QuestionClose questionClose) {
 		messagingTemplate.convertAndSend(courseIntercationPre + questionClose.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", questionClose)));
+	}
+
+	@Override
+	public void sendQuestionAnswerShareInfo(QuestionAnswerShare answerShare) {
+		messagingTemplate.convertAndSend(courseIntercationPre + answerShare.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", answerShare)));
+		
 	}
 
 }
