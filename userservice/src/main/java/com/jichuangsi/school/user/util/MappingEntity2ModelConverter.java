@@ -18,6 +18,7 @@ import com.jichuangsi.school.user.model.roles.Teacher;
 import com.jichuangsi.school.user.model.org.Class;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
+import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 
 import java.util.ArrayList;
@@ -163,5 +164,12 @@ public final class MappingEntity2ModelConverter {
         c.setUpdateTime(classInfo.getUpdateTime());
 
         return c;
+    }
+
+    public static final TransferStudent TransferStudent(UserInfo userInfo){
+        TransferStudent transferStudent = new TransferStudent();
+        transferStudent.setStudentId(userInfo.getId());
+        transferStudent.setStudentName(userInfo.getName());
+        return transferStudent;
     }
 }

@@ -5,6 +5,7 @@ import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
+import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,4 +126,7 @@ public interface UserInfoService {
      * @throws UserServiceException
      */
     Long TrulyDeleted(String[] ids)throws UserServiceException;
+
+    @Transactional
+    List<TransferStudent> getStudentsByClassId(String classId);
 }

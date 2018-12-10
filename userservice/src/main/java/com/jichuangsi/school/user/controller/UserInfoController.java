@@ -2,6 +2,7 @@ package com.jichuangsi.school.user.controller;
 
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
+import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
@@ -26,7 +27,7 @@ public class UserInfoController {
 
     @ApiOperation(value = "获取指定老师的班级信息", notes = "")
     @GetMapping("/getClassInfoForTeacher")
-    public List<TransferClass> getTeachClass(@RequestParam(value = "teacherId") String teacherId){
+    public List<TransferClass> getTeacherClass(@RequestParam(value = "teacherId") String teacherId){
         try {
             return userInfoService.getTeacherClass(teacherId);
         } catch (Exception e) {
@@ -44,5 +45,11 @@ public class UserInfoController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @ApiOperation(value = "获取指定班级的学生信息", notes = "")
+    @GetMapping("/getStudentsForClass")
+    public List<TransferStudent> getStudentsForClass(@RequestParam(value = "classId") String classId){
+        return  userInfoService.getStudentsByClassId(classId);
     }
 }

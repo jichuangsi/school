@@ -12,6 +12,7 @@ import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
+import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.UserInfoService;
@@ -341,6 +342,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         return deletedCount;
     }
 
+    public List<TransferStudent> getStudentsByClassId(String classId){
+        Criteria criteria = Criteria.where("roleInfos").elemMatch(Criteria.where("roleName").is("Student").and("primaryClass.classId").is(classId));
+        Query query = new Query(criteria);
+        return  convertStudentsList(mongoTemplate.find(query, UserInfo.class));
+    }
 
     private List<User> convertQuestionList(List<UserInfo> userInfos){
         List<User> users = new ArrayList<User>();
@@ -348,5 +354,13 @@ public class UserInfoServiceImpl implements UserInfoService {
             users.add(MappingEntity2ModelConverter.ConvertUser(userInfo));
         });
         return users;
+    }
+
+    private List<TransferStudent> convertStudentsList(List<UserInfo> students){
+        List<TransferStudent> transferStudents = new ArrayList<TransferStudent>();
+        students.forEach(s -> {
+            transferStudents.add(MappingEntity2ModelConverter.TransferStudent(s));
+        });
+        return transferStudents;
     }
 }
