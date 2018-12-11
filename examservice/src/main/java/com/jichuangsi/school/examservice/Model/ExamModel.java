@@ -9,22 +9,31 @@ public class ExamModel {
     private long createTime;
     private long updateTime;
 
-    private String pageSize;
-    private String pageIndex;
+    private Integer pageSize;
+    private Integer pageIndex;
+    private String examSecondName;
 
-    public String getPageSize() {
+    public String getExamSecondName() {
+        return examSecondName;
+    }
+
+    public void setExamSecondName(String examSecondName) {
+        this.examSecondName = examSecondName;
+    }
+
+    public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(String pageSize) {
+    public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
 
-    public String getPageIndex() {
+    public Integer getPageIndex() {
         return pageIndex;
     }
 
-    public void setPageIndex(String pageIndex) {
+    public void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
     }
 
