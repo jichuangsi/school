@@ -16,7 +16,7 @@ spring:
     port: 6379
   data:
     mongodb:
-      uri: mongodb://localhost:27017/Students
+      uri: mongodb://localhost:27017/school
 
 server:
   port: 8085
