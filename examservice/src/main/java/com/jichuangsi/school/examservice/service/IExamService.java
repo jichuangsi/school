@@ -10,6 +10,7 @@ import com.jichuangsi.school.examservice.exception.ExamException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IExamService {
     @Transactional
@@ -28,5 +29,9 @@ public interface IExamService {
     List<QuestionModel> getQuestions(String examId);
 
     @Transactional
-    PageHolder<TransferExam> getExamByExamName(ExamModel examModel);
+    PageHolder<ExamModel> getExamByExamName(ExamModel examModel);
+    @Transactional
+    List<Map<String,Object>> getQuestionTypegroup(String eid);
+    @Transactional
+    List<Map<String,Object>> getQuestionDifficultgroup(String eid);
 }
