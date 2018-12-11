@@ -1,5 +1,6 @@
 package com.jichuangsi.school.courseservice.model;
 
+
 import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
 
 import java.util.ArrayList;
