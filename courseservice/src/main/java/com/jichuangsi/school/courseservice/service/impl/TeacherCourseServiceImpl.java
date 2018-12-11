@@ -374,7 +374,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                         teacherAnswerRepository.save(answer2Share);
                         mqService.sendMsg4ShareAnswer(MappingEntity2MessageConverter.ConvertShareAnswer(course==null?"":course.getId(), questionId, revise.getStubForSubjective()));
                     }else{
-                        throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+                        throw new TeacherCourseServiceException(ResultCode.TEACHER_ANSWER_NOT_EXISTED);
                     }
                 }
             }else{

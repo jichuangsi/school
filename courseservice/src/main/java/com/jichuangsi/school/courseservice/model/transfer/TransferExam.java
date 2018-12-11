@@ -1,22 +1,22 @@
 package com.jichuangsi.school.courseservice.model.transfer;
 
 public class TransferExam {
-    private String eaxmId;
-    private String eaxmName;
+    private String examId;
+    private String examName;
 
-    public String getEaxmId() {
-        return eaxmId;
+    public String getExamId() {
+        return examId;
     }
 
-    public void setEaxmId(String eaxmId) {
-        this.eaxmId = eaxmId;
+    public void setExamId(String examId) {
+        this.examId = examId;
     }
 
-    public String getEaxmName() {
-        return eaxmName;
+    public String getExamName() {
+        return examName;
     }
 
-    public void setEaxmName(String eaxmName) {
-        this.eaxmName = eaxmName;
+    public void setExamName(String examName) {
+        this.examName = examName;
     }
 }
