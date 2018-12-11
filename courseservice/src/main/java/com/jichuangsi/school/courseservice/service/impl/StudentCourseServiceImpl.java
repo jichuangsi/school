@@ -9,6 +9,7 @@ import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
+import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
@@ -98,8 +99,8 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
                 }
             }
             if(question.getAnswerForTeacher()==null){
-                question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
-                        teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndIsShareOrderByShareTimeDesc(course.getTeacherId(), question.getQuestionId(), true)));
+                TeacherAnswer shareAnswer = teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndIsShareOrderByShareTimeDesc(course.getTeacherId(), question.getQuestionId(), true);
+                if(shareAnswer !=null) question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(shareAnswer));
             }
         });
         return courseForStudent;
