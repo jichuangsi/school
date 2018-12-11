@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IExamRepository extends MongoRepository<Exam,String>,IExamExtraRepository {
+public interface IExamRepository extends MongoRepository<Exam,String> {
     Exam findOneByExamId(String id);
 
     List<Exam> findByTeacherId(String id);

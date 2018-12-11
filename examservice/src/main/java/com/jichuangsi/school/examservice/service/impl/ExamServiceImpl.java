@@ -1,11 +1,11 @@
 package com.jichuangsi.school.examservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
-import com.jichuangsi.school.examservice.Model.PageHolder;
-import com.jichuangsi.school.examservice.Model.transfer.TransferExam;
 import com.jichuangsi.school.examservice.Model.DeleteQueryModel;
 import com.jichuangsi.school.examservice.Model.ExamModel;
+import com.jichuangsi.school.examservice.Model.PageHolder;
 import com.jichuangsi.school.examservice.Model.QuestionModel;
+import com.jichuangsi.school.examservice.Model.transfer.TransferExam;
 import com.jichuangsi.school.examservice.Utils.CommonUtils;
 import com.jichuangsi.school.examservice.Utils.MappingEntity2ModelConverter;
 import com.jichuangsi.school.examservice.Utils.MappingModel2EntityConverter;
@@ -13,9 +13,10 @@ import com.jichuangsi.school.examservice.constant.ResultCode;
 import com.jichuangsi.school.examservice.entity.Exam;
 import com.jichuangsi.school.examservice.entity.Question;
 import com.jichuangsi.school.examservice.exception.ExamException;
-import com.jichuangsi.school.examservice.repository.IExamRepository;
-import com.jichuangsi.school.examservice.repository.IQuestionRepository;
+import com.jichuangsi.school.examservice.repository.IExamExtraRepository;
+import com.jichuangsi.school.examservice.repository.IQuestionExtraRepository;
 import com.jichuangsi.school.examservice.service.IExamService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -24,16 +25,21 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ExamServiceImpl implements IExamService{
 
 
     @Resource
-    private IExamRepository examRepository;
+    private IExamExtraRepository examRepository;
     @Resource
-    private IQuestionRepository questionRepository;
+    private IQuestionExtraRepository questionRepository;
 
+    @Value("${com.jichuangsi.school.sortType.difficult}")
+    private String difficultType;
+    @Value("${com.jichuangsi.school.sortType.question}")
+    private String questionType;
     @Resource
     private MongoTemplate mongoTemplate;
     @Override
@@ -90,18 +96,26 @@ public class ExamServiceImpl implements IExamService{
     }
 
     @Override
-    public List<QuestionModel> getQuestions(String examId) {
-        List<Question> questions = questionRepository.findByExamId(examId);
-        return changQustionList(questions);
+    public PageHolder<QuestionModel> getQuestions(ExamModel examModel) {
+        PageHolder<QuestionModel> page = new PageHolder<QuestionModel>();
+        List<Question> questions = questionRepository.findPageQuestions(examModel);
+        page.setContent(changQustionList(questions));
+        page.setPageNum(examModel.getPageIndex());
+        page.setPageSize(examModel.getPageSize());
+        page.setTotal((int)questionRepository.findCountByExamId(examModel.getExamId()));
+        return page;
     }
 
     @Override
-    public PageHolder<TransferExam> getExamByExamName(ExamModel examModel) {
-        PageHolder<TransferExam> page = new PageHolder<TransferExam>();
-        List<Exam> exams = examRepository.findExamsByExamNameLike(examModel.getExamName(),examModel.getPageSize(),examModel.getPageIndex());
-        page.setContent(changeForExams(exams));
-        page.setPageSize(Integer.valueOf(examModel.getPageSize()));
-        page.setPageNum(Integer.valueOf(examModel.getPageIndex()));
+    public PageHolder<ExamModel> getExamByExamName(ExamModel examModel) {
+        PageHolder<ExamModel> page = new PageHolder<ExamModel>();
+        List<Exam> exams = examRepository.findExamByExamNameAndConditions(examModel.getExamName(),examModel.getPageSize(),examModel.getPageIndex());
+/*
+        exams = test(examModel.getExamName(),examModel.getPageSize(),examModel.getPageIndex());
+*/
+        page.setContent(changeExamModelForExam(exams));
+        page.setPageSize(examModel.getPageSize());
+        page.setPageNum(examModel.getPageIndex());
         page.setTotal((int)examRepository.countByExamNameLike(examModel.getExamName()));
         return page;
     }
@@ -144,4 +158,34 @@ public class ExamServiceImpl implements IExamService{
         return transferExams;
     }
 
+
+    private List<ExamModel> changeExamModelForExam(List<Exam> exams){
+        List<ExamModel> examModels = new ArrayList<ExamModel>();
+        exams.forEach(exam -> {
+            examModels.add(MappingEntity2ModelConverter.ConverterForExam(exam));
+        });
+
+        return examModels;
+    }
+
+/*    private List<Exam> test(String keyword,Integer pageSize,Integer pageIndex){
+        Criteria criteria = new Criteria();
+        if(!StringUtils.isEmpty(keyword)){
+            Pattern pattern= Pattern.compile("^.*"+keyword+".*$", Pattern.CASE_INSENSITIVE);
+            criteria = Criteria.where("examName").regex(pattern);}
+        Query query = new Query(criteria);
+        query.limit(pageSize);
+        query.skip((pageIndex)*pageSize);
+        return mongoTemplate.find(query,Exam.class);
+    }*/
+
+    @Override
+    public List<Map<String,Object>> getQuestionTypegroup(String eid) {
+        return examRepository.getGroupCount(questionType,eid);
+    }
+
+    @Override
+    public List<Map<String,Object>> getQuestionDifficultgroup(String eid) {
+        return examRepository.getGroupCount(difficultType,eid);
+    }
 }

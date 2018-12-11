@@ -17,6 +17,16 @@ public class Exam {
     long createTime;
     long updateTime;
 
+    private String examSecondName;
+
+    public String getExamSecondName() {
+        return examSecondName;
+    }
+
+    public void setExamSecondName(String examSecondName) {
+        this.examSecondName = examSecondName;
+    }
+
     public String getExamId() {
         return examId;
     }
