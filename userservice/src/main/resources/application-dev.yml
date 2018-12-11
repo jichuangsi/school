@@ -3,7 +3,7 @@ spring:
     name: userservice
   data:
     mongodb:
-      uri: mongodb://localhost:27017/Students
+      uri: mongodb://localhost:27017/school
   devtools:
     freemarker:
       cache:false
