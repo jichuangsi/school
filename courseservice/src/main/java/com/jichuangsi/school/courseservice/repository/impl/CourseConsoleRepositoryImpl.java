@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.repository.impl;
 import com.jichuangsi.school.courseservice.constant.CourseSort;
 import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
+import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
 import org.springframework.data.domain.Sort;
@@ -101,21 +102,23 @@ public class CourseConsoleRepositoryImpl<T> implements CourseConsoleRepository<T
     }
 
     @Override
-    public void updateCourseById(Course course) {
-        Criteria criteria = Criteria.where("id").is(course.getId());
+    public void updateCourseById(CourseForTeacher course) {
+        Criteria criteria = Criteria.where("id").is(course.getCourseId());
         Update update = new Update();
-        if(course.getName()!=null)
-        update.set("name",course.getName());
-        if(course.getClassId()!=null)
+        if(!StringUtils.isEmpty(course.getCourseName()))
+        update.set("name",course.getCourseName());
+        if(!StringUtils.isEmpty(course.getClassId()))
         update.set("classId",course.getClassId());
-        if(course.getClassName()!=null)
+        if(!StringUtils.isEmpty(course.getClassName()))
         update.set("className",course.getClassName());
-        if(course.getStartTime()!=null)
-        update.set("startTime",course.getStartTime());
-        if(course.getEndTime()!=null)
-        update.set("endTime",course.getEndTime());
-        if(course.getInfo()!=null)
-        update.set("info",course.getInfo());
+        if(course.getCourseStartTime()!=0)
+        update.set("startTime",course.getCourseStartTime());
+        if(course.getCourseEndTime()!=0)
+        update.set("endTime",course.getCourseEndTime());
+        if(!StringUtils.isEmpty(course.getCourseInfo()))
+        update.set("info",course.getCourseInfo());
+        if(!StringUtils.isEmpty(course.getCoursePic()))
+        update.set("picAddress",course.getCoursePic());
         update.set("updateTime",new Date().getTime());
         mongoTemplate.updateFirst(new Query(criteria),update,Course.class);
     }

@@ -6,14 +6,17 @@ import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
+import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
 import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
 import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
 import com.jichuangsi.school.courseservice.service.ICourseConsoleService;
+import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.util.DateFormateUtil;
+import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,6 +45,9 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Resource
+    private IFileStoreService fileStoreService;
 
     @Override
     public PageHolder<Course> getSortCoursesList(Course course, PageHolder<Course> page, String keyWord, Integer sortNum, Date nowDay) throws TeacherCourseServiceException {
@@ -124,9 +130,46 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         Course storedCourse = mongoTemplate.findById(courseForTeacher.getCourseId(), Course.class);
         if(!Status.NOTSTART.getName().equalsIgnoreCase(storedCourse.getStatus())) throw new TeacherCourseServiceException(ResultCode.COURSE_ALREADY_BEGIN);
         DateFormateUtil dfu = new DateFormateUtil(defaultDateFormat1);
-        Course course = MappingModel2EntityConverter.ConvertTeacherCourse(userInfoForToken,courseForTeacher);
-        if(course.getStartTime() > 0)
-            course.setEndTime(dfu.getEndTime(course.getStartTime(), coursePeriod));
-        courseConsoleRepository.updateCourseById(course);
+        courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(storedCourse);
+        if(courseForTeacher.getCourseStartTime() > 0)
+            courseForTeacher.setCourseEndTime(dfu.getEndTime(courseForTeacher.getCourseStartTime(), coursePeriod));
+        courseConsoleRepository.updateCourseById(courseForTeacher);
+    }
+
+    @Override
+    public CourseForTeacher uploadIco(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException{
+        try {
+            fileStoreService.uploadCourseFile(courseFile);
+        } catch (Exception e) {
+            throw new TeacherCourseServiceException(ResultCode.FILE_UPLOAD_ERROR);
+        }
+        CourseForTeacher courseForTeacher = new CourseForTeacher();
+        courseForTeacher.setTeacherId(userInfo.getUserId());
+        courseForTeacher.setTeacherName(userInfo.getUserName());
+        courseForTeacher.setCoursePic(courseFile.getStoredName());
+        return courseForTeacher;
+    }
+
+    @Override
+    public CourseFile downIco(UserInfoForToken userInfo, String pic) throws TeacherCourseServiceException{
+        try {
+            return fileStoreService.donwloadCourseFile(pic);
+        } catch (Exception e) {
+            throw  new TeacherCourseServiceException(ResultCode.FILE_DOWNLOAD_ERROR);
+        }
+    }
+
+    @Override
+    public void updateIco(UserInfoForToken userInfo, CourseFile courseFile,String cid) throws TeacherCourseServiceException {
+        Course course = mongoTemplate.findById(cid,Course.class);
+        CourseForTeacher courseModle = new CourseForTeacher();
+        courseModle.setCourseId(course.getId());
+        courseModle.setCoursePic(uploadIco(userInfo,courseFile).getCoursePic());
+        courseConsoleRepository.updateCourseById(courseModle);
+        try {
+            fileStoreService.deleteCourseFile(course.getPicAddress());
+        } catch (Exception e) {
+            throw new TeacherCourseServiceException(ResultCode.FILE_REMOVE_ERROR);
+        }
     }
 }
