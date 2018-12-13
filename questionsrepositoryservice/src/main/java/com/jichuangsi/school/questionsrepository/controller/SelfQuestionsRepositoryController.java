@@ -8,6 +8,7 @@ import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
+import com.jichuangsi.school.questionsrepository.model.common.SendCodePic;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositoryService;
 import io.swagger.annotations.Api;
@@ -69,17 +70,21 @@ public class SelfQuestionsRepositoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/sendQuestionPic")
-    public ResponseModel<SelfQuestion> sendQuestionPic(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
+    public ResponseModel<SelfQuestion> sendQuestionPic(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo,@RequestParam String code) throws QuestionRepositoryServiceException{
         /*try{
             return ResponseModel.sucess("",  teacherCourseService.uploadTeacherSubjectPic(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
         }catch (IOException ioExp){
             throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }*/
-        try{
-            return ResponseModel.sucess("",  selfQuestionsRepositoryService.uploadQuestionPic(userInfo, new QuestionFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
-        }catch (IOException ioExp){
+        SendCodePic sendCodePic = new SendCodePic();
+        sendCodePic.setCode(code);
+        sendCodePic.setTeacherId(userInfo.getUserId());
+        try {
+            selfQuestionsRepositoryService.uploadQuestionPic(new QuestionFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()),sendCodePic);
+        } catch (IOException e) {
             throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
+        return ResponseModel.sucessWithEmptyData("");
     }
 
     //获取指定文件名图片
@@ -99,6 +104,23 @@ public class SelfQuestionsRepositoryController {
     @DeleteMapping("/remoreQuestionPic")
     public ResponseModel<SelfQuestion> remoreQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SelfQuestion questionPic) throws QuestionRepositoryServiceException{
         selfQuestionsRepositoryService.deleteQuestionPic(userInfo,questionPic.getQuestionPic());
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    //二维码上传指定文件名图片
+    @ApiOperation(value = "二维码上传指定文件名图片", notes = "")
+    @ApiImplicitParams({})
+    @PostMapping("/codeSendQuestionPic")
+    public ResponseModel codeSendQuestionPic(@RequestParam MultipartFile file, @RequestParam String code,@RequestParam String teacherId) throws QuestionRepositoryServiceException{
+
+        SendCodePic sendCodePic = new SendCodePic();
+        sendCodePic.setTeacherId(teacherId);
+        sendCodePic.setCode(code);
+        try {
+            selfQuestionsRepositoryService.uploadQuestionPic(new QuestionFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()),sendCodePic);
+        } catch (IOException e) {
+            throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
+        }
         return ResponseModel.sucessWithEmptyData("");
     }
 }

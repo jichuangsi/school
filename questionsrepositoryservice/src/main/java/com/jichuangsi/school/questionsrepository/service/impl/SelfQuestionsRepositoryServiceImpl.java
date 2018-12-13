@@ -8,12 +8,14 @@ import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
+import com.jichuangsi.school.questionsrepository.model.common.SendCodePic;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
 import com.jichuangsi.school.questionsrepository.repository.ISelfQuestionsRepository;
 import com.jichuangsi.school.questionsrepository.service.IFileStoreService;
 import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositoryService;
 import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
+import com.jichuangsi.school.questionsrepository.service.impl.cache.CacheServiceLocalImpl;
 import com.jichuangsi.school.questionsrepository.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.questionsrepository.util.MappingModel2EntityConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,10 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
     @Value("${com.jichuangsi.school.result.page-size}")
     private int defaultPageSize;
+    @Value("${com.jichuangsi.school.codePic.time}")
+    private long picCacheTime;
+    @Value("${com.jichuangsi.school.codePic.prefix}")
+    private String picPrefix;
 
     @Resource
     private IFileStoreService fileStoreService;
@@ -40,19 +46,19 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     private IUserInfoService userInfoService;
 
     @Resource
+    private CacheServiceLocalImpl cacheServiceLocal;
+
+    @Resource
     private MongoTemplate mongoTemplate;
     @Override
-    public SelfQuestion uploadQuestionPic(UserInfoForToken userInfo, QuestionFile questionFile) throws QuestionRepositoryServiceException{
+    public void uploadQuestionPic(QuestionFile questionFile, SendCodePic sendCodePic) throws QuestionRepositoryServiceException{
         try {
             fileStoreService.uploadQuestionFile(questionFile);
         } catch (Exception e) {
             throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
-        SelfQuestion selfQuestion = new SelfQuestion();
-        selfQuestion.setTeacherId(userInfo.getUserId());
-        selfQuestion.setQuestionPic(questionFile.getStoredName());
-        selfQuestion.setTeacherName(userInfo.getUserName());
-        return selfQuestion;
+        //保存进内存
+        cacheServiceLocal.set(picPrefix+sendCodePic.getOneCode(),questionFile.getStoredName(),picCacheTime);
     }
 
     @Override
@@ -76,6 +82,8 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     @Override
     public void addSelfQuestion(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) {
         TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        String picName = cacheServiceLocal.get(picPrefix+userInfoForToken.getUserId()+selfQuestion.getCode());
+        selfQuestion.setQuestionPic(picName);
         selfQuestion.setGradeId(transferTeacher.getGradeId());
         selfQuestion.setSubjectId(transferTeacher.getSubjectId());
         SelfQuestions selfQuestions = MappingModel2EntityConverter.ConverterSelfQuestion(userInfoForToken,selfQuestion);
@@ -117,4 +125,6 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     public void deleteSelfQuestions(UserInfoForToken userInfo, DeleteQueryModel deleteQueryModel) throws QuestionRepositoryServiceException {
         selfQuestionsRepository.findAllAndRemove(deleteQueryModel);
     }
+
+
 }
