@@ -2,10 +2,9 @@ package com.jichuangsi.school.examservice.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
-import com.jichuangsi.school.examservice.Model.PageHolder;
-import com.jichuangsi.school.examservice.Model.transfer.TransferExam;
 import com.jichuangsi.school.examservice.Model.DeleteQueryModel;
 import com.jichuangsi.school.examservice.Model.ExamModel;
+import com.jichuangsi.school.examservice.Model.PageHolder;
 import com.jichuangsi.school.examservice.Model.QuestionModel;
 import com.jichuangsi.school.examservice.Utils.CommonUtils;
 import com.jichuangsi.school.examservice.constant.ResultCode;
@@ -19,7 +18,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/exam")
@@ -74,22 +75,35 @@ public class ExamController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/findExams")
-    public ResponseModel<PageHolder<TransferExam>> findExams(@ModelAttribute UserInfoForToken userInfo, @RequestBody ExamModel examModel) throws ExamException{
-        if(examModel==null && StringUtils.isEmpty(examModel.getExamName())){
+    public ResponseModel<PageHolder<ExamModel>> findExams(@ModelAttribute UserInfoForToken userInfo, @RequestBody ExamModel examModel) throws ExamException{
+        if(examModel==null){
             throw new ExamException(ResultCode.PARAM_MISS_MSG);
         }
         return ResponseModel.sucess("",examService.getExamByExamName(examModel));
     }
 
-    @ApiOperation(value = "courseservice获取exam和exam内的试题集", notes = "")
+    @ApiOperation(value = "获取exam和exam内的试题集", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/getExamInfoForExamId")
-    public List<QuestionModel> getExamInfoForExamId(@RequestParam(value = "examId") String examId){
-
-        return examService.getQuestions(examId);
+    public ResponseModel<PageHolder<QuestionModel>> getExamInfoForExamId(@ModelAttribute UserInfoForToken userInfo,@RequestBody ExamModel examModel) throws  ExamException{
+        if(examModel==null) throw new ExamException(ResultCode.PARAM_MISS_MSG);
+        return ResponseModel.sucess("",examService.getQuestions(examModel));
     }
 
-
+    @ApiOperation(value = "根据id获取试卷类，题型数量", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping("/getExamInfoCount")
+    public ResponseModel getExamInfoCount(@ModelAttribute UserInfoForToken userInfo,@RequestParam String eid) throws ExamException{
+        if(StringUtils.isEmpty(eid)){
+            throw  new ExamException(ResultCode.PARAM_MISS_MSG);
+        }
+        Map<String,List<Map<String,Object>>> maps = new HashMap<String,List<Map<String,Object>>>();
+        maps.put("qt",examService.getQuestionTypegroup(eid));
+        maps.put("dt",examService.getQuestionDifficultgroup(eid));
+        return ResponseModel.sucess("",maps);
+    }
 }

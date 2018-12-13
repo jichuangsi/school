@@ -15,9 +15,18 @@ public class Course {
     long courseEndTime;
     long createTime;
     long updateTime;
+    String coursePic;
 
     int pageNum;
     int pageSize;
+
+    public String getCoursePic() {
+        return coursePic;
+    }
+
+    public void setCoursePic(String coursePic) {
+        this.coursePic = coursePic;
+    }
 
     public String getCourseId() {
         return courseId;

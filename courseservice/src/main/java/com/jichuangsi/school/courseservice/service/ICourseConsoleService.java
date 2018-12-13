@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.service;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.entity.Course;
+import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,4 +41,10 @@ public interface ICourseConsoleService {
     //修改未开始的课程
     @Transactional
     void updateCourseIsN(UserInfoForToken userInfoForToken,CourseForTeacher courseForTeacher) throws TeacherCourseServiceException;
+    @Transactional
+    CourseForTeacher uploadIco(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException;
+    @Transactional
+    CourseFile downIco(UserInfoForToken userInfo,String pic)  throws TeacherCourseServiceException;
+    @Transactional
+    void updateIco(UserInfoForToken userInfo, CourseFile courseFile,String cid) throws TeacherCourseServiceException;
 }

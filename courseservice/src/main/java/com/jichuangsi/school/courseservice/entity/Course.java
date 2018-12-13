@@ -22,6 +22,15 @@ public class Course {
     List<String> questionIds = new ArrayList<String>();
     long createTime;
     long updateTime;
+    String picAddress;
+
+    public String getPicAddress() {
+        return picAddress;
+    }
+
+    public void setPicAddress(String picAddress) {
+        this.picAddress = picAddress;
+    }
 
     public String getId() {
         return id;

@@ -42,7 +42,7 @@ public  final class MappingModel2EntityConverter {
         else
             course.setCreateTime(courseForTeacher.getCreateTime());
         course.setUpdateTime(new Date().getTime());
-
+        course.setPicAddress(courseForTeacher.getCoursePic());
         return course;
     }
 

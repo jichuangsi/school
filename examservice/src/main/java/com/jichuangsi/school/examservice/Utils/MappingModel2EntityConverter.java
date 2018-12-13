@@ -5,6 +5,7 @@ import com.jichuangsi.school.examservice.Model.ExamModel;
 import com.jichuangsi.school.examservice.Model.QuestionModel;
 import com.jichuangsi.school.examservice.entity.Exam;
 import com.jichuangsi.school.examservice.entity.Question;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ public final  class MappingModel2EntityConverter {
     public final static Exam converterForExamModel(UserInfoForToken userInfo, ExamModel eaxmModel,
                                                    List<String> qids){
         Exam exam = new Exam();
-        if(eaxmModel.getExamId()==null){
+        if(StringUtils.isEmpty(eaxmModel.getExamId())){
             exam.setExamId( UUID.randomUUID().toString().replace("-",""));
         }else {exam.setExamId(eaxmModel.getExamId());}
         exam.setExamName(eaxmModel.getExamName());
@@ -24,6 +25,7 @@ public final  class MappingModel2EntityConverter {
         exam.setTeacherId(userInfo.getUserId());
         exam.setTeacherName(userInfo.getUserName());
         exam.setUpdateTime(new Date().getTime());
+        exam.setExamSecondName(eaxmModel.getExamSecondName());
         exam.setQuestionIds(qids);
         return exam;
     }
@@ -36,7 +38,7 @@ public final  class MappingModel2EntityConverter {
         question.setCreateTime(questionModel.getCreateTime()==0?new Date().getTime():questionModel.getCreateTime());
         question.setDifficulty(questionModel.getDifficulty());
         question.setGradeId(questionModel.getGradeId());
-        question.setId(questionModel.getQuestionId()==null?
+        question.setId(StringUtils.isEmpty(questionModel.getGradeId())?
                                     UUID.randomUUID().toString().replace("-",""):questionModel.getQuestionId());
         question.setIdMD52(questionModel.getQuestionIdMD52());
         question.setKnowledge(questionModel.getKnowledge());

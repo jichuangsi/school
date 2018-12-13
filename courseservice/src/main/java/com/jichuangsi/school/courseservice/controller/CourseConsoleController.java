@@ -4,12 +4,11 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
-import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.model.*;
-import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.service.ICourseConsoleService;
 import com.jichuangsi.school.courseservice.service.IExamInfoService;
+import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.util.DateFormateUtil;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import io.swagger.annotations.Api;
@@ -19,8 +18,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -201,6 +202,54 @@ public class CourseConsoleController {
         courseConsoleService.updateCourseIsN(userInfo,courseForTeacher);
         return ResponseModel.sucessWithEmptyData("");
     }
+
+    @ApiOperation(value = "上传course的ico图标", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/saveCourseIco")
+    public ResponseModel<CourseForTeacher> saveCourseIco(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo){
+        try {
+            return ResponseModel.sucess("",  courseConsoleService.uploadIco(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        } catch (IOException e) {
+            return ResponseModel.fail("",ResultCode.FILE_UPLOAD_ERROR);
+        }
+    }
+
+    @ApiOperation(value = "查看course的ico图标", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/getCourseIco")
+    public ResponseModel<CourseFile> getCourseIco(@ModelAttribute UserInfoForToken userInfo,@RequestBody CourseForTeacher courseForTeacher){
+
+        try {
+            return ResponseModel.sucess("",courseConsoleService.downIco(userInfo,courseForTeacher.getCoursePic()));
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(value = "修改course的ico图标", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/updateCourseIco")
+    public ResponseModel updateCourseIco(@RequestParam MultipartFile file,@ModelAttribute UserInfoForToken userInfo,@RequestParam String courseId){
+        try {
+            courseConsoleService.updateIco(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()),courseId);
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        } catch (IOException e) {
+            return ResponseModel.fail("",ResultCode.FILE_UPLOAD_ERROR);
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+
 
 
     //使course数据带时间
