@@ -8,8 +8,6 @@ import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.model.*;
 
-import java.util.List;
-
 public final class MappingEntity2ModelConverter {
 
     private MappingEntity2ModelConverter(){}
@@ -28,6 +26,7 @@ public final class MappingEntity2ModelConverter {
         courseForTeacher.setCourseEndTime(course.getEndTime());
         courseForTeacher.setCreateTime(course.getCreateTime());
         courseForTeacher.setUpdateTime(course.getUpdateTime());
+        courseForTeacher.setCoursePic(course.getPicAddress());
         return courseForTeacher;
     }
 

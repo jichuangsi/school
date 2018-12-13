@@ -26,12 +26,14 @@ public interface IExamService {
     List<TransferExam> getTransferExamByTeacherId(String teacherId);
 
     @Transactional
-    List<QuestionModel> getQuestions(String examId);
+    PageHolder<QuestionModel> getQuestions(ExamModel examModel);
 
     @Transactional
     PageHolder<ExamModel> getExamByExamName(ExamModel examModel);
+
     @Transactional
     List<Map<String,Object>> getQuestionTypegroup(String eid);
+
     @Transactional
     List<Map<String,Object>> getQuestionDifficultgroup(String eid);
 }

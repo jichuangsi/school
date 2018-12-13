@@ -82,14 +82,14 @@ public class ExamController {
         return ResponseModel.sucess("",examService.getExamByExamName(examModel));
     }
 
-    @ApiOperation(value = "courseservice获取exam和exam内的试题集", notes = "")
+    @ApiOperation(value = "获取exam和exam内的试题集", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/getExamInfoForExamId")
-    public List<QuestionModel> getExamInfoForExamId(@RequestParam(value = "examId") String examId){
-
-        return examService.getQuestions(examId);
+    public ResponseModel<PageHolder<QuestionModel>> getExamInfoForExamId(@ModelAttribute UserInfoForToken userInfo,@RequestBody ExamModel examModel) throws  ExamException{
+        if(examModel==null) throw new ExamException(ResultCode.PARAM_MISS_MSG);
+        return ResponseModel.sucess("",examService.getQuestions(examModel));
     }
 
     @ApiOperation(value = "根据id获取试卷类，题型数量", notes = "")

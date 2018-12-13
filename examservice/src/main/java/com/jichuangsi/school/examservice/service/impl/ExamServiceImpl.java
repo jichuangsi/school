@@ -14,7 +14,7 @@ import com.jichuangsi.school.examservice.entity.Exam;
 import com.jichuangsi.school.examservice.entity.Question;
 import com.jichuangsi.school.examservice.exception.ExamException;
 import com.jichuangsi.school.examservice.repository.IExamExtraRepository;
-import com.jichuangsi.school.examservice.repository.IQuestionRepository;
+import com.jichuangsi.school.examservice.repository.IQuestionExtraRepository;
 import com.jichuangsi.school.examservice.service.IExamService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,7 +34,7 @@ public class ExamServiceImpl implements IExamService{
     @Resource
     private IExamExtraRepository examRepository;
     @Resource
-    private IQuestionRepository questionRepository;
+    private IQuestionExtraRepository questionRepository;
 
     @Value("${com.jichuangsi.school.sortType.difficult}")
     private String difficultType;
@@ -96,9 +96,14 @@ public class ExamServiceImpl implements IExamService{
     }
 
     @Override
-    public List<QuestionModel> getQuestions(String examId) {
-        List<Question> questions = questionRepository.findByExamId(examId);
-        return changQustionList(questions);
+    public PageHolder<QuestionModel> getQuestions(ExamModel examModel) {
+        PageHolder<QuestionModel> page = new PageHolder<QuestionModel>();
+        List<Question> questions = questionRepository.findPageQuestions(examModel);
+        page.setContent(changQustionList(questions));
+        page.setPageNum(examModel.getPageIndex());
+        page.setPageSize(examModel.getPageSize());
+        page.setTotal((int)questionRepository.findCountByExamId(examModel.getExamId()));
+        return page;
     }
 
     @Override
@@ -109,8 +114,8 @@ public class ExamServiceImpl implements IExamService{
         exams = test(examModel.getExamName(),examModel.getPageSize(),examModel.getPageIndex());
 */
         page.setContent(changeExamModelForExam(exams));
-        page.setPageSize(Integer.valueOf(examModel.getPageSize()));
-        page.setPageNum(Integer.valueOf(examModel.getPageIndex()));
+        page.setPageSize(examModel.getPageSize());
+        page.setPageNum(examModel.getPageIndex());
         page.setTotal((int)examRepository.countByExamNameLike(examModel.getExamName()));
         return page;
     }
