@@ -1,7 +1,10 @@
 package com.jichuangsi.school.questionsrepository.model.common;
 
 public class SendCodePic {
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     private String code;
     private String teacherId;
 
@@ -20,4 +23,11 @@ public class SendCodePic {
     public void setTeacherId(String teacherId) {
         this.teacherId = teacherId;
     }
+<<<<<<< Updated upstream
+=======
+
+    public String getOneCode(){
+        return teacherId+code;
+    }
+>>>>>>> Stashed changes
 }
