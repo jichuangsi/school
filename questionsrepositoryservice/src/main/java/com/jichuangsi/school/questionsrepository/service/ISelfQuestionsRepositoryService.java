@@ -7,12 +7,13 @@ import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
+import com.jichuangsi.school.questionsrepository.model.common.SendCodePic;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 
 public interface ISelfQuestionsRepositoryService {
 
     //上传问题图片
-    SelfQuestion uploadQuestionPic(UserInfoForToken userInfo, QuestionFile questionFile) throws QuestionRepositoryServiceException;
+    void uploadQuestionPic(QuestionFile questionFile, SendCodePic sendCodePic) throws QuestionRepositoryServiceException;
 
     //下载问题图片
     QuestionFile downQuestionPic(UserInfoForToken userInfo, String fileName) throws QuestionRepositoryServiceException;
@@ -34,4 +35,6 @@ public interface ISelfQuestionsRepositoryService {
 
     //删除自定义
     void deleteSelfQuestions(UserInfoForToken userInfo,DeleteQueryModel deleteQueryModel) throws  QuestionRepositoryServiceException;
+
+
 }

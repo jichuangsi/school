@@ -37,7 +37,7 @@ com:
           userClaim : userInfo
       tiku:
         schema: http
-        host: 192.168.31.108
+        host: 14.18.114.19
         accessKey: 9229eb41327ec6385c28baf45469f988
         subjectEditionApi: subjectEditionApi
         otherBasicApi: getOtherBasic
@@ -47,3 +47,6 @@ com:
         knowledgeApi: knowledgeApi
       swagger:
         enable: true
+      codePic:
+        time: 300000
+        prefix: pic_
