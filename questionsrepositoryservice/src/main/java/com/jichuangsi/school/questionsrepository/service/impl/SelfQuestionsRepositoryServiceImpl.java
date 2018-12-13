@@ -1,5 +1,6 @@
 package com.jichuangsi.school.questionsrepository.service.impl;
 
+import com.jichuangsi.microservice.common.cache.ICacheService;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
@@ -15,7 +16,6 @@ import com.jichuangsi.school.questionsrepository.repository.ISelfQuestionsReposi
 import com.jichuangsi.school.questionsrepository.service.IFileStoreService;
 import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositoryService;
 import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
-import com.jichuangsi.school.questionsrepository.service.impl.cache.CacheServiceLocalImpl;
 import com.jichuangsi.school.questionsrepository.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.questionsrepository.util.MappingModel2EntityConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +46,7 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     private IUserInfoService userInfoService;
 
     @Resource
-    private CacheServiceLocalImpl cacheServiceLocal;
+    private ICacheService cacheServiceLocal;
 
     @Resource
     private MongoTemplate mongoTemplate;
