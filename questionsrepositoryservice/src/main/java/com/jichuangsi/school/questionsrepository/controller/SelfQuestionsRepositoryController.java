@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -94,14 +93,15 @@ public class SelfQuestionsRepositoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getQuestionPic")
-    public ResponseModel<Base64TransferFile> getQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SelfQuestion questionPic) throws QuestionRepositoryServiceException{
-        Base64TransferFile base64TransferFile = new Base64TransferFile();
+    public ResponseModel<QuestionFile> getQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SelfQuestion questionPic) throws QuestionRepositoryServiceException{
+        /*Base64TransferFile base64TransferFile = new Base64TransferFile();
         QuestionFile questionFile =  selfQuestionsRepositoryService.downQuestionPic(userInfo,questionPic.getQuestionPic());
         base64TransferFile.setName(questionFile.getName());
         base64TransferFile.setContentType(questionFile.getContentType());
         base64TransferFile.setContent(new String(questionFile.getContent()));
 
-        return  ResponseModel.sucess("", base64TransferFile);
+        return  ResponseModel.sucess("", base64TransferFile);*/
+        return  ResponseModel.sucess("", selfQuestionsRepositoryService.downQuestionPic(userInfo,questionPic.getQuestionPic()));
     }
 
     //删除指定文件名图片
@@ -118,18 +118,15 @@ public class SelfQuestionsRepositoryController {
     @ApiOperation(value = "二维码上传指定文件名图片", notes = "")
     @ApiImplicitParams({})
     @PostMapping("/codeSendQuestionPic")
-    public ResponseModel codeSendQuestionPic(@RequestParam MultipartFile file, @RequestParam String code,@RequestParam String teacherId,@RequestParam long safeTime) throws QuestionRepositoryServiceException{
-        if(safeTime!=0 && new Date().getTime()<safeTime){
-            SendCodePic sendCodePic = new SendCodePic();
-            sendCodePic.setTeacherId(teacherId);
-            sendCodePic.setCode(code);
-            try {
-                selfQuestionsRepositoryService.uploadQuestionPic(new QuestionFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()),sendCodePic);
-            } catch (IOException e) {
-                throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
-            }
-        }else{
-            throw new QuestionRepositoryServiceException(ResultCode.OVER_SALE_TIME);
+    public ResponseModel codeSendQuestionPic(@RequestParam MultipartFile file, @RequestParam String code,@RequestParam String teacherId) throws QuestionRepositoryServiceException{
+
+        SendCodePic sendCodePic = new SendCodePic();
+        sendCodePic.setTeacherId(teacherId);
+        sendCodePic.setCode(code);
+        try {
+            selfQuestionsRepositoryService.uploadQuestionPic(new QuestionFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()),sendCodePic);
+        } catch (IOException e) {
+            throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
         return ResponseModel.sucessWithEmptyData("");
     }
