@@ -221,15 +221,15 @@ public class CourseConsoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/getCourseIco")
-    public ResponseModel<Base64TransferFile> getCourseIco(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) {
+    public ResponseModel<CourseFile> getCourseIco(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) {
 
         try {
-            Base64TransferFile base64TransferFile = new Base64TransferFile();
+            /*Base64TransferFile base64TransferFile = new Base64TransferFile();
             CourseFile courseFile = courseConsoleService.downIco(userInfo, courseForTeacher.getCoursePic());
             base64TransferFile.setName(courseFile.getName());
             base64TransferFile.setContentType(courseFile.getContentType());
-            base64TransferFile.setContent(new String(courseFile.getContent()));
-            return ResponseModel.sucess("",base64TransferFile);
+            base64TransferFile.setContent(new String(courseFile.getContent()));*/
+            return ResponseModel.sucess("",courseConsoleService.downIco(userInfo, courseForTeacher.getCoursePic()));
         } catch (TeacherCourseServiceException e) {
             return ResponseModel.fail("", e.getMessage());
         }

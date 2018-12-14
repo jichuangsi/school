@@ -96,14 +96,14 @@ public class SchoolQuestionsRepositoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getQuestionPic")
-    public ResponseModel<Base64TransferFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolQuestion questionPic) throws QuestionRepositoryServiceException{
-        Base64TransferFile base64TransferFile = new Base64TransferFile();
+    public ResponseModel<QuestionFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolQuestion questionPic) throws QuestionRepositoryServiceException{
+        /*Base64TransferFile base64TransferFile = new Base64TransferFile();
         QuestionFile questionFile = schoolQuestionService.downQuestionPic(userInfo,questionPic.getQuestionPic());
         base64TransferFile.setName(questionFile.getName());
         base64TransferFile.setContentType(questionFile.getContentType());
-        base64TransferFile.setContent(new String(questionFile.getContent()));
+        base64TransferFile.setContent(new String(questionFile.getContent()));*/
 
-        return  ResponseModel.sucess("", base64TransferFile);
+        return  ResponseModel.sucess("", schoolQuestionService.downQuestionPic(userInfo,questionPic.getQuestionPic()));
     }
 
     //删除指定文件名图片
