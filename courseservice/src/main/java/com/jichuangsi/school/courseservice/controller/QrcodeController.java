@@ -51,7 +51,7 @@ public class QrcodeController {
         long time = date.getTime()+increaseTime;
         String s = String.valueOf(time);//?a="123"&code=
         String url=c+"&id="+userInfo.getUserId()+"&t="+s;
-        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,logoPath);
+        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
         ImageIO.write(bufferedImage, "jpg", baos);//写入流中
         byte[] bytes = baos.toByteArray();//转换成字节
@@ -70,13 +70,10 @@ public class QrcodeController {
     @PostMapping("/createLogoQR")
     public String productcodewithLogo(@ModelAttribute UserInfoForToken userInfo,@RequestParam(value = "code") String c) throws IOException {
         Date date=new Date();
- /*       Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE,increaseTime);
-        long time1 = calendar.getTime().getTime();*/
         long time = date.getTime()+increaseTime;
         String s = String.valueOf(time);//?a="123"&code=
         String url=c+"&id="+userInfo.getUserId()+"&t="+s;
-        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,"http://www.jichuangsi.com/logo/jichuangsi.logo.jpg");
+        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,logoPath);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
         ImageIO.write(bufferedImage, "jpg", baos);//写入流中
         byte[] bytes = baos.toByteArray();//转换成字节
