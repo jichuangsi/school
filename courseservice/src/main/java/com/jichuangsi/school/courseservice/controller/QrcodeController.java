@@ -42,7 +42,7 @@ public class QrcodeController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @CrossOrigin
-    @PostMapping("/createQR")
+    @PostMapping("/createLogoQR")
     public String productcode(@ModelAttribute UserInfoForToken userInfo,@RequestParam(value = "code") String c) throws IOException {
         Date date=new Date();
  /*       Calendar calendar = Calendar.getInstance();
@@ -67,7 +67,7 @@ public class QrcodeController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @CrossOrigin
-    @PostMapping("/createLogoQR")
+    @PostMapping("/createQR")
     public String productcodewithLogo(@ModelAttribute UserInfoForToken userInfo,@RequestParam(value = "code") String c) throws IOException {
         Date date=new Date();
         long time = date.getTime()+increaseTime;
