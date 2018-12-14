@@ -52,17 +52,18 @@ public class CourseConsoleController {
 
     /**
      * {
-        "nanos":0,
-        "time":1371721834000,
-        "minutes":50,
-        "seconds":34,
-        "hours":17,
-        "month":5,
-        "year":113,
-        "timezoneOffset":-480,
-        "day":4,
-        "date":20
-     }
+     * "nanos":0,
+     * "time":1371721834000,
+     * "minutes":50,
+     * "seconds":34,
+     * "hours":17,
+     * "month":5,
+     * "year":113,
+     * "timezoneOffset":-480,
+     * "day":4,
+     * "date":20
+     * }
+     *
      * @param userInfo
      * @return
      * @throws TeacherCourseServiceException
@@ -72,22 +73,22 @@ public class CourseConsoleController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/getSortList",consumes = "application/json")
+    @PostMapping(value = "/getSortList", consumes = "application/json")
     public ResponseModel<PageHolder<ReturnCourse>> getSortList(@ModelAttribute UserInfoForToken userInfo, @RequestBody(required = false) SearchCourseModel searchCourseModel) throws TeacherCourseServiceException {
-/*        searchCourseModel = new SearchCourseModel("","2018-11-23",1,"N",1,3);*/
-        if(userInfo==null||searchCourseModel==null){
+        /*        searchCourseModel = new SearchCourseModel("","2018-11-23",1,"N",1,3);*/
+        if (userInfo == null || searchCourseModel == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
         Course course = new Course();
         PageHolder<Course> page = new PageHolder<Course>();
         course.setTeacherId(userInfo.getUserId());
-        if(!StringUtils.isEmpty(searchCourseModel.getStatus())){
+        if (!StringUtils.isEmpty(searchCourseModel.getStatus())) {
             course.setStatus(searchCourseModel.getStatus().getName());
         }
-        page.setPageSize(searchCourseModel.getPageSize()>0?searchCourseModel.getPageSize():defaultPageSize);
+        page.setPageSize(searchCourseModel.getPageSize() > 0 ? searchCourseModel.getPageSize() : defaultPageSize);
         page.setPageNum(searchCourseModel.getPageIndex());
-        DateFormateUtil dfu  = new DateFormateUtil(defaultDateFormat1);
-        page =  courseConsoleService.getSortCoursesList(course,page,searchCourseModel.getKeyWord(),searchCourseModel.getSortNum(),dfu.getDateTime(searchCourseModel.getTime()));
+        DateFormateUtil dfu = new DateFormateUtil(defaultDateFormat1);
+        page = courseConsoleService.getSortCoursesList(course, page, searchCourseModel.getKeyWord(), searchCourseModel.getSortNum(), dfu.getDateTime(searchCourseModel.getTime()));
         PageHolder<ReturnCourse> pageHolder = new PageHolder<ReturnCourse>();
         pageHolder.setContent(changeReturnCourse(page.getContent()));
         pageHolder.setPageCount(page.getPageCount());
@@ -97,21 +98,20 @@ public class CourseConsoleController {
         return ResponseModel.sucess("", pageHolder);
     }
 
-
     //新增备课
     @ApiOperation(value = "教师新增备课", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/saveCourse",consumes =  "application/json")
-    public ResponseModel<CourseForTeacher> saveCourse(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) throws TeacherCourseServiceException{
-        if(userInfo==null||courseForTeacher==null){
+    @PostMapping(value = "/saveCourse", consumes = "application/json")
+    public ResponseModel<CourseForTeacher> saveCourse(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) throws TeacherCourseServiceException {
+        if (userInfo == null || courseForTeacher == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
-        if(courseForTeacher.getCourseId()!=null){
+        if (courseForTeacher.getCourseId() != null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_ALREADY_EXISTED);
         }
-        courseConsoleService.saveNewCourse(userInfo,courseForTeacher);
+        courseConsoleService.saveNewCourse(userInfo, courseForTeacher);
         return ResponseModel.sucessWithEmptyData("");
     }
 
@@ -120,20 +120,19 @@ public class CourseConsoleController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/varifyClassTime",consumes = "application/json")
+    @PostMapping(value = "/varifyClassTime", consumes = "application/json")
     public ResponseModel<IncludeInfo> varifyClassTime(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) throws TeacherCourseServiceException {
-        if(userInfo==null||courseForTeacher==null){
+        if (userInfo == null || courseForTeacher == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
         IncludeInfo info = new IncludeInfo();
         courseForTeacher.setTeacherId(userInfo.getUserId());
         info.setResult("none");
-        if(courseConsoleService.getCoursesListByTime(courseForTeacher)>0){
+        if (courseConsoleService.getCoursesListByTime(courseForTeacher) > 0) {
             info.setResult("include");
         }
-        return ResponseModel.sucess("",info);
+        return ResponseModel.sucess("", info);
     }
-
 
     //获取添加course页面数据全部班级
     @ApiOperation(value = "新增备课时，添加班级的数据", notes = "")
@@ -142,16 +141,16 @@ public class CourseConsoleController {
     })
     @GetMapping(value = "/getClass")
     public ResponseModel<EaxmAndClass> getClassList(@ModelAttribute UserInfoForToken userInfo) throws TeacherCourseServiceException {
-        if(userInfo==null){
+        if (userInfo == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
         EaxmAndClass eaxmAndClass = new EaxmAndClass();
         /*Teacher teacher = teacherCourseService.getTeacher(String teacherId);*///暂时不获取teacher
 
         /*eaxmAndClass.setsTransferClasses( teacherCourseService.getTeachClass(userInfo.getUserId()) );//暂时全班级数据*/
-        eaxmAndClass.setTransferExams( examInfoService.getExamForTeacherById(userInfo.getUserId()) );
+        eaxmAndClass.setTransferExams(examInfoService.getExamForTeacherById(userInfo.getUserId()));
         eaxmAndClass.setTransferClasses(userInfoService.getClassForTeacherById(userInfo.getUserId()));
-        return ResponseModel.sucess("",eaxmAndClass);
+        return ResponseModel.sucess("", eaxmAndClass);
     }
 
     //新建课堂页面的最新创建未开课的新课程
@@ -159,13 +158,13 @@ public class CourseConsoleController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/getNewCourse",consumes = "application/json")
+    @GetMapping(value = "/getNewCourse", consumes = "application/json")
     public ResponseModel<List<ReturnCourse>> getNewCreateCourse(@ModelAttribute UserInfoForToken userInfo) throws TeacherCourseServiceException {
-        if(userInfo==null){
+        if (userInfo == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
         List<Course> courses = courseConsoleService.getNewCoursesList(userInfo.getUserId());
-        return ResponseModel.sucess("",changeReturnCourse(courses));
+        return ResponseModel.sucess("", changeReturnCourse(courses));
     }
 
     //删除新建没有开始的课程
@@ -173,21 +172,20 @@ public class CourseConsoleController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @DeleteMapping(value = "/deleteNewCourse",consumes = "application/json")
+    @DeleteMapping(value = "/deleteNewCourse", consumes = "application/json")
     public ResponseModel deleteCourse(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) throws TeacherCourseServiceException {
-        if(userInfo==null||courseForTeacher==null|| StringUtils.isEmpty(courseForTeacher.getCourseId())){
+        if (userInfo == null || courseForTeacher == null || StringUtils.isEmpty(courseForTeacher.getCourseId())) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
-        if(courseConsoleService.getCourseById(courseForTeacher.getCourseId())==null){
+        if (courseConsoleService.getCourseById(courseForTeacher.getCourseId()) == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
         }
         Boolean result = courseConsoleService.deleteCourseIsN(courseForTeacher.getCourseId());
-        if (!result){
+        if (!result) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_DELETE_FAIL);
         }
         return ResponseModel.sucessWithEmptyData("");
     }
-
 
     //修改新建没有开始的课程
     @ApiOperation(value = "修改新建没有开始的课程", notes = "")
@@ -196,10 +194,10 @@ public class CourseConsoleController {
     })
     @PostMapping("/updateCourse")
     public ResponseModel updateCourse(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) throws TeacherCourseServiceException {
-        if(userInfo==null || courseForTeacher==null || StringUtils.isEmpty(courseForTeacher.getCourseId())){
+        if (userInfo == null || courseForTeacher == null || StringUtils.isEmpty(courseForTeacher.getCourseId())) {
             throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        courseConsoleService.updateCourseIsN(userInfo,courseForTeacher);
+        courseConsoleService.updateCourseIsN(userInfo, courseForTeacher);
         return ResponseModel.sucessWithEmptyData("");
     }
 
@@ -208,13 +206,13 @@ public class CourseConsoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/saveCourseIco")
-    public ResponseModel<CourseForTeacher> saveCourseIco(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo){
+    public ResponseModel<CourseForTeacher> saveCourseIco(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) {
         try {
-            return ResponseModel.sucess("",  courseConsoleService.uploadIco(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
+            return ResponseModel.sucess("", courseConsoleService.uploadIco(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
         } catch (TeacherCourseServiceException e) {
-            return ResponseModel.fail("",e.getMessage());
+            return ResponseModel.fail("", e.getMessage());
         } catch (IOException e) {
-            return ResponseModel.fail("",ResultCode.FILE_UPLOAD_ERROR);
+            return ResponseModel.fail("", ResultCode.FILE_UPLOAD_ERROR);
         }
     }
 
@@ -223,12 +221,17 @@ public class CourseConsoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/getCourseIco")
-    public ResponseModel<CourseFile> getCourseIco(@ModelAttribute UserInfoForToken userInfo,@RequestBody CourseForTeacher courseForTeacher){
+    public ResponseModel<Base64TransferFile> getCourseIco(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForTeacher courseForTeacher) {
 
         try {
-            return ResponseModel.sucess("",courseConsoleService.downIco(userInfo,courseForTeacher.getCoursePic()));
+            Base64TransferFile base64TransferFile = new Base64TransferFile();
+            CourseFile courseFile = courseConsoleService.downIco(userInfo, courseForTeacher.getCoursePic());
+            base64TransferFile.setName(courseFile.getName());
+            base64TransferFile.setContentType(courseFile.getContentType());
+            base64TransferFile.setContent(new String(courseFile.getContent()));
+            return ResponseModel.sucess("",base64TransferFile);
         } catch (TeacherCourseServiceException e) {
-            return ResponseModel.fail("",e.getMessage());
+            return ResponseModel.fail("", e.getMessage());
         }
     }
 
