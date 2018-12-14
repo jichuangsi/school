@@ -43,6 +43,7 @@ com:
         enable: true
 custom:
   login:
-    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=
+    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?
     increaseTime: 30 #时间按分钟制
+    QRsize: 600000
 

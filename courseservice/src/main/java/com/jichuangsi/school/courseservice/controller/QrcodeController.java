@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,6 +31,8 @@ public class QrcodeController {
     private String content;
     @Value("${custom.login.increaseTime}")
     private int increaseTime;
+    @Value("${custom.login.QRsize}")
+    private int QRsize;
     /**
      * 生成二维码
      */
@@ -40,13 +43,14 @@ public class QrcodeController {
     @PostMapping("/createQR")
     public String productcode(@ModelAttribute UserInfoForToken userInfo,@RequestParam(value = "code") String c) throws IOException {
         Date date=new Date();
-        Calendar calendar = Calendar.getInstance();
+ /*       Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE,increaseTime);
-        long time1 = calendar.getTime().getTime();
-        long time = date.getTime()+time1;
+        long time1 = calendar.getTime().getTime();*/
+        long time = date.getTime()+increaseTime;
+        System.out.println(time);
         String s = String.valueOf(time);//?a="123"&code=
-        String url=c+"&id="+userInfo.getUserId()+"&t="+s;
-        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,500,null);
+        String url="a=123&c="+c+"&id="+userInfo.getUserId()+"&t="+s;
+        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,"D:\\voice\\picture\\2018",QRsize,null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
         ImageIO.write(bufferedImage, "jpg", baos);//写入流中
         byte[] bytes = baos.toByteArray();//转换成字节
@@ -60,10 +64,11 @@ public class QrcodeController {
      */
     @GetMapping("/test")
     public void analysiscode() {
-
-        Result result = QRCodeUtil.zxingCodeAnalyze("你的二维码路径");
+        Result result = QRCodeUtil.zxingCodeAnalyze("D:\\voice\\picture\\2018\\111.jpg");
         System.err.println("二维码解析内容："+result.toString());
     }
+
+
 
 }
 
