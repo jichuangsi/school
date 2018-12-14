@@ -43,6 +43,6 @@ com:
         enable: true
 custom:
   login:
-    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a="123"&code=
+    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=
     increaseTime: 30 #时间按分钟制
 

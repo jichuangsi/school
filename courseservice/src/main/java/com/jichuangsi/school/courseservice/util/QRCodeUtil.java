@@ -41,7 +41,7 @@ public class QRCodeUtil {
          * @param size     生成的二维码图片尺寸 可以自定义或者默认（250）
          * @param logoPath logo的存放位置
          */
-        public static BufferedImage zxingCodeCreate(String content, String path, Integer size, String logoPath) {
+        public static BufferedImage zxingCodeCreate(String content, String path, Integer size, String logoPath) throws IOException {
             //图片类型
             String imageType = "jpg";
             //获取二维码流的形式，写入到目录文件中

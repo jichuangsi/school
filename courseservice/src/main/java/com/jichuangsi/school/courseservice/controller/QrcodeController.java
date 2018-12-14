@@ -60,7 +60,8 @@ public class QrcodeController {
      */
     @GetMapping("/test")
     public void analysiscode() {
-        Result result = QRCodeUtil.zxingCodeAnalyze("D:/voice/picture/2018/109.jpg");
+
+        Result result = QRCodeUtil.zxingCodeAnalyze("你的二维码路径");
         System.err.println("二维码解析内容："+result.toString());
     }
 
