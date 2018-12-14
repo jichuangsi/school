@@ -78,8 +78,8 @@ public class StudentCourseController {
 		return ResponseModel.sucess("",  studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile(file.getName(), file.getContentType(), file.getContent().getBytes())));
     }
 
-	//获取指定文件名图片
-	@ApiOperation(value = "根据学生id和文件名下载指定的文件", notes = "")
+	//获取指定文件名手寫板輸入图片
+	@ApiOperation(value = "根据学生id和文件名下载指定的手寫板輸入图片", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@PostMapping("/getSubjectPic")
@@ -90,6 +90,15 @@ public class StudentCourseController {
 		base64TransferFile.setContentType(courseFile.getContentType());
 		base64TransferFile.setContent(new String(courseFile.getContent()));
 		return  ResponseModel.sucess("",base64TransferFile);
+	}
+
+	//获取指定文件名图片
+	@ApiOperation(value = "根据学生id和文件名下载指定的上傳图片", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+	@PostMapping("/getQuestionPic")
+	public ResponseModel<CourseFile> getQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent questionPic) throws StudentCourseServiceException{
+		return  ResponseModel.sucess("",studentCourseService.downloadStudentSubjectPic(userInfo, questionPic.getStubForSubjective()));
 	}
 
 	//删除指定文件名图片
