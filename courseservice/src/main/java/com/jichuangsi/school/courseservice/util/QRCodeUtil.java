@@ -9,8 +9,9 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -94,12 +95,16 @@ public class QRCodeUtil {
                         image.setRGB(i, j, bitMatrix.get(i, j) ? BLACK : WHITE);
                     }
                 }
+
                 //判断是否写入logo图片
                 if (logoPath != null && !"".equals(logoPath)) {
-                    File logoPic = new File(logoPath);
-                    if (logoPic.exists()) {
+                    URL url = new URL(logoPath);
+                    HttpURLConnection urlconn = (HttpURLConnection)url.openConnection();
+                    urlconn.connect();
+                    InputStream inputStream = urlconn.getInputStream();
+                    if (inputStream.available()>0) {
                         Graphics2D g = image.createGraphics();
-                        BufferedImage logo = ImageIO.read(logoPic);
+                        BufferedImage logo = ImageIO.read(inputStream);
                         int widthLogo = logo.getWidth(null) > image.getWidth() * 2 / 10 ? (image.getWidth() * 2 / 10) : logo.getWidth(null);
                         int heightLogo = logo.getHeight(null) > image.getHeight() * 2 / 10 ? (image.getHeight() * 2 / 10) : logo.getHeight(null);
                         int x = (image.getWidth() - widthLogo) / 2;
@@ -115,6 +120,7 @@ public class QRCodeUtil {
                         g.dispose();
                         logo.flush();
                         image.flush();
+                        inputStream.close();
                     }
                 }
             } catch (WriterException e) {

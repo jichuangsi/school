@@ -33,6 +33,8 @@ public class QrcodeController {
     private int increaseTime;
     @Value("${custom.login.QRsize}")
     private int QRsize;
+    @Value("${custom.login.logoPath}")
+    private String logoPath;
     /**
      * 生成二维码
      */
@@ -49,7 +51,32 @@ public class QrcodeController {
         long time = date.getTime()+increaseTime;
         String s = String.valueOf(time);//?a="123"&code=
         String url=c+"&id="+userInfo.getUserId()+"&t="+s;
-        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,null);
+        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,logoPath);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
+        ImageIO.write(bufferedImage, "jpg", baos);//写入流中
+        byte[] bytes = baos.toByteArray();//转换成字节
+        BASE64Encoder encoder = new BASE64Encoder();
+        String png_base64 =  encoder.encodeBuffer(bytes).trim();//转换成base64串
+       // png_base64 = png_base64.replaceAll("\n", "").replaceAll("\r", "");//删除 \r\n
+        return png_base64;
+    }
+    /**
+     * 生成二维码
+     */
+    @ApiOperation(value = "生成带公司logo的二维码", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @CrossOrigin
+    @PostMapping("/createLogoQR")
+    public String productcodewithLogo(@ModelAttribute UserInfoForToken userInfo,@RequestParam(value = "code") String c) throws IOException {
+        Date date=new Date();
+ /*       Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE,increaseTime);
+        long time1 = calendar.getTime().getTime();*/
+        long time = date.getTime()+increaseTime;
+        String s = String.valueOf(time);//?a="123"&code=
+        String url=c+"&id="+userInfo.getUserId()+"&t="+s;
+        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,"http://www.jichuangsi.com/logo/jichuangsi.logo.jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
         ImageIO.write(bufferedImage, "jpg", baos);//写入流中
         byte[] bytes = baos.toByteArray();//转换成字节
