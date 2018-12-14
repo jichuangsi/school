@@ -41,3 +41,8 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
+custom:
+  login:
+    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a="123"&code=
+    increaseTime: 30 #时间按分钟制
+

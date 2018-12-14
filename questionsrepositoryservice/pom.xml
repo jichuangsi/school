@@ -77,7 +77,6 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.49</version>
 		</dependency>
-
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -129,6 +128,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!--<configuration>-->
+					<!--<fork>true</fork>-->
+				<!--</configuration>-->
 			</plugin>
 		</plugins>
 	</build>

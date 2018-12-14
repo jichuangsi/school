@@ -207,7 +207,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                     throw new UserServiceException(MyResultCode.USER_EXISTED);
                 }
                 user.setUserId(UUID.randomUUID().toString());
-            }else {
+            }
 //            else {//修改
 //                Optional<UserInfo> userInStore = userRepository.findById(user.getUserId());
 //                if(!userInStore.isPresent()) throw new UserServiceException(MyResultCode.USER_UNEXITS);
@@ -216,16 +216,16 @@ public class UserInfoServiceImpl implements UserInfoService {
 //                        throw new UserServeException(MyResultCode.USER_EXISTED);
 //                    }
 //                }
+
 //            }
-                user.setUserStatus(Status.ACTIVATE);
-                user.setUserPwd(Md5Util.encodeByMd5(user.getUserPwd()));
-                UserInfo userInfo = userRepository.save(MappingModel2EntityConverter.ConvertUser(user));
-                return MappingEntity2ModelConverter.ConvertUser(userInfo);
-            }
+            user.setUserStatus(Status.ACTIVATE);
+            user.setUserPwd(Md5Util.encodeByMd5(user.getUserPwd()));
+            UserInfo userInfo = userRepository.save(MappingModel2EntityConverter.ConvertUser(user));
+            return MappingEntity2ModelConverter.ConvertUser(userInfo);
         }catch (Exception e){
             throw new UserServiceException(e.getMessage());
         }
-        return null;
+
     }
 
     /**

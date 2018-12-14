@@ -77,12 +77,27 @@
 
             // 添加或修改品牌
             $scope.saveOrUpdate = function(){
-                var url = "save"; // 添加
+                var url = "/save"; // 添加
                 if ($scope.entity.id){
                     url = "update"; // 修改
                 }
                 // 发送异步请求
                 $http.post(url, $scope.entity).then(function(response){
+                    if (response.data){
+                        alert("操作成功！");
+                        // 重新加载数据
+                        $scope.reload();
+                    }else{
+                        alert("操作失败！")
+                    }
+                });
+            };
+            $scope.user={};
+            // 添加或修改品牌
+            $scope.saveOrUpdate1 = function(){
+                var url = "/save"; // 添加
+                // 发送异步请求
+                $http.post(url, $scope.user).then(function(response){
                     if (response.data){
                         alert("操作成功！");
                         // 重新加载数据
@@ -188,6 +203,10 @@
         <div class="pull-left">
             <div class="form-group form-inline">
                 <div class="btn-group">
+                    <button type="button" class="btn btn-default" title="新增"
+                            data-toggle="modal" data-target="#addUser"
+                            onclick="user={};">
+                        <i class="fa fa-refresh"></i> 新增</button>
                     <button type="button" class="btn btn-default" title="删除"
                             ng-click="delete();">
                         <i class="fa fa-trash-o"></i> 删除</button>
@@ -267,7 +286,7 @@
                 <td class="text-center">
                     <button type="button" class="btn bg-olive btn-xs"
                             data-toggle="modal" data-target="#editModal"
-                            ng-click="show(entity);">新增或修改</button>
+                            ng-click="show(entity);">修改</button>
                 </td>
             </tr>
 
@@ -404,6 +423,132 @@
             </div>
         </div>
     </div>
+</div>
+<!--增加用户-->
+<div class="modal fade" id="addUser" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" >
+        <div class="modal-content" style="width:1200px;margin-left:-254px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id=>新增用户</h3>
+            </div>
+            <div class="modal-body" >
+                <table class="table table-bordered table-striped"  width="800px">
+                    <tr>
+                        <td>Id</td>
+                        <td ><input  class="form-control" ng-model="user.userId"
+                                     placeholder="Id" >  </td>
+                        <td>名字</td>
+                        <td><input  class="form-control" ng-model="user.userName"
+                                    placeholder="名字" >  </td>
+                        <td>性别</td>
+                        <td><input  class="form-control" ng-model="user.userSex"
+                                    placeholder="性别" >  </td>
+                        <td>账号</td>
+                        <td><input  class="form-control" ng-model="user.userAccount"
+                                    placeholder="账号" >  </td>
+                        <td>密码</td>
+                        <td><input  class="form-control" ng-model="user.userPwd" type="password"
+                                    placeholder="密码" >  </td>
+                        <td>状态</td>
+                        <td><input  class="form-control" ng-model="user.userStatus"
+                                    placeholder="状态" >  </td>
+                        <td><input  class="form-control" ng-model="user.roles[0].secondaryGrades"
+                                    placeholder="次要年级" >  </td>
+                    </tr>
+                    <a >以上为基本信息</a>
+                    <table class="table table-bordered table-striped"  width="800px" ng-repeat="school in user.roles" >
+                        <tr>
+                            <td>次要年级</td>
+                            <td><input  class="form-control" ng-model="school.secondaryGrades"
+                                        placeholder="次要年级" >  </td>
+                            <td>次要科目</td>
+                            <td><input  class="form-control" ng-model="school.secondarySubjects"
+                                        placeholder="次要科目" >  </td>
+                            <td>次级班级<input  class="form-control" ng-model="school.secondaryClass"
+                                            placeholder="次级班级" >  </td>
+                            <!--<td>教师Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.roleId"-->
+                            <!--placeholder="教师Id" >  </td>-->
+                            <!--<td>教师名字:</td>-->
+                            <td><input  class="form-control" ng-model="school.roleName"
+                                        placeholder="教师名字" >  </td>
+                            <td>权限:</td>
+                            <td><input  class="form-control" ng-model="school.privileges"
+                                        placeholder="权限" >  </td>
+                        </tr>
+
+                        <tr>
+                            <!--<td>学校Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.school.schoolId"-->
+                            <!--placeholder="学校Id" >  </td>-->
+                            <td>学校名字</td>
+                            <td><input  class="form-control" ng-model="school.school.schoolName"
+                                        placeholder="学校名字" >  </td>
+                            <td>学校地址</td>
+                            <td><input  class="form-control" ng-model="school.school.address"
+                                        placeholder="学校地址" >  </td>
+                        </tr>
+                        <!--<tr>-->
+                        <!--<td>年段Id:</td>-->
+                        <!--<td><input  class="form-control" ng-model="school.phrase.phraseId"-->
+                        <!--placeholder="年段Id" >  </td>-->
+                        <td>年段名</td>
+                        <td><input  class="form-control" ng-model="school.phrase.phraseName"
+                                    placeholder="年段名" >  </td>
+                        </tr>
+                        <tr>
+                            <!--<td>班级Id:</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.primaryClass.classId"-->
+                            <!--placeholder="班级Id" >  </td>-->
+                            <td>班级名</td>
+                            <td><input  class="form-control" ng-model="school.primaryClass.className"
+                                        placeholder="班级名" >  </td>
+                        </tr>
+                        <tr>
+                            <!--<td>小学年级</td>-->
+                            <!--<td>年段Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.primaryGrade.gradeId"-->
+                            <!--placeholder="年段Id" >  </td>-->
+                            <td>小学班级</td>
+                            <td><input  class="form-control" ng-model="school.primaryGrade.classes"
+                                        placeholder="小学班级" >  </td>
+                            <td>年段名</td>
+                            <td><input  class="form-control" ng-model="school.primaryGrade.gradeName"
+                                        placeholder="年段名" >  </td>
+                        </tr>
+                        <tr>
+                            <td>职教科目</td>
+                            <!--<td>科目Id</td>-->
+                            <!--<td><input  class="form-control" ng-model="school.primarySubject.subjectId"-->
+                            <!--placeholder="科目Id" >  </td>-->
+                            <td>科目名字</td>
+                            <td><input  class="form-control" ng-model="school.primarySubject.subjectName"
+                                        placeholder="科目名字" >  </td>
+                        </tr>
+
+                        <!--<tr>-->
+                        <!--<td>新建时间</td>-->
+                        <!--<td><input  class="form-control" ng-model="entity.createTime"-->
+                        <!--placeholder="新建时间" >  </td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                        <!--<td>最近修改时间</td>-->
+                        <!--<td><input  class="form-control" ng-model="entity.updateTime"-->
+                        <!--placeholder="最近修改时间" >  </td>-->
+                    </table>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" data-dismiss="modal"
+                        aria-hidden="true" ng-click="saveOrUpdate1();">保存</button>
+                <button class="btn btn-default" data-dismiss="modal"
+                        aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <!--详情窗口-->
 <div class="modal fade" id="Details" tabindex="-1" role="dialog"

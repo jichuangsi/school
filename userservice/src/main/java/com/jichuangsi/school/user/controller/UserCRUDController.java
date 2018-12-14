@@ -73,7 +73,7 @@ public class UserCRUDController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/save")
     public ResponseModel<User> save(@ModelAttribute UserInfoForToken userInfo, @ModelAttribute List<Role> userRoles, @RequestBody User user) throws UserServiceException{
-        user.getRoles().clear();
+//        user.getRoles().clear();
         user.getRoles().addAll(userRoles);
         return ResponseModel.sucess("", userInfoService.saveUserInfo(user));
     }

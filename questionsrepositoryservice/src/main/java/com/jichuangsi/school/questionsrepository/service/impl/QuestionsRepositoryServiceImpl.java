@@ -342,7 +342,6 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
 
     private List<EditionTreeNode> getEditionsByTeacherInfo(UserInfoForToken userInfo, List<EditionTreeNode> editions) {
         TransferTeacher teacher = userInfoService.getUserForTeacherById(userInfo.getUserId());
-
         for (int i = editions.size() - 1; i >= 0; i--) {
             if (!editions.get(i).getCode().equals(teacher.getPhraseId())) {
                 editions.remove(editions.get(i));
