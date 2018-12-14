@@ -58,6 +58,7 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
                         .and("question.knowledge").as("knowledge")
                         .and("question.idMD52").as("idMD52")
                         .and("question.status").as("status")
+                        .and("question.pic").as("pic")
         );
         return mongoTemplate.aggregate(agg, Course.class,Question.class).getMappedResults();
     }
@@ -84,6 +85,7 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
                         .and("question.knowledge").as("knowledge")
                         .and("question.idMD52").as("idMD52")
                         .and("question.status").as("status")
+                        .and("question.pic").as("pic")
         );
         return mongoTemplate.aggregate(agg, Course.class,Question.class).getMappedResults();
     }
