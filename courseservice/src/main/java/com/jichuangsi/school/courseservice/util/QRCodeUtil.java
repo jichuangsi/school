@@ -49,13 +49,13 @@ public class QRCodeUtil {
             BufferedImage image = getBufferedImage(content, size, logoPath);
 
            // 获得随机数
-                Random random = new Random();
-                //生成二维码存放文件
-                File file = new File(path+random.nextInt(1000)+".jpg");
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
-                ImageIO.write(image, imageType, file);
+//                Random random = new Random();
+//                //生成二维码存放文件
+//                File file = new File(path+random.nextInt(1000)+".jpg");
+//                if (!file.exists()) {
+//                    file.mkdirs();
+//                }
+//                ImageIO.write(image, imageType, file);
             return image;
         }
 

@@ -47,10 +47,9 @@ public class QrcodeController {
         calendar.add(Calendar.MINUTE,increaseTime);
         long time1 = calendar.getTime().getTime();*/
         long time = date.getTime()+increaseTime;
-        System.out.println(time);
         String s = String.valueOf(time);//?a="123"&code=
-        String url="a=123&c="+c+"&id="+userInfo.getUserId()+"&t="+s;
-        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,"D:\\voice\\picture\\2018",QRsize,null);
+        String url=c+"&id="+userInfo.getUserId()+"&t="+s;
+        BufferedImage bufferedImage = QRCodeUtil.zxingCodeCreate(content+url,null,QRsize,null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
         ImageIO.write(bufferedImage, "jpg", baos);//写入流中
         byte[] bytes = baos.toByteArray();//转换成字节
@@ -62,11 +61,11 @@ public class QrcodeController {
     /**
      * 解析二维码
      */
-    @GetMapping("/test")
-    public void analysiscode() {
-        Result result = QRCodeUtil.zxingCodeAnalyze("D:\\voice\\picture\\2018\\111.jpg");
-        System.err.println("二维码解析内容："+result.toString());
-    }
+//    @GetMapping("/test")
+//    public void analysiscode() {
+//        Result result = QRCodeUtil.zxingCodeAnalyze("D:\\voice\\picture\\2018\\111.jpg");
+//        System.err.println("二维码解析内容："+result.toString());
+//    }
 
 
 
