@@ -79,7 +79,7 @@ app:
       initialCapacity: 500
       maximumSize: 100000
       expireAfterAccessWithMinutes: 30
-    ingoreTokenUrls: /api/auth/login, /api/auth/getToken, /websocket/course/
+    ingoreTokenUrls: /api/auth/login, /api/auth/getToken, /websocket/course/, /QUESTIONSREPOSITORY/self/codeSendQuestionPic
     publicKey: EC86@34$123c
     userInfoKey: userInfo
 custom:

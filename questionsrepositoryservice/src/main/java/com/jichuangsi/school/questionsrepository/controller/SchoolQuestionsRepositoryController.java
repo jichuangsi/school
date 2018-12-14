@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
+import com.jichuangsi.school.questionsrepository.model.Base64TransferFile;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
@@ -95,9 +96,14 @@ public class SchoolQuestionsRepositoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getQuestionPic")
-    public ResponseModel<QuestionFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolQuestion questionPic) throws QuestionRepositoryServiceException{
+    public ResponseModel<Base64TransferFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolQuestion questionPic) throws QuestionRepositoryServiceException{
+        Base64TransferFile base64TransferFile = new Base64TransferFile();
+        QuestionFile questionFile = schoolQuestionService.downQuestionPic(userInfo,questionPic.getQuestionPic());
+        base64TransferFile.setName(questionFile.getName());
+        base64TransferFile.setContentType(questionFile.getContentType());
+        base64TransferFile.setContent(new String(questionFile.getContent()));
 
-        return  ResponseModel.sucess("", schoolQuestionService.downQuestionPic(userInfo,questionPic.getQuestionPic()));
+        return  ResponseModel.sucess("", base64TransferFile);
     }
 
     //删除指定文件名图片

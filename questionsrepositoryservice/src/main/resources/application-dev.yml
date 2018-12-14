@@ -47,3 +47,6 @@ com:
         knowledgeApi: knowledgeApi
       swagger:
         enable: true
+      codePic:
+        time: 300000
+        prefix: pic_
