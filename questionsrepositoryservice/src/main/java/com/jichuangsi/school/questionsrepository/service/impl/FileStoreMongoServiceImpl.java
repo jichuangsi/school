@@ -25,7 +25,9 @@ public class FileStoreMongoServiceImpl implements IFileStoreService {
 
     @Override
     public QuestionFile uploadQuestionFile(QuestionFile file) throws Exception{
+        System.out.println("==StoredName=="+file.getStoredName()+",==ContentType=="+file.getContentType());
         ObjectId objectId = gridFsOperations.store(new ByteArrayInputStream(file.getContent()), file.getStoredName(), file.getContentType());
+        System.out.println("==objectId==" + objectId);
         return file;
     }
 

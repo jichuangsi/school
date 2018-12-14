@@ -53,12 +53,16 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     @Override
     public void uploadQuestionPic(QuestionFile questionFile, SendCodePic sendCodePic) throws QuestionRepositoryServiceException{
         try {
+            System.out.println("==3==");
             fileStoreService.uploadQuestionFile(questionFile);
+            System.out.println("==4==");
         } catch (Exception e) {
             throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
+        System.out.println("==5==");
         //保存进内存
         cacheServiceLocal.set(picPrefix+sendCodePic.getOneCode(),questionFile.getStoredName(),picCacheTime);
+        System.out.println("==6==");
     }
 
     @Override

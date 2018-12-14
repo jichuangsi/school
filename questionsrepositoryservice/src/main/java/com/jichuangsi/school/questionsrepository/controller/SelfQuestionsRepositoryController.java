@@ -16,6 +16,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -119,18 +121,23 @@ public class SelfQuestionsRepositoryController {
     @ApiImplicitParams({})
     @PostMapping("/codeSendQuestionPic")
     public ResponseModel codeSendQuestionPic(@RequestParam MultipartFile file, @RequestParam String code,@RequestParam String teacherId,@RequestParam long safeTime) throws QuestionRepositoryServiceException{
+        System.out.println("code:"+code+",teacherId："+teacherId+",safeTime"+safeTime);
         if(safeTime!=0 && new Date().getTime()<safeTime){
+            System.out.println("==1==");
             SendCodePic sendCodePic = new SendCodePic();
             sendCodePic.setTeacherId(teacherId);
             sendCodePic.setCode(code);
             try {
+                System.out.println("==2==");
                 selfQuestionsRepositoryService.uploadQuestionPic(new QuestionFile(file.getOriginalFilename(), file.getContentType(), file.getBytes()),sendCodePic);
+                System.out.println("==7==");
             } catch (IOException e) {
                 throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
             }
         }else{
             throw new QuestionRepositoryServiceException(ResultCode.OVER_SALE_TIME);
         }
+        System.out.println("==8==");
         return ResponseModel.sucessWithEmptyData("");
     }
 }
