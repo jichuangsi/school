@@ -44,6 +44,6 @@ com:
 custom:
   login:
     content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=
-    increaseTime: 30 #时间按分钟制
-    QRsize: 600000
+    increaseTime: 600000 #时间按分钟制
+    QRsize: 500
 
