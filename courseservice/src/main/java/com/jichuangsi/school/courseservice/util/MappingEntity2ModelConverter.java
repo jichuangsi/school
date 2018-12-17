@@ -27,6 +27,7 @@ public final class MappingEntity2ModelConverter {
         courseForTeacher.setCreateTime(course.getCreateTime());
         courseForTeacher.setUpdateTime(course.getUpdateTime());
         courseForTeacher.setCoursePic(course.getPicAddress());
+        courseForTeacher.setSubjectName(course.getSubjectName());
         return courseForTeacher;
     }
 

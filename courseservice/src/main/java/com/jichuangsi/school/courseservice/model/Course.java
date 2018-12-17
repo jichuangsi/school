@@ -16,9 +16,18 @@ public class Course {
     long createTime;
     long updateTime;
     String coursePic;
+    String subjectName;
 
     int pageNum;
     int pageSize;
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
 
     public String getCoursePic() {
         return coursePic;

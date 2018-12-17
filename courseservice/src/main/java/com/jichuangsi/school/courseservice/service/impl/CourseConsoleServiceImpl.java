@@ -77,18 +77,20 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         if(course==null){
             throw new TeacherCourseServiceException(ResultCode.COURSE_FAIL_SAVE);
         }
-        List<String> questionIds = new ArrayList<String>();
-        for (QuestionForTeacher questionForTeacher: courseForTeacher.getQuestions() ) {
-            questionForTeacher.setGradeId(transferTeacher.getGradeId());
-            questionForTeacher.setSubjectId(transferTeacher.getSubjectId());
-            Question question = MappingModel2EntityConverter.ConvertTeacherQuestion(questionForTeacher);
-            question = (Question) courseConsoleRepository.save(question);
-            if (question==null){
-                throw new TeacherCourseServiceException(ResultCode.QUESTION_FAIL_SAVE);
+        if(courseForTeacher.getQuestions()!=null) {
+            List<String> questionIds = new ArrayList<String>();
+            for (QuestionForTeacher questionForTeacher : courseForTeacher.getQuestions()) {
+                questionForTeacher.setGradeId(transferTeacher.getGradeId());
+                questionForTeacher.setSubjectId(transferTeacher.getSubjectId());
+                Question question = MappingModel2EntityConverter.ConvertTeacherQuestion(questionForTeacher);
+                question = (Question) courseConsoleRepository.save(question);
+                if (question == null) {
+                    throw new TeacherCourseServiceException(ResultCode.QUESTION_FAIL_SAVE);
+                }
+                questionIds.add(question.getId());
             }
-            questionIds.add(question.getId());
+            course.setQuestionIds(questionIds);
         }
-        course.setQuestionIds(questionIds);
         mongoTemplate.save(course);
     }
 

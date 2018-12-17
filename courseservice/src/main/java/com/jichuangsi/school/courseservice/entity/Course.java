@@ -23,6 +23,15 @@ public class Course {
     long createTime;
     long updateTime;
     String picAddress;
+    String subjectName;
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
 
     public String getPicAddress() {
         return picAddress;

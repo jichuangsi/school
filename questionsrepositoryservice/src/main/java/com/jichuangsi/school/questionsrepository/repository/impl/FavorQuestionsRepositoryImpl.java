@@ -75,7 +75,7 @@ public class FavorQuestionsRepositoryImpl<T> implements IFavorQuestionsRepositor
 
     @Override
     public void findAllAndRemove(DeleteQueryModel deleteQueryModel) {
-        Criteria criteria = Criteria.where("id").in(deleteQueryModel.getIds());
+        Criteria criteria = Criteria.where("questionIdMD52").in(deleteQueryModel.getIds());
         mongoTemplate.findAllAndRemove(new Query(criteria),FavorQuestions.class);
     }
 
