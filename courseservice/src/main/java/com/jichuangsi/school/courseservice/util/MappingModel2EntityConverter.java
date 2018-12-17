@@ -32,7 +32,7 @@ public  final class MappingModel2EntityConverter {
         course.setClassName(courseForTeacher.getClassName());
         course.setStartTime(courseForTeacher.getCourseStartTime());
         course.setEndTime(courseForTeacher.getCourseEndTime());
-        if(courseForTeacher.getQuestions().size()>0){
+        if(courseForTeacher.getQuestions()!=null && courseForTeacher.getQuestions().size()>0){
             courseForTeacher.getQuestions().forEach(question -> {
                 course.getQuestionIds().add(question.getQuestionId());
             });
@@ -50,7 +50,7 @@ public  final class MappingModel2EntityConverter {
         Question question = new Question();
         question.setId(StringUtils.isEmpty(questionForTeacher.getQuestionId())?UUID.randomUUID().toString().replaceAll("-", ""):questionForTeacher.getQuestionId());
         question.setContent(questionForTeacher.getQuestionContent());
-        if(questionForTeacher.getOptions().size()>0){
+        if(questionForTeacher.getOptions()!=null && questionForTeacher.getOptions().size()>0){
             questionForTeacher.getOptions().forEach(option -> {
                question.getOptions().add(option);
             });

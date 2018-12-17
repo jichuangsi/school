@@ -51,7 +51,7 @@ public final class MappingEntity2ModelConverter {
         QuestionForTeacher questionForTeacher = new QuestionForTeacher();
         questionForTeacher.setQuestionId(question.getId());
         questionForTeacher.setQuestionContent(question.getContent());
-        if(question.getOptions().size()>0){
+        if(question.getOptions()!=null && question.getOptions().size()>0){
             question.getOptions().forEach(option -> {
                 questionForTeacher.getOptions().add(option);
             });
@@ -76,7 +76,7 @@ public final class MappingEntity2ModelConverter {
         QuestionForStudent questionForStudent = new QuestionForStudent();
         questionForStudent.setQuestionId(question.getId());
         questionForStudent.setQuestionContent(question.getContent());
-        if(question.getOptions().size()>0){
+        if(question.getOptions()!=null && question.getOptions().size()>0){
             question.getOptions().forEach(option -> {
                 questionForStudent.getOptions().add(option);
             });
