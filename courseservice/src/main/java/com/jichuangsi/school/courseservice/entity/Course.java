@@ -24,6 +24,7 @@ public class Course {
     long updateTime;
     String picAddress;
     String subjectName;
+    String subjectId;
 
     public String getSubjectName() {
         return subjectName;
@@ -143,5 +144,13 @@ public class Course {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
     }
 }

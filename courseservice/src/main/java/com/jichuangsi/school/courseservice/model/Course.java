@@ -17,6 +17,7 @@ public class Course {
     long updateTime;
     String coursePic;
     String subjectName;
+    String subjectId;
 
     int pageNum;
     int pageSize;
@@ -147,5 +148,13 @@ public class Course {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
     }
 }
