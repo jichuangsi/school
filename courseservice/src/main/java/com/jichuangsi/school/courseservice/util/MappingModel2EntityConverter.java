@@ -115,7 +115,7 @@ public  final class MappingModel2EntityConverter {
 
     private static QuestionType translateQuestionType(String quTypeInChinese) {
         switch (quTypeInChinese){
-            case "选择题" : return QuestionType.OBJECTIVE;
+            case "选择题" : case "单选题" : case "多选题" : return QuestionType.OBJECTIVE;
             default: return QuestionType.SUBJECTIVE;
         }
     }
