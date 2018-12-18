@@ -26,3 +26,6 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
+      sortType:
+        difficult: difficulty
+        question: type
