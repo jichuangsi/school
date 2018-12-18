@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
+import com.jichuangsi.school.classinteraction.model.StudentAnswerModel;
 import com.jichuangsi.school.classinteraction.websocket.model.CourseStatistics;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionStatistics;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherService;
@@ -28,6 +29,8 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 	private String csChangePre;
 	@Value("${custom.ws.sub.teacher.qcChangePre}")
 	private String qcChangePre;
+	@Value("${custom.ws.sub.teacher.questionAnswerPre}")
+	private String questionAnswerPre;
 
 	@Override
 	public void sendCourseStatisticsInfo(CourseStatistics courseStatistics) {
@@ -40,6 +43,13 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 	public void sendQuestionStatisticsInfo(QuestionStatistics questionStatistics) {
 		messagingTemplate.convertAndSend(qcChangePre + questionStatistics.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", questionStatistics)));
+
+	}
+
+	@Override
+	public void sendQuestionAnswerInfo(StudentAnswerModel studentAnswerModel) {
+		messagingTemplate.convertAndSend(questionAnswerPre + studentAnswerModel.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", studentAnswerModel)));
 
 	}
 

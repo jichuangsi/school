@@ -5,7 +5,6 @@ package com.jichuangsi.school.statistics.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -30,6 +30,7 @@ import com.jichuangsi.school.statistics.model.QuestionStatisticsInfoModel;
 import com.jichuangsi.school.statistics.model.QuestionStatisticsListModel;
 import com.jichuangsi.school.statistics.model.StudentAnswerModel;
 import com.jichuangsi.school.statistics.mq.producer.service.ICourseStatisticsSender;
+import com.jichuangsi.school.statistics.mq.producer.service.IQuestionAnswerSender;
 import com.jichuangsi.school.statistics.mq.producer.service.IQuestionStatisticsSender;
 import com.jichuangsi.school.statistics.repository.CourseStatisticsRepository;
 import com.jichuangsi.school.statistics.repository.QuestionAnswersRepository;
@@ -54,7 +55,13 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 	@Resource
 	private QuestionAnswersRepository questionAnswersRepository;
 	@Resource
+	private IQuestionAnswerSender questionAnswerSender; 
+	@Resource
 	private MongoTemplate mongoTemplate;
+	
+	@Value("${custom.question.answer-count}")
+	private int subjectNotifyCount = 5;
+	
 
 	@Override
 	public AddToCourseModel addToCourse(AddToCourseModel addToCourseModel) {
@@ -112,7 +119,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 	}
 
 	@Override
-	public StudentAnswerModel saveStudentAnswer(StudentAnswerModel answerModel) {
+	public StudentAnswerModel saveStudentAnswer(final StudentAnswerModel answerModel) {
 		final String courseId = answerModel.getCourseId();
 		final String questionId = answerModel.getQuestionId();
 		final String studentId = answerModel.getStudentId();
@@ -140,9 +147,20 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 				// addToSet存在则不加，不存在则加,push不管是否存在都加，这里用addToSet
 				update.addToSet("studentAnswers", studentAnswerEntity);
 				mongoTemplate.upsert(query1, update, QuestionAnswersEntity.class);
+				
+				//主观题时，通知老师有学生作答
+				sendStudentAnswerSubjective(answerModel);
+				
 			} else {
 				StudentAnswerEntity oldstudentAnswerEntity = null;
-				for (StudentAnswerEntity temp : questionAnswersEntity.getStudentAnswers()) {
+				List<StudentAnswerEntity> answerList = questionAnswersEntity.getStudentAnswers();
+				
+				//前N个（默认前5个），通知老师有学生作答
+				if(answerList.size()<subjectNotifyCount) {
+					sendStudentAnswerSubjective(answerModel);
+				}
+				
+				for (StudentAnswerEntity temp : answerList) {
 					if (temp.getStudentId().equals(studentId)) {
 						oldstudentAnswerEntity = temp;
 						break;
@@ -227,8 +245,11 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 
 	}
 
-	public static void main(String[] args) {
-
+	private void sendStudentAnswerSubjective(StudentAnswerModel answerModel) {
+		if(StudentAnswerModel.QUTYPE_SUBJECTIVE.equals(answerModel.getQuType())	){
+			questionAnswerSender.send(answerModel);
+		}
+		
 	}
 
 }

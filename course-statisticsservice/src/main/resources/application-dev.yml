@@ -16,15 +16,18 @@ server:
 custom: 
   token: 
     userClaim: userInfo
+  question: 
+    answer-count: 6
   mq: 
     producer:
       queue-name: 
         courseStatistics: course.statistics.classinteraction
         questionStatistics: course.question.statistics.classinteraction
+        questionAnswer: course.question.answer.classinteraction
     consumer:
       queue-name:
         courseStudentAdd: course.student.add.coursestatistics
-        answerQuestion: course.question.answer.coursestatistics      
+        answerQuestion: course.question.answer.coursestatistics
   swagger:
     enable: true
   log: 
