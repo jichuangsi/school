@@ -3,9 +3,8 @@ package com.jichuangsi.school.questionsrepository.repository.impl;
 import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
-import com.jichuangsi.school.questionsrepository.repository.ISchoolQuestionsRepository;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferSchool;
-import org.springframework.data.domain.Sort;
+import com.jichuangsi.school.questionsrepository.repository.ISchoolQuestionsRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,10 +24,12 @@ public class SchoolQuestionsRepositoryImpl<T> implements ISchoolQuestionsReposit
     public List<SchoolQuestions> selectSortSchoolQuestions( SearchQuestionModel searchQuestionModel, TransferSchool school) {
         Criteria criteria = Criteria.where("schoolId").is(school.getSchoolId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
-            criteria.and("difficulty").is(searchQuestionModel.getDifficulty());
+            Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("difficulty").regex(diff);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getType())){
-            criteria.and("type").is(searchQuestionModel.getType());
+            Pattern type= Pattern.compile("^.*"+searchQuestionModel.getType()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("type").regex(type);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getKeyWord())){
             Pattern pattern= Pattern.compile("^.*"+searchQuestionModel.getKeyWord()+".*$", Pattern.CASE_INSENSITIVE);
@@ -48,10 +49,12 @@ public class SchoolQuestionsRepositoryImpl<T> implements ISchoolQuestionsReposit
     public long selectSchoolCount(SearchQuestionModel searchQuestionModel, TransferSchool school) {
         Criteria criteria = Criteria.where("schoolId").is(school.getSchoolId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
-            criteria.and("difficulty").is(searchQuestionModel.getDifficulty());
+            Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("difficulty").regex(diff);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getType())){
-            criteria.and("type").is(searchQuestionModel.getType());
+            Pattern type= Pattern.compile("^.*"+searchQuestionModel.getType()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("type").regex(type);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getKeyWord())){
             Pattern pattern= Pattern.compile("^.*"+searchQuestionModel.getKeyWord()+".*$", Pattern.CASE_INSENSITIVE);

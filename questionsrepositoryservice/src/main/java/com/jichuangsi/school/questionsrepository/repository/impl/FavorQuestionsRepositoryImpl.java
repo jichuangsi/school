@@ -33,10 +33,12 @@ public class FavorQuestionsRepositoryImpl<T> implements IFavorQuestionsRepositor
                 //.and("knowledge").is(searchQuestionModel.getKnowledge())
                 ;
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
-            criteria.and("difficulty").is(searchQuestionModel.getDifficulty());
+            Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("difficulty").regex(diff);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getType())){
-            criteria.and("type").is(searchQuestionModel.getType());
+            Pattern type= Pattern.compile("^.*"+searchQuestionModel.getType()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("type").regex(type);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getKeyWord())){
             Pattern pattern= Pattern.compile("^.*"+searchQuestionModel.getKeyWord()+".*$", Pattern.CASE_INSENSITIVE);
@@ -58,10 +60,12 @@ public class FavorQuestionsRepositoryImpl<T> implements IFavorQuestionsRepositor
                 //.and("knowledge").is(searchQuestionModel.getKnowledge())
                 ;
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
-            criteria.and("difficulty").is(searchQuestionModel.getDifficulty());
+            Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("difficulty").regex(diff);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getType())){
-            criteria.and("type").is(searchQuestionModel.getType());
+            Pattern type= Pattern.compile("^.*"+searchQuestionModel.getType()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("type").regex(type);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getKeyWord())){
             Pattern pattern= Pattern.compile("^.*"+searchQuestionModel.getKeyWord()+".*$", Pattern.CASE_INSENSITIVE);

@@ -5,7 +5,6 @@ import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.repository.ISelfQuestionsRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,10 +30,12 @@ public class SelfQuestionsRepositoryImpl<T> implements ISelfQuestionsRepository<
     public long getSelfQuestionCount(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel) {
         Criteria criteria = Criteria.where("teacherId").is(userInfoForToken.getUserId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
-            criteria.and("difficulty").is(searchQuestionModel.getDifficulty());
+            Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("difficulty").regex(diff);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getType())){
-            criteria.and("type").is(searchQuestionModel.getType());
+            Pattern type= Pattern.compile("^.*"+searchQuestionModel.getType()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("type").regex(type);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getKeyWord())){
             Pattern pattern= Pattern.compile("^.*"+searchQuestionModel.getKeyWord()+".*$", Pattern.CASE_INSENSITIVE);
@@ -50,10 +51,12 @@ public class SelfQuestionsRepositoryImpl<T> implements ISelfQuestionsRepository<
     public List<SelfQuestions> selectPageSelfQ(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel) {
         Criteria criteria = Criteria.where("teacherId").is(userInfoForToken.getUserId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
-            criteria.and("difficulty").is(searchQuestionModel.getDifficulty());
+            Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("difficulty").regex(diff);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getType())){
-            criteria.and("type").is(searchQuestionModel.getType());
+            Pattern type= Pattern.compile("^.*"+searchQuestionModel.getType()+".*$", Pattern.CASE_INSENSITIVE);
+            criteria.and("type").regex(type);
         }
         if(!StringUtils.isEmpty(searchQuestionModel.getKeyWord())){
             Pattern pattern= Pattern.compile("^.*"+searchQuestionModel.getKeyWord()+".*$", Pattern.CASE_INSENSITIVE);
