@@ -22,7 +22,7 @@ public interface ISelfQuestionsRepositoryService {
     void deleteQuestionPic(UserInfoForToken userInfo, String fileName) throws QuestionRepositoryServiceException;
 
     //添加自定义
-    void addSelfQuestion(UserInfoForToken userInfoForToken,SelfQuestion selfQuestion);
+    void addSelfQuestion(UserInfoForToken userInfoForToken,SelfQuestion selfQuestion) throws QuestionRepositoryServiceException;
 
     //分页排序显示
     PageHolder<SelfQuestion> getSelfQuestionSortList(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel);

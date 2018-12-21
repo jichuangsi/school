@@ -1,6 +1,7 @@
 package com.jichuangsi.school.questionsrepository.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.entity.FavorQuestions;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
@@ -37,8 +38,9 @@ public class FavorQuestionsRepositoryServiceImpl implements IFavorQuestionsRepos
     private IUserInfoService userInfoService;
 
     @Override
-    public Boolean addFavorQuestion(UserInfoForToken userInfoForToken,FavorQuestion favorQuestion) {
+    public Boolean addFavorQuestion(UserInfoForToken userInfoForToken,FavorQuestion favorQuestion) throws QuestionRepositoryServiceException{
         TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        if(transferTeacher==null) throw new QuestionRepositoryServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
         favorQuestion.setGradeId(transferTeacher.getGradeId());
         favorQuestion.setSubjectId(transferTeacher.getSubjectId());
         FavorQuestions favorQuestions = MappingModel2EntityConverter.ConverterFavorQuestion(userInfoForToken,favorQuestion);

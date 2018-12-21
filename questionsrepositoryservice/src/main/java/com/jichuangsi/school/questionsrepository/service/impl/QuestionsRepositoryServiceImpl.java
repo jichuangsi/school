@@ -2,8 +2,8 @@ package com.jichuangsi.school.questionsrepository.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.entity.QuestionStatistics;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.*;
@@ -340,8 +340,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
         return resp;
     }
 
-    private List<EditionTreeNode> getEditionsByTeacherInfo(UserInfoForToken userInfo, List<EditionTreeNode> editions) {
+    private List<EditionTreeNode> getEditionsByTeacherInfo(UserInfoForToken userInfo, List<EditionTreeNode> editions) throws QuestionRepositoryServiceException {
         TransferTeacher teacher = userInfoService.getUserForTeacherById(userInfo.getUserId());
+        if(teacher==null) throw new QuestionRepositoryServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
         for (int i = editions.size() - 1; i >= 0; i--) {
             if (!editions.get(i).getCode().equals(teacher.getPhraseId())) {
                 editions.remove(editions.get(i));

@@ -40,7 +40,9 @@ public class SchoolQuestionsRepositoryController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/saveQuestion")
     public ResponseModel saveQuestion(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolQuestion schoolQuestion) throws QuestionRepositoryServiceException {
-        schoolQuestionService.addSchoolQuestion(userInfo,userInfoService.getSchoolInfoById(userInfo.getUserId()),schoolQuestion);
+        TransferSchool transferSchool = userInfoService.getSchoolInfoById(userInfo.getUserId());
+        if(transferSchool==null) throw new QuestionRepositoryServiceException(ResultCode.SCHOOL_INFO_NOT_EXISTED);
+        schoolQuestionService.addSchoolQuestion(userInfo, transferSchool,schoolQuestion);
         return ResponseModel.sucessWithEmptyData("");
     }
 
@@ -55,6 +57,7 @@ public class SchoolQuestionsRepositoryController {
             throw new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
         }*/
         TransferSchool school = userInfoService.getSchoolInfoById(userInfo.getUserId());
+        if(school==null) throw new QuestionRepositoryServiceException(ResultCode.SCHOOL_INFO_NOT_EXISTED);
         return ResponseModel.sucess("", schoolQuestionService.getSortSchoolQuestion(school,searchQuestionModel));
     }
 

@@ -80,8 +80,9 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     }
 
     @Override
-    public void addSelfQuestion(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) {
+    public void addSelfQuestion(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) throws QuestionRepositoryServiceException {
         TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        if(transferTeacher==null) throw new QuestionRepositoryServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
         String picName = cacheServiceLocal.get(picPrefix+userInfoForToken.getUserId()+selfQuestion.getCode());
         selfQuestion.setQuestionPic(picName);
         selfQuestion.setGradeId(transferTeacher.getGradeId());

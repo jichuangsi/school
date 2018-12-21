@@ -10,7 +10,7 @@ import com.jichuangsi.school.questionsrepository.model.favor.FavorQuestion;
 public interface IFavorQuestionsRepositoryService {
 
     //添加收藏
-    Boolean addFavorQuestion(UserInfoForToken userInfoForToken,FavorQuestion favorQuestion);
+    Boolean addFavorQuestion(UserInfoForToken userInfoForToken,FavorQuestion favorQuestion) throws QuestionRepositoryServiceException;
 
     //返回分页查询收藏
     PageHolder<FavorQuestion> getFavorQuestionSortList(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel);

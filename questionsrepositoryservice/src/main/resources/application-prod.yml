@@ -28,6 +28,20 @@ eureka:
     #ip-address: 114.115.207.28
     #prefer-ip-address: true
 
+# feign配置
+feign:
+  hystrix:
+    # 在feign中开启hystrix功能，默认情况下feign不开启hystrix功能
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
 com:
   jichuangsi:
     school:

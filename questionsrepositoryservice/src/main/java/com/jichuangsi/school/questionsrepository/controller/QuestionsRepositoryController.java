@@ -1,8 +1,8 @@
 package com.jichuangsi.school.questionsrepository.controller;
 
-import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.*;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
@@ -120,6 +120,7 @@ public class QuestionsRepositoryController {
     @GetMapping("/getKnowledgeInfoByTeacher")
     public Mono<ResponseModel<List<KnowledgeTreeNode>>> getKnowledgeInfoByTeacher(@ModelAttribute UserInfoForToken userInfo) throws QuestionRepositoryServiceException{
         TransferTeacher teacher = userInfoService.getUserForTeacherById(userInfo.getUserId());
+        if(teacher==null) throw new QuestionRepositoryServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
         if(StringUtils.isEmpty(teacher.getPhraseId()) || StringUtils.isEmpty(teacher.getSubjectId())) throw new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
         return Mono.just(ResponseModel.sucess("", questionsRepositoryService.getTreeForKnowledgeInfoByTeacher(teacher.getPhraseId(), teacher.getSubjectId())));
     }
