@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.entity.Course;
+import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.service.ICourseConsoleService;
 import com.jichuangsi.school.courseservice.service.IExamInfoService;
@@ -252,7 +253,13 @@ public class CourseConsoleController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
-
+    private List<QuestionForTeacher> convertQuestionList(List<Question> questions){
+        List<QuestionForTeacher> questionForTeachers = new ArrayList<QuestionForTeacher>();
+        questions.forEach(question -> {
+            questionForTeachers.add(MappingEntity2ModelConverter.ConvertTeacherQuestion(question));
+        });
+        return questionForTeachers;
+    }
 
 
     //使course数据带时间
@@ -260,6 +267,7 @@ public class CourseConsoleController {
         List<ReturnCourse> rcs = new ArrayList<ReturnCourse>();
         olds.forEach(course -> {
             CourseForTeacher courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(course);
+            courseForTeacher.getQuestions().addAll(convertQuestionList(courseConsoleService.getQuestionList(course.getQuestionIds())));
             courseForTeacher.getStudents().addAll(userInfoService.getStudentsForClassById(course.getClassId()));
             ReturnCourse rc = new ReturnCourse();
             rc.setCourseForTeacher(courseForTeacher);

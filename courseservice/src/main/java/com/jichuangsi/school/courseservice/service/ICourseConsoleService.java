@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.service;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.entity.Course;
+import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
@@ -47,4 +48,7 @@ public interface ICourseConsoleService {
     CourseFile downIco(UserInfoForToken userInfo,String pic)  throws TeacherCourseServiceException;
     @Transactional
     void updateIco(UserInfoForToken userInfo, CourseFile courseFile,String cid) throws TeacherCourseServiceException;
+
+    @Transactional
+    List<Question> getQuestionList(List<String> qIds);
 }

@@ -177,4 +177,9 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
             throw new TeacherCourseServiceException(ResultCode.FILE_REMOVE_ERROR);
         }
     }
+
+    @Override
+    public List<Question> getQuestionList(List<String> qIds){
+        return mongoTemplate.find(new Query(Criteria.where("id").in(qIds)), Question.class);
+    }
 }
