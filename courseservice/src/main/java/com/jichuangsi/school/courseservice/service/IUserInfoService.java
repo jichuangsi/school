@@ -3,13 +3,14 @@ package com.jichuangsi.school.courseservice.service;
 import com.jichuangsi.school.courseservice.model.transfer.TransferClass;
 import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
+import com.jichuangsi.school.courseservice.service.impl.UserInfoServiceFallBack;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "userservice")
+@FeignClient(name = "userservice", fallback = UserInfoServiceFallBack.class)
 public interface IUserInfoService {
 
     @RequestMapping("/getClassInfoForTeacher")

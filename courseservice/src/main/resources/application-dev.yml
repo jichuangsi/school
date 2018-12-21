@@ -18,6 +18,20 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
 
+# feign配置
+feign:
+  hystrix:
+    # 在feign中开启hystrix功能，默认情况下feign不开启hystrix功能
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
 com:
   jichuangsi:
     school:

@@ -22,5 +22,5 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
 	public static final String COURSE_FAIL_SAVE = "保存课程失败";
 	public static final String QUESTION_FAIL_SAVE = "保存试题失败";
 	public static final String TEACHER_ANSWER_NOT_EXISTED = "所指老师作答不存在";
-
+	public static final String TEACHER_INFO_NOT_EXISTED = "老师信息获取错误";
 }

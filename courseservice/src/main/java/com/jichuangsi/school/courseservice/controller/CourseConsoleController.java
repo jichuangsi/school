@@ -144,13 +144,13 @@ public class CourseConsoleController {
         if (userInfo == null) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_QUERY_IS_EMPTY);
         }
-        EaxmAndClass eaxmAndClass = new EaxmAndClass();
+        EaxmAndClass examAndClass = new EaxmAndClass();
         /*Teacher teacher = teacherCourseService.getTeacher(String teacherId);*///暂时不获取teacher
 
         /*eaxmAndClass.setsTransferClasses( teacherCourseService.getTeachClass(userInfo.getUserId()) );//暂时全班级数据*/
-        eaxmAndClass.setTransferExams(examInfoService.getExamForTeacherById(userInfo.getUserId()));
-        eaxmAndClass.setTransferClasses(userInfoService.getClassForTeacherById(userInfo.getUserId()));
-        return ResponseModel.sucess("", eaxmAndClass);
+        examAndClass.setTransferExams(examInfoService.getExamForTeacherById(userInfo.getUserId()));
+        examAndClass.setTransferClasses(userInfoService.getClassForTeacherById(userInfo.getUserId()));
+        return ResponseModel.sucess("", examAndClass);
     }
 
     //新建课堂页面的最新创建未开课的新课程
@@ -260,6 +260,7 @@ public class CourseConsoleController {
         List<ReturnCourse> rcs = new ArrayList<ReturnCourse>();
         olds.forEach(course -> {
             CourseForTeacher courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(course);
+            courseForTeacher.getStudents().addAll(userInfoService.getStudentsForClassById(course.getClassId()));
             ReturnCourse rc = new ReturnCourse();
             rc.setCourseForTeacher(courseForTeacher);
             rc.setBeginTime(new SimpleDateFormat(defaultDateFormat2).format(new Date(course.getStartTime())));

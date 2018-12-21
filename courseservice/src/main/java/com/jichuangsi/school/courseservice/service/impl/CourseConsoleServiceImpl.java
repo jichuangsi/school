@@ -70,6 +70,7 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
     public void saveNewCourse(UserInfoForToken userInfoForToken, CourseForTeacher courseForTeacher) throws TeacherCourseServiceException {
         DateFormateUtil dfu  = new DateFormateUtil(defaultDateFormat1);
         TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        if(transferTeacher==null) throw new TeacherCourseServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
         courseForTeacher.setSubjectId(transferTeacher.getSubjectId());
         courseForTeacher.setSubjectName(transferTeacher.getSubjectName());
         Course course = MappingModel2EntityConverter.ConvertTeacherCourse(userInfoForToken,courseForTeacher);
