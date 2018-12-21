@@ -2,10 +2,7 @@ package com.jichuangsi.school.courseservice.service;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
-import com.jichuangsi.school.courseservice.model.AnswerForStudent;
-import com.jichuangsi.school.courseservice.model.CourseFile;
-import com.jichuangsi.school.courseservice.model.CourseForStudent;
-import com.jichuangsi.school.courseservice.model.PageHolder;
+import com.jichuangsi.school.courseservice.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,4 +29,8 @@ public interface IStudentCourseService {
 
     @Transactional
     void saveStudentAnswer(UserInfoForToken userInfo, String courseId, String questionId, AnswerForStudent answer) throws StudentCourseServiceException;
+
+    @Transactional
+    QuestionForStudent getParticularQuestion(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException;
+
 }

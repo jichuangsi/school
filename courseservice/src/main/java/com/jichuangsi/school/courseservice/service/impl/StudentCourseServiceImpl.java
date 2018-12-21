@@ -168,6 +168,23 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         }
     }
 
+    @Override
+    public QuestionForStudent getParticularQuestion(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException {
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> result = questionRepository.findById(questionId);
+        if(result.isPresent()){
+            QuestionForStudent questionForStudent =  MappingEntity2ModelConverter.ConvertStudentQuestion(result.get());
+            StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userInfo.getUserId());
+            if(studentAnswer!=null) {
+                questionForStudent.setAnswerForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(studentAnswer));
+                TeacherAnswer teacherAnswer = teacherAnswerRepository.findFirstByQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(questionId, studentAnswer.getId());
+                if(teacherAnswer!=null) questionForStudent.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(teacherAnswer));
+            }
+            return questionForStudent;
+        }
+        throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+    }
+
     private List<CourseForStudent> convertCourseList(List<Course> courses){
         List<CourseForStudent> courseForTeachers = new ArrayList<CourseForStudent>();
         courses.forEach(course -> {

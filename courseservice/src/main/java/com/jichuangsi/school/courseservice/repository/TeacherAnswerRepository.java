@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface TeacherAnswerRepository extends MongoRepository<TeacherAnswer, String>, TeacherAnswerExtraRepository {
 
+    TeacherAnswer findFirstByQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(String questionId, String studentAnswerId);
+
     TeacherAnswer findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(String teacherId, String questionId, String studentAnswerId);
 
     TeacherAnswer findFirstByTeacherIdAndQuestionIdAndIsShareOrderByShareTimeDesc(String teacherId, String questionId, boolean isShare);

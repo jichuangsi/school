@@ -1,6 +1,5 @@
 package com.jichuangsi.school.courseservice.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
@@ -123,4 +122,16 @@ public class StudentCourseController {
 		studentCourseService.saveStudentAnswer(userInfo, courseId, questionId, answer);
 		return ResponseModel.sucessWithEmptyData("");
 	}
+
+	//获取指定课堂题目
+	@ApiOperation(value = "根据问题id查询问题信息", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String") })
+	@GetMapping("/getQuestion/{questionId}")
+	public ResponseModel<QuestionForStudent> getQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws StudentCourseServiceException{
+
+		return ResponseModel.sucess("",  studentCourseService.getParticularQuestion(userInfo, questionId));
+	}
+
 }
