@@ -29,6 +29,9 @@ public interface IExamService {
     PageHolder<QuestionModel> getQuestions(ExamModel examModel);
 
     @Transactional
+    List<QuestionModel> getQuestions(String examId);
+
+    @Transactional
     PageHolder<ExamModel> getExamByExamName(ExamModel examModel);
 
     @Transactional

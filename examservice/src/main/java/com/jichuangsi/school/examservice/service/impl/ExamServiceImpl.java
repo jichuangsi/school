@@ -107,6 +107,11 @@ public class ExamServiceImpl implements IExamService{
     }
 
     @Override
+    public List<QuestionModel> getQuestions(String examId) {
+        return changQustionList(questionRepository.findQuestionsByExamId(examId));
+    }
+
+    @Override
     public PageHolder<ExamModel> getExamByExamName(ExamModel examModel) {
         PageHolder<ExamModel> page = new PageHolder<ExamModel>();
         List<Exam> exams = examRepository.findExamByExamNameAndConditions(examModel.getExamName(),examModel.getPageSize(),examModel.getPageIndex());

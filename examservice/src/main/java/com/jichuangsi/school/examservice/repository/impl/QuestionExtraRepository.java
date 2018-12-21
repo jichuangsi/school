@@ -36,6 +36,12 @@ public class QuestionExtraRepository implements IQuestionExtraRepository {
     }
 
     @Override
+    public List<Question> findQuestionsByExamId(String examId) {
+        Criteria criteria = Criteria.where("examId").is(examId);
+        return mongoTemplate.find(new Query(criteria),Question.class);
+    }
+
+    @Override
     public long findCountByExamId(String eid) {
         Criteria criteria = Criteria.where("examId").is(eid);
         return mongoTemplate.count(new Query(criteria),Question.class);

@@ -24,8 +24,9 @@ public final class MappingEntity2ModelConverter {
         questionModel.setQuestionId(question.getId());
         questionModel.setQuestionIdMD52(question.getIdMD52());
         questionModel.setQuestionPic(question.getPic());
-        questionModel.setQuestionStatus(Status.getStatus(question.getStatus()));
+        //questionModel.setQuestionStatus(Status.getStatus(question.getStatus()));
         questionModel.setSubjectId(question.getSubjectId());
+        questionModel.setGradeId(question.getGradeId());
         questionModel.setUpdateTime(question.getUpdateTime());
 
         return questionModel;

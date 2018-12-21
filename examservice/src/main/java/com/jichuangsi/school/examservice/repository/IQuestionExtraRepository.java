@@ -13,6 +13,7 @@ public interface IQuestionExtraRepository {
 
     List<Question> findPageQuestions(ExamModel examModel);
 
+    List<Question> findQuestionsByExamId(String examId);
 
     long findCountByExamId(String eid);
 

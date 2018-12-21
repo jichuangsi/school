@@ -92,6 +92,16 @@ public class ExamController {
         return ResponseModel.sucess("",examService.getQuestions(examModel));
     }
 
+    @ApiOperation(value = "exam内的试题集", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping("/getQuestions/{examId}")
+    public ResponseModel<List<QuestionModel>> getQuestions(@ModelAttribute UserInfoForToken userInfo,@PathVariable String examId) throws  ExamException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(examId)) throw new ExamException(ResultCode.PARAM_MISS_MSG);
+        return ResponseModel.sucess("",examService.getQuestions(examId));
+    }
+
     @ApiOperation(value = "根据id获取试卷类，题型数量", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
