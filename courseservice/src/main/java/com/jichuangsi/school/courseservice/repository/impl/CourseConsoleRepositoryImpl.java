@@ -102,23 +102,23 @@ public class CourseConsoleRepositoryImpl<T> implements CourseConsoleRepository<T
     }
 
     @Override
-    public void updateCourseById(CourseForTeacher course) {
-        Criteria criteria = Criteria.where("id").is(course.getCourseId());
+    public void updateCourseById(Course updatedCourse) {
+        Criteria criteria = Criteria.where("_id").is(updatedCourse.getId());
         Update update = new Update();
-        if(!StringUtils.isEmpty(course.getCourseName()))
-        update.set("name",course.getCourseName());
-        if(!StringUtils.isEmpty(course.getClassId()))
-        update.set("classId",course.getClassId());
-        if(!StringUtils.isEmpty(course.getClassName()))
-        update.set("className",course.getClassName());
-        if(course.getCourseStartTime()!=0)
-        update.set("startTime",course.getCourseStartTime());
-        if(course.getCourseEndTime()!=0)
-        update.set("endTime",course.getCourseEndTime());
-        if(!StringUtils.isEmpty(course.getCourseInfo()))
-        update.set("info",course.getCourseInfo());
-        if(!StringUtils.isEmpty(course.getCoursePic()))
-        update.set("picAddress",course.getCoursePic());
+        if(!StringUtils.isEmpty(updatedCourse.getName()))
+        update.set("name",updatedCourse.getName());
+        if(!StringUtils.isEmpty(updatedCourse.getClassId()))
+        update.set("classId",updatedCourse.getClassId());
+        if(!StringUtils.isEmpty(updatedCourse.getClassName()))
+        update.set("className",updatedCourse.getClassName());
+        if(updatedCourse.getStartTime()!=0)
+        update.set("startTime",updatedCourse.getStartTime());
+        if(updatedCourse.getEndTime()!=0)
+        update.set("endTime",updatedCourse.getEndTime());
+        if(!StringUtils.isEmpty(updatedCourse.getInfo()))
+        update.set("info",updatedCourse.getInfo());
+        if(!StringUtils.isEmpty(updatedCourse.getPicAddress()))
+        update.set("picAddress",updatedCourse.getPicAddress());
         update.set("updateTime",new Date().getTime());
         mongoTemplate.updateFirst(new Query(criteria),update,Course.class);
     }

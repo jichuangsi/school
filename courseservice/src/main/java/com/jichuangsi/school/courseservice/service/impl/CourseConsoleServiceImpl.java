@@ -135,10 +135,11 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         Course storedCourse = mongoTemplate.findById(courseForTeacher.getCourseId(), Course.class);
         if(!Status.NOTSTART.getName().equalsIgnoreCase(storedCourse.getStatus())) throw new TeacherCourseServiceException(ResultCode.COURSE_ALREADY_BEGIN);
         DateFormateUtil dfu = new DateFormateUtil(defaultDateFormat1);
-        courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(storedCourse);
-        if(courseForTeacher.getCourseStartTime() > 0)
-            courseForTeacher.setCourseEndTime(dfu.getEndTime(courseForTeacher.getCourseStartTime(), coursePeriod));
-        courseConsoleRepository.updateCourseById(courseForTeacher);
+        //courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(storedCourse);
+        Course updatedCourse = MappingModel2EntityConverter.ConvertTeacherCourse(userInfoForToken, courseForTeacher);
+        if(updatedCourse.getStartTime() > 0)
+            updatedCourse.setEndTime(dfu.getEndTime(updatedCourse.getStartTime(), coursePeriod));
+        courseConsoleRepository.updateCourseById(updatedCourse);
     }
 
     @Override
@@ -170,7 +171,7 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         CourseForTeacher courseModle = new CourseForTeacher();
         courseModle.setCourseId(course.getId());
         courseModle.setCoursePic(uploadIco(userInfo,courseFile).getCoursePic());
-        courseConsoleRepository.updateCourseById(courseModle);
+        courseConsoleRepository.updateCourseById(MappingModel2EntityConverter.ConvertTeacherCourse(userInfo, courseModle));
         try {
             fileStoreService.deleteCourseFile(course.getPicAddress());
         } catch (Exception e) {

@@ -26,6 +26,6 @@ public interface CourseConsoleRepository<T> {
     List<Course> findNewCourse(String teacherId);
 
     //修改课堂部分信息
-    void updateCourseById(CourseForTeacher course);
+    void updateCourseById(Course updatedCourse);
 
 }
