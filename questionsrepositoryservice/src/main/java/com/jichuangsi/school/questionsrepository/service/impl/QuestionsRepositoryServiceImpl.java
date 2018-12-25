@@ -39,6 +39,9 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     @Value("${com.jichuangsi.school.tiku.host}")
     private String host;
 
+    @Value("${com.jichuangsi.school.tiku.port}")
+    private String port;
+
     @Value("${com.jichuangsi.school.tiku.accessKey}")
     private String accessKey;
 
@@ -329,7 +332,7 @@ public class QuestionsRepositoryServiceImpl implements IQuestionsRepositoryServi
     private Mono<String> webClientFormRequest(String api, MultiValueMap formData) throws Exception {
         Mono<String> resp = WebClient.create().post().uri(uriBuilder -> uriBuilder
                 .scheme(schema)
-                .host(host)
+                .host(host).port(port)
                 .path("/index.php")
                 .queryParam("s","Index").queryParam("m","Api")
                 .queryParam("a", api).build())

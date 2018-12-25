@@ -52,6 +52,7 @@ com:
       tiku:
         schema: http
         host: 127.0.0.1
+        port: 80
         accessKey: 9229eb41327ec6385c28baf45469f988
         subjectEditionApi: subjectEditionApi
         otherBasicApi: getOtherBasic
