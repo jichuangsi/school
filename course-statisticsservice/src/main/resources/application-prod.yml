@@ -11,22 +11,23 @@ spring:
       database: courseStatistics
 
 server:
-  port: 8082
+  port: 8082 
 
 custom: 
   token: 
     userClaim: userInfo
+  question: 
+    answer-count: 6
   mq: 
     producer:
       queue-name: 
         courseStatistics: course.statistics.classinteraction
         questionStatistics: course.question.statistics.classinteraction
+        questionAnswer: course.question.answer.classinteraction
     consumer:
       queue-name:
         courseStudentAdd: course.student.add.coursestatistics
         answerQuestion: course.question.answer.coursestatistics      
   swagger:
-    enable: false
-  log: 
-    path: E:/logback/${spring.application.name}/${spring.profiles.active}
+    enable: true
         

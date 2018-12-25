@@ -4,14 +4,12 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
-    username: admin
-    password: admin
     listener:
       simple:
         concurrency: 2
         max-concurrency: 4 
 server:
-  port: 8081
+  port: 8080
  
 eureka:
   instance:
@@ -37,6 +35,7 @@ custom:
       teacher:
         csChangePre: /queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
         qcChangePre: /queue/course/teacher/qs/ #订阅某堂课题目统计数据更新的消息前缀
+        questionAnswerPre: /queue/course/teacher/question/ #订阅某堂课题目学生作答的消息前缀
   mq: 
     consumer: 
       queue-name:
@@ -45,6 +44,7 @@ custom:
         question-pubilish: course.question.pub.classinteraction
         question-statistics: course.question.statistics.classinteraction
         question-termin: course.question.termin.classinteraction
+        question-answer: course.question.answer.classinteraction
         answer-share: course.question.answer.share.classinteraction
     producer: 
       queue-name:

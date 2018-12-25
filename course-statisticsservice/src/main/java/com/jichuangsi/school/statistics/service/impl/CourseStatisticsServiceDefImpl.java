@@ -6,9 +6,14 @@ package com.jichuangsi.school.statistics.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,6 +30,7 @@ import com.jichuangsi.school.statistics.model.QuestionStatisticsInfoModel;
 import com.jichuangsi.school.statistics.model.QuestionStatisticsListModel;
 import com.jichuangsi.school.statistics.model.StudentAnswerModel;
 import com.jichuangsi.school.statistics.mq.producer.service.ICourseStatisticsSender;
+import com.jichuangsi.school.statistics.mq.producer.service.IQuestionAnswerSender;
 import com.jichuangsi.school.statistics.mq.producer.service.IQuestionStatisticsSender;
 import com.jichuangsi.school.statistics.repository.CourseStatisticsRepository;
 import com.jichuangsi.school.statistics.repository.QuestionAnswersRepository;
@@ -49,7 +55,13 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 	@Resource
 	private QuestionAnswersRepository questionAnswersRepository;
 	@Resource
+	private IQuestionAnswerSender questionAnswerSender; 
+	@Resource
 	private MongoTemplate mongoTemplate;
+	
+	@Value("${custom.question.answer-count}")
+	private int subjectNotifyCount = 5;
+	
 
 	@Override
 	public AddToCourseModel addToCourse(AddToCourseModel addToCourseModel) {
@@ -107,7 +119,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 	}
 
 	@Override
-	public StudentAnswerModel saveStudentAnswer(StudentAnswerModel answerModel) {
+	public StudentAnswerModel saveStudentAnswer(final StudentAnswerModel answerModel) {
 		final String courseId = answerModel.getCourseId();
 		final String questionId = answerModel.getQuestionId();
 		final String studentId = answerModel.getStudentId();
@@ -135,9 +147,20 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 				// addToSet存在则不加，不存在则加,push不管是否存在都加，这里用addToSet
 				update.addToSet("studentAnswers", studentAnswerEntity);
 				mongoTemplate.upsert(query1, update, QuestionAnswersEntity.class);
+				
+				//主观题时，通知老师有学生作答
+				sendStudentAnswerSubjective(answerModel);
+				
 			} else {
 				StudentAnswerEntity oldstudentAnswerEntity = null;
-				for (StudentAnswerEntity temp : questionAnswersEntity.getStudentAnswers()) {
+				List<StudentAnswerEntity> answerList = questionAnswersEntity.getStudentAnswers();
+				
+				//前N个（默认前5个），通知老师有学生作答
+				if(answerList.size()<subjectNotifyCount) {
+					sendStudentAnswerSubjective(answerModel);
+				}
+				
+				for (StudentAnswerEntity temp : answerList) {
 					if (temp.getStudentId().equals(studentId)) {
 						oldstudentAnswerEntity = temp;
 						break;
@@ -160,13 +183,14 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 				}
 
 			}
+
+			// 获取统计信息
+			QuestionStatisticsInfoModel info = getQuestionStatisticsInfo(answerModel.getCourseId(),
+					answerModel.getQuestionId());
+			// 发送题目统计变更消息
+			questionStatisticsSender.send(info);
 		}
 
-		// 获取统计信息
-		QuestionStatisticsInfoModel info = getQuestionStatisticsInfo(answerModel.getCourseId(),
-				answerModel.getQuestionId());
-		// 发送题目统计变更消息
-		questionStatisticsSender.send(info);
 		return answerModel;
 	}
 
@@ -181,6 +205,7 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 			info.setAcc(0);
 			info.setAvgScore(0);
 			info.setCount(0);
+			info.setMostError("");
 		} else {
 			fillQuestionStatisticsInfoModel(entity, info);
 		}
@@ -193,6 +218,38 @@ public class CourseStatisticsServiceDefImpl implements ICourseStatisticsService 
 		info.setAcc((float) entity.getAccCount() / entity.getCount());
 		info.setAvgScore(entity.getTotalScore() / entity.getCount());
 		info.setCount(entity.getCount());
+
+		// 不是全部人答对，且题目是客观题
+		if (StudentAnswerModel.QUTYPE_OBJECTIVE.equals(entity.getQuType()) && entity.getAccCount() < entity.getCount()) {
+			// 获取最多错误答案
+			// 统计出各个错误答案的出现次数
+			Map<String, Long> countMap = entity.getStudentAnswers().stream().filter(studentAnswer -> {
+				if (studentAnswer.getIsRight()) {
+					return false;
+				} else {
+					return true;
+				}
+			}).collect(Collectors.groupingBy(StudentAnswerEntity::getAnswer, Collectors.counting()));
+
+			if (!countMap.isEmpty()) {
+				// 找出出现次数最多的错误答案
+				Optional<Entry<String, Long>> op = countMap.entrySet().stream().max((a1, a2) -> {
+					return a1.getValue().intValue() - a2.getValue().intValue();
+				});
+				info.setMostError(op.get().getKey());
+			}
+
+		} else {
+			info.setMostError("");
+		}
+
+	}
+
+	private void sendStudentAnswerSubjective(StudentAnswerModel answerModel) {
+		if(StudentAnswerModel.QUTYPE_SUBJECTIVE.equals(answerModel.getQuType())	){
+			questionAnswerSender.send(answerModel);
+		}
+		
 	}
 
 }
