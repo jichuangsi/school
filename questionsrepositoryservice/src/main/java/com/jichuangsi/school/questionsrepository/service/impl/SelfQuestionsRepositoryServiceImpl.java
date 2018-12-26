@@ -68,6 +68,8 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
         }
         //保存进内存
         cacheServiceLocal.set(picPrefix+sendCodePic.getOneCode(),questionFile.getStoredName(),picCacheTime);
+        //清除识别图中文字的缓存，如果换Redis需要修改其他方法
+        cacheServiceLocal.set(PIC_CONTENT_PREFIX+sendCodePic.getOneCode(), null, 0);
     }
 
     @Override
