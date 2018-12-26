@@ -12,8 +12,10 @@ import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionMode
 import com.jichuangsi.school.questionsrepository.model.common.SendCodePic;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
+import com.jichuangsi.school.questionsrepository.model.translate.PicContent;
 import com.jichuangsi.school.questionsrepository.repository.ISelfQuestionsRepository;
 import com.jichuangsi.school.questionsrepository.service.IFileStoreService;
+import com.jichuangsi.school.questionsrepository.service.IPicTranslationService;
 import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositoryService;
 import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
 import com.jichuangsi.school.questionsrepository.util.MappingEntity2ModelConverter;
@@ -21,6 +23,7 @@ import com.jichuangsi.school.questionsrepository.util.MappingModel2EntityConvert
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -36,6 +39,8 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
     @Value("${com.jichuangsi.school.codePic.prefix}")
     private String picPrefix;
 
+    private final static String PIC_CONTENT_PREFIX = "picContent_";
+
     @Resource
     private IFileStoreService fileStoreService;
 
@@ -50,6 +55,10 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Resource
+    private IPicTranslationService picTranslationService;
+
     @Override
     public void uploadQuestionPic(QuestionFile questionFile, SendCodePic sendCodePic) throws QuestionRepositoryServiceException{
         try {
@@ -127,5 +136,41 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
         selfQuestionsRepository.findAllAndRemove(deleteQueryModel);
     }
 
+    @Override
+    public PicContent transQuestionPic(SendCodePic sendCodePic) throws QuestionRepositoryServiceException {
+        PicContent picContent = null;
+        picContent = cacheServiceLocal.get(PIC_CONTENT_PREFIX+sendCodePic.getOneCode());
+
+        if(picContent==null) {
+            String picName = cacheServiceLocal.get(picPrefix + sendCodePic.getOneCode());
+            if (StringUtils.isEmpty(picName)) throw new QuestionRepositoryServiceException(ResultCode.FILE_NOT_EXISTED);
+            QuestionFile questionFile = null;
+            try {
+                questionFile = fileStoreService.donwloadQuestionFile(picName);
+            } catch (Exception e) {
+                throw new QuestionRepositoryServiceException(ResultCode.FILE_DOWNLOAD_ERROR);
+            }
+            if (questionFile.getContent() == null)
+                throw new QuestionRepositoryServiceException(ResultCode.FILE_NOT_EXISTED);
+            picContent = picTranslationService.translate(questionFile.getContent());
+            picContent.setPicSub(picName);
+            //保存进内存
+            cacheServiceLocal.set(PIC_CONTENT_PREFIX + sendCodePic.getOneCode(), picContent, picCacheTime);
+        }
+        return picContent;
+    }
+
+    @Override
+    public QuestionFile viewQuestionPic(SendCodePic sendCodePic) throws QuestionRepositoryServiceException {
+        String picName = cacheServiceLocal.get(picPrefix + sendCodePic.getOneCode());
+        if (StringUtils.isEmpty(picName)) throw new QuestionRepositoryServiceException(ResultCode.FILE_NOT_EXISTED);
+        QuestionFile questionFile = null;
+        try {
+            questionFile = fileStoreService.donwloadQuestionFile(picName);
+        } catch (Exception e) {
+            throw new QuestionRepositoryServiceException(ResultCode.FILE_DOWNLOAD_ERROR);
+        }
+        return questionFile;
+    }
 
 }

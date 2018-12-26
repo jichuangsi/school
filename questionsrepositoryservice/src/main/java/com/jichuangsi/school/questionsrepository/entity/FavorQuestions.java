@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "shchool_question_favor")
+@Document(collection = "school_question_favor")
 public class FavorQuestions {
 
     @Id

@@ -11,6 +11,7 @@ import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.common.SendCodePic;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
+import com.jichuangsi.school.questionsrepository.model.translate.PicContent;
 import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -86,6 +87,30 @@ public class SelfQuestionsRepositoryController {
             throw new QuestionRepositoryServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
         return ResponseModel.sucessWithEmptyData("");
+    }
+
+    //自定义题目图片转文字
+    @ApiOperation(value = "自定义题目图片转文字", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/transQuestionPic/{code}")
+    public ResponseModel<PicContent> transQuestionPic(@ModelAttribute UserInfoForToken userInfo, @PathVariable String code) throws QuestionRepositoryServiceException{
+        SendCodePic sendCodePic = new SendCodePic();
+        sendCodePic.setCode(code);
+        sendCodePic.setTeacherId(userInfo.getUserId());
+        return ResponseModel.sucess("", selfQuestionsRepositoryService.transQuestionPic(sendCodePic));
+    }
+
+    //预览自定义题目图片
+    @ApiOperation(value = "预览自定义题目图片", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/viewQuestionPic/{code}")
+    public ResponseModel<QuestionFile> viewQuestionPic(@ModelAttribute UserInfoForToken userInfo, @PathVariable String code) throws QuestionRepositoryServiceException{
+        SendCodePic sendCodePic = new SendCodePic();
+        sendCodePic.setCode(code);
+        sendCodePic.setTeacherId(userInfo.getUserId());
+        return ResponseModel.sucess("", selfQuestionsRepositoryService.viewQuestionPic(sendCodePic));
     }
 
     //获取指定文件名图片

@@ -3,6 +3,7 @@ package com.jichuangsi.school.questionsrepository.service.impl;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.service.IFileStoreService;
+import com.jichuangsi.school.questionsrepository.service.impl.trans.BaiduPicTranslationService;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Query;

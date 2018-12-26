@@ -9,6 +9,7 @@ import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.common.SendCodePic;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
+import com.jichuangsi.school.questionsrepository.model.translate.PicContent;
 
 public interface ISelfQuestionsRepositoryService {
 
@@ -36,5 +37,7 @@ public interface ISelfQuestionsRepositoryService {
     //删除自定义
     void deleteSelfQuestions(UserInfoForToken userInfo,DeleteQueryModel deleteQueryModel) throws  QuestionRepositoryServiceException;
 
+    PicContent transQuestionPic(SendCodePic sendCodePic) throws QuestionRepositoryServiceException;
 
+    QuestionFile viewQuestionPic(SendCodePic sendCodePic) throws QuestionRepositoryServiceException;
 }
