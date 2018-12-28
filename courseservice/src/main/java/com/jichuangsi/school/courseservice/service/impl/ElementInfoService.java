@@ -31,6 +31,6 @@ public class ElementInfoService implements IElementInfoService {
     @Override
     public QuestionType fetchQuestionType(String type){
         if(StringUtils.isEmpty(type)) return QuestionType.EMPTY;
-        return QuestionType.getResult(QUESTION_TYPE.get(type));
+        return QuestionType.getResult(QUESTION_TYPE.get(type)==null?0:QUESTION_TYPE.get(type));
     }
 }
