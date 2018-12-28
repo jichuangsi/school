@@ -60,7 +60,8 @@ public  final class MappingModel2EntityConverter {
         question.setAnswer(questionForTeacher.getAnswer());
         question.setAnswerDetail(questionForTeacher.getAnswerDetail());
         question.setParse(questionForTeacher.getParse());
-        question.setType(questionForTeacher.getQuesetionType()!=null?translateQuestionType(questionForTeacher.getQuesetionType()).getName(): null);
+        //question.setType(questionForTeacher.getQuesetionType()!=null?translateQuestionType(questionForTeacher.getQuesetionType()).getName(): null);
+        question.setType(questionForTeacher.getQuesetionType());
         question.setDifficulty(questionForTeacher.getDifficulty());
         question.setSubjectId(questionForTeacher.getSubjectId());
         question.setGradeId(questionForTeacher.getGradeId());
@@ -115,10 +116,12 @@ public  final class MappingModel2EntityConverter {
         return studentAnswer;
     }
 
-    private static QuestionType translateQuestionType(String quTypeInChinese) {
+    /*private static QuestionType translateQuestionType(String quTypeInChinese) {
         switch (quTypeInChinese){
-            case "选择题" : case "单选题" : case "多选题" : case "判断题" : return QuestionType.OBJECTIVE;
+            case "选择题" : case "单选题" : case "多选题" : case "判断题" : case "双选题" :
+            case "不定项选择题" : case "多项选择题" : case "单项选择题" :
+                return QuestionType.OBJECTIVE;
             default: return QuestionType.SUBJECTIVE;
         }
-    }
+    }*/
 }

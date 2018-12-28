@@ -2,6 +2,7 @@ package com.jichuangsi.school.courseservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
+import com.jichuangsi.school.courseservice.constant.QuestionType;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
@@ -13,11 +14,13 @@ import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
 import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
 import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
 import com.jichuangsi.school.courseservice.service.ICourseConsoleService;
+import com.jichuangsi.school.courseservice.service.IElementInfoService;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.util.DateFormateUtil;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -48,6 +51,9 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
 
     @Resource
     private IFileStoreService fileStoreService;
+
+    @Resource
+    private IElementInfoService elementInfoService;
 
     @Override
     public PageHolder<Course> getSortCoursesList(Course course, PageHolder<Course> page, String keyWord, Integer sortNum, Date nowDay) throws TeacherCourseServiceException {

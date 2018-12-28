@@ -1,7 +1,7 @@
 package com.jichuangsi.school.courseservice.constant;
 
 public enum QuestionType {
-    OBJECTIVE("objective", 1), SUBJECTIVE("subjective", 2);
+    EMPTY(null, 0), OBJECTIVE("objective", 1), SUBJECTIVE("subjective", 2);
     private String name;
     private int index;
 
@@ -23,6 +23,15 @@ public enum QuestionType {
     public static QuestionType getResult(String name) {
         for (QuestionType c : QuestionType.values()) {
             if (c.getName().equalsIgnoreCase(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public static QuestionType getResult(int index) {
+        for (QuestionType c : QuestionType.values()) {
+            if (c.getIndex() == index) {
                 return c;
             }
         }
