@@ -17,6 +17,7 @@ public class Question {
     String answerDetail;
     String parse;
     String type;
+    String typeInCN;
     String difficulty;
     String subjectId;
     String gradeId;
@@ -153,5 +154,13 @@ public class Question {
 
     public void setPic(String pic) {
         this.pic = pic;
+    }
+
+    public String getTypeInCN() {
+        return typeInCN;
+    }
+
+    public void setTypeInCN(String typeInCN) {
+        this.typeInCN = typeInCN;
     }
 }

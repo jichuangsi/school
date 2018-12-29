@@ -14,6 +14,7 @@ public class Question {
     private String answerDetail;
     private String parse;
     private String quesetionType;
+    private String questionTypeInCN;
     private String difficulty;
     private String subjectId;
     private String gradeId;
@@ -150,5 +151,13 @@ public class Question {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getQuestionTypeInCN() {
+        return questionTypeInCN;
+    }
+
+    public void setQuestionTypeInCN(String questionTypeInCN) {
+        this.questionTypeInCN = questionTypeInCN;
     }
 }

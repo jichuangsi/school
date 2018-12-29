@@ -82,6 +82,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     public CourseForTeacher getParticularCourse(UserInfoForToken userInfo, String courseId) throws TeacherCourseServiceException {
         if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(courseId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         Course course = courseRepository.findFirstByIdAndTeacherIdOrderByUpdateTimeDesc(courseId, userInfo.getUserId());
+        if(course == null) throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
         List<Question> questions = questionRepository.findQuestionsByTeacherIdAndCourseId(userInfo.getUserId(), courseId);
         CourseForTeacher courseForTeacher = MappingEntity2ModelConverter.ConvertTeacherCourse(course);
         courseForTeacher.getQuestions().addAll(convertQuestionList(questions));

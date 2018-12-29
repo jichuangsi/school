@@ -83,6 +83,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     public CourseForStudent getParticularCourse(UserInfoForToken userInfo, String courseId) throws StudentCourseServiceException {
         if(StringUtils.isEmpty(courseId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
         Course course = courseRepository.findFirstByIdAndClassIdOrderByUpdateTimeDesc(courseId, userInfo.getClassId());
+        if(course==null) throw new StudentCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
         List<Question> questions = questionRepository.findQuestionsByClassIdAndCourseId(userInfo.getClassId(), courseId);
         CourseForStudent courseForStudent = MappingEntity2ModelConverter.ConvertStudentCourse(course);
         courseForStudent.getQuestions().addAll(convertQuestionList(questions));
