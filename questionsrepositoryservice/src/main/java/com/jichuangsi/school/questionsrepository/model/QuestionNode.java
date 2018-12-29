@@ -9,6 +9,7 @@ public class QuestionNode implements Serializable {
     private String option_b;
     private String option_c;
     private String option_d;
+    private String option_e;
     private String qtpye;
     private String diff;
     private String year;
@@ -183,5 +184,13 @@ public class QuestionNode implements Serializable {
 
     public void setGradeId(String gradeId) {
         this.gradeId = gradeId;
+    }
+
+    public String getOption_e() {
+        return option_e;
+    }
+
+    public void setOption_e(String option_e) {
+        this.option_e = option_e;
     }
 }
