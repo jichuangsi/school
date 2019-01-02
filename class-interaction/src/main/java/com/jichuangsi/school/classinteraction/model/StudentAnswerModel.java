@@ -3,11 +3,13 @@
  */
 package com.jichuangsi.school.classinteraction.model;
 
+import com.jichuangsi.school.classinteraction.websocket.model.AbstractNotifyInfoForTeacher;
+
 /**
  * @author huangjiajun
  *
  */
-public class StudentAnswerModel {
+public class StudentAnswerModel extends AbstractNotifyInfoForTeacher {
 
 	public static final String QUTYPE_OBJECTIVE = "objective";
 	public static final String QUTYPE_SUBJECTIVE = "subjective";
@@ -19,7 +21,6 @@ public class StudentAnswerModel {
 	private String quType;// 题目类型，主观题，客观题
 	private String answer;// 答案内容
 	private String studentId;// 学生ID
-
 
 	public final String getCourseId() {
 		return courseId;

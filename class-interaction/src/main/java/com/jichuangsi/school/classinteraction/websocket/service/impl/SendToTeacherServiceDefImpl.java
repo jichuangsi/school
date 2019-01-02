@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.classinteraction.model.StudentAnswerModel;
+import com.jichuangsi.school.classinteraction.websocket.model.AbstractNotifyInfoForTeacher;
 import com.jichuangsi.school.classinteraction.websocket.model.CourseStatistics;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionStatistics;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToTeacherService;
@@ -34,6 +35,7 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 
 	@Override
 	public void sendCourseStatisticsInfo(CourseStatistics courseStatistics) {
+		courseStatistics.setNotifyType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_CS);
 		messagingTemplate.convertAndSend(csChangePre + courseStatistics.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", courseStatistics)));
 
@@ -41,6 +43,7 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 
 	@Override
 	public void sendQuestionStatisticsInfo(QuestionStatistics questionStatistics) {
+		questionStatistics.setNotifyType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_QS);
 		messagingTemplate.convertAndSend(qcChangePre + questionStatistics.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", questionStatistics)));
 
@@ -48,6 +51,7 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 
 	@Override
 	public void sendQuestionAnswerInfo(StudentAnswerModel studentAnswerModel) {
+		studentAnswerModel.setNotifyType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_SA);
 		messagingTemplate.convertAndSend(questionAnswerPre + studentAnswerModel.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", studentAnswerModel)));
 

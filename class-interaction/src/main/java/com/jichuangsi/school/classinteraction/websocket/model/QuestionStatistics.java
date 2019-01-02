@@ -7,7 +7,7 @@ package com.jichuangsi.school.classinteraction.websocket.model;
  * @author huangjiajun
  *
  */
-public class QuestionStatistics {
+public class QuestionStatistics extends AbstractNotifyInfoForTeacher {
 	private String courseId;
 	private String questionId;
 	private float acc;// 正确率

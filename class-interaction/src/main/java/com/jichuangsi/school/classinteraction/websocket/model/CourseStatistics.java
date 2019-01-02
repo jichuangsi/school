@@ -7,7 +7,7 @@ package com.jichuangsi.school.classinteraction.websocket.model;
  * @author huangjiajun
  *
  */
-public class CourseStatistics {
+public class CourseStatistics extends AbstractNotifyInfoForTeacher{
 	private String courseId;
 	private int studentCount;
 
