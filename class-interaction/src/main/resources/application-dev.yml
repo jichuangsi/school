@@ -33,9 +33,9 @@ custom:
         classInfoPre: /topic/group/student/ #订阅某个班级的信息前缀
         courseIntercationPre: /topic/course/student/ #订阅某个课程的信息前缀
       teacher:
-        csChangePre: /queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
-        qcChangePre: /queue/course/teacher/qs/ #订阅某堂课题目统计数据更新的消息前缀
-        questionAnswerPre: /queue/course/teacher/question/ #订阅某堂课题目学生作答的消息前缀
+        csChangePre: /queue/course/teacher/course/#/queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
+        qcChangePre: /queue/course/teacher/course/#/queue/course/teacher/qs/ #订阅某堂课题目统计数据更新的消息前缀
+        questionAnswerPre: /queue/course/teacher/course/#/queue/course/teacher/question/ #订阅某堂课题目学生作答的消息前缀
   mq: 
     consumer: 
       queue-name:
