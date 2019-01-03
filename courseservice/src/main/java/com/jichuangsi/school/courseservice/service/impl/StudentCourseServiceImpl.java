@@ -6,10 +6,9 @@ import com.jichuangsi.school.courseservice.constant.QuestionType;
 import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.constant.Status;
+import com.jichuangsi.school.courseservice.entity.*;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
-import com.jichuangsi.school.courseservice.entity.StudentAnswer;
-import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
@@ -22,7 +21,12 @@ import com.jichuangsi.school.courseservice.service.IStudentCourseService;
 import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -58,6 +62,9 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
 
     @Resource
     private IAutoVerifyAnswerService autoVerifyAnswerService;
+
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     @Override
     public List<CourseForStudent> getCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException {
@@ -184,6 +191,68 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
             return questionForStudent;
         }
         throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+    }
+
+    @Override
+    public void addParticularQuestionInFavor(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        synchronized (questionId.intern()){
+            Optional<Question> result = questionRepository.findById(questionId);
+            if(result.isPresent()){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("studentId").is(userInfo.getUserId()));
+                Update update = new Update();
+                update.set("studentId", userInfo.getUserId());
+                update.set("studentName", userInfo.getUserName());
+                // addToSet存在则不加，不存在则加,push不管是否存在都加，这里用addToSet
+                update.addToSet("questionIds", questionId);
+                UpdateResult ur = mongoTemplate.upsert(query, update, StudentFavorQuestion.class);
+                if(ur.isModifiedCountAvailable())
+                    return;
+                else
+                    throw new StudentCourseServiceException(ResultCode.STUDENT_ADD_FAVOR_QUESTION_FAIL);
+            }
+        }
+
+        throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+    }
+
+    @Override
+    public void removeParticularQuestionInFavor(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        synchronized (questionId.intern()){
+            Optional<Question> result = questionRepository.findById(questionId);
+            if(result.isPresent()){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("studentId").is(userInfo.getUserId()));
+                Update update = new Update();
+                update.pull("questionIds", questionId);
+                UpdateResult ur = mongoTemplate.updateFirst(query, update, StudentFavorQuestion.class);
+                if(ur.isModifiedCountAvailable())
+                    return;
+                else
+                    throw new StudentCourseServiceException(ResultCode.STUDENT_REMOVE_FAVOR_QUESTION_FAIL);
+            }
+        }
+
+        throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+    }
+
+    @Override
+    public List<QuestionForStudent> getFavorQuestionsList(UserInfoForToken userInfo) throws StudentCourseServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+
+        StudentFavorQuestion studentFavorQuestion = mongoTemplate.findOne(
+                new Query(Criteria.where("studentId").is(userInfo.getUserId())), StudentFavorQuestion.class);
+        List<QuestionForStudent> questions = new ArrayList<QuestionForStudent>();
+        studentFavorQuestion.getQuestionIds().forEach(q -> {
+            try{
+                questions.add(getParticularQuestion(userInfo, q));
+            }catch (StudentCourseServiceException scsExp){
+
+            }
+        });
+        return questions;
     }
 
     private List<CourseForStudent> convertCourseList(List<Course> courses){

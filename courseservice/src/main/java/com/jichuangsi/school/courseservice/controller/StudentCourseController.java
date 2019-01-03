@@ -32,7 +32,7 @@ public class StudentCourseController {
 	@GetMapping("/getList")
 	public ResponseModel<List<CourseForStudent>> getList(@ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
 
-		return ResponseModel.sucess("",  studentCourseService.getCoursesList(userInfo));
+		return ResponseModel.sucess("", studentCourseService.getCoursesList(userInfo));
 	}
 
 	//获取学生历史课程列表
@@ -42,18 +42,18 @@ public class StudentCourseController {
 	@PostMapping("/getHistory")
 	public ResponseModel<PageHolder<CourseForStudent>> getHistory(@ModelAttribute UserInfoForToken userInfo, @RequestBody CourseForStudent pageInform) throws StudentCourseServiceException {
 
-		return ResponseModel.sucess("",  studentCourseService.getHistoryCoursesList(userInfo, pageInform));
+		return ResponseModel.sucess("", studentCourseService.getHistoryCoursesList(userInfo, pageInform));
 	}
 
 	//获取指定课堂基本信息
 	@ApiOperation(value = "根据课堂id查询课堂信息", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
-			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
+			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String")})
 	@GetMapping("/getCourse/{courseId}")
 	public ResponseModel<CourseForStudent> getCourse(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId) throws StudentCourseServiceException {
 		;
-		return ResponseModel.sucess("",  studentCourseService.getParticularCourse(userInfo, courseId));
+		return ResponseModel.sucess("", studentCourseService.getParticularCourse(userInfo, courseId));
 	}
 
 	//课堂主观题图片存根
@@ -61,34 +61,34 @@ public class StudentCourseController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@PostMapping("/sendSubjectPicByFile")
-	public ResponseModel<AnswerForStudent> sendSubjectPicByFile(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException{
-		try{
-			return ResponseModel.sucess("",  studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
-		}catch (IOException ioExp){
+	public ResponseModel<AnswerForStudent> sendSubjectPicByFile(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
+		try {
+			return ResponseModel.sucess("", studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
+		} catch (IOException ioExp) {
 			throw new StudentCourseServiceException(ResultCode.FILE_UPLOAD_ERROR);
 		}
 	}
 
 	@ApiOperation(value = "根据学生id保存上传的字符串", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PostMapping("/sendSubjectPicByString")
-    public ResponseModel<AnswerForStudent> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody Base64TransferFile file) throws StudentCourseServiceException{
-		return ResponseModel.sucess("",  studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile(file.getName(), file.getContentType(), file.getContent().getBytes())));
-    }
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+	@PostMapping("/sendSubjectPicByString")
+	public ResponseModel<AnswerForStudent> sendSubjectPicByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody Base64TransferFile file) throws StudentCourseServiceException {
+		return ResponseModel.sucess("", studentCourseService.uploadStudentSubjectPic(userInfo, new CourseFile(file.getName(), file.getContentType(), file.getContent().getBytes())));
+	}
 
 	//获取指定文件名手寫板輸入图片
 	@ApiOperation(value = "根据学生id和文件名下载指定的手寫板輸入图片", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@PostMapping("/getSubjectPic")
-	public ResponseModel<Base64TransferFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent answer) throws StudentCourseServiceException{
+	public ResponseModel<Base64TransferFile> getSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent answer) throws StudentCourseServiceException {
 		Base64TransferFile base64TransferFile = new Base64TransferFile();
-		CourseFile courseFile =  studentCourseService.downloadStudentSubjectPic(userInfo, answer.getStubForSubjective());
+		CourseFile courseFile = studentCourseService.downloadStudentSubjectPic(userInfo, answer.getStubForSubjective());
 		base64TransferFile.setName(courseFile.getName());
 		base64TransferFile.setContentType(courseFile.getContentType());
 		base64TransferFile.setContent(new String(courseFile.getContent()));
-		return  ResponseModel.sucess("",base64TransferFile);
+		return ResponseModel.sucess("", base64TransferFile);
 	}
 
 	//获取指定文件名图片
@@ -96,8 +96,8 @@ public class StudentCourseController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@PostMapping("/getQuestionPic")
-	public ResponseModel<CourseFile> getQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent questionPic) throws StudentCourseServiceException{
-		return  ResponseModel.sucess("",studentCourseService.downloadStudentSubjectPic(userInfo, questionPic.getStubForSubjective()));
+	public ResponseModel<CourseFile> getQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent questionPic) throws StudentCourseServiceException {
+		return ResponseModel.sucess("", studentCourseService.downloadStudentSubjectPic(userInfo, questionPic.getStubForSubjective()));
 	}
 
 	//删除指定文件名图片
@@ -105,7 +105,7 @@ public class StudentCourseController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@DeleteMapping("/remoreSubjectPic")
-	public ResponseModel<CourseFile> remoreSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent answer) throws StudentCourseServiceException{
+	public ResponseModel<CourseFile> remoreSubjectPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForStudent answer) throws StudentCourseServiceException {
 		studentCourseService.deleteStudentSubjectPic(userInfo, answer.getStubForSubjective());
 		return ResponseModel.sucessWithEmptyData("");
 	}
@@ -118,7 +118,7 @@ public class StudentCourseController {
 	@PostMapping("/sendAnswer/{courseId}/{questionId}")
 	public ResponseModel<AnswerForStudent> sendAnswer(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId,
 													  @PathVariable String questionId,
-													  @RequestBody AnswerForStudent answer) throws StudentCourseServiceException{
+													  @RequestBody AnswerForStudent answer) throws StudentCourseServiceException {
 		studentCourseService.saveStudentAnswer(userInfo, courseId, questionId, answer);
 		return ResponseModel.sucessWithEmptyData("");
 	}
@@ -127,11 +127,41 @@ public class StudentCourseController {
 	@ApiOperation(value = "根据问题id查询问题信息", notes = "")
 	@ApiImplicitParams({
 			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
-			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String") })
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
 	@GetMapping("/getQuestion/{questionId}")
-	public ResponseModel<QuestionForStudent> getQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws StudentCourseServiceException{
+	public ResponseModel<QuestionForStudent> getQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws StudentCourseServiceException {
 
-		return ResponseModel.sucess("",  studentCourseService.getParticularQuestion(userInfo, questionId));
+		return ResponseModel.sucess("", studentCourseService.getParticularQuestion(userInfo, questionId));
 	}
 
+	@ApiOperation(value = "根据问题id增加学生收藏题目", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
+	@PutMapping("/addFavorQuestion/{questionId}")
+	public ResponseModel addFavorQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws StudentCourseServiceException {
+		studentCourseService.addParticularQuestionInFavor(userInfo, questionId);
+		return ResponseModel.sucessWithEmptyData("");
+	}
+
+	@ApiOperation(value = "根据问题id删除学生收藏题目", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
+	@DeleteMapping("/removeFavorQuestion/{questionId}")
+	public ResponseModel removeFavorQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws StudentCourseServiceException {
+		studentCourseService.removeParticularQuestionInFavor(userInfo, questionId);
+		return ResponseModel.sucessWithEmptyData("");
+	}
+
+	@ApiOperation(value = "根据问题id列出学生收藏题目", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
+	@GetMapping("/listFavorQuestions")
+	public ResponseModel<List<QuestionForStudent>> listFavorQuestions(@ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
+
+		return ResponseModel.sucess("", studentCourseService.getFavorQuestionsList(userInfo));
+	}
 }
+

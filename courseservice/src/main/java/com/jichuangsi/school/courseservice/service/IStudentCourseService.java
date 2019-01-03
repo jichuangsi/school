@@ -33,4 +33,12 @@ public interface IStudentCourseService {
     @Transactional
     QuestionForStudent getParticularQuestion(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException;
 
+    @Transactional
+    void addParticularQuestionInFavor(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException;
+
+    @Transactional
+    void removeParticularQuestionInFavor(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException;
+
+    @Transactional
+    List<QuestionForStudent> getFavorQuestionsList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 }
