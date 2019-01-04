@@ -17,6 +17,7 @@ public final class MappingEntity2ModelConverter {
         questionModel.setDifficulty(question.getDifficulty());
         questionModel.setGradeId(question.getGradeId());
         questionModel.setKnowledge(question.getKnowledge());
+        questionModel.setKnowledgeId(question.getKnowledgeId());
         questionModel.setOptions(question.getOptions());
         questionModel.setParse(question.getParse());
         questionModel.setQuesetionType(question.getType());

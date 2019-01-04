@@ -18,6 +18,7 @@ public class QuestionModel {
     String subjectId;
     String gradeId;
     String knowledge;
+    String knowledgeId;
     String questionIdMD52;
     Status questionStatus;
     private String questionPic;
@@ -151,5 +152,13 @@ public class QuestionModel {
 
     public void setQuestionPic(String questionPic) {
         this.questionPic = questionPic;
+    }
+
+    public String getKnowledgeId() {
+        return knowledgeId;
+    }
+
+    public void setKnowledgeId(String knowledgeId) {
+        this.knowledgeId = knowledgeId;
     }
 }

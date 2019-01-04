@@ -16,6 +16,7 @@ public class Question {
     private String subjectId;
     private String gradeId;
     private String knowledge;
+    private String knowledgeId;
     private String questionIdMD52;
     private String teacherId;
     private String teacherName;
@@ -157,5 +158,13 @@ public class Question {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getKnowledgeId() {
+        return knowledgeId;
+    }
+
+    public void setKnowledgeId(String knowledgeId) {
+        this.knowledgeId = knowledgeId;
     }
 }

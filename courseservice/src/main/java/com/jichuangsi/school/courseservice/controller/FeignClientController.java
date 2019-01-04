@@ -2,6 +2,7 @@ package com.jichuangsi.school.courseservice.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
+import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import com.jichuangsi.school.courseservice.service.IFeignClientService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,7 +28,7 @@ public class FeignClientController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String") })
     @GetMapping("/getQuestionKnowledge/{questionId}")
-    public ResponseModel<String> getQuestionKnowledge(@PathVariable String questionId) throws StudentCourseServiceException {
+    public ResponseModel<TransferKnowledge> getQuestionKnowledge(@PathVariable String questionId) throws StudentCourseServiceException {
 
         return ResponseModel.sucess("",  iFeignClientService.getKnowledgeOfParticularQuestion(questionId));
     }

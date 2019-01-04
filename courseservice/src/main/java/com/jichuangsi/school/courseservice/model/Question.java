@@ -19,6 +19,7 @@ public class Question {
     private String subjectId;
     private String gradeId;
     private String knowledge;
+    private String knowledgeId;
     private String questionIdMD52;
     private Status questionStatus;
     private String questionPic;
@@ -159,5 +160,13 @@ public class Question {
 
     public void setQuestionTypeInCN(String questionTypeInCN) {
         this.questionTypeInCN = questionTypeInCN;
+    }
+
+    public String getKnowledgeId() {
+        return knowledgeId;
+    }
+
+    public void setKnowledgeId(String knowledgeId) {
+        this.knowledgeId = knowledgeId;
     }
 }

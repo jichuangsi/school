@@ -22,6 +22,7 @@ public class Question {
     String subjectId;
     String gradeId;
     String knowledge;
+    String knowledgeId;
     String idMD52;
     String status;
     String pic;
@@ -162,5 +163,13 @@ public class Question {
 
     public void setTypeInCN(String typeInCN) {
         this.typeInCN = typeInCN;
+    }
+
+    public String getKnowledgeId() {
+        return knowledgeId;
+    }
+
+    public void setKnowledgeId(String knowledgeId) {
+        this.knowledgeId = knowledgeId;
     }
 }

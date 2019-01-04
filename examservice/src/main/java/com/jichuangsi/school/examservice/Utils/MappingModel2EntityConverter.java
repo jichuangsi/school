@@ -42,6 +42,7 @@ public final  class MappingModel2EntityConverter {
                                     UUID.randomUUID().toString().replace("-",""):questionModel.getQuestionId());
         question.setIdMD52(questionModel.getQuestionIdMD52());
         question.setKnowledge(questionModel.getKnowledge());
+        question.setKnowledgeId(questionModel.getKnowledgeId());
         question.setOptions(questionModel.getOptions());
         question.setParse(questionModel.getParse());
         question.setPic(questionModel.getQuestionPic());

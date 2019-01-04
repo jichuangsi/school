@@ -17,6 +17,7 @@ public final class MappingEntity2ModelConverter {
         fq.setDifficulty(fqs.getDifficulty());
         fq.setGradeId(fqs.getGradeId());
         fq.setKnowledge(fqs.getKnowledge());
+        fq.setKnowledgeId(fqs.getKnowledgeId());
         fq.setOptions(fqs.getOptions());
         fq.setParse(fqs.getParse());
         fq.setQuesetionType(fqs.getType());
@@ -39,6 +40,7 @@ public final class MappingEntity2ModelConverter {
         sq.setDifficulty(sqs.getDifficulty());
         sq.setGradeId(sqs.getGradeId());
         sq.setKnowledge(sqs.getKnowledge());
+        sq.setKnowledgeId(sqs.getKnowledgeId());
         sq.setOptions(sqs.getOptions());
         sq.setParse(sqs.getParse());
         sq.setQuesetionType(sqs.getType());
@@ -61,6 +63,7 @@ public final class MappingEntity2ModelConverter {
         sq.setDifficulty(sqs.getDifficulty());
         sq.setGradeId(sqs.getGradeId());
         sq.setKnowledge(sqs.getKnowledge());
+        sq.setKnowledgeId(sqs.getKnowledgeId());
         sq.setOptions(sqs.getOptions());
         sq.setParse(sqs.getParse());
         sq.setQuesetionType(sqs.getType());
