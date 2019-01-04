@@ -41,4 +41,7 @@ public interface IStudentCourseService {
 
     @Transactional
     List<QuestionForStudent> getFavorQuestionsList(UserInfoForToken userInfo) throws StudentCourseServiceException;
+
+    @Transactional
+    List<QuestionForStudent> getIncorrectQuestionList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 }

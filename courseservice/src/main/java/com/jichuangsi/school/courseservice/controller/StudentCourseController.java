@@ -163,5 +163,15 @@ public class StudentCourseController {
 
 		return ResponseModel.sucess("", studentCourseService.getFavorQuestionsList(userInfo));
 	}
+
+	@ApiOperation(value = "根据问题id列出学生错误题目", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
+	@GetMapping("/collectIncorrectQuestions")
+	public ResponseModel<List<QuestionForStudent>> collectIncorrectQuestions(@ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
+
+		return ResponseModel.sucess("", studentCourseService.getIncorrectQuestionList(userInfo));
+	}
 }
 

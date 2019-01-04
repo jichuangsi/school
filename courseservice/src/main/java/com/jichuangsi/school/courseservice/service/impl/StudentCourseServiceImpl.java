@@ -196,7 +196,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     @Override
     public void addParticularQuestionInFavor(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        synchronized (questionId.intern()){
+        synchronized (questionId.intern()){//需要实现分布式锁
             Optional<Question> result = questionRepository.findById(questionId);
             if(result.isPresent()){
                 Query query = new Query();
@@ -220,7 +220,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     @Override
     public void removeParticularQuestionInFavor(UserInfoForToken userInfo, String questionId) throws StudentCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        synchronized (questionId.intern()){
+        synchronized (questionId.intern()){//需要实现分布式锁
             Optional<Question> result = questionRepository.findById(questionId);
             if(result.isPresent()){
                 Query query = new Query();
@@ -241,13 +241,27 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     @Override
     public List<QuestionForStudent> getFavorQuestionsList(UserInfoForToken userInfo) throws StudentCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-
         StudentFavorQuestion studentFavorQuestion = mongoTemplate.findOne(
                 new Query(Criteria.where("studentId").is(userInfo.getUserId())), StudentFavorQuestion.class);
         List<QuestionForStudent> questions = new ArrayList<QuestionForStudent>();
         studentFavorQuestion.getQuestionIds().forEach(q -> {
             try{
                 questions.add(getParticularQuestion(userInfo, q));
+            }catch (StudentCourseServiceException scsExp){
+
+            }
+        });
+        return questions;
+    }
+
+    @Override
+    public List<QuestionForStudent> getIncorrectQuestionList(UserInfoForToken userInfo) throws StudentCourseServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        List<StudentAnswer> studentAnswers = studentAnswerRepository.findAllByStudentIdAndResult(userInfo.getUserId(), Result.WRONG.getName());
+        List<QuestionForStudent> questions = new ArrayList<QuestionForStudent>();
+        studentAnswers.forEach(a -> {
+            try{
+                questions.add(getParticularQuestion(userInfo, a.getQuestionId()));
             }catch (StudentCourseServiceException scsExp){
 
             }
