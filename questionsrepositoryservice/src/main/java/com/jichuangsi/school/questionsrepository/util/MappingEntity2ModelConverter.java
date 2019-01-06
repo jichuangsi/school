@@ -18,6 +18,8 @@ public final class MappingEntity2ModelConverter {
         fq.setGradeId(fqs.getGradeId());
         fq.setKnowledge(fqs.getKnowledge());
         fq.setKnowledgeId(fqs.getKnowledgeId());
+        fq.setCapability(fqs.getCapability());
+        fq.setCapabilityId(fqs.getCapabilityId());
         fq.setOptions(fqs.getOptions());
         fq.setParse(fqs.getParse());
         fq.setQuesetionType(fqs.getType());
@@ -28,6 +30,8 @@ public final class MappingEntity2ModelConverter {
         fq.setSubjectId(fqs.getSubjectId());
         fq.setTeacherId(fqs.getTeacherId());
         fq.setTeacherName(fqs.getTeacherName());
+        fq.setCreateTime(fqs.getCreateTime());
+        fq.setUpdateTime(fqs.getUpdateTime());
 
         return fq;
     }
@@ -41,6 +45,8 @@ public final class MappingEntity2ModelConverter {
         sq.setGradeId(sqs.getGradeId());
         sq.setKnowledge(sqs.getKnowledge());
         sq.setKnowledgeId(sqs.getKnowledgeId());
+        sq.setCapability(sqs.getCapability());
+        sq.setCapabilityId(sqs.getCapabilityId());
         sq.setOptions(sqs.getOptions());
         sq.setParse(sqs.getParse());
         sq.setQuesetionType(sqs.getType());
@@ -51,6 +57,8 @@ public final class MappingEntity2ModelConverter {
         sq.setSubjectId(sqs.getSubjectId());
         sq.setTeacherId(sqs.getTeacherId());
         sq.setTeacherName(sqs.getTeacherName());
+        sq.setCreateTime(sqs.getCreateTime());
+        sq.setUpdateTime(sqs.getUpdateTime());
 
         return sq;
     }
@@ -64,6 +72,8 @@ public final class MappingEntity2ModelConverter {
         sq.setGradeId(sqs.getGradeId());
         sq.setKnowledge(sqs.getKnowledge());
         sq.setKnowledgeId(sqs.getKnowledgeId());
+        sq.setCapability(sqs.getCapability());
+        sq.setCapabilityId(sqs.getCapabilityId());
         sq.setOptions(sqs.getOptions());
         sq.setParse(sqs.getParse());
         sq.setQuesetionType(sqs.getType());
@@ -76,6 +86,9 @@ public final class MappingEntity2ModelConverter {
         sq.setTeacherName(sqs.getTeacherName());
         sq.setSchoolId(sqs.getSchoolId());
         sq.setSchoolName(sqs.getSchoolName());
+        sq.setCreateTime(sqs.getCreateTime());
+        sq.setUpdateTime(sqs.getUpdateTime());
+
         return sq;
     }
 }

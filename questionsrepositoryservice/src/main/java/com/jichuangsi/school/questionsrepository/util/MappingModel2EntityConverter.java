@@ -25,6 +25,8 @@ public final class MappingModel2EntityConverter {
         favorQuestions.setGradeId(fq.getGradeId());
         favorQuestions.setKnowledge(fq.getKnowledge());
         favorQuestions.setKnowledgeId(fq.getKnowledgeId());
+        favorQuestions.setCapability(fq.getCapability());
+        favorQuestions.setCapabilityId(fq.getCapabilityId());
         favorQuestions.setOptions(fq.getOptions());
         favorQuestions.setParse(fq.getParse());
         favorQuestions.setQuestionIdMD52(StringUtils.isEmpty(fq.getQuestionIdMD52())?Md5Util.encodeByMd5(favorQuestions.getId()):fq.getQuestionIdMD52());
@@ -33,7 +35,10 @@ public final class MappingModel2EntityConverter {
         favorQuestions.setTeacherId(userInfoForToken.getUserId());
         favorQuestions.setTeacherName(userInfoForToken.getUserName());
         favorQuestions.setType(fq.getQuesetionType());
-        if(StringUtils.isEmpty(fq.getQuestionId())) favorQuestions.setCreateTime(new Date().getTime());
+        if(StringUtils.isEmpty(fq.getQuestionId()))
+            favorQuestions.setCreateTime(new Date().getTime());
+        else
+            favorQuestions.setCreateTime(fq.getCreateTime());
         favorQuestions.setUpdateTime(new Date().getTime());
         return favorQuestions;
     }
@@ -48,6 +53,8 @@ public final class MappingModel2EntityConverter {
         selfQuestions.setGradeId(sq.getGradeId());
         selfQuestions.setKnowledge(sq.getKnowledge());
         selfQuestions.setKnowledgeId(sq.getKnowledgeId());
+        selfQuestions.setCapability(sq.getCapability());
+        selfQuestions.setCapabilityId(sq.getCapabilityId());
         selfQuestions.setOptions(sq.getOptions());
         selfQuestions.setParse(sq.getParse());
         selfQuestions.setQuestionIdMD52(StringUtils.isEmpty(sq.getQuestionIdMD52())?Md5Util.encodeByMd5(selfQuestions.getId()):sq.getQuestionIdMD52());
@@ -56,7 +63,10 @@ public final class MappingModel2EntityConverter {
         selfQuestions.setTeacherId(userInfoForToken.getUserId());
         selfQuestions.setTeacherName(userInfoForToken.getUserName());
         selfQuestions.setType(sq.getQuesetionType());
-        if(StringUtils.isEmpty(sq.getQuestionId())) selfQuestions.setCreateTime(new Date().getTime());
+        if(StringUtils.isEmpty(sq.getQuestionId()))
+            selfQuestions.setCreateTime(new Date().getTime());
+        else
+            selfQuestions.setCreateTime(sq.getCreateTime());
         selfQuestions.setUpdateTime(new Date().getTime());
         return selfQuestions;
     }
@@ -71,6 +81,8 @@ public final class MappingModel2EntityConverter {
         sqs.setGradeId(sq.getGradeId());
         sqs.setKnowledge(sq.getKnowledge());
         sqs.setKnowledgeId(sq.getKnowledgeId());
+        sqs.setCapability(sq.getCapability());
+        sqs.setCapabilityId(sq.getCapabilityId());
         sqs.setOptions(sq.getOptions());
         sqs.setParse(sq.getParse());
         sqs.setQuestionIdMD52(StringUtils.isEmpty(sq.getQuestionIdMD52())?Md5Util.encodeByMd5(sqs.getId()):sq.getQuestionIdMD52());
@@ -81,7 +93,10 @@ public final class MappingModel2EntityConverter {
         sqs.setType(sq.getQuesetionType());
         sqs.setSchoolId(sq.getSchoolId());
         sqs.setSchoolName(sq.getSchoolName());
-        if(StringUtils.isEmpty(sq.getQuestionId())) sqs.setCreateTime(new Date().getTime());
+        if(StringUtils.isEmpty(sq.getQuestionId()))
+            sqs.setCreateTime(new Date().getTime());
+        else
+            sqs.setCreateTime(sq.getCreateTime());
         sqs.setUpdateTime(new Date().getTime());
         return sqs;
     }
