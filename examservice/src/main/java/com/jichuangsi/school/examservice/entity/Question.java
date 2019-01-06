@@ -10,23 +10,25 @@ import java.util.List;
 public class Question {
 
     @Id
-    String id;
-    String content;
-    List<String> options = new ArrayList<String>();
-    String answer;
-    String answerDetail;
-    String parse;
-    String type;
-    String difficulty;
-    String subjectId;
-    String gradeId;
-    String knowledge;
-    String knowledgeId;
-    String idMD52;
-    String status;
-    String pic;
-    long createTime;
-    long updateTime;
+    private String id;
+    private String content;
+    private List<String> options = new ArrayList<String>();
+    private String answer;
+    private String answerDetail;
+    private String parse;
+    private String type;
+    private String difficulty;
+    private String subjectId;
+    private String gradeId;
+    private String knowledge;
+    private String knowledgeId;
+    private String capabilityId;
+    private String capability;
+    private String idMD52;
+    private String status;
+    private String pic;
+    private long createTime;
+    private long updateTime;
     private String examId;
 
     public String getExamId() {
@@ -171,5 +173,21 @@ public class Question {
 
     public void setKnowledgeId(String knowledgeId) {
         this.knowledgeId = knowledgeId;
+    }
+
+    public String getCapabilityId() {
+        return capabilityId;
+    }
+
+    public void setCapabilityId(String capabilityId) {
+        this.capabilityId = capabilityId;
+    }
+
+    public String getCapability() {
+        return capability;
+    }
+
+    public void setCapability(String capability) {
+        this.capability = capability;
     }
 }

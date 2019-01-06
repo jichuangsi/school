@@ -43,6 +43,8 @@ public final  class MappingModel2EntityConverter {
         question.setIdMD52(questionModel.getQuestionIdMD52());
         question.setKnowledge(questionModel.getKnowledge());
         question.setKnowledgeId(questionModel.getKnowledgeId());
+        question.setCapability(questionModel.getCapability());
+        question.setCapabilityId(questionModel.getCapabilityId());
         question.setOptions(questionModel.getOptions());
         question.setParse(questionModel.getParse());
         question.setPic(questionModel.getQuestionPic());

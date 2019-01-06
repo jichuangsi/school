@@ -7,20 +7,22 @@ import java.util.List;
 
 public class QuestionModel {
     //题目基本信息
-    String questionId;
-    String questionContent;
-    List<String> options = new ArrayList<String>();
-    String answer;
-    String answerDetail;
-    String parse;
-    String quesetionType;
-    String difficulty;
-    String subjectId;
-    String gradeId;
-    String knowledge;
-    String knowledgeId;
-    String questionIdMD52;
-    Status questionStatus;
+    private String questionId;
+    private String questionContent;
+    private List<String> options = new ArrayList<String>();
+    private String answer;
+    private String answerDetail;
+    private String parse;
+    private String quesetionType;
+    private String difficulty;
+    private String subjectId;
+    private String gradeId;
+    private String knowledge;
+    private String knowledgeId;
+    private String capabilityId;
+    private String capability;
+    private String questionIdMD52;
+    private Status questionStatus;
     private String questionPic;
 
     private long createTime;
@@ -160,5 +162,21 @@ public class QuestionModel {
 
     public void setKnowledgeId(String knowledgeId) {
         this.knowledgeId = knowledgeId;
+    }
+
+    public String getCapabilityId() {
+        return capabilityId;
+    }
+
+    public void setCapabilityId(String capabilityId) {
+        this.capabilityId = capabilityId;
+    }
+
+    public String getCapability() {
+        return capability;
+    }
+
+    public void setCapability(String capability) {
+        this.capability = capability;
     }
 }
