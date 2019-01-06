@@ -28,9 +28,15 @@ hystrix:
   command:
     default:
       execution:
+        timeout:
+         enabled: true
         isolation:
           thread:
             timeoutInMilliseconds: 10000
+
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
 
 com:
   jichuangsi:
@@ -55,6 +61,10 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
+      question:
+        ai-push:
+          number: 3
+          size: 100
 custom:
   login:
     content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=

@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.service;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.repository.QuestionQueryModel;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -44,4 +45,7 @@ public interface IStudentCourseService {
 
     @Transactional
     List<QuestionForStudent> getIncorrectQuestionList(UserInfoForToken userInfo) throws StudentCourseServiceException;
+
+    @Transactional
+    List findSimilarQuestionsList(UserInfoForToken userInfo, QuestionQueryModel questionQueryModel) throws StudentCourseServiceException;
 }

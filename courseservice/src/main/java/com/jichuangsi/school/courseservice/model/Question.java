@@ -20,6 +20,8 @@ public class Question {
     private String gradeId;
     private String knowledge;
     private String knowledgeId;
+    private String capabilityId;
+    private String capability;
     private String questionIdMD52;
     private Status questionStatus;
     private String questionPic;
@@ -168,5 +170,21 @@ public class Question {
 
     public void setKnowledgeId(String knowledgeId) {
         this.knowledgeId = knowledgeId;
+    }
+
+    public String getCapabilityId() {
+        return capabilityId;
+    }
+
+    public void setCapabilityId(String capabilityId) {
+        this.capabilityId = capabilityId;
+    }
+
+    public String getCapability() {
+        return capability;
+    }
+
+    public void setCapability(String capability) {
+        this.capability = capability;
     }
 }

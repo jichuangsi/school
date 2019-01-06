@@ -28,9 +28,15 @@ hystrix:
   command:
     default:
       execution:
+        timeout:
+         enabled: true
         isolation:
           thread:
             timeoutInMilliseconds: 10000
+
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
 
 com:
   jichuangsi:
@@ -55,5 +61,13 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
-      log:
-        path: E:/logback/${spring.application.name}/${spring.profiles.active}
+      question:
+        ai-push:
+          number: 3
+          size: 100
+custom:
+  login:
+    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=
+    increaseTime: 600000 #时间按分钟制
+    QRsize: 500
+    logoPath: http://www.jichuangsi.com/logo/jichuangsi.logo.jpg

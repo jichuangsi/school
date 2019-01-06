@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.repository.QuestionQueryModel;
 import com.jichuangsi.school.courseservice.service.IStudentCourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -172,6 +173,12 @@ public class StudentCourseController {
 	public ResponseModel<List<QuestionForStudent>> collectIncorrectQuestions(@ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
 
 		return ResponseModel.sucess("", studentCourseService.getIncorrectQuestionList(userInfo));
+	}
+
+	@PostMapping("/aiPushQuestions")
+	public ResponseModel<List<QuestionForStudent>> aiPushQuestions(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel)throws StudentCourseServiceException {
+
+		return ResponseModel.sucess("", studentCourseService.findSimilarQuestionsList(userInfo, questionQueryModel));
 	}
 }
 

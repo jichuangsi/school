@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/feign")
-@Api("StudentCourseController相关的api")
+@Api("FeignClientController")
 public class FeignClientController {
 
     @Resource

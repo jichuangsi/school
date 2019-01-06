@@ -10,17 +10,17 @@ import com.jichuangsi.school.courseservice.entity.*;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.repository.QuestionNode;
+import com.jichuangsi.school.courseservice.model.repository.QuestionQueryModel;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
 import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
-import com.jichuangsi.school.courseservice.service.IAutoVerifyAnswerService;
-import com.jichuangsi.school.courseservice.service.IFileStoreService;
-import com.jichuangsi.school.courseservice.service.IMqService;
-import com.jichuangsi.school.courseservice.service.IStudentCourseService;
+import com.jichuangsi.school.courseservice.service.*;
 import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import com.jichuangsi.school.courseservice.util.MappingModel2ModelConverter;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,16 +31,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class StudentCourseServiceImpl implements IStudentCourseService{
 
     @Value("${com.jichuangsi.school.result.page-size}")
     private int defaultPageSize;
+
+    @Value("${com.jichuangsi.school.question.ai-push.number}")
+    private int questionAIPushNumber;
+
+    @Value("${com.jichuangsi.school.question.ai-push.size}")
+    private String questionAIPushSize;
 
     @Resource
     private IMqService mqService;
@@ -62,6 +65,9 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
 
     @Resource
     private IAutoVerifyAnswerService autoVerifyAnswerService;
+
+    @Resource
+    private IQuestionInfoService questionInfoService;
 
     @Resource
     private MongoTemplate mongoTemplate;
@@ -269,6 +275,26 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         return questions;
     }
 
+    @Override
+    public List<QuestionForStudent> findSimilarQuestionsList(UserInfoForToken userInfo, QuestionQueryModel questionQueryModel) throws StudentCourseServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        questionQueryModel.setPage("1");
+        questionQueryModel.setPageSize(questionAIPushSize);
+        PageHolder<QuestionNode> list = questionInfoService.getQuestionsByKnowledge(questionQueryModel);
+        if(list == null || list.getContent().size() == 0) throw new StudentCourseServiceException(ResultCode.AI_PUSH_QUESTION_FAIL);
+        List<QuestionNode> questionNodes = new ArrayList<>(questionAIPushNumber);
+        if(list.getContent().size()<=questionAIPushNumber){
+            questionNodes.addAll(list.getContent());
+        }else{
+            Random rand = new Random();
+            for(int i = 0; i < questionAIPushNumber; i++){
+                questionNodes.add(list.getContent().get(rand.nextInt(list.getContent().size())));
+            }
+        }
+
+        return convertQuestionList2(questionNodes);
+    }
+
     private List<CourseForStudent> convertCourseList(List<Course> courses){
         List<CourseForStudent> courseForTeachers = new ArrayList<CourseForStudent>();
         courses.forEach(course -> {
@@ -281,6 +307,14 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         List<QuestionForStudent> questionForStudents = new ArrayList<QuestionForStudent>();
         questions.forEach(question -> {
             questionForStudents.add(MappingEntity2ModelConverter.ConvertStudentQuestion(question));
+        });
+        return questionForStudents;
+    }
+
+    private List<QuestionForStudent> convertQuestionList2(List<QuestionNode> questions){
+        List<QuestionForStudent> questionForStudents = new ArrayList<QuestionForStudent>();
+        questions.forEach(question -> {
+            questionForStudents.add(MappingModel2ModelConverter.ConvertQuestionNode(question));
         });
         return questionForStudents;
     }
