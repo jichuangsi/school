@@ -12,7 +12,7 @@ public final class MappingModel2ModelConverter {
 
     public static final QuestionForStudent ConvertQuestionNode(QuestionNode questionNode){
         QuestionForStudent questionForStudent = new QuestionForStudent();
-
+        questionForStudent.setQuestionContent(questionNode.getTitle());
         Field[] fields = questionNode.getClass().getDeclaredFields();
         for (int i=0;i<fields.length;i++){//遍历
             try {
