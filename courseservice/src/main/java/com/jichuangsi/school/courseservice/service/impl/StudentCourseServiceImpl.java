@@ -189,6 +189,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         Optional<Question> result = questionRepository.findById(questionId);
         if(result.isPresent()){
             QuestionForStudent questionForStudent =  MappingEntity2ModelConverter.ConvertStudentQuestion(result.get());
+            questionForStudent.setFavor(mongoTemplate.exists(new Query(Criteria.where("questionIds").is(questionId)), StudentFavorQuestion.class));
             StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userInfo.getUserId());
             if(studentAnswer!=null) {
                 questionForStudent.setAnswerForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(studentAnswer));
