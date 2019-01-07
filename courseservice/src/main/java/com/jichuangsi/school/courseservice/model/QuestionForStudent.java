@@ -2,10 +2,13 @@ package com.jichuangsi.school.courseservice.model;
 
 public class QuestionForStudent extends Question {
 
+    //是否收藏
+    private boolean isFavor;
+
     //学生答案
-    AnswerForStudent answerForStudent;
+    private AnswerForStudent answerForStudent;
     //老师批改
-    AnswerForTeacher answerForTeacher;
+    private AnswerForTeacher answerForTeacher;
 
     public AnswerForStudent getAnswerForStudent() {
         return answerForStudent;
@@ -21,5 +24,13 @@ public class QuestionForStudent extends Question {
 
     public void setAnswerForTeacher(AnswerForTeacher answerForTeacher) {
         this.answerForTeacher = answerForTeacher;
+    }
+
+    public boolean isFavor() {
+        return isFavor;
+    }
+
+    public void setFavor(boolean favor) {
+        isFavor = favor;
     }
 }
