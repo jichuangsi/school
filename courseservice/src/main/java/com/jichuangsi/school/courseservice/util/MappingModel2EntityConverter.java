@@ -65,7 +65,7 @@ public  final class MappingModel2EntityConverter {
         question.setParse(questionForTeacher.getParse());
         //question.setType(questionForTeacher.getQuesetionType()!=null?translateQuestionType(questionForTeacher.getQuesetionType()).getName(): null);
         question.setType(questionForTeacher.getQuesetionType());
-        question.setTypeInCN(questionForTeacher.getQuesetionType());
+        question.setTypeInCN(StringUtils.isEmpty(questionForTeacher.getQuestionTypeInCN())?questionForTeacher.getQuesetionType():questionForTeacher.getQuestionTypeInCN());
         question.setDifficulty(questionForTeacher.getDifficulty());
         question.setSubjectId(questionForTeacher.getSubjectId());
         question.setGradeId(questionForTeacher.getGradeId());
