@@ -9,22 +9,23 @@ import java.util.List;
 @Document(collection = "school_course")
 public class Course {
     @Id
-    String id;
-    String name;
-    String info;
-    String status;
-    String teacherId;
-    String teacherName;
-    String classId;
-    String className;
-    Long startTime;
-    Long endTime;
-    List<String> questionIds = new ArrayList<String>();
-    long createTime;
-    long updateTime;
-    String picAddress;
-    String subjectName;
-    String subjectId;
+    private String id;
+    private String name;
+    private String info;
+    private String status;
+    private String teacherId;
+    private String teacherName;
+    private String classId;
+    private String className;
+    private Long startTime;
+    private Long endTime;
+    private List<String> questionIds = new ArrayList<String>();
+    private long createTime;
+    private long updateTime;
+    private String picAddress;
+    private String subjectName;
+    private String subjectId;
+    private List<Attachment> attachments = new ArrayList<Attachment>();
 
     public String getSubjectName() {
         return subjectName;
@@ -152,5 +153,13 @@ public class Course {
 
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

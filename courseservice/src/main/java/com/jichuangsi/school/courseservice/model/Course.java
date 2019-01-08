@@ -2,25 +2,29 @@ package com.jichuangsi.school.courseservice.model;
 
 import com.jichuangsi.school.courseservice.constant.Status;
 
-public class Course {
-    String courseId;
-    String courseName;
-    String courseInfo;
-    Status courseStatus;
-    String teacherId;
-    String teacherName;
-    String classId;
-    String className;
-    long courseStartTime;
-    long courseEndTime;
-    long createTime;
-    long updateTime;
-    String coursePic;
-    String subjectName;
-    String subjectId;
+import java.util.ArrayList;
+import java.util.List;
 
-    int pageNum;
-    int pageSize;
+public class Course {
+    private String courseId;
+    private String courseName;
+    private String courseInfo;
+    private Status courseStatus;
+    private String teacherId;
+    private String teacherName;
+    private String classId;
+    private String className;
+    private long courseStartTime;
+    private long courseEndTime;
+    private long createTime;
+    private long updateTime;
+    private String coursePic;
+    private String subjectName;
+    private String subjectId;
+    private List<Attachment> attachments = new ArrayList<Attachment>();
+
+    private int pageNum;
+    private int pageSize;
 
     public String getSubjectName() {
         return subjectName;
@@ -156,5 +160,13 @@ public class Course {
 
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

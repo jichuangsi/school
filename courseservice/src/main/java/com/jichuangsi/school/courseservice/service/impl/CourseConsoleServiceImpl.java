@@ -11,6 +11,7 @@ import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
+import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
 import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
 import com.jichuangsi.school.courseservice.service.ICourseConsoleService;
@@ -182,6 +183,27 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
             fileStoreService.deleteCourseFile(course.getPicAddress());
         } catch (Exception e) {
             throw new TeacherCourseServiceException(ResultCode.FILE_REMOVE_ERROR);
+        }
+    }
+
+    @Override
+    public String uploadAttachment(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException{
+        try {
+            fileStoreService.uploadCourseFile(courseFile);
+        } catch (Exception e) {
+            throw new TeacherCourseServiceException(ResultCode.FILE_UPLOAD_ERROR);
+        }
+        return courseFile.getStoredName();
+    }
+
+    @Override
+    public void removeCourseAttachment(UserInfoForToken userInfo, DeleteQueryModel deleteQueryModel) throws TeacherCourseServiceException {
+        try{
+            for(String d : deleteQueryModel.getIds()){
+                fileStoreService.deleteCourseFile(d);
+            }
+        }catch (Exception exp){
+            throw new TeacherCourseServiceException(exp.getMessage());
         }
     }
 

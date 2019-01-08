@@ -7,6 +7,7 @@ import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
+import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -51,4 +52,10 @@ public interface ICourseConsoleService {
 
     @Transactional
     List<Question> getQuestionList(List<String> qIds);
+
+    @Transactional
+    String uploadAttachment(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException;
+
+    @Transactional
+    void removeCourseAttachment(UserInfoForToken userInfo, DeleteQueryModel deleteQueryModel) throws TeacherCourseServiceException;
 }

@@ -29,6 +29,11 @@ public final class MappingEntity2ModelConverter {
         courseForTeacher.setCoursePic(course.getPicAddress());
         courseForTeacher.setSubjectName(course.getSubjectName());
         courseForTeacher.setSubjectId(course.getSubjectId());
+        if(course.getAttachments()!=null&&course.getAttachments().size()>0){
+            course.getAttachments().forEach(attachment -> {
+                courseForTeacher.getAttachments().add(new Attachment(attachment.getName(),attachment.getSub()));
+            });
+        }
         return courseForTeacher;
     }
 

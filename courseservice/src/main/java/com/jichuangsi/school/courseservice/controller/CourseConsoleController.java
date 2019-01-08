@@ -7,6 +7,7 @@ import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.courseservice.service.ICourseConsoleService;
 import com.jichuangsi.school.courseservice.service.IExamInfoService;
 import com.jichuangsi.school.courseservice.service.IUserInfoService;
@@ -236,7 +237,6 @@ public class CourseConsoleController {
         }
     }
 
-
     @ApiOperation(value = "修改course的ico图标", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
@@ -251,6 +251,35 @@ public class CourseConsoleController {
             return ResponseModel.fail("",ResultCode.FILE_UPLOAD_ERROR);
         }
         return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "上传course的附件", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/saveCourseAttachment")
+    public ResponseModel<String> saveCourseAttachment(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) {
+        try {
+            return ResponseModel.sucess("", courseConsoleService.uploadAttachment(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("", e.getMessage());
+        } catch (IOException e) {
+            return ResponseModel.fail("", ResultCode.FILE_UPLOAD_ERROR);
+        }
+    }
+
+    @ApiOperation(value = "删除course的附件", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping("/removeCourseAttachment")
+    public ResponseModel removeCourseAttachment(@ModelAttribute UserInfoForToken userInfo, @RequestBody DeleteQueryModel deleteQueryModel) {
+        try {
+            courseConsoleService.removeCourseAttachment(userInfo, deleteQueryModel);
+            return ResponseModel.sucessWithEmptyData("");
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("", e.getMessage());
+        }
     }
 
     private List<QuestionForTeacher> convertQuestionList(List<Question> questions){

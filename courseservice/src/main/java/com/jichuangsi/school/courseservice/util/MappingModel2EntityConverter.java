@@ -3,10 +3,7 @@ package com.jichuangsi.school.courseservice.util;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.constant.QuestionType;
 import com.jichuangsi.school.courseservice.constant.Status;
-import com.jichuangsi.school.courseservice.entity.Course;
-import com.jichuangsi.school.courseservice.entity.Question;
-import com.jichuangsi.school.courseservice.entity.StudentAnswer;
-import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
+import com.jichuangsi.school.courseservice.entity.*;
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.AnswerForTeacher;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
@@ -39,6 +36,12 @@ public  final class MappingModel2EntityConverter {
                 course.getQuestionIds().add(question.getQuestionId());
             });
         }
+        if(courseForTeacher.getAttachments()!=null&&courseForTeacher.getAttachments().size()>0){
+            courseForTeacher.getAttachments().forEach(attachment -> {
+                course.getAttachments().add(new Attachment(attachment.getName(), attachment.getSub()));
+            });
+        }
+
         if(StringUtils.isEmpty(courseForTeacher.getCourseId()))
             course.setCreateTime(new Date().getTime());
         else
