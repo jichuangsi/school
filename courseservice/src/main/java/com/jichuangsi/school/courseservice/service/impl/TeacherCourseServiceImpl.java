@@ -355,6 +355,15 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
+    public CourseFile downloadTeacherAttachment(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException{
+        try{
+            return fileStoreService.donwloadCourseFile(fileName);
+        }catch (Exception exp){
+            throw new TeacherCourseServiceException(exp.getMessage());
+        }
+    }
+
+    @Override
     public void shareTeacherAnswer(UserInfoForToken userInfo, String questionId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())
                 || StringUtils.isEmpty(questionId)

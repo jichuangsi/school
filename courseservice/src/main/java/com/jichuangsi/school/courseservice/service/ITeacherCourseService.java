@@ -73,4 +73,6 @@ public interface ITeacherCourseService {
     @Transactional
     void shareTeacherAnswer(UserInfoForToken userInfo, String questinoId, String studentAnswerId, AnswerForTeacher revise) throws TeacherCourseServiceException;
 
+    @Transactional
+    CourseFile downloadTeacherAttachment(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
 }

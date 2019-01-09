@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -156,6 +158,26 @@ public class TeacherCourseController {
     @PostMapping("/getQuestionPic")
     public ResponseModel<CourseFile> getQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody AnswerForTeacher questionPic) throws TeacherCourseServiceException{
         return  ResponseModel.sucess("", teacherCourseService.downloadTeacherSubjectPic(userInfo, questionPic.getStubForSubjective()));
+    }
+
+    //获取指定文件名的上傳附件
+    @ApiOperation(value = "根据老师id和文件名下载指定的上傳附件", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PostMapping("/getAttachment")
+    public void getAttachment(@ModelAttribute UserInfoForToken userInfo, @RequestBody Attachment attachment, HttpServletResponse resp) throws TeacherCourseServiceException{
+        try {
+            CourseFile file = teacherCourseService.downloadTeacherAttachment(userInfo, attachment.getSub());
+            resp.setHeader("content-type", "application/octet-stream");
+            resp.setContentType("application/octet-stream");
+            resp.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byteArrayOutputStream.write(file.getContent());
+            resp.setHeader("content-length", byteArrayOutputStream.size() + "");
+            resp.getOutputStream().write(byteArrayOutputStream.toByteArray());
+        }catch (Exception e) {
+            throw new TeacherCourseServiceException(e.getMessage());
+        }
     }
 
     //删除指定文件名图片
