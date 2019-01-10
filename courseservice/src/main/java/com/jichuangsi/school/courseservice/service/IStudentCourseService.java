@@ -44,7 +44,7 @@ public interface IStudentCourseService {
     List<QuestionForStudent> getFavorQuestionsList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 
     @Transactional
-    List<QuestionForStudent> getIncorrectQuestionList(UserInfoForToken userInfo) throws StudentCourseServiceException;
+    List<IncorrectQuestionReturnModel> getIncorrectQuestionList(UserInfoForToken userInfo, IncorrectQuestionQueryModel incorrectQuestionQueryModel) throws StudentCourseServiceException;
 
     @Transactional
     List findSimilarQuestionsList(UserInfoForToken userInfo, QuestionQueryModel questionQueryModel) throws StudentCourseServiceException;

@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentCourseServiceImpl implements IStudentCourseService{
@@ -68,6 +69,9 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
 
     @Resource
     private IQuestionInfoService questionInfoService;
+
+    @Resource
+    private IElementInfoService elementInfoService;
 
     @Resource
     private MongoTemplate mongoTemplate;
@@ -263,9 +267,36 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     }
 
     @Override
-    public List<QuestionForStudent> getIncorrectQuestionList(UserInfoForToken userInfo) throws StudentCourseServiceException{
+    public List<IncorrectQuestionReturnModel> getIncorrectQuestionList(UserInfoForToken userInfo, IncorrectQuestionQueryModel incorrectQuestionQueryModel) throws StudentCourseServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        List<StudentAnswer> studentAnswers = studentAnswerRepository.findAllByStudentIdAndResult(userInfo.getUserId(), Result.WRONG.getName());
+        if(StringUtils.isEmpty(incorrectQuestionQueryModel.getSubjectId())&&StringUtils.isEmpty(incorrectQuestionQueryModel.getKnowledgeId()))throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        List<Question> questions = studentAnswerRepository.findAllBySubjectIdAndKnowledgeIdAndStudentIdAndResult(
+                incorrectQuestionQueryModel.getSubjectId(),
+                incorrectQuestionQueryModel.getKnowledgeId(),
+                userInfo.getUserId(), Result.WRONG.getName());
+        List<QuestionForStudent> questionForStudents = convertQuestionList(questions);
+        questionForStudents.forEach(questionForStudent -> {
+            questionForStudent.setFavor(mongoTemplate.exists(new Query(Criteria.where("questionIds").is(questionForStudent.getQuestionId())), StudentFavorQuestion.class));
+            StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionForStudent.getQuestionId(), userInfo.getUserId());
+            if(studentAnswer!=null) {
+                questionForStudent.setAnswerForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(studentAnswer));
+                TeacherAnswer teacherAnswer = teacherAnswerRepository.findFirstByQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(questionForStudent.getQuestionId(), studentAnswer.getId());
+                if(teacherAnswer!=null) questionForStudent.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(teacherAnswer));
+            }
+        });
+
+        List<IncorrectQuestionReturnModel> incorrectQuestionReturnModelList = new ArrayList<IncorrectQuestionReturnModel>();
+        questionForStudents.stream()
+                .collect(Collectors.groupingBy(QuestionForStudent::getKnowledgeId, Collectors.toList()))
+                .forEach((knowledgeId,questionListByKnowledgeId)->{
+                    IncorrectQuestionReturnModel incorrectQuestionReturnModel = new IncorrectQuestionReturnModel();
+                    incorrectQuestionReturnModel.setKnowledgeId(knowledgeId);
+                    if(questionListByKnowledgeId.size()>0) incorrectQuestionReturnModel.setKnowledge(questionListByKnowledgeId.get(0).getKnowledge());
+                    incorrectQuestionReturnModel.setCount(questionListByKnowledgeId.size());
+                    incorrectQuestionReturnModel.setQuestions(questionListByKnowledgeId);
+                    incorrectQuestionReturnModelList.add(incorrectQuestionReturnModel);
+                });
+        /*List<StudentAnswer> studentAnswers = studentAnswerRepository.findAllByStudentIdAndResult(userInfo.getUserId(), Result.WRONG.getName());
         List<QuestionForStudent> questions = new ArrayList<QuestionForStudent>();
         studentAnswers.forEach(a -> {
             try{
@@ -273,8 +304,8 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
             }catch (StudentCourseServiceException scsExp){
 
             }
-        });
-        return questions;
+        });*/
+        return incorrectQuestionReturnModelList;
     }
 
     @Override
@@ -316,7 +347,9 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
     private List<QuestionForStudent> convertQuestionList2(List<QuestionNode> questions){
         List<QuestionForStudent> questionForStudents = new ArrayList<QuestionForStudent>();
         questions.forEach(question -> {
-            questionForStudents.add(MappingModel2ModelConverter.ConvertQuestionNode(question));
+            QuestionForStudent questionForStudent = MappingModel2ModelConverter.ConvertQuestionNode(question);
+            questionForStudent.setQuesetionType(elementInfoService.fetchQuestionType(questionForStudent.getQuesetionType()).getName());
+            questionForStudents.add(questionForStudent);
         });
         return questionForStudents;
     }

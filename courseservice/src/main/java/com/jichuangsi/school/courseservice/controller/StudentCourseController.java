@@ -165,16 +165,18 @@ public class StudentCourseController {
 		return ResponseModel.sucess("", studentCourseService.getFavorQuestionsList(userInfo));
 	}
 
-	@ApiOperation(value = "根据问题id列出学生错误题目", notes = "")
+	@ApiOperation(value = "根据学科列出学生错误题目", notes = "")
 	@ApiImplicitParams({
-			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
-			@ApiImplicitParam(paramType = "path", name = "questionId", value = "问题ID", required = true, dataType = "String")})
-	@GetMapping("/collectIncorrectQuestions")
-	public ResponseModel<List<QuestionForStudent>> collectIncorrectQuestions(@ModelAttribute UserInfoForToken userInfo) throws StudentCourseServiceException {
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+	@PostMapping("/collectIncorrectQuestions")
+	public ResponseModel<List<IncorrectQuestionReturnModel>> collectIncorrectQuestions(@ModelAttribute UserInfoForToken userInfo, @RequestBody IncorrectQuestionQueryModel incorrectQuestionQueryModel) throws StudentCourseServiceException {
 
-		return ResponseModel.sucess("", studentCourseService.getIncorrectQuestionList(userInfo));
+		return ResponseModel.sucess("", studentCourseService.getIncorrectQuestionList(userInfo, incorrectQuestionQueryModel));
 	}
 
+	@ApiOperation(value = "根据错误题目知识点，难度和题型推送题目", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
 	@PostMapping("/aiPushQuestions")
 	public ResponseModel<List<QuestionForStudent>> aiPushQuestions(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel)throws StudentCourseServiceException {
 
