@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
+import com.jichuangsi.school.courseservice.model.Attachment;
 import com.jichuangsi.school.courseservice.model.CourseFile;
 import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
@@ -54,7 +55,7 @@ public interface ICourseConsoleService {
     List<Question> getQuestionList(List<String> qIds);
 
     @Transactional
-    String uploadAttachment(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException;
+    Attachment uploadAttachment(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException;
 
     @Transactional
     void removeCourseAttachment(UserInfoForToken userInfo, DeleteQueryModel deleteQueryModel) throws TeacherCourseServiceException;

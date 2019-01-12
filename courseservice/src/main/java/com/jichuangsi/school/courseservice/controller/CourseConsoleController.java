@@ -258,7 +258,7 @@ public class CourseConsoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/saveCourseAttachment")
-    public ResponseModel<String> saveCourseAttachment(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) {
+    public ResponseModel<Attachment> saveCourseAttachment(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) {
         try {
             return ResponseModel.sucess("", courseConsoleService.uploadAttachment(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
         } catch (TeacherCourseServiceException e) {

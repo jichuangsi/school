@@ -7,10 +7,7 @@ import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
-import com.jichuangsi.school.courseservice.model.CourseFile;
-import com.jichuangsi.school.courseservice.model.CourseForTeacher;
-import com.jichuangsi.school.courseservice.model.PageHolder;
-import com.jichuangsi.school.courseservice.model.QuestionForTeacher;
+import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
 import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
@@ -187,13 +184,13 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
     }
 
     @Override
-    public String uploadAttachment(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException{
+    public Attachment uploadAttachment(UserInfoForToken userInfo, CourseFile courseFile) throws TeacherCourseServiceException{
         try {
             fileStoreService.uploadCourseFile(courseFile);
         } catch (Exception e) {
             throw new TeacherCourseServiceException(ResultCode.FILE_UPLOAD_ERROR);
         }
-        return courseFile.getStoredName();
+        return new Attachment(courseFile.getName(), courseFile.getStoredName(), courseFile.getContentType());
     }
 
     @Override

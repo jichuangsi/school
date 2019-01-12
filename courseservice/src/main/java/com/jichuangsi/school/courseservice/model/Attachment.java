@@ -2,13 +2,15 @@ package com.jichuangsi.school.courseservice.model;
 
 public class Attachment {
     private String name;
+    private String contentType;
     private String sub;
 
     public Attachment(){}
 
-    public Attachment(String name, String sub){
+    public Attachment(String name, String sub, String contentType){
         this.name = name;
         this.sub = sub;
+        this.contentType = contentType;
     }
 
     public String getName() {
@@ -25,5 +27,13 @@ public class Attachment {
 
     public void setSub(String sub) {
         this.sub = sub;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }
