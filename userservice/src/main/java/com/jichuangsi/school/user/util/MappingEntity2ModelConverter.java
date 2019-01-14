@@ -170,6 +170,7 @@ public final class MappingEntity2ModelConverter {
         TransferStudent transferStudent = new TransferStudent();
         transferStudent.setStudentId(userInfo.getId());
         transferStudent.setStudentName(userInfo.getName());
+        transferStudent.setStudentAccount(userInfo.getAccount());
         return transferStudent;
     }
 }

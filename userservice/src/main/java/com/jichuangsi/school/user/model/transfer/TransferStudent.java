@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.model.transfer;
 public class TransferStudent {
 
     private String studentId;
+    private String studentAccount;
     private String studentName;
 
     public TransferStudent(){}
@@ -21,6 +22,14 @@ public class TransferStudent {
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+
+    public String getStudentAccount() {
+        return studentAccount;
+    }
+
+    public void setStudentAccount(String studentAccount) {
+        this.studentAccount = studentAccount;
     }
 }
 
