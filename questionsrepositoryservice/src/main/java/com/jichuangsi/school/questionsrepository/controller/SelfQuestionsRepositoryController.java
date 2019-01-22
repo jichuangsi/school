@@ -52,6 +52,16 @@ public class SelfQuestionsRepositoryController {
         return ResponseModel.sucess("",selfQuestionsRepositoryService.getSelfQuestionSortList(userInfo,searchQuestion)  );
     }
 
+    //获取指定id的自定义题
+    @ApiOperation(value = "获取指定id的自定义题", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/getQuestion/{questionId}")
+    public ResponseModel<SelfQuestion> getQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws QuestionRepositoryServiceException {
+
+        return ResponseModel.sucess("",selfQuestionsRepositoryService.getSelfQuestionById(userInfo,questionId));
+    }
+
     //删除指定的自定义题目
     @ApiOperation(value = "删除指定的自定义题目", notes = "")
     @ApiImplicitParams({

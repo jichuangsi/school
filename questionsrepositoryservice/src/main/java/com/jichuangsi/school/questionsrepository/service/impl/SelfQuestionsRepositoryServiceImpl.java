@@ -20,6 +20,7 @@ import com.jichuangsi.school.questionsrepository.service.ISelfQuestionsRepositor
 import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
 import com.jichuangsi.school.questionsrepository.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.questionsrepository.util.MappingModel2EntityConverter;
+import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -112,6 +113,11 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
         return page;
     }
 
+    @Override
+    public SelfQuestion getSelfQuestionById(UserInfoForToken userInfoForToken, String questionId) throws QuestionRepositoryServiceException{
+        if(StringUtils.isEmpty(userInfoForToken.getUserId())|| StringUtils.isEmpty(questionId)) new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
+        return MappingEntity2ModelConverter.ConverterSelfQuestions(selfQuestionsRepository.findParticularQuesitonById(userInfoForToken.getUserId(),questionId));
+    }
 
     private List<SelfQuestion> changeForSelfQuestions(List<SelfQuestions> selfQuestions){
         List<SelfQuestion> selfQuestion = new ArrayList<SelfQuestion>();

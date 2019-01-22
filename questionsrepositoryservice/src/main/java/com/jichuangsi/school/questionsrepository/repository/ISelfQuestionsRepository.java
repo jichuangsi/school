@@ -14,5 +14,7 @@ public interface ISelfQuestionsRepository<T> {
 
     List<SelfQuestions> selectPageSelfQ(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel);
 
+    SelfQuestions findParticularQuesitonById(String userId, String questionId);
+
     void findAllAndRemove(DeleteQueryModel deleteQueryModel);
 }

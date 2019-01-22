@@ -28,6 +28,9 @@ public interface ISelfQuestionsRepositoryService {
     //分页排序显示
     PageHolder<SelfQuestion> getSelfQuestionSortList(UserInfoForToken userInfoForToken, SearchQuestionModel searchQuestionModel);
 
+    //获取指定自定义题目
+    SelfQuestion getSelfQuestionById(UserInfoForToken userInfoForToken, String questionId) throws QuestionRepositoryServiceException;
+
     //根据id获取selfQuestions
     SelfQuestions getSelfQuestionsById(String id);
 

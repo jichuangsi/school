@@ -73,6 +73,12 @@ public class SelfQuestionsRepositoryImpl<T> implements ISelfQuestionsRepository<
     }
 
     @Override
+    public SelfQuestions findParticularQuesitonById(String userId, String questionId){
+        Criteria criteria = Criteria.where("_id").is(questionId).and("teacherId").is(userId);
+        return mongoTemplate.findOne(new Query(criteria),SelfQuestions.class);
+    }
+
+    @Override
     public void findAllAndRemove(DeleteQueryModel deleteQueryModel) {
         Criteria criteria = Criteria.where("id").in(deleteQueryModel.getIds());
         mongoTemplate.findAllAndRemove(new Query(criteria),SelfQuestions.class);
