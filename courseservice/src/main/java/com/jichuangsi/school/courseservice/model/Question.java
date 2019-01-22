@@ -1,6 +1,7 @@
 package com.jichuangsi.school.courseservice.model;
 
 import com.jichuangsi.school.courseservice.constant.Status;
+import com.jichuangsi.school.courseservice.model.common.CustomArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,7 @@ public class Question {
     private String difficulty;
     private String subjectId;
     private String gradeId;
-    private String knowledge;
-    private String knowledgeId;
-    private String capabilityId;
-    private String capability;
+    private CustomArrayList<Knowledge> knowledges = new CustomArrayList<Knowledge>();
     private String questionIdMD52;
     private Status questionStatus;
     private String questionPic;
@@ -100,14 +98,6 @@ public class Question {
         this.subjectId = subjectId;
     }
 
-    public String getKnowledge() {
-        return knowledge;
-    }
-
-    public void setKnowledge(String knowledge) {
-        this.knowledge = knowledge;
-    }
-
     public String getQuestionIdMD52() {
         return questionIdMD52;
     }
@@ -164,27 +154,11 @@ public class Question {
         this.questionTypeInCN = questionTypeInCN;
     }
 
-    public String getKnowledgeId() {
-        return knowledgeId;
+    public CustomArrayList<Knowledge> getKnowledges() {
+        return knowledges;
     }
 
-    public void setKnowledgeId(String knowledgeId) {
-        this.knowledgeId = knowledgeId;
-    }
-
-    public String getCapabilityId() {
-        return capabilityId;
-    }
-
-    public void setCapabilityId(String capabilityId) {
-        this.capabilityId = capabilityId;
-    }
-
-    public String getCapability() {
-        return capability;
-    }
-
-    public void setCapability(String capability) {
-        this.capability = capability;
+    public void setKnowledges(CustomArrayList<Knowledge> knowledges) {
+        this.knowledges = knowledges;
     }
 }

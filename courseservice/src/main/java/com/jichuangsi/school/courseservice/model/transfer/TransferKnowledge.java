@@ -1,30 +1,19 @@
 package com.jichuangsi.school.courseservice.model.transfer;
 
+import com.jichuangsi.school.courseservice.model.Knowledge;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransferKnowledge {
 
-    private String knowledgeId;
-    private String knowledge;
+    private List<Knowledge> knowledges = new ArrayList<Knowledge>();
 
-    public TransferKnowledge(){}
-
-    public TransferKnowledge(String knowledgeId, String knowledge){
-        this.knowledgeId = knowledgeId;
-        this.knowledge = knowledge;
+    public List<Knowledge> getKnowledges() {
+        return knowledges;
     }
 
-    public String getKnowledgeId() {
-        return knowledgeId;
-    }
-
-    public void setKnowledgeId(String knowledgeId) {
-        this.knowledgeId = knowledgeId;
-    }
-
-    public String getKnowledge() {
-        return knowledge;
-    }
-
-    public void setKnowledge(String knowledge) {
-        this.knowledge = knowledge;
+    public void setKnowledges(List<Knowledge> knowledges) {
+        this.knowledges = knowledges;
     }
 }

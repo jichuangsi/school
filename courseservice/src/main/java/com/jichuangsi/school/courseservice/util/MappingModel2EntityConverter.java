@@ -69,10 +69,9 @@ public  final class MappingModel2EntityConverter {
         question.setDifficulty(questionForTeacher.getDifficulty());
         question.setSubjectId(questionForTeacher.getSubjectId());
         question.setGradeId(questionForTeacher.getGradeId());
-        question.setKnowledge(questionForTeacher.getKnowledge());
-        question.setKnowledgeId(questionForTeacher.getKnowledgeId());
-        question.setCapability(questionForTeacher.getCapability());
-        question.setCapabilityId(questionForTeacher.getCapabilityId());
+        questionForTeacher.getKnowledges().forEach(q->{
+            question.getKnowledges().add(new Knowledge(q.getKnowledgeId(),q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         question.setIdMD52(questionForTeacher.getQuestionIdMD52());
         question.setStatus(questionForTeacher.getQuestionStatus()!=null?questionForTeacher.getQuestionStatus().getName(): Status.NOTSTART.getName());
         question.setPic(questionForTeacher.getQuestionPic());

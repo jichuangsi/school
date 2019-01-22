@@ -1,5 +1,6 @@
 package com.jichuangsi.school.courseservice.util;
 
+import com.jichuangsi.school.courseservice.model.Knowledge;
 import com.jichuangsi.school.courseservice.model.QuestionForStudent;
 import com.jichuangsi.school.courseservice.model.repository.QuestionNode;
 import org.apache.commons.lang.StringUtils;
@@ -34,8 +35,7 @@ public final class MappingModel2ModelConverter {
         questionForStudent.setDifficulty(questionNode.getDiff());
         questionForStudent.setSubjectId(questionNode.getSubjectId());
         questionForStudent.setGradeId(questionNode.getGradeId());
-        questionForStudent.setKnowledge(questionNode.getKnowledges());
-        questionForStudent.setKnowledgeId(questionNode.getKnowledgeId());
+        questionForStudent.getKnowledges().add(new Knowledge(questionNode.getKnowledgeId(), questionNode.getKnowledges(), null, null));
         questionForStudent.setQuestionIdMD52(questionNode.getQid());
 
         return questionForStudent;

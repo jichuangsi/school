@@ -10,6 +10,8 @@ import com.jichuangsi.school.courseservice.entity.*;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.Knowledge;
+import com.jichuangsi.school.courseservice.model.common.CustomArrayList;
 import com.jichuangsi.school.courseservice.model.repository.QuestionNode;
 import com.jichuangsi.school.courseservice.model.repository.QuestionQueryModel;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
@@ -32,6 +34,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -286,8 +289,21 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         });
 
         List<IncorrectQuestionReturnModel> incorrectQuestionReturnModelList = new ArrayList<IncorrectQuestionReturnModel>();
-        questionForStudents.stream()
-                .collect(Collectors.groupingBy(QuestionForStudent::getKnowledgeId, Collectors.toList()))
+        Function<QuestionForStudent, CustomArrayList<Knowledge>> f1 = QuestionForStudent::getKnowledges;
+        Function<CustomArrayList<Knowledge>, Knowledge> f2 = CustomArrayList::getFirst;
+        Function<Knowledge, String> f3 = Knowledge::getKnowledgeId;
+        questionForStudents.stream().collect(Collectors.groupingBy(f1.andThen(f2).andThen(f3), Collectors.toList()))
+                .forEach((knowledgeId,questionListByKnowledgeId)->{
+                    IncorrectQuestionReturnModel incorrectQuestionReturnModel = new IncorrectQuestionReturnModel();
+                    incorrectQuestionReturnModel.setKnowledgeId(knowledgeId);
+                    if(questionListByKnowledgeId.size()>0) incorrectQuestionReturnModel.setKnowledge(questionListByKnowledgeId.get(0).getKnowledges().getFirst().getKnowledge());
+                    incorrectQuestionReturnModel.setCount(questionListByKnowledgeId.size());
+                    incorrectQuestionReturnModel.setQuestions(questionListByKnowledgeId);
+                    incorrectQuestionReturnModelList.add(incorrectQuestionReturnModel);
+                });
+
+        /*questionForStudents.stream()
+                .collect(Collectors.groupingBy(QuestionForStudent::getKnowledges, Collectors.toList()))
                 .forEach((knowledgeId,questionListByKnowledgeId)->{
                     IncorrectQuestionReturnModel incorrectQuestionReturnModel = new IncorrectQuestionReturnModel();
                     incorrectQuestionReturnModel.setKnowledgeId(knowledgeId);
@@ -295,16 +311,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
                     incorrectQuestionReturnModel.setCount(questionListByKnowledgeId.size());
                     incorrectQuestionReturnModel.setQuestions(questionListByKnowledgeId);
                     incorrectQuestionReturnModelList.add(incorrectQuestionReturnModel);
-                });
-        /*List<StudentAnswer> studentAnswers = studentAnswerRepository.findAllByStudentIdAndResult(userInfo.getUserId(), Result.WRONG.getName());
-        List<QuestionForStudent> questions = new ArrayList<QuestionForStudent>();
-        studentAnswers.forEach(a -> {
-            try{
-                questions.add(getParticularQuestion(userInfo, a.getQuestionId()));
-            }catch (StudentCourseServiceException scsExp){
-
-            }
-        });*/
+                });*/
         return incorrectQuestionReturnModelList;
     }
 

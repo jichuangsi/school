@@ -1,22 +1,19 @@
 package com.jichuangsi.school.courseservice.repository.impl;
 
-import com.jichuangsi.school.courseservice.entity.Course;
+import com.jichuangsi.school.courseservice.entity.Knowledge;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerExtraRepository;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
 public class StudentAnswerExtraRepositoryImpl implements StudentAnswerExtraRepository {
 
@@ -40,7 +37,12 @@ public class StudentAnswerExtraRepositoryImpl implements StudentAnswerExtraRepos
          }
          },
          {$unwind:{path:"$question",preserveNullAndEmptyArrays:false}},
-         {$match:{$and:[{"question.subjectId":"2"},{"question.knowledgeId":{$ne:null}}]}}
+         {$match:{"question.knowledges.0":{$exists:1}}},
+         //{$match:{$and:[{"question.subjectId":"2"},{"question.knowledges":{$elemMatch:{"knowledgeId":"3ad1c9adb15a800b629366802923dc93"}}}]}},
+         {$match:{"question.subjectId":"2"}},
+         {$unwind:{path:"$question.knowledges",preserveNullAndEmptyArrays:false}},
+         //{$match:{"question.knowledges.knowledgeId":"3ad1c9adb15a800b629366802923dc93"}}
+         { $project: { knowledges: [ "$question.knowledges.knowledgeId", "$question.knowledges.knowledge" ] } }
          ]
          )
          */
@@ -48,53 +50,33 @@ public class StudentAnswerExtraRepositoryImpl implements StudentAnswerExtraRepos
         operations.add(match(Criteria.where("studentId").is(studentId).andOperator(Criteria.where("result").is(result))));
         operations.add(lookup("school_course_question","questionId","_id","question"));
         operations.add(unwind("question", false));
-        operations.add(match(Criteria.where("question.knowledgeId").ne(null)));
+        operations.add(match(Criteria.where("question.knowledges.0").exists(true)));
         if(!StringUtils.isEmpty(subjectId)) operations.add(match(Criteria.where("question.subjectId").is(subjectId)));
-        if(!StringUtils.isEmpty(knowledgeId)) operations.add(match(Criteria.where("question.knowledgeId").is(knowledgeId)));
-        operations.add(project().and("question._id").as("_id")
-                .and("question.content").as("content")
-                .and("question.options").as("options")
-                .and("question.answer").as("answer")
-                .and("question.answerDetail").as("answerDetail")
-                .and("question.parse").as("parse")
-                .and("question.type").as("type")
-                .and("question.typeInCN").as("typeInCN")
-                .and("question.difficulty").as("difficulty")
-                .and("question.subjectId").as("subjectId")
-                .and("question.gradeId").as("gradeId")
-                .and("question.knowledge").as("knowledge")
-                .and("question.knowledgeId").as("knowledgeId")
-                .and("question.capability").as("capability")
-                .and("question.capabilityId").as("capabilityId")
-                .and("question.idMD52").as("idMD52")
-                .and("question.status").as("status")
-                .and("question.pic").as("pic"));
+        if(!StringUtils.isEmpty(knowledgeId)) operations.add(match(Criteria.where("question.knowledges").elemMatch(Criteria.where("knowledgeId").is(knowledgeId))));
+        operations.add(unwind("question.knowledges", false));
+        if(!StringUtils.isEmpty(knowledgeId)) operations.add(match(Criteria.where("question.knowledges.knowledgeId").is(knowledgeId)));
 
-        Aggregation agg = Aggregation.newAggregation(operations
-                /*match(Criteria.where("studentId").is(studentId).andOperator(Criteria.where("result").is(result))),
-                lookup("school_course_question","questionId","_id","question"),
-                unwind("question", false),
-                match(Criteria.where("question.subjectId").is(subjectId)),
-                match(Criteria.where("question.knowledgeId").is(knowledgeId)),
-                project().and("question._id").as("_id")
-                        .and("question.content").as("content")
-                        .and("question.options").as("options")
-                        .and("question.answer").as("answer")
-                        .and("question.answerDetail").as("answerDetail")
-                        .and("question.parse").as("parse")
-                        .and("question.type").as("type")
-                        .and("question.typeInCN").as("typeInCN")
-                        .and("question.difficulty").as("difficulty")
-                        .and("question.subjectId").as("subjectId")
-                        .and("question.gradeId").as("gradeId")
-                        .and("question.knowledge").as("knowledge")
-                        .and("question.knowledgeId").as("knowledgeId")
-                        .and("question.capability").as("capability")
-                        .and("question.capabilityId").as("capabilityId")
-                        .and("question.idMD52").as("idMD52")
-                        .and("question.status").as("status")
-                        .and("question.pic").as("pic")*/
-        );
+        operations.add(new CustomProjectAggregationOperation(
+                new Document("$project",
+                        new Document().append("_id","$question._id").append("content","$question.content").append("options","$question.options").append("answer","$question.answer").append("answerDetail","$question.answerDetail")
+                                .append("parse","$question.parse").append("type","$question.type").append("typeInCN","$question.typeInCN").append("difficulty","$question.difficulty").append("subjectId","$question.subjectId")
+                                .append("gradeId","$question.gradeId").append("idMD52","$question.idMD52").append("status","$question.status").append("pic","$question.pic")
+                                .append("knowledges",new Object[]{new Knowledge("$question.knowledges.knowledgeId","$question.knowledges.knowledge","$question.knowledges.capabilityId","$question.knowledges.capability")})
+                )));
+        Aggregation agg = Aggregation.newAggregation(operations);
         return mongoTemplate.aggregate(agg, StudentAnswer.class, Question.class).getMappedResults();
+    }
+
+    class CustomProjectAggregationOperation implements AggregationOperation {
+        private Document document;
+
+        public CustomProjectAggregationOperation (Document document) {
+            this.document = document;
+        }
+
+        @Override
+        public Document toDocument(AggregationOperationContext context) {
+            return context.getMappedObject(document);
+        }
     }
 }

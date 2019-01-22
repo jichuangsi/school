@@ -73,10 +73,9 @@ public final class MappingEntity2ModelConverter {
         questionForTeacher.setDifficulty(question.getDifficulty());
         questionForTeacher.setSubjectId(question.getSubjectId());
         questionForTeacher.setGradeId(question.getGradeId());
-        questionForTeacher.setKnowledge(question.getKnowledge());
-        questionForTeacher.setKnowledgeId(question.getKnowledgeId());
-        questionForTeacher.setCapability(question.getCapability());
-        questionForTeacher.setCapabilityId(question.getCapabilityId());
+        question.getKnowledges().forEach(q->{
+            questionForTeacher.getKnowledges().add(new Knowledge(q.getKnowledgeId(),q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         questionForTeacher.setQuestionIdMD52(question.getIdMD52());
         questionForTeacher.setQuestionStatus(Status.getStatus(question.getStatus()));
         questionForTeacher.setQuestionPic(question.getPic());
@@ -102,8 +101,9 @@ public final class MappingEntity2ModelConverter {
         questionForStudent.setDifficulty(question.getDifficulty());
         questionForStudent.setSubjectId(question.getSubjectId());
         questionForStudent.setGradeId(question.getGradeId());
-        questionForStudent.setKnowledge(question.getKnowledge());
-        questionForStudent.setKnowledgeId(question.getKnowledgeId());
+        question.getKnowledges().forEach(q->{
+            questionForStudent.getKnowledges().add(new Knowledge(q.getKnowledgeId(),q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         questionForStudent.setQuestionIdMD52(question.getIdMD52());
         questionForStudent.setQuestionStatus(Status.getStatus(question.getStatus()));
         questionForStudent.setQuestionPic(question.getPic());
