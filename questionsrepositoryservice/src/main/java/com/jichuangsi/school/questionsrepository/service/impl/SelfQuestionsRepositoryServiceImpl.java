@@ -115,8 +115,10 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
     @Override
     public SelfQuestion getSelfQuestionById(UserInfoForToken userInfoForToken, String questionId) throws QuestionRepositoryServiceException{
-        if(StringUtils.isEmpty(userInfoForToken.getUserId())|| StringUtils.isEmpty(questionId)) new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
-        return MappingEntity2ModelConverter.ConverterSelfQuestions(selfQuestionsRepository.findParticularQuesitonById(userInfoForToken.getUserId(),questionId));
+        if(StringUtils.isEmpty(userInfoForToken.getUserId())|| StringUtils.isEmpty(questionId)) throw new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
+        SelfQuestions question = selfQuestionsRepository.findParticularQuesitonById(userInfoForToken.getUserId(),questionId);
+        if(question == null) throw new QuestionRepositoryServiceException(ResultCode.QUESTION_NOT_EXISTED);
+        return MappingEntity2ModelConverter.ConverterSelfQuestions(question);
     }
 
     private List<SelfQuestion> changeForSelfQuestions(List<SelfQuestions> selfQuestions){
