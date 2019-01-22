@@ -20,10 +20,7 @@ public class FavorQuestions {
     private String difficulty;
     private String subjectId;
     private String gradeId;
-    private String knowledge;
-    private String knowledgeId;
-    private String capabilityId;
-    private String capability;
+    private List<Knowledge> knowledges = new ArrayList<Knowledge>();
     private String questionIdMD52;
     private String teacherId;
     private String teacherName;
@@ -111,14 +108,6 @@ public class FavorQuestions {
         this.gradeId = gradeId;
     }
 
-    public String getKnowledge() {
-        return knowledge;
-    }
-
-    public void setKnowledge(String knowledge) {
-        this.knowledge = knowledge;
-    }
-
     public String getQuestionIdMD52() {
         return questionIdMD52;
     }
@@ -167,27 +156,11 @@ public class FavorQuestions {
         this.updateTime = updateTime;
     }
 
-    public String getKnowledgeId() {
-        return knowledgeId;
+    public List<Knowledge> getKnowledges() {
+        return knowledges;
     }
 
-    public void setKnowledgeId(String knowledgeId) {
-        this.knowledgeId = knowledgeId;
-    }
-
-    public String getCapabilityId() {
-        return capabilityId;
-    }
-
-    public void setCapabilityId(String capabilityId) {
-        this.capabilityId = capabilityId;
-    }
-
-    public String getCapability() {
-        return capability;
-    }
-
-    public void setCapability(String capability) {
-        this.capability = capability;
+    public void setKnowledges(List<Knowledge> knowledges) {
+        this.knowledges = knowledges;
     }
 }

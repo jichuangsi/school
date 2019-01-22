@@ -3,6 +3,7 @@ package com.jichuangsi.school.questionsrepository.util;
 import com.jichuangsi.school.questionsrepository.entity.FavorQuestions;
 import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
 import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
+import com.jichuangsi.school.questionsrepository.model.common.Knowledge;
 import com.jichuangsi.school.questionsrepository.model.favor.FavorQuestion;
 import com.jichuangsi.school.questionsrepository.model.school.SchoolQuestion;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
@@ -16,10 +17,10 @@ public final class MappingEntity2ModelConverter {
         fq.setAnswerDetail(fqs.getAnswerDetail());
         fq.setDifficulty(fqs.getDifficulty());
         fq.setGradeId(fqs.getGradeId());
-        fq.setKnowledge(fqs.getKnowledge());
-        fq.setKnowledgeId(fqs.getKnowledgeId());
-        fq.setCapability(fqs.getCapability());
-        fq.setCapabilityId(fqs.getCapabilityId());
+        fqs.getKnowledges().forEach(q->{
+            fq.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         fq.setOptions(fqs.getOptions());
         fq.setParse(fqs.getParse());
         fq.setQuesetionType(fqs.getType());
@@ -43,10 +44,10 @@ public final class MappingEntity2ModelConverter {
         sq.setAnswerDetail(sqs.getAnswerDetail());
         sq.setDifficulty(sqs.getDifficulty());
         sq.setGradeId(sqs.getGradeId());
-        sq.setKnowledge(sqs.getKnowledge());
-        sq.setKnowledgeId(sqs.getKnowledgeId());
-        sq.setCapability(sqs.getCapability());
-        sq.setCapabilityId(sqs.getCapabilityId());
+        sqs.getKnowledges().forEach(q->{
+            sq.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         sq.setOptions(sqs.getOptions());
         sq.setParse(sqs.getParse());
         sq.setQuesetionType(sqs.getType());
@@ -70,10 +71,10 @@ public final class MappingEntity2ModelConverter {
         sq.setAnswerDetail(sqs.getAnswerDetail());
         sq.setDifficulty(sqs.getDifficulty());
         sq.setGradeId(sqs.getGradeId());
-        sq.setKnowledge(sqs.getKnowledge());
-        sq.setKnowledgeId(sqs.getKnowledgeId());
-        sq.setCapability(sqs.getCapability());
-        sq.setCapabilityId(sqs.getCapabilityId());
+        sqs.getKnowledges().forEach(q->{
+            sq.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         sq.setOptions(sqs.getOptions());
         sq.setParse(sqs.getParse());
         sq.setQuesetionType(sqs.getType());

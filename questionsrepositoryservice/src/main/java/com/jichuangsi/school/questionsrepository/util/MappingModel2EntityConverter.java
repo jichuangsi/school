@@ -2,6 +2,7 @@ package com.jichuangsi.school.questionsrepository.util;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.entity.FavorQuestions;
+import com.jichuangsi.school.questionsrepository.entity.Knowledge;
 import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
 import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.model.favor.FavorQuestion;
@@ -23,10 +24,10 @@ public final class MappingModel2EntityConverter {
         favorQuestions.setContent(fq.getQuestionContent());
         favorQuestions.setDifficulty(fq.getDifficulty());
         favorQuestions.setGradeId(fq.getGradeId());
-        favorQuestions.setKnowledge(fq.getKnowledge());
-        favorQuestions.setKnowledgeId(fq.getKnowledgeId());
-        favorQuestions.setCapability(fq.getCapability());
-        favorQuestions.setCapabilityId(fq.getCapabilityId());
+        fq.getKnowledges().forEach(q->{
+            favorQuestions.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         favorQuestions.setOptions(fq.getOptions());
         favorQuestions.setParse(fq.getParse());
         favorQuestions.setQuestionIdMD52(StringUtils.isEmpty(fq.getQuestionIdMD52())?Md5Util.encodeByMd5(favorQuestions.getId()):fq.getQuestionIdMD52());
@@ -51,10 +52,10 @@ public final class MappingModel2EntityConverter {
         selfQuestions.setContent(sq.getQuestionContent());
         selfQuestions.setDifficulty(sq.getDifficulty());
         selfQuestions.setGradeId(sq.getGradeId());
-        selfQuestions.setKnowledge(sq.getKnowledge());
-        selfQuestions.setKnowledgeId(sq.getKnowledgeId());
-        selfQuestions.setCapability(sq.getCapability());
-        selfQuestions.setCapabilityId(sq.getCapabilityId());
+        sq.getKnowledges().forEach(q->{
+            selfQuestions.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         selfQuestions.setOptions(sq.getOptions());
         selfQuestions.setParse(sq.getParse());
         selfQuestions.setQuestionIdMD52(StringUtils.isEmpty(sq.getQuestionIdMD52())?Md5Util.encodeByMd5(selfQuestions.getId()):sq.getQuestionIdMD52());
@@ -79,10 +80,10 @@ public final class MappingModel2EntityConverter {
         sqs.setContent(sq.getQuestionContent());
         sqs.setDifficulty(sq.getDifficulty());
         sqs.setGradeId(sq.getGradeId());
-        sqs.setKnowledge(sq.getKnowledge());
-        sqs.setKnowledgeId(sq.getKnowledgeId());
-        sqs.setCapability(sq.getCapability());
-        sqs.setCapabilityId(sq.getCapabilityId());
+        sq.getKnowledges().forEach(q->{
+            sqs.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         sqs.setOptions(sq.getOptions());
         sqs.setParse(sq.getParse());
         sqs.setQuestionIdMD52(StringUtils.isEmpty(sq.getQuestionIdMD52())?Md5Util.encodeByMd5(sqs.getId()):sq.getQuestionIdMD52());
