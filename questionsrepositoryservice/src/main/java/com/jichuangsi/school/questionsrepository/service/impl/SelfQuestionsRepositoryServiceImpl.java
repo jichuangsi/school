@@ -96,6 +96,9 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
         TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
         if(transferTeacher==null) throw new QuestionRepositoryServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
         String picName = cacheServiceLocal.get(picPrefix+userInfoForToken.getUserId()+selfQuestion.getCode());
+        if(StringUtils.isEmpty(picName)){
+            picName = selfQuestion.getQuestionPic();
+        }
         selfQuestion.setQuestionPic(picName);
         selfQuestion.setGradeId(transferTeacher.getGradeId());
         selfQuestion.setSubjectId(transferTeacher.getSubjectId());
