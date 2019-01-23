@@ -1,6 +1,7 @@
 package com.jichuangsi.school.examservice.Utils;
 
 import com.jichuangsi.school.examservice.Model.ExamModel;
+import com.jichuangsi.school.examservice.Model.KnowledgeModel;
 import com.jichuangsi.school.examservice.Model.QuestionModel;
 import com.jichuangsi.school.examservice.constant.Status;
 import com.jichuangsi.school.examservice.entity.Exam;
@@ -16,10 +17,10 @@ public final class MappingEntity2ModelConverter {
         questionModel.setCreateTime(question.getCreateTime());
         questionModel.setDifficulty(question.getDifficulty());
         questionModel.setGradeId(question.getGradeId());
-        questionModel.setKnowledge(question.getKnowledge());
-        questionModel.setKnowledgeId(question.getKnowledgeId());
-        questionModel.setCapability(question.getCapability());
-        questionModel.setCapabilityId(question.getCapabilityId());
+        question.getKnowledges().forEach(q->{
+            questionModel.getKnowledgeModels().add(new KnowledgeModel(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         questionModel.setOptions(question.getOptions());
         questionModel.setParse(question.getParse());
         questionModel.setQuesetionType(question.getType());

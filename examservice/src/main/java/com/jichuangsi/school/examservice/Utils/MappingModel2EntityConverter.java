@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.examservice.Model.ExamModel;
 import com.jichuangsi.school.examservice.Model.QuestionModel;
 import com.jichuangsi.school.examservice.entity.Exam;
+import com.jichuangsi.school.examservice.entity.Knowledge;
 import com.jichuangsi.school.examservice.entity.Question;
 import org.springframework.util.StringUtils;
 
@@ -41,10 +42,10 @@ public final  class MappingModel2EntityConverter {
         question.setId(StringUtils.isEmpty(questionModel.getQuestionId())?
                                     UUID.randomUUID().toString().replace("-",""):questionModel.getQuestionId());
         question.setIdMD52(questionModel.getQuestionIdMD52());
-        question.setKnowledge(questionModel.getKnowledge());
-        question.setKnowledgeId(questionModel.getKnowledgeId());
-        question.setCapability(questionModel.getCapability());
-        question.setCapabilityId(questionModel.getCapabilityId());
+        questionModel.getKnowledgeModels().forEach(q->{
+            question.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                    q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
         question.setOptions(questionModel.getOptions());
         question.setParse(questionModel.getParse());
         question.setPic(questionModel.getQuestionPic());
