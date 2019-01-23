@@ -42,7 +42,7 @@ public final  class MappingModel2EntityConverter {
         question.setId(StringUtils.isEmpty(questionModel.getQuestionId())?
                                     UUID.randomUUID().toString().replace("-",""):questionModel.getQuestionId());
         question.setIdMD52(questionModel.getQuestionIdMD52());
-        questionModel.getKnowledgeModels().forEach(q->{
+        questionModel.getKnowledges().forEach(q->{
             question.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
                     q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
         });

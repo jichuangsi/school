@@ -1,15 +1,15 @@
 package com.jichuangsi.school.examservice.Model;
 
-public class KnowledgeModel {
+public class Knowledge {
 
     private String knowledge;
     private String knowledgeId;
     private String capabilityId;
     private String capability;
 
-    public KnowledgeModel(){}
+    public Knowledge(){}
 
-    public KnowledgeModel(String knowledgeId, String knowledge, String capabilityId, String capability){
+    public Knowledge(String knowledgeId, String knowledge, String capabilityId, String capability){
         this.knowledgeId = knowledgeId;
         this.knowledge = knowledge;
         this.capabilityId = capabilityId;

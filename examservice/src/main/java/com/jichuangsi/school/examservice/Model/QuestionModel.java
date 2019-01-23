@@ -17,7 +17,7 @@ public class QuestionModel {
     private String difficulty;
     private String subjectId;
     private String gradeId;
-    private List<KnowledgeModel> knowledgeModels = new ArrayList<KnowledgeModel>();
+    private List<Knowledge> knowledges = new ArrayList<Knowledge>();
     private String questionIdMD52;
     private Status questionStatus;
     private String questionPic;
@@ -145,11 +145,11 @@ public class QuestionModel {
         this.questionPic = questionPic;
     }
 
-    public List<KnowledgeModel> getKnowledgeModels() {
-        return knowledgeModels;
+    public List<Knowledge> getKnowledges() {
+        return knowledges;
     }
 
-    public void setKnowledgeModels(List<KnowledgeModel> knowledgeModels) {
-        this.knowledgeModels = knowledgeModels;
+    public void setKnowledges(List<Knowledge> knowledges) {
+        this.knowledges = knowledges;
     }
 }
