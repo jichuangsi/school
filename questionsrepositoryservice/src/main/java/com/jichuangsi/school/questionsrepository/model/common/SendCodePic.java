@@ -3,6 +3,7 @@ package com.jichuangsi.school.questionsrepository.model.common;
 public class SendCodePic {
 
     private String code;
+    private String sub;
     private String teacherId;
 
     public String getCode() {
@@ -19,6 +20,14 @@ public class SendCodePic {
 
     public void setTeacherId(String teacherId) {
         this.teacherId = teacherId;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
     }
 
     public String getOneCode(){

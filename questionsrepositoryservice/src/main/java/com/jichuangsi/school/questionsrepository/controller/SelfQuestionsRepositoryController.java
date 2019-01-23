@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -103,10 +104,9 @@ public class SelfQuestionsRepositoryController {
     @ApiOperation(value = "自定义题目图片转文字", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @GetMapping("/transQuestionPic/{code}")
-    public ResponseModel<PicContent> transQuestionPic(@ModelAttribute UserInfoForToken userInfo, @PathVariable String code) throws QuestionRepositoryServiceException{
-        SendCodePic sendCodePic = new SendCodePic();
-        sendCodePic.setCode(code);
+    @PostMapping("/transQuestionPic")
+    public ResponseModel<PicContent> transQuestionPic(@ModelAttribute UserInfoForToken userInfo, @RequestBody SendCodePic sendCodePic) throws QuestionRepositoryServiceException{
+        if(StringUtils.isEmpty(sendCodePic.getCode())&&StringUtils.isEmpty(sendCodePic.getSub())) throw new QuestionRepositoryServiceException(ResultCode.PARAM_MISS_MSG);
         sendCodePic.setTeacherId(userInfo.getUserId());
         return ResponseModel.sucess("", selfQuestionsRepositoryService.transQuestionPic(sendCodePic));
     }

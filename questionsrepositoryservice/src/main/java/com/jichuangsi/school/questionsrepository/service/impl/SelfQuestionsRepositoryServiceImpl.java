@@ -156,7 +156,9 @@ public class SelfQuestionsRepositoryServiceImpl implements ISelfQuestionsReposit
 
         if(picContent==null) {
             String picName = cacheServiceLocal.get(picPrefix + sendCodePic.getOneCode());
+            if(StringUtils.isEmpty(picName)&&!StringUtils.isEmpty(sendCodePic.getSub())) picName = sendCodePic.getSub();
             if (StringUtils.isEmpty(picName)) throw new QuestionRepositoryServiceException(ResultCode.FILE_NOT_EXISTED);
+
             QuestionFile questionFile = null;
             try {
                 questionFile = fileStoreService.donwloadQuestionFile(picName);
