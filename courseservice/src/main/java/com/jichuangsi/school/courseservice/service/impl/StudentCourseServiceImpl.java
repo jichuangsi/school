@@ -355,7 +355,8 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
         List<QuestionForStudent> questionForStudents = new ArrayList<QuestionForStudent>();
         questions.forEach(question -> {
             QuestionForStudent questionForStudent = MappingModel2ModelConverter.ConvertQuestionNode(question);
-            questionForStudent.setQuesetionType(elementInfoService.fetchQuestionType(questionForStudent.getQuesetionType()).getName());
+            String qt = elementInfoService.fetchQuestionType(questionForStudent.getQuesetionType()).getName();
+            questionForStudent.setQuesetionType(StringUtils.isEmpty(qt)?QuestionType.SUBJECTIVE.getName():qt);
             questionForStudents.add(questionForStudent);
         });
         return questionForStudents;

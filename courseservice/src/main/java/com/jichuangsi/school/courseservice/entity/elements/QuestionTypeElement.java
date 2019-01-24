@@ -6,10 +6,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "school_question_type")
 public class QuestionTypeElement {
     @Id
-    String id;
-    String type;
-    int index;
-    String remark;
+    private String id;
+    private String type;
+    private int index;
+    private String remark;
 
     public String getId() {
         return id;

@@ -15,6 +15,7 @@ public class InitialStartupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         elementInfoService.initQuestionType();
+        elementInfoService.initQuestionMapping();
     }
 
 }
