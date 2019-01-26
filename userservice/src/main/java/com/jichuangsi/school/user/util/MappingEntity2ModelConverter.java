@@ -6,9 +6,11 @@ import com.jichuangsi.school.user.entity.RoleInfo;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.school.user.entity.app.AppInfoEntity;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
+import com.jichuangsi.school.user.model.app.AppInfoModule;
 import com.jichuangsi.school.user.model.basic.Phrase;
 import com.jichuangsi.school.user.model.basic.Subject;
 import com.jichuangsi.school.user.model.org.Grade;
@@ -172,5 +174,15 @@ public final class MappingEntity2ModelConverter {
         transferStudent.setStudentName(userInfo.getName());
         transferStudent.setStudentAccount(userInfo.getAccount());
         return transferStudent;
+    }
+
+    public static final AppInfoModule ConvertAppInfo(AppInfoEntity appInfoEntity){
+        AppInfoModule appInfoModule = new AppInfoModule();
+        appInfoModule.setPackageName(appInfoEntity.getPkName());
+        appInfoModule.setDownloadPath(appInfoEntity.getDlPath());
+        appInfoModule.setAppVersion(appInfoEntity.getVersion());
+        appInfoModule.setRemark(appInfoEntity.getRemark());
+
+        return appInfoModule;
     }
 }
