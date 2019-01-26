@@ -24,7 +24,7 @@ public class AppInfoServiceImpl implements IAppInfoService {
 
     @Override
     public AppInfoModule fetchLastestAppInfo(AppInfoQueryModule appInfoQueryModule) throws UserServiceException{
-        Criteria criteria = Criteria.where("pkName").is(appInfoQueryModule.getAppName()).and("type").is(appInfoQueryModule.getAppType());
+        Criteria criteria = Criteria.where("name").is(appInfoQueryModule.getAppName()).and("type").is(appInfoQueryModule.getAppType());
         AppInfoEntity appInfoEntity = mongoTemplate.findOne(new Query(criteria).with(new Sort(Sort.Direction.DESC,"upgradeTime")).skip(0).limit(1), AppInfoEntity.class);
 
         return MappingEntity2ModelConverter.ConvertAppInfo(appInfoEntity);

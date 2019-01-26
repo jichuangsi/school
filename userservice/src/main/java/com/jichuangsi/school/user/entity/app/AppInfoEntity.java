@@ -8,6 +8,7 @@ public class AppInfoEntity {
 
     @Id
     private String id;
+    private String name;
     private String pkName;
     private String type;
     private String dlPath;
@@ -69,5 +70,13 @@ public class AppInfoEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
