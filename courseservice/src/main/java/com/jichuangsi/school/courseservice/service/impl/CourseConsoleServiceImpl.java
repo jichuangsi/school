@@ -18,11 +18,13 @@ import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.util.DateFormateUtil;
 import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -86,19 +88,22 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         }
         if(courseForTeacher.getQuestions()!=null) {
             List<String> questionIds = new ArrayList<String>();
+            Update update = new Update();
             for (QuestionForTeacher questionForTeacher : courseForTeacher.getQuestions()) {
                 questionForTeacher.setGradeId(transferTeacher.getGradeId());
                 questionForTeacher.setSubjectId(transferTeacher.getSubjectId());
                 Question question = MappingModel2EntityConverter.ConvertTeacherQuestion(questionForTeacher);
                 question = (Question) courseConsoleRepository.save(question);
-                if (question == null) {
+                /*if (question == null) {
                     throw new TeacherCourseServiceException(ResultCode.QUESTION_FAIL_SAVE);
-                }
+                }*/
                 questionIds.add(question.getId());
             }
-            course.setQuestionIds(questionIds);
+            //course.setQuestionIds(questionIds);
+            update.set("questionIds",questionIds);
+            UpdateResult result = mongoTemplate.upsert(new Query(Criteria.where("_id").is(course.getId())),update,Course.class);
         }
-        mongoTemplate.save(course);
+        //mongoTemplate.save(course);
     }
 
     @Override

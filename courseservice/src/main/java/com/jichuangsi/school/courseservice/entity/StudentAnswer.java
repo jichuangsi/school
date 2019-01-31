@@ -3,7 +3,7 @@ package com.jichuangsi.school.courseservice.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "school_course_student_answer")
+@Document(collection = "school_student_answer_collection")
 public class StudentAnswer {
 
     @Id

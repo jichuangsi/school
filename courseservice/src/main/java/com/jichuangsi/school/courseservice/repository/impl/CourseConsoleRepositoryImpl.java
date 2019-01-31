@@ -40,13 +40,13 @@ public class CourseConsoleRepositoryImpl<T> implements CourseConsoleRepository<T
         if(time!=null){
             criteria.and("startTime").lte(time[1]).gte(time[0]);
         }
-        if(!StringUtils.isEmpty(course.getStatus())){
+        if(!StringUtils.isEmpty(course.getStatus())&&!Status.EMPTY.equals(course.getStatus())){
             criteria.and("status").is(course.getStatus());
         }
         if (!StringUtils.isEmpty(keyWord)){
             Pattern pattern= Pattern.compile("^.*"+keyWord+".*$", Pattern.CASE_INSENSITIVE);
             Criteria c1 = Criteria.where("info").regex(pattern);
-            Criteria c2 = Criteria.where("className").regex(pattern);
+            Criteria c2 = Criteria.where("name").regex(pattern);
             criteria.orOperator(c1,c2);
         }
         Query query = new Query(criteria);

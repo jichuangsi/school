@@ -33,7 +33,8 @@ public  final class MappingModel2EntityConverter {
         course.setSubjectId(courseForTeacher.getSubjectId());
         if(courseForTeacher.getQuestions()!=null&&courseForTeacher.getQuestions().size()>0){
             courseForTeacher.getQuestions().forEach(question -> {
-                course.getQuestionIds().add(question.getQuestionId());
+                if(!StringUtils.isEmpty(question.getQuestionId()))
+                    course.getQuestionIds().add(question.getQuestionId());
             });
         }
         if(courseForTeacher.getAttachments()!=null&&courseForTeacher.getAttachments().size()>0){

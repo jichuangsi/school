@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ElementInfoService implements IElementInfoService {
+public class ElementInfoServiceImpl implements IElementInfoService {
 
     private final Map<String, Integer> QUESTION_TYPE = new HashMap<String, Integer>();
 
