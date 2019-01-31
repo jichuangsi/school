@@ -19,7 +19,7 @@ public class QuestionModel {
     private String difficulty;
     private String subjectId;
     private String gradeId;
-    private CustomArrayList<KnowledgeModel> knowledgeModels = new CustomArrayList<KnowledgeModel>();
+    private CustomArrayList<KnowledgeModel> knowledges = new CustomArrayList<KnowledgeModel>();
     private String questionIdMD52;
     private Status questionStatus;
     private String questionPic;
@@ -154,11 +154,11 @@ public class QuestionModel {
         this.questionTypeInCN = questionTypeInCN;
     }
 
-    public CustomArrayList<KnowledgeModel> getKnowledgeModels() {
-        return knowledgeModels;
+    public CustomArrayList<KnowledgeModel> getKnowledges() {
+        return knowledges;
     }
 
-    public void setKnowledgeModels(CustomArrayList<KnowledgeModel> knowledgeModels) {
-        this.knowledgeModels = knowledgeModels;
+    public void setKnowledges(CustomArrayList<KnowledgeModel> knowledges) {
+        this.knowledges = knowledges;
     }
 }
