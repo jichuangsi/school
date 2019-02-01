@@ -29,7 +29,7 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
          {$unwind:{path:"$questionIds",includeArrayIndex:"questionIndex",preserveNullAndEmptyArrays:false}},
          {
          $lookup:{
-         from: "school_course_question",
+         from: "school_question_collection",
          localField: "questionIds",
          foreignField: "_id",
          as: "question"
@@ -42,7 +42,7 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("_id").is(courseId).andOperator(Criteria.where("teacherId").is(teacherId))),
                 unwind("questionIds","questionIndex", false),
-                lookup("school_course_question","questionIds","_id","question"),
+                lookup("school_question_collection","questionIds","_id","question"),
                 unwind("question", false),
                 sort(ASC, "questionIndex"),
                 project().and("question._id").as("_id")
@@ -72,7 +72,7 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("_id").is(courseId).andOperator(Criteria.where("classId").is(classId))),
                 unwind("questionIds","questionIndex", false),
-                lookup("school_course_question","questionIds","_id","question"),
+                lookup("school_question_collection","questionIds","_id","question"),
                 //match(Criteria.where("question.status").is(Status.FINISH.getName())),
                 unwind("question", false),
                 sort(ASC, "questionIndex"),

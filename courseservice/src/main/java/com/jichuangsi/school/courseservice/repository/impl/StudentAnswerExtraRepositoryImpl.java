@@ -24,13 +24,13 @@ public class StudentAnswerExtraRepositoryImpl implements StudentAnswerExtraRepos
     public List<Question> findAllBySubjectIdAndKnowledgeIdAndStudentIdAndResult(String subjectId, String knowledgeId, String studentId, String result){
 
         /*
-        db.getCollection('school_course_student_answer').aggregate(
+        db.getCollection('school_student_answer_collection').aggregate(
          [
          {$match:{$and:[{"studentId":"430c242713e2466fa87717beca952b96"},{"result":"W"}]}},
          //{$unwind:{path:"$questionIds",includeArrayIndex:"questionIndex",preserveNullAndEmptyArrays:false}},
          {
          $lookup:{
-         from: "school_course_question",
+         from: "school_question_collection",
          localField: "questionId",
          foreignField: "_id",
          as: "question"
@@ -48,7 +48,7 @@ public class StudentAnswerExtraRepositoryImpl implements StudentAnswerExtraRepos
          */
         List<AggregationOperation> operations= new ArrayList<AggregationOperation>();
         operations.add(match(Criteria.where("studentId").is(studentId).andOperator(Criteria.where("result").is(result))));
-        operations.add(lookup("school_course_question","questionId","_id","question"));
+        operations.add(lookup("school_question_collection","questionId","_id","question"));
         operations.add(unwind("question", false));
         operations.add(match(Criteria.where("question.knowledges.0").exists(true)));
         if(!StringUtils.isEmpty(subjectId)) operations.add(match(Criteria.where("question.subjectId").is(subjectId)));
