@@ -6,6 +6,7 @@ public class AppInfoModule {
     private String downloadPath;
     private String appVersion;
     private String remark;
+    private boolean mandatory;
 
     public String getPackageName() {
         return packageName;
@@ -37,5 +38,13 @@ public class AppInfoModule {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 }

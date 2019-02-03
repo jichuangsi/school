@@ -14,6 +14,7 @@ public class AppInfoEntity {
     private String dlPath;
     private String version;
     private String remark;
+    private boolean mandatory;
     private long upgradeTime;
 
     public String getId() {
@@ -78,5 +79,13 @@ public class AppInfoEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 }

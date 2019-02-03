@@ -182,6 +182,7 @@ public final class MappingEntity2ModelConverter {
         appInfoModule.setDownloadPath(appInfoEntity.getDlPath());
         appInfoModule.setAppVersion(appInfoEntity.getVersion());
         appInfoModule.setRemark(appInfoEntity.getRemark());
+        appInfoModule.setMandatory(appInfoEntity.isMandatory());
 
         return appInfoModule;
     }
