@@ -61,7 +61,7 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
                 new Query(
                         Criteria.where("teacherId").is(userInfo.getUserId()).and("status").ne(Status.COMPLETED.getName()))
                         .with(new Sort(Sort.Direction.DESC,"publishTime")),Homework.class));
-        countSubmittedHomework(homeworks);
+        countSubmittedAndTotalHomework(homeworks);
         return homeworks;
     }
 
@@ -83,7 +83,7 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
                         .with(new Sort(Sort.Direction.DESC,"publishTime"))
                         .skip((long)((searchHomeworkModel.getPageIndex()-1)*searchHomeworkModel.getPageSize()))
                         .limit(searchHomeworkModel.getPageSize()),Homework.class));
-        countSubmittedHomework(homeworks);
+        countSubmittedAndTotalHomework(homeworks);
         pageHolder.setContent(homeworks);
         return pageHolder;
     }
@@ -159,12 +159,13 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
         homeworkConsoleService.updateHomeWork2NewStatus(userInfo, homeworkModelForTeacher);
     }
 
-    private void countSubmittedHomework(List<HomeworkModelForTeacher> homeworks){
+    private void countSubmittedAndTotalHomework(List<HomeworkModelForTeacher> homeworks){
         homeworks.forEach(h -> {
             h.setSubmitted((int)mongoTemplate.count(new Query(
                     Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId").is(h.getHomeworkId())
                             .and("completedTime").ne(0))), StudentHomeworkCollection.class));
-            h.getStudents().addAll(userInfoService.getStudentsForClassById(h.getClassId()));
+            h.setTotal((int)mongoTemplate.count(new Query(
+                    Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId").is(h.getHomeworkId()))), StudentHomeworkCollection.class));
         });
     }
 

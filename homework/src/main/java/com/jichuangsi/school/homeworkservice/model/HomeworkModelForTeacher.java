@@ -9,6 +9,7 @@ public class HomeworkModelForTeacher extends HomeworkModel{
     private List<QuestionModelForTeacher> questions = new ArrayList<QuestionModelForTeacher>();
     private List<TransferStudent> students = new ArrayList<TransferStudent>();
     private int submitted;
+    private int total;
 
     public List<QuestionModelForTeacher> getQuestions() {
         return questions;
@@ -32,5 +33,13 @@ public class HomeworkModelForTeacher extends HomeworkModel{
 
     public void setSubmitted(int submitted) {
         this.submitted = submitted;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }
