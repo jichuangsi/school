@@ -166,14 +166,15 @@ public class StudentCourseServiceImpl implements IStudentCourseService{
                 || StringUtils.isEmpty(questionId)
                 || (StringUtils.isEmpty(answer.getAnswerForObjective()) && StringUtils.isEmpty(answer.getStubForSubjective())))
             throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        synchronized (userInfo.getUserId().intern()){//需要实现分布式锁
+        String userId = userInfo.getUserId();
+        synchronized (userId.intern()){//需要实现分布式锁
             Optional<Question> question = questionRepository.findById(questionId);
             if(!question.isPresent()) throw new StudentCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
             if(Status.FINISH.getName().equalsIgnoreCase(question.get().getStatus())) throw new StudentCourseServiceException(ResultCode.QUESTION_COMPLETE);
             if(!StringUtils.isEmpty(answer.getAnswerForObjective())){
                 answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
             }
-            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userInfo.getUserId()));
+            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userId));
             StudentAnswer answer2Return = null;
             if(result.isPresent()){
                 StudentAnswer answer2Update = result.get();
