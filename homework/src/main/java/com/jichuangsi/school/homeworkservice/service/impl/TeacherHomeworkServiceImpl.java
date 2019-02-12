@@ -4,10 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.homeworkservice.constant.Result;
 import com.jichuangsi.school.homeworkservice.constant.ResultCode;
 import com.jichuangsi.school.homeworkservice.constant.Status;
-import com.jichuangsi.school.homeworkservice.entity.Homework;
-import com.jichuangsi.school.homeworkservice.entity.Question;
-import com.jichuangsi.school.homeworkservice.entity.StudentAnswer;
-import com.jichuangsi.school.homeworkservice.entity.TeacherAnswer;
+import com.jichuangsi.school.homeworkservice.entity.*;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.*;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
@@ -60,11 +57,12 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
     @Override
     public List<HomeworkModelForTeacher> getHomeworksList(UserInfoForToken userInfo) throws TeacherHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
-        List<Homework> homeworks = mongoTemplate.find(
+        List<HomeworkModelForTeacher> homeworks = convertHomeworkList(mongoTemplate.find(
                 new Query(
                         Criteria.where("teacherId").is(userInfo.getUserId()).and("status").ne(Status.COMPLETED.getName()))
-                        .with(new Sort(Sort.Direction.DESC,"publishTime")),Homework.class);
-        return convertHomeworkList(homeworks);
+                        .with(new Sort(Sort.Direction.DESC,"publishTime")),Homework.class));
+        countSubmittedHomework(homeworks);
+        return homeworks;
     }
 
     @Override
@@ -79,13 +77,14 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
         );
         pageHolder.setPageNum(searchHomeworkModel.getPageIndex());
         pageHolder.setPageSize(searchHomeworkModel.getPageSize());
-        List<Homework> homeworks = mongoTemplate.find(
+        List<HomeworkModelForTeacher> homeworks = convertHomeworkList(mongoTemplate.find(
                 new Query(
                         Criteria.where("teacherId").is(userInfo.getUserId()).and("status").is(Status.COMPLETED.getName()))
                         .with(new Sort(Sort.Direction.DESC,"publishTime"))
                         .skip((long)((searchHomeworkModel.getPageIndex()-1)*searchHomeworkModel.getPageSize()))
-                        .limit(searchHomeworkModel.getPageSize()),Homework.class);
-        pageHolder.setContent(convertHomeworkList(homeworks));
+                        .limit(searchHomeworkModel.getPageSize()),Homework.class));
+        countSubmittedHomework(homeworks);
+        pageHolder.setContent(homeworks);
         return pageHolder;
     }
 
@@ -158,6 +157,15 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
     @Override
     public void updateParticularHomeworkStatus(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException{
         homeworkConsoleService.updateHomeWork2NewStatus(userInfo, homeworkModelForTeacher);
+    }
+
+    private void countSubmittedHomework(List<HomeworkModelForTeacher> homeworks){
+        homeworks.forEach(h -> {
+            h.setSubmitted((int)mongoTemplate.count(new Query(
+                    Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId").is(h.getHomeworkId())
+                            .and("completedTime").ne(0))), StudentHomeworkCollection.class));
+            h.getStudents().addAll(userInfoService.getStudentsForClassById(h.getClassId()));
+        });
     }
 
     private QuestionModelForTeacher convertAndFetchAnswerForQuestion(String teacherId, Question question){

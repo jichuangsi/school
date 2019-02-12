@@ -8,6 +8,7 @@ import java.util.List;
 public class HomeworkModelForTeacher extends HomeworkModel{
     private List<QuestionModelForTeacher> questions = new ArrayList<QuestionModelForTeacher>();
     private List<TransferStudent> students = new ArrayList<TransferStudent>();
+    private int submitted;
 
     public List<QuestionModelForTeacher> getQuestions() {
         return questions;
@@ -23,5 +24,13 @@ public class HomeworkModelForTeacher extends HomeworkModel{
 
     public void setStudents(List<TransferStudent> students) {
         this.students = students;
+    }
+
+    public int getSubmitted() {
+        return submitted;
+    }
+
+    public void setSubmitted(int submitted) {
+        this.submitted = submitted;
     }
 }
