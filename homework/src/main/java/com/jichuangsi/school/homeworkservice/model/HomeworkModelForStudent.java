@@ -5,7 +5,8 @@ import java.util.List;
 
 public class HomeworkModelForStudent extends HomeworkModel{
 
-    List<QuestionModelForStudent> questions = new ArrayList<QuestionModelForStudent>();
+    private List<QuestionModelForStudent> questions = new ArrayList<QuestionModelForStudent>();
+    private boolean completed;
 
     public List<QuestionModelForStudent> getQuestions() {
         return questions;
@@ -15,4 +16,11 @@ public class HomeworkModelForStudent extends HomeworkModel{
         this.questions = questions;
     }
 
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 }

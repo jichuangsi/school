@@ -1,7 +1,7 @@
 package com.jichuangsi.school.homeworkservice.constant;
 
 public enum Status {
-    EMPTY("", 0), PROGRESS("P", 1), NOTSTART("N", 2), FINISH("F", 3);
+    EMPTY("", 0), PROGRESS("P", 1), NOTSTART("N", 2), FINISH("F", 3), COMPLETED("C", 4);
     private String name;
     private int index;
 

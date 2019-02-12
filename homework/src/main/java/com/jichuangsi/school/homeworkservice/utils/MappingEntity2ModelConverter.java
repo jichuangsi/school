@@ -36,7 +36,7 @@ public final class MappingEntity2ModelConverter {
         return homeworkModelForTeacher;
     }
 
-    public static final HomeworkModelForStudent ConvertStudentCourse(Homework homework){
+    public static final HomeworkModelForStudent ConvertStudentHomework(Homework homework){
         HomeworkModelForStudent homeworkModelForStudent = new HomeworkModelForStudent();
         homeworkModelForStudent.setHomeworkId(homework.getId());
         homeworkModelForStudent.setHomeworkName(homework.getName());

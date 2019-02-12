@@ -5,7 +5,9 @@ import com.jichuangsi.school.homeworkservice.constant.HomeworkSort;
 import com.jichuangsi.school.homeworkservice.constant.ResultCode;
 import com.jichuangsi.school.homeworkservice.constant.Status;
 import com.jichuangsi.school.homeworkservice.entity.Homework;
+import com.jichuangsi.school.homeworkservice.entity.HomeworkSummary;
 import com.jichuangsi.school.homeworkservice.entity.Question;
+import com.jichuangsi.school.homeworkservice.entity.StudentHomeworkCollection;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
 import com.jichuangsi.school.homeworkservice.model.QuestionModel;
@@ -14,6 +16,7 @@ import com.jichuangsi.school.homeworkservice.model.SearchHomeworkModel;
 import com.jichuangsi.school.homeworkservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.homeworkservice.model.common.Elements;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
+import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.homeworkservice.model.transfer.TransferTeacher;
 import com.jichuangsi.school.homeworkservice.repository.HomeworkConsoleRepository;
 import com.jichuangsi.school.homeworkservice.repository.QuestionRepository;
@@ -194,22 +197,41 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
     @Override
     public void updateHomeWork2NewStatus(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId()) || Status.EMPTY.equals(homeworkModelForTeacher.getHomeworkStatus())) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
-        Homework homework = mongoTemplate.findOne(new Query(Criteria.where("id").is(homeworkModelForTeacher.getHomeworkId()).and("teacherId").is(userInfo.getUserId())),Homework.class);
-        if(homework!=null){
-            Homework updatedHomework = MappingModel2EntityConverter.ConvertTeacherHomework(userInfo, homeworkModelForTeacher);
-            Criteria criteria = Criteria.where("id").is(updatedHomework.getId());
-            Update update = new Update();
-            if(!StringUtils.isEmpty(updatedHomework.getStatus())){
-                update.set("status",updatedHomework.getStatus());
-                if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())){
-                    update.set("publishTime",new Date().getTime());
+        String hwId = homeworkModelForTeacher.getHomeworkId();
+        synchronized (hwId.intern()){
+            Homework homework = mongoTemplate.findOne(new Query(Criteria.where("id").is(hwId).and("teacherId").is(userInfo.getUserId())),Homework.class);
+            if(homework!=null){
+                Homework updatedHomework = MappingModel2EntityConverter.ConvertTeacherHomework(userInfo, homeworkModelForTeacher);
+                Criteria criteria = Criteria.where("id").is(updatedHomework.getId());
+                Update update = new Update();
+                if(!StringUtils.isEmpty(updatedHomework.getStatus())){
+                    update.set("status",updatedHomework.getStatus());
+                    if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())){
+                        update.set("publishTime",new Date().getTime());
+                    }
                 }
+                update.set("updateTime",new Date().getTime());
+                UpdateResult updateResult = mongoTemplate.updateFirst(new Query(criteria),update,Homework.class);
+                if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())&&updateResult.getModifiedCount()>0){
+                    this.assignHomework2Student(homework);
+                }
+            }else{
+                throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_STATUS_ERROR);
             }
-            update.set("updateTime",new Date().getTime());
-            mongoTemplate.updateFirst(new Query(criteria),update,Homework.class);
-        }else{
-            throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_STATUS_ERROR);
         }
+    }
+
+    private void assignHomework2Student(Homework homework) throws TeacherHomeworkServiceException{
+        if(homework == null) throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
+        List<TransferStudent> students = userInfoService.getStudentsForClassById(homework.getClassId());
+        if(students.isEmpty()) throw new TeacherHomeworkServiceException(ResultCode.STUDENT_INFO_NOT_EXISTED);
+        students.forEach(s ->{
+            Update update = new Update();
+            update.set("studentId", s.getStudentId());
+            update.set("studentName", s.getStudentName());
+            update.addToSet("homeworks", new HomeworkSummary(homework.getId(), homework.getName()));
+            mongoTemplate.upsert(new Query(Criteria.where("studentId").is(s.getStudentId())),update, StudentHomeworkCollection.class);
+        });
     }
 
     private List<HomeworkModelForTeacher> convertHomeworkList(List<Homework> homeworks){
