@@ -5,6 +5,7 @@ public class TransferStudent {
     private String studentId;
     private String studentAccount;
     private String studentName;
+    private long completedTime;
 
     public TransferStudent(){}
 
@@ -36,5 +37,13 @@ public class TransferStudent {
 
     public void setStudentAccount(String studentAccount) {
         this.studentAccount = studentAccount;
+    }
+
+    public long getCompletedTime() {
+        return completedTime;
+    }
+
+    public void setCompletedTime(long completedTime) {
+        this.completedTime = completedTime;
     }
 }

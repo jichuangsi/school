@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
@@ -106,12 +104,18 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
             questionModelForTeachers.add(convertAndFetchAnswerForQuestion(userInfo.getUserId(), q));
         });
         homeworkModelForTeacher.getQuestions().addAll(questionModelForTeachers);
-        List<StudentHomeworkCollection> students = mongoTemplate.find(new Query(
-                Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkModelForTeacher.getHomeworkId()))), StudentHomeworkCollection.class);
-        students.forEach(s -> {
+        List<StudentHomeworkCollection> studentHomwokrs = mongoTemplate.find(new Query(
+                Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId")
+                        .is(homeworkModelForTeacher.getHomeworkId())))
+                , StudentHomeworkCollection.class);
+        List<TransferStudent> students = new ArrayList<TransferStudent>();
+        studentHomwokrs.forEach(s -> {
+            Optional<HomeworkSummary> homeworkSummary = s.getHomeworks().stream().filter(h->h.getHomeworkId().equalsIgnoreCase(homeworkId)).findFirst();
             TransferStudent ts = new TransferStudent(s.getStudentId(), s.getStudentAccount(), s.getStudentName());
-            homeworkModelForTeacher.getStudents().add(ts);
+            ts.setCompletedTime(homeworkSummary.isPresent()?homeworkSummary.get().getCompletedTime():0);
+            students.add(ts);
         });
+        homeworkModelForTeacher.getStudents().addAll(students.stream().sorted(Comparator.comparing(TransferStudent::getCompletedTime).reversed()).collect(Collectors.toList()));
         return homeworkModelForTeacher;
     }
 
