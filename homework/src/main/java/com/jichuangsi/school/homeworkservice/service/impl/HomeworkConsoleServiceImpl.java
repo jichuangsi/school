@@ -228,6 +228,7 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
         students.forEach(s ->{
             Update update = new Update();
             update.set("studentId", s.getStudentId());
+            update.set("studentAccount", s.getStudentAccount());
             update.set("studentName", s.getStudentName());
             update.addToSet("homeworks", new HomeworkSummary(homework.getId(), homework.getName()));
             mongoTemplate.upsert(new Query(Criteria.where("studentId").is(s.getStudentId())),update, StudentHomeworkCollection.class);

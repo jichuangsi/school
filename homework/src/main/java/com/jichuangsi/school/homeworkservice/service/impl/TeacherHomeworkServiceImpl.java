@@ -8,6 +8,7 @@ import com.jichuangsi.school.homeworkservice.entity.*;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.*;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
+import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.homeworkservice.repository.HomeworkRepository;
 import com.jichuangsi.school.homeworkservice.repository.QuestionRepository;
 import com.jichuangsi.school.homeworkservice.repository.StudentAnswerRepository;
@@ -17,6 +18,7 @@ import com.jichuangsi.school.homeworkservice.service.ITeacherHomeworkService;
 import com.jichuangsi.school.homeworkservice.service.IUserInfoService;
 import com.jichuangsi.school.homeworkservice.utils.MappingEntity2ModelConverter;
 import com.jichuangsi.school.homeworkservice.utils.MappingModel2EntityConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -54,6 +56,9 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
     @Resource
     private MongoTemplate mongoTemplate;
 
+    @Value("${com.jichuangsi.school.result.page-size}")
+    private int defaultPageSize;
+
     @Override
     public List<HomeworkModelForTeacher> getHomeworksList(UserInfoForToken userInfo) throws TeacherHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
@@ -68,6 +73,7 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
     @Override
     public PageHolder<HomeworkModelForTeacher> getHistoryHomeworksList(UserInfoForToken userInfo, SearchHomeworkModel searchHomeworkModel) throws TeacherHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        if(searchHomeworkModel.getPageSize() == 0) searchHomeworkModel.setPageSize(defaultPageSize);
         PageHolder<HomeworkModelForTeacher> pageHolder = new PageHolder<HomeworkModelForTeacher>();
         pageHolder.setTotal((int)
                 mongoTemplate.count(
@@ -100,7 +106,12 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
             questionModelForTeachers.add(convertAndFetchAnswerForQuestion(userInfo.getUserId(), q));
         });
         homeworkModelForTeacher.getQuestions().addAll(questionModelForTeachers);
-        homeworkModelForTeacher.getStudents().addAll(userInfoService.getStudentsForClassById(homework.getClassId()));
+        List<StudentHomeworkCollection> students = mongoTemplate.find(new Query(
+                Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkModelForTeacher.getHomeworkId()))), StudentHomeworkCollection.class);
+        students.forEach(s -> {
+            TransferStudent ts = new TransferStudent(s.getStudentId(), s.getStudentAccount(), s.getStudentName());
+            homeworkModelForTeacher.getStudents().add(ts);
+        });
         return homeworkModelForTeacher;
     }
 

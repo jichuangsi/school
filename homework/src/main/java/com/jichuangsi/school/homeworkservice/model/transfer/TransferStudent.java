@@ -8,6 +8,12 @@ public class TransferStudent {
 
     public TransferStudent(){}
 
+    public TransferStudent(String studentId, String studentAccount, String studentName){
+        this.studentId = studentId;
+        this.studentAccount = studentAccount;
+        this.studentName = studentName;
+    }
+
     public String getStudentId() {
         return studentId;
     }

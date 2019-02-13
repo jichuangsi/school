@@ -20,6 +20,7 @@ import com.jichuangsi.school.homeworkservice.service.IAutoVerifyAnswerService;
 import com.jichuangsi.school.homeworkservice.service.IStudentHomeworkService;
 import com.jichuangsi.school.homeworkservice.utils.MappingEntity2ModelConverter;
 import com.jichuangsi.school.homeworkservice.utils.MappingModel2EntityConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -51,6 +52,9 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
     @Resource
     private MongoTemplate mongoTemplate;
 
+    @Value("${com.jichuangsi.school.result.page-size}")
+    private int defaultPageSize;
+
     @Override
     public List<HomeworkModelForStudent> getHomeworksList(UserInfoForToken userInfo) throws StudentHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
@@ -62,6 +66,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
     @Override
     public PageHolder<HomeworkModelForStudent> getHistoryHomeworksList(UserInfoForToken userInfo, SearchHomeworkModel searchHomeworkModel) throws StudentHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        if(searchHomeworkModel.getPageSize() == 0) searchHomeworkModel.setPageSize(defaultPageSize);
         PageHolder<HomeworkModelForStudent> pageHolder = new PageHolder<HomeworkModelForStudent>();
         pageHolder.setTotal(homeworkRepository.countFinishedHomeworkByStudentId(userInfo.getUserId()));
         pageHolder.setPageNum(searchHomeworkModel.getPageIndex());

@@ -12,6 +12,7 @@ public class StudentHomeworkCollection {
     @Id
     private String id;
     private String studentId;
+    private String studentAccount;
     private String studentName;
     private List<HomeworkSummary> homeworks = new ArrayList<HomeworkSummary>();
 
@@ -45,5 +46,13 @@ public class StudentHomeworkCollection {
 
     public void setHomeworks(List<HomeworkSummary> homeworks) {
         this.homeworks = homeworks;
+    }
+
+    public String getStudentAccount() {
+        return studentAccount;
+    }
+
+    public void setStudentAccount(String studentAccount) {
+        this.studentAccount = studentAccount;
     }
 }
