@@ -1,5 +1,6 @@
 package com.jichuangsi.school.homeworkservice.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.homeworkservice.constant.ResultCode;
@@ -103,7 +104,7 @@ public class FileController {
     @PostMapping("/getByString")
     public ResponseModel<Base64TransferFile> getByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody String sub) throws FileServiceException {
         Base64TransferFile base64TransferFile = new Base64TransferFile();
-        HomeworkFile courseFile = fileService.downloadFile(userInfo, sub);
+        HomeworkFile courseFile = fileService.downloadFile(userInfo, JSON.parseObject(sub).getString("sub"));
         base64TransferFile.setName(courseFile.getName());
         base64TransferFile.setContentType(courseFile.getContentType());
         base64TransferFile.setContent(new String(courseFile.getContent()));
@@ -116,7 +117,7 @@ public class FileController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getByFile")
     public ResponseModel<HomeworkFile> getByFile(@ModelAttribute UserInfoForToken userInfo, @RequestBody String sub) throws FileServiceException {
-        return ResponseModel.sucess("", fileService.downloadFile(userInfo, sub));
+        return ResponseModel.sucess("", fileService.downloadFile(userInfo, JSON.parseObject(sub).getString("sub")));
     }
 
     //删除指定文件名图片
