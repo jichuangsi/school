@@ -71,7 +71,7 @@ com:
           size: 100
 custom:
   login:
-    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=
+    content: http://school.jichuangsi.com/imgupload/imgupload.html?a=123&c=
     increaseTime: 600000 #时间按分钟制
     QRsize: 500
     logoPath: http://www.jichuangsi.com/logo/jichuangsi.logo.jpg
