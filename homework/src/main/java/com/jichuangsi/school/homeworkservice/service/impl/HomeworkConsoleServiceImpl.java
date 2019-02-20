@@ -226,12 +226,16 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
         List<TransferStudent> students = userInfoService.getStudentsForClassById(homework.getClassId());
         if(students.isEmpty()) throw new TeacherHomeworkServiceException(ResultCode.STUDENT_INFO_NOT_EXISTED);
         students.forEach(s ->{
-            Update update = new Update();
-            update.set("studentId", s.getStudentId());
-            update.set("studentAccount", s.getStudentAccount());
-            update.set("studentName", s.getStudentName());
-            update.addToSet("homeworks", new HomeworkSummary(homework.getId(), homework.getName()));
-            mongoTemplate.upsert(new Query(Criteria.where("studentId").is(s.getStudentId())),update, StudentHomeworkCollection.class);
+            if(!mongoTemplate.exists(
+                    new Query(Criteria.where("studentId").is(s.getStudentId()).and("homeworks").elemMatch(Criteria.where("homeworkId").is(homework.getId()))),
+                    StudentHomeworkCollection.class)){
+                Update update = new Update();
+                update.set("studentId", s.getStudentId());
+                update.set("studentAccount", s.getStudentAccount());
+                update.set("studentName", s.getStudentName());
+                update.addToSet("homeworks", new HomeworkSummary(homework.getId(), homework.getName()));
+                mongoTemplate.upsert(new Query(Criteria.where("studentId").is(s.getStudentId())),update, StudentHomeworkCollection.class);
+            }
         });
     }
 
