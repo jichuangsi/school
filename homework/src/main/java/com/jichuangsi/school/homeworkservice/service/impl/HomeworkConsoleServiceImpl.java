@@ -10,7 +10,6 @@ import com.jichuangsi.school.homeworkservice.entity.Question;
 import com.jichuangsi.school.homeworkservice.entity.StudentHomeworkCollection;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
-import com.jichuangsi.school.homeworkservice.model.QuestionModel;
 import com.jichuangsi.school.homeworkservice.model.QuestionModelForTeacher;
 import com.jichuangsi.school.homeworkservice.model.SearchHomeworkModel;
 import com.jichuangsi.school.homeworkservice.model.common.DeleteQueryModel;
@@ -214,6 +213,8 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
                 UpdateResult updateResult = mongoTemplate.updateFirst(new Query(criteria),update,Homework.class);
                 if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())&&updateResult.getModifiedCount()>0){
                     this.assignHomework2Student(homework);
+                }else if(Status.COMPLETED.getName().equalsIgnoreCase(updatedHomework.getStatus())&&updateResult.getModifiedCount()>0){
+                    this.finishQuestionInHomework(homework);
                 }
             }else{
                 throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_STATUS_ERROR);
@@ -237,6 +238,13 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
                 mongoTemplate.upsert(new Query(Criteria.where("studentId").is(s.getStudentId())),update, StudentHomeworkCollection.class);
             }
         });
+    }
+
+    private void finishQuestionInHomework(Homework homework) throws TeacherHomeworkServiceException{
+        if(homework == null) throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
+        Update update = new Update();
+        update.set("status", Status.FINISH.getName());
+        mongoTemplate.updateMulti(new Query(Criteria.where("id").in(homework.getQuestionIds())), update, Question.class);
     }
 
     private List<HomeworkModelForTeacher> convertHomeworkList(List<Homework> homeworks){
