@@ -17,6 +17,10 @@ import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
 import com.jichuangsi.school.courseservice.service.IUserInfoService;
 import com.jichuangsi.school.courseservice.util.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -49,6 +53,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Resource
     private IUserInfoService userInfoService;
+
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException{
@@ -177,6 +184,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                     course2Update.setStatus(Status.FINISH.getName());
                     course2Update.setUpdateTime(new Date().getTime());
                     course2Update = courseRepository.save(course2Update);
+                    if(course2Update!=null) {
+                     this.finishQuestionInCourse(course2Update);
+                    }
                 }else if(Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())){
                     throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
                 }else if(Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())){
@@ -391,6 +401,13 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                 throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
             }
         }
+    }
+
+    private void finishQuestionInCourse(Course course) throws TeacherCourseServiceException{
+        if(course == null) throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+        Update update = new Update();
+        update.set("status", Status.FINISH.getName());
+        mongoTemplate.updateMulti(new Query(Criteria.where("id").in(course.getQuestionIds())), update, Question.class);
     }
 
     private List<CourseForTeacher> convertCourseList(List<Course> courses){
