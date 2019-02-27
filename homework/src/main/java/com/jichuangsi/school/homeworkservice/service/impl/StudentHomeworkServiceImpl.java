@@ -86,7 +86,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         HomeworkModelForStudent homeworkModelForStudent = MappingEntity2ModelConverter.ConvertStudentHomework(homework);
         homeworkModelForStudent.getQuestions().addAll(convertQuestionList(questions));
         homeworkModelForStudent.getQuestions().forEach(question ->{
-            question.setFavor(mongoTemplate.exists(new Query(Criteria.where("questionIds").is(question.getQuestionId())), StudentFavorQuestion.class));
+            question.setFavor(mongoTemplate.exists(new Query(Criteria.where("studentId").is(userInfo.getUserId()).and("questionIds").is(question.getQuestionId())), StudentFavorQuestion.class));
             Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), userInfo.getUserId()));
             if(result.isPresent()){
                 question.setAnswerModelForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
