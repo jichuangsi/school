@@ -49,11 +49,11 @@ public class ExamExtraRepositoryImpl implements IExamExtraRepository {
     }
 
     @Override
-    public long countByExamNameLike(String keyword) {
-        Criteria criteria = new Criteria();
+    public long countByExamNameLike(String userId, String keyword) {
+        Criteria criteria = new Criteria("teacherId").is(userId);
         if (!StringUtils.isEmpty(keyword)){
         Pattern pattern= Pattern.compile("^.*"+keyword+".*$", Pattern.CASE_INSENSITIVE);
-        criteria = Criteria.where("examName").regex(pattern);}
+        criteria.andOperator(Criteria.where("examName").regex(pattern)) ;}
         return mongoTemplate.count(new Query(criteria),Exam.class);
     }
 

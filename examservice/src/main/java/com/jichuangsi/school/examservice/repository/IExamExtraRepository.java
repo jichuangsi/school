@@ -12,7 +12,7 @@ public interface IExamExtraRepository {
 
 
     @Transactional
-    long countByExamNameLike(String keyword);
+    long countByExamNameLike(String userId, String keyword);
     @Transactional
     List<Exam> findExamByExamNameAndConditions(String userId, String keyword,Integer pageSize,Integer pageIndex);
     @Transactional

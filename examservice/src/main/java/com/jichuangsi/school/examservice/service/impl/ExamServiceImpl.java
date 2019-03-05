@@ -121,7 +121,7 @@ public class ExamServiceImpl implements IExamService{
         page.setContent(changeExamModelForExam(exams));
         page.setPageSize(examModel.getPageSize());
         page.setPageNum(examModel.getPageIndex());
-        page.setTotal((int)examRepository.countByExamNameLike(examModel.getExamName()));
+        page.setTotal((int)examRepository.countByExamNameLike(userInfo.getUserId(), examModel.getExamName()));
         return page;
     }
 
