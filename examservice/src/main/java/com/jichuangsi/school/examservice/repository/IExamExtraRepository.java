@@ -14,7 +14,7 @@ public interface IExamExtraRepository {
     @Transactional
     long countByExamNameLike(String keyword);
     @Transactional
-    List<Exam> findExamByExamNameAndConditions(String keyword,Integer pageSize,Integer pageIndex);
+    List<Exam> findExamByExamNameAndConditions(String userId, String keyword,Integer pageSize,Integer pageIndex);
     @Transactional
     Exam save(Exam exam);
     @Transactional

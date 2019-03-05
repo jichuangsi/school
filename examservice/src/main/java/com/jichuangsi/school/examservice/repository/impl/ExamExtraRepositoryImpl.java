@@ -34,8 +34,8 @@ public class ExamExtraRepositoryImpl implements IExamExtraRepository {
     }*/
 
     @Override
-    public List<Exam> findExamByExamNameAndConditions(String keyword,Integer pageSize,Integer pageIndex) {
-        Criteria criteria = new Criteria();
+    public List<Exam> findExamByExamNameAndConditions(String userId, String keyword,Integer pageSize,Integer pageIndex) {
+        Criteria criteria = new Criteria("teacherId").is(userId);
         if(!StringUtils.isEmpty(keyword)){
             Pattern pattern= Pattern.compile("^.*"+keyword+".*$", Pattern.CASE_INSENSITIVE);
             Criteria    c1 = Criteria.where("examName").regex(pattern);

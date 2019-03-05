@@ -32,7 +32,7 @@ public interface IExamService {
     List<QuestionModel> getQuestions(String examId);
 
     @Transactional
-    PageHolder<ExamModel> getExamByExamName(ExamModel examModel);
+    PageHolder<ExamModel> getExamByExamName(UserInfoForToken userInfo, ExamModel examModel);
 
     @Transactional
     List<Map<String,Object>> getQuestionTypegroup(String eid);

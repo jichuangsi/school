@@ -79,7 +79,7 @@ public class ExamController {
         if(examModel==null){
             throw new ExamException(ResultCode.PARAM_MISS_MSG);
         }
-        return ResponseModel.sucess("",examService.getExamByExamName(examModel));
+        return ResponseModel.sucess("",examService.getExamByExamName(userInfo, examModel));
     }
 
     @ApiOperation(value = "获取exam和exam内的试题集", notes = "")
