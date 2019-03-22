@@ -22,9 +22,18 @@ public class Course {
     private String subjectName;
     private String subjectId;
     private List<Attachment> attachments = new ArrayList<Attachment>();
+    private List<String> questionIds = new ArrayList<String>();
 
     private int pageNum;
     private int pageSize;
+
+    public List<String> getQuestionIds() {
+        return questionIds;
+    }
+
+    public void setQuestionIds(List<String> questionIds) {
+        this.questionIds = questionIds;
+    }
 
     public String getSubjectName() {
         return subjectName;

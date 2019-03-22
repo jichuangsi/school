@@ -1,7 +1,6 @@
 package com.jichuangsi.school.courseservice.repository;
 
 import com.jichuangsi.school.courseservice.entity.Course;
-import com.jichuangsi.school.courseservice.entity.Question;
 
 import java.util.List;
 
@@ -18,4 +17,6 @@ public interface CourseExtraRepository{
     List<Course> findHistoryCourseByClassIdAndStatus(String classId, int pageNum, int pageSize);
 
     Course findCourseByTeacherIdAndQuestionId(String teacherId, String questionId);
+
+    List<Course> findOneWeekCourseByClassIdAndStatusAndEndTime(String classId,long endTime);
 }

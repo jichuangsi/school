@@ -16,4 +16,6 @@ public class ResultCode {
 	public static final String TOKEN_CHECK_ERR_MSG = "token校验异常";
 	public static final String SYS_ERROR_MSG = "系统繁忙";
 	public static final String SYS_BUSY_MSG = "系统繁忙";
+
+	public static final String SELECT_NULL_MSG = "查无此信息";
 }

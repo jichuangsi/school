@@ -6,6 +6,24 @@ public class Class {
     private String className;
     private long createTime;
     private long updateTime;
+    private String schoolId;
+    private String gradeId;
+
+    public String getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(String schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    public String getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(String gradeId) {
+        this.gradeId = gradeId;
+    }
 
     public Class(){}
 

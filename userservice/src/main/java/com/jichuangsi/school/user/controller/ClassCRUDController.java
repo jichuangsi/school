@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @RestController
 @Api("关于班级的crud")
@@ -32,12 +31,12 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/saveClass/{gradeId}",consumes =  "application/json")
-    public ResponseModel saveClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @RequestBody Class classModel) throws ClassServiceException{
+    @PostMapping(value = "/saveClass",consumes =  "application/json")
+    public ResponseModel saveClass(@ModelAttribute UserInfoForToken userInfo, @RequestBody Class classModel) throws ClassServiceException{
         if(userInfo==null||classModel==null){
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
         }
-        schoolClassService.saveOrUpClass(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), gradeId, classModel);
+        schoolClassService.saveOrUpClass(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), classModel.getGradeId(), classModel);
         return ResponseModel.sucessWithEmptyData("");
     }
 
@@ -46,7 +45,7 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @DeleteMapping(value = "/deleteClass/{gradeId}/{classId}",consumes =  "application/json")
+    @GetMapping(value = "/deleteClass/{gradeId}/{classId}",consumes =  "application/json")
     public ResponseModel deleteClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException {
         if(userInfo==null|| StringUtils.isEmpty(gradeId)|| StringUtils.isEmpty(classId)){
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
@@ -66,4 +65,6 @@ public class ClassCRUDController {
         }
         return ResponseModel.sucess("",schoolClassService.getClassInfo(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), gradeId, classId));
     }
+
+
 }

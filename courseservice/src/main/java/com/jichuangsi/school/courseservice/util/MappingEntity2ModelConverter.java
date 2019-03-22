@@ -53,6 +53,7 @@ public final class MappingEntity2ModelConverter {
         courseForStudent.setUpdateTime(course.getUpdateTime());
         courseForStudent.setSubjectName(course.getSubjectName());
         courseForStudent.setSubjectId(course.getSubjectId());
+        courseForStudent.setQuestionIds(course.getQuestionIds());
         return courseForStudent;
     }
 
