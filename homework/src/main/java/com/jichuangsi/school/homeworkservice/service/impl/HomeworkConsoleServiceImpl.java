@@ -26,6 +26,7 @@ import com.jichuangsi.school.homeworkservice.utils.MappingEntity2ModelConverter;
 import com.jichuangsi.school.homeworkservice.utils.MappingModel2EntityConverter;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -58,6 +59,9 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
 
     @Resource
     private QuestionRepository questionRepository;
+
+    @Value("${com.jichuangsi.school.result.page-size}")
+    private int defaultPageSize;
 
     @Override
     public void saveNewHomework(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException {
@@ -103,6 +107,7 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
     @Override
     public PageHolder<HomeworkModelForTeacher> getSortedHomeworksList(UserInfoForToken userInfo, SearchHomeworkModel searchHomeworkModel) throws TeacherHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        if(searchHomeworkModel.getPageSize() == 0) searchHomeworkModel.setPageSize(defaultPageSize);
         Criteria criteria = Criteria.where("teacherId").is(userInfo.getUserId());
         if(!StringUtils.isEmpty(searchHomeworkModel.getTime())){
             criteria.and("endTime").lte(Long.valueOf(searchHomeworkModel.getTime())+86400000l).gte(Long.valueOf(searchHomeworkModel.getTime()));
