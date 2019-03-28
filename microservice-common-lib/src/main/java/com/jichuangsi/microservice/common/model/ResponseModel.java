@@ -9,6 +9,8 @@ public class ResponseModel<T> {
 	private String msg;
 	private T data;
 
+	public ResponseModel() { }
+
 	public ResponseModel(String tranId, String code, String msg, T data) {
 		this.tranId = tranId;
 		this.code = code;

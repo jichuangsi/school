@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "school_grade")
@@ -13,7 +14,7 @@ public class GradeInfo {
     private String name;
     private List<String> classIds = new ArrayList<String>();
     private long createTime;
-    private long updateTime;
+    private long updateTime = new Date().getTime();
 
     public String getId() {
         return id;

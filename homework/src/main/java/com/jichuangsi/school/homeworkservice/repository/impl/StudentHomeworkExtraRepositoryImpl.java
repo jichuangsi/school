@@ -12,10 +12,8 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
 public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraRepository {
 
@@ -23,7 +21,7 @@ public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraR
     private MongoTemplate mongoTemplate;
 
     @Override
-    public List<Homework> findProgressHomeworkByStudentId(String studentId){
+    public List<Homework> findProgressHomeworkByStudentId(String studentId) {
         /**
          db.getCollection('school_student_homework_collection').aggregate(
          [
@@ -48,7 +46,7 @@ public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraR
                 match(Criteria.where("studentId").is(studentId)),
                 unwind("$homeworks", false),
                 //match(Criteria.where("homeworks.completedTime").is(0)),
-                lookup("school_homework","homeworks.homeworkId","_id","homework"),
+                lookup("school_homework", "homeworks.homeworkId", "_id", "homework"),
                 unwind("$homework", false),
                 match(Criteria.where("homework.status").is(Status.PROGRESS.getName())),
                 sort(DESC, "homework.publishTime"),
@@ -67,33 +65,33 @@ public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraR
                         .and("homework.subjectName").as("subjectName")
                         .and("homework.subjectId").as("subjectId")
         );
-        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class,Homework.class).getMappedResults();
+        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class, Homework.class).getMappedResults();
     }
 
     @Override
-    public int countFinishedHomeworkByStudentId(String studentId){
+    public int countFinishedHomeworkByStudentId(String studentId) {
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("studentId").is(studentId)),
                 unwind("$homeworks", false),
                 //match(Criteria.where("homeworks.completedTime").is(0)),
-                lookup("school_homework","homeworks.homeworkId","_id","homework"),
+                lookup("school_homework", "homeworks.homeworkId", "_id", "homework"),
                 unwind("$homework", false),
-                match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(),Status.COMPLETED.getName()))));
-        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class,Homework.class).getMappedResults().size();
+                match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(), Status.COMPLETED.getName()))));
+        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class, Homework.class).getMappedResults().size();
     }
 
     @Override
-    public List<Homework> findFinishedHomeworkByStudentId(String studentId, int pageNum, int pageSize){
+    public List<Homework> findFinishedHomeworkByStudentId(String studentId, int pageNum, int pageSize) {
         Aggregation agg = Aggregation.newAggregation(
                 match(Criteria.where("studentId").is(studentId)),
                 unwind("$homeworks", false),
                 //match(Criteria.where("homeworks.completedTime").is(0)),
-                lookup("school_homework","homeworks.homeworkId","_id","homework"),
+                lookup("school_homework", "homeworks.homeworkId", "_id", "homework"),
                 unwind("$homework", false),
-                match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(),Status.COMPLETED.getName()))),
+                match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(), Status.COMPLETED.getName()))),
                 sort(DESC, "homework.publishTime"),
-                skip((long)((pageNum-1)*pageSize)),
-                limit((long)pageSize),
+                skip((long) ((pageNum - 1) * pageSize)),
+                limit((long) pageSize),
                 project().and("homework._id").as("_id")
                         .and("homework.name").as("name")
                         .and("homework.info").as("info")
@@ -109,6 +107,38 @@ public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraR
                         .and("homework.subjectName").as("subjectName")
                         .and("homework.subjectId").as("subjectId")
         );
-        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class,Homework.class).getMappedResults();
+        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class, Homework.class).getMappedResults();
+    }
+
+    @Override
+    public List<Homework> findFinishedHomeWorkByStudentIdAndEndTime(String studentId, long endTime, String subject) {
+        Aggregation agg = Aggregation.newAggregation(
+                match(Criteria.where("studentId").is(studentId)),
+                unwind("$homeworks", false),
+                //match(Criteria.where("homeworks.publishTime").gte(0)),
+                lookup("school_homework", "homeworks.homeworkId", "_id", "homework"),
+                unwind("$homework", false),
+                match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(), Status.COMPLETED.getName()))),
+                match(Criteria.where("homework.endTime").gte(endTime)),
+                match(Criteria.where("homework.subjectName").is(subject)),
+                sort(DESC, "homework.publishTime"),
+                project().and("homework._id").as("_id")
+                        .and("homework.name").as("name")
+                        .and("homework.info").as("info")
+                        .and("homework.status").as("status")
+                        .and("homework.teacherId").as("teacherId")
+                        .and("homework.teacherName").as("teacherName")
+                        .and("homework.classId").as("classId")
+                        .and("homework.className").as("className")
+                        .and("homework.publishTime").as("publishTime")
+                        .and("homework.endTime").as("endTime")
+                        .and("homework.createTime").as("createTime")
+                        .and("homework.updateTime").as("updateTime")
+                        .and("homework.subjectName").as("subjectName")
+                        .and("homework.subjectId").as("subjectId")
+                        .and("homework.questionIds").as("questionIds")
+        );
+        return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class, Homework.class).getMappedResults();
+
     }
 }

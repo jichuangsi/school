@@ -5,11 +5,15 @@ import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
+import com.jichuangsi.school.user.entity.org.GradeInfo;
+import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
 import com.jichuangsi.school.user.model.org.Class;
+import com.jichuangsi.school.user.model.school.GradeModel;
+import com.jichuangsi.school.user.model.school.SchoolModel;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -92,5 +96,24 @@ public  final class MappingModel2EntityConverter {
         classInfo.setUpdateTime(new Date().getTime());
 
         return classInfo;
+    }
+
+    public static SchoolInfo CONVERTERFROMSCHOOLMODEL(SchoolModel model){
+        SchoolInfo info = new SchoolInfo();
+        info.setAddress(model.getAddress());
+        info.setName(model.getSchoolName());
+        info.setCreateTime(null == model.getCreatedTime() ? new Date().getTime() : model.getCreatedTime());
+        info.setUpdateTime(null == model.getUpdateTime() ? new Date().getTime() : model.getUpdateTime());
+        info.setId(model.getSchoolId());
+        return info;
+    }
+
+    public static GradeInfo CONVERTERFROMGRADEMODEL(GradeModel model){
+        GradeInfo info = new GradeInfo();
+        info.setId(model.getGradeId());
+        info.setCreateTime(null == model.getCreatedTime() ? new Date().getTime() : model.getCreatedTime());
+        info.setName(model.getGradeName());
+        info.setUpdateTime(null == model.getUpdateTime() ? new Date().getTime() : model.getUpdateTime());
+        return info;
     }
 }

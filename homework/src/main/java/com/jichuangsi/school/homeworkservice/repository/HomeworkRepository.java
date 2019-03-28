@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface HomeworkRepository extends MongoRepository<Homework, String>, StudentHomeworkExtraRepository{
 
     Homework findFirstByIdOrderByUpdateTimeDesc(String homeworkId);
+
+    Homework findByTeacherIdAndId(String teacherId,String homeId);
 }

@@ -48,4 +48,6 @@ public interface IStudentCourseService {
 
     @Transactional
     List findSimilarQuestionsList(UserInfoForToken userInfo, QuestionQueryModel questionQueryModel) throws StudentCourseServiceException;
+
+    List<CourseForStudent> getCourseOnWeek(String classId) throws StudentCourseServiceException;
 }

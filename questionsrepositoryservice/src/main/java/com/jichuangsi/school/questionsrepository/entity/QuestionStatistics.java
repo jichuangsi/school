@@ -12,7 +12,8 @@ public class QuestionStatistics {
     private Integer answerCount;//作答次数
     private Double average;//平均的得分率
 
-    public QuestionStatistics(){}
+    public QuestionStatistics() {
+    }
 
     public QuestionStatistics(String qidMD52, Integer addPapercount, Integer answerCount, double average) {
         this.qidMD52 = qidMD52;

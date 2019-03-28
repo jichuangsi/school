@@ -26,4 +26,6 @@ public interface IStudentHomeworkService {
 
     @Transactional
     void submitParticularHomework(UserInfoForToken userInfo, String homeworkId) throws StudentHomeworkServiceException;
+
+    List<HomeworkModelForStudent> getHomeworksListOnWeek(String userId,String subject) throws StudentHomeworkServiceException;
 }

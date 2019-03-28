@@ -52,6 +52,7 @@ public final class MappingEntity2ModelConverter {
         homeworkModelForStudent.setUpdateTime(homework.getUpdateTime());
         homeworkModelForStudent.setSubjectName(homework.getSubjectName());
         homeworkModelForStudent.setSubjectId(homework.getSubjectId());
+        homeworkModelForStudent.setQuestionIds(homework.getQuestionIds());
         return homeworkModelForStudent;
     }
 

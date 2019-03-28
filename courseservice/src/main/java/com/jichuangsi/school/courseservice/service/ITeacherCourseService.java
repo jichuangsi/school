@@ -2,11 +2,9 @@ package com.jichuangsi.school.courseservice.service;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
-import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 public interface ITeacherCourseService {
@@ -75,4 +73,6 @@ public interface ITeacherCourseService {
 
     @Transactional
     CourseFile downloadTeacherAttachment(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
+
+    List<AnswerForStudent> getQuestionsResult(List<String> qusetionIds,String studentId) throws TeacherCourseServiceException;
 }

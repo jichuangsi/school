@@ -56,17 +56,19 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
     private int defaultPageSize;
 
     @Override
-    public List<HomeworkModelForStudent> getHomeworksList(UserInfoForToken userInfo) throws StudentHomeworkServiceException{
-        if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+    public List<HomeworkModelForStudent> getHomeworksList(UserInfoForToken userInfo) throws StudentHomeworkServiceException {
+        if (StringUtils.isEmpty(userInfo.getUserId()))
+            throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findProgressHomeworkByStudentId(userInfo.getUserId()));
         checkHomeworkCompleted(userInfo, homeworks);
         return homeworks;
     }
 
     @Override
-    public PageHolder<HomeworkModelForStudent> getHistoryHomeworksList(UserInfoForToken userInfo, SearchHomeworkModel searchHomeworkModel) throws StudentHomeworkServiceException{
-        if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
-        if(searchHomeworkModel.getPageSize() == 0) searchHomeworkModel.setPageSize(defaultPageSize);
+    public PageHolder<HomeworkModelForStudent> getHistoryHomeworksList(UserInfoForToken userInfo, SearchHomeworkModel searchHomeworkModel) throws StudentHomeworkServiceException {
+        if (StringUtils.isEmpty(userInfo.getUserId()))
+            throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        if (searchHomeworkModel.getPageSize() == 0) searchHomeworkModel.setPageSize(defaultPageSize);
         PageHolder<HomeworkModelForStudent> pageHolder = new PageHolder<HomeworkModelForStudent>();
         pageHolder.setTotal(homeworkRepository.countFinishedHomeworkByStudentId(userInfo.getUserId()));
         pageHolder.setPageNum(searchHomeworkModel.getPageIndex());
@@ -78,20 +80,20 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
     }
 
     @Override
-    public HomeworkModelForStudent getParticularHomework(UserInfoForToken userInfo, String homeworkId) throws StudentHomeworkServiceException{
-        if(StringUtils.isEmpty(homeworkId)) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+    public HomeworkModelForStudent getParticularHomework(UserInfoForToken userInfo, String homeworkId) throws StudentHomeworkServiceException {
+        if (StringUtils.isEmpty(homeworkId)) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         Homework homework = homeworkRepository.findFirstByIdOrderByUpdateTimeDesc(homeworkId);
-        if(homework==null) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
+        if (homework == null) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
         List<Question> questions = questionRepository.findQuestionsByHomeworkId(homeworkId);
         HomeworkModelForStudent homeworkModelForStudent = MappingEntity2ModelConverter.ConvertStudentHomework(homework);
         homeworkModelForStudent.getQuestions().addAll(convertQuestionList(questions));
-        homeworkModelForStudent.getQuestions().forEach(question ->{
+        homeworkModelForStudent.getQuestions().forEach(question -> {
             question.setFavor(mongoTemplate.exists(new Query(Criteria.where("studentId").is(userInfo.getUserId()).and("questionIds").is(question.getQuestionId())), StudentFavorQuestion.class));
             Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), userInfo.getUserId()));
-            if(result.isPresent()){
+            if (result.isPresent()) {
                 question.setAnswerModelForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
-                if(QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(question.getQuestionType())){
-                    if(Result.PASS.getName().equalsIgnoreCase(result.get().getResult())){
+                if (QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(question.getQuestionType())) {
+                    if (Result.PASS.getName().equalsIgnoreCase(result.get().getResult())) {
                         question.setAnswerModelForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
                                 teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(homework.getTeacherId(), question.getQuestionId(), result.get().getId())
                         ));
@@ -109,32 +111,34 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
 
     @Override
     public void saveStudentAnswer(UserInfoForToken userInfo, String homeworkId, String questionId, AnswerModelForStudent answer) throws StudentHomeworkServiceException {
-        if(StringUtils.isEmpty(userInfo.getUserId())
+        if (StringUtils.isEmpty(userInfo.getUserId())
                 || StringUtils.isEmpty(homeworkId)
                 || StringUtils.isEmpty(questionId)
                 || (StringUtils.isEmpty(answer.getAnswerForObjective()) && StringUtils.isEmpty(answer.getStubForSubjective())))
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         String userId = userInfo.getUserId();
-        synchronized (userId.intern()){//需要实现分布式锁
+        synchronized (userId.intern()) {//需要实现分布式锁
             Homework homework = homeworkRepository.findFirstByIdOrderByUpdateTimeDesc(homeworkId);
-            if(Status.NOTSTART.getName().equalsIgnoreCase(homework.getStatus())) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOTSTART);
-            if(Status.FINISH.getName().equalsIgnoreCase(homework.getStatus())
-                    ||Status.COMPLETED.getName().equalsIgnoreCase(homework.getStatus())) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_FINISHED);
+            if (Status.NOTSTART.getName().equalsIgnoreCase(homework.getStatus()))
+                throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOTSTART);
+            if (Status.FINISH.getName().equalsIgnoreCase(homework.getStatus())
+                    || Status.COMPLETED.getName().equalsIgnoreCase(homework.getStatus()))
+                throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_FINISHED);
             Optional<Question> question = questionRepository.findById(questionId);
-            if(!question.isPresent()) throw new StudentHomeworkServiceException(ResultCode.QUESTION_NOT_EXISTED);
-            if(!StringUtils.isEmpty(answer.getAnswerForObjective())){
+            if (!question.isPresent()) throw new StudentHomeworkServiceException(ResultCode.QUESTION_NOT_EXISTED);
+            if (!StringUtils.isEmpty(answer.getAnswerForObjective())) {
                 answer.setResult(autoVerifyAnswerService.verifyObjectiveAnswer(question.get(), answer.getAnswerForObjective()));
             }
             Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(questionId, userId));
-            if(result.isPresent()){
+            if (result.isPresent()) {
                 StudentAnswer answer2Update = result.get();
                 //answer2Update.setSubjectivePic(answer.getReviseForSubjective());
                 answer2Update.setSubjectivePicStub(answer.getStubForSubjective());
                 answer2Update.setObjectiveAnswer(answer.getAnswerForObjective());
-                answer2Update.setResult(StringUtils.isEmpty(answer.getResult())?null:answer.getResult().getName());
+                answer2Update.setResult(StringUtils.isEmpty(answer.getResult()) ? null : answer.getResult().getName());
                 answer2Update.setUpdateTime(new Date().getTime());
                 studentAnswerRepository.save(answer2Update);
-            }else{
+            } else {
                 studentAnswerRepository.save(MappingModel2EntityConverter.ConvertStudentAnswer(userInfo, questionId, answer));
             }
             mongoTemplate.updateFirst(
@@ -144,23 +148,25 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
     }
 
     @Override
-    public void submitParticularHomework(UserInfoForToken userInfo, String homeworkId) throws StudentHomeworkServiceException{
-        if(StringUtils.isEmpty(userInfo.getUserId())
+    public void submitParticularHomework(UserInfoForToken userInfo, String homeworkId) throws StudentHomeworkServiceException {
+        if (StringUtils.isEmpty(userInfo.getUserId())
                 || StringUtils.isEmpty(homeworkId))
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         String userId = userInfo.getUserId();
-        synchronized (userId.intern()){//需要实现分布式锁
+        synchronized (userId.intern()) {//需要实现分布式锁
             Homework homework = homeworkRepository.findFirstByIdOrderByUpdateTimeDesc(homeworkId);
-            if(Status.NOTSTART.getName().equalsIgnoreCase(homework.getStatus())) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOTSTART);
-            if(Status.FINISH.getName().equalsIgnoreCase(homework.getStatus())
-                    ||Status.COMPLETED.getName().equalsIgnoreCase(homework.getStatus())) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_FINISHED);
+            if (Status.NOTSTART.getName().equalsIgnoreCase(homework.getStatus()))
+                throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOTSTART);
+            if (Status.FINISH.getName().equalsIgnoreCase(homework.getStatus())
+                    || Status.COMPLETED.getName().equalsIgnoreCase(homework.getStatus()))
+                throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_FINISHED);
             mongoTemplate.updateFirst(
                     new Query(Criteria.where("studentId").is(userInfo.getUserId()).and("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkId))),
                     new Update().set("homeworks.$.completedTime", new Date().getTime()), StudentHomeworkCollection.class);
         }
     }
 
-    private void checkHomeworkCompleted(UserInfoForToken userInfo, List<HomeworkModelForStudent> homeworks){
+    private void checkHomeworkCompleted(UserInfoForToken userInfo, List<HomeworkModelForStudent> homeworks) {
         homeworks.forEach(h -> {
             h.setCompleted(mongoTemplate.exists(
                     new Query(Criteria.where("studentId").is(userInfo.getUserId())
@@ -169,7 +175,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         });
     }
 
-    private List<HomeworkModelForStudent> convertHomeworkList(List<Homework> homeworks){
+    private List<HomeworkModelForStudent> convertHomeworkList(List<Homework> homeworks) {
         List<HomeworkModelForStudent> homeworkModelForStudents = new ArrayList<HomeworkModelForStudent>();
         homeworks.forEach(homework -> {
             homeworkModelForStudents.add(MappingEntity2ModelConverter.ConvertStudentHomework(homework));
@@ -177,11 +183,34 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         return homeworkModelForStudents;
     }
 
-    private List<QuestionModelForStudent> convertQuestionList(List<Question> questions){
+    private List<QuestionModelForStudent> convertQuestionList(List<Question> questions) {
         List<QuestionModelForStudent> questionForStudents = new ArrayList<QuestionModelForStudent>();
         questions.forEach(question -> {
             questionForStudents.add(MappingEntity2ModelConverter.ConvertStudentQuestion(question));
         });
         return questionForStudents;
+    }
+
+    private void checkHomeworkCompletedByUserId(String userId, List<HomeworkModelForStudent> homeworks) {
+        homeworks.forEach(h -> {
+            h.setCompleted(mongoTemplate.exists(
+                    new Query(Criteria.where("studentId").is(userId)
+                            .and("homeworks").elemMatch(Criteria.where("homeworkId").is(h.getHomeworkId()).and("completedTime").ne(0))),
+                    StudentHomeworkCollection.class));
+        });
+    }
+
+    @Override
+    public List<HomeworkModelForStudent> getHomeworksListOnWeek(String userId, String subject) throws StudentHomeworkServiceException {
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.DAY_OF_WEEK, -1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        if (StringUtils.isEmpty(userId)) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findFinishedHomeWorkByStudentIdAndEndTime(userId, c.getTimeInMillis(), subject));
+        checkHomeworkCompletedByUserId(userId, homeworks);
+        return homeworks;
     }
 }

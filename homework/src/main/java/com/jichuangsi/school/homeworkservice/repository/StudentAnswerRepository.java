@@ -12,4 +12,8 @@ public interface StudentAnswerRepository extends MongoRepository<StudentAnswer, 
     StudentAnswer findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(String questionId, String studentId);
 
     List<StudentAnswer> findAllByStudentIdAndResult(String studentId, String result);
+
+    List<StudentAnswer> findByQuestionIdIn(List<String> questionIds);
+
+    List<StudentAnswer> findByQuestionIdInAndStudentId(List<String> questionIds,String studentId);
 }
