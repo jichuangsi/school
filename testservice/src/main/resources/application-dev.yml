@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: testservice
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/school
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: 8087
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+# feign配置
+feign:
+  hystrix:
+    # 在feign中开启hystrix功能，默认情况下feign不开启hystrix功能
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+         enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+
+com:
+  jichuangsi:
+    school:
+      result:
+        page-size: 10
+        date-format1: yyyy-MM-dd hh:mm:ss
+        date-format2: yyyy年MM月dd日 HH:mm
+        course-period: 45
+      mq:
+        courses: course.start.classinteraction
+        questions:
+          pubilish: course.question.pub.classinteraction
+          terminate: course.question.termin.classinteraction
+        answers:
+          statistics: course.question.answer.coursestatistics
+          share: course.question.answer.share.classinteraction
+        exchange: course.start.exchange
+      token:
+          jwt:
+            secret: EC86@34$123c
+          userClaim : userInfo
+      swagger:
+        enable: true
+      question:
+        ai-push:
+          number: 3
+          size: 100
+custom:
+  login:
+    content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=
+    increaseTime: 600000 #时间按分钟制
+    QRsize: 500
+    logoPath: http://www.jichuangsi.com/logo/jichuangsi.logo.jpg
+
