@@ -3,17 +3,16 @@
  */
 package com.jichuangsi.school.classinteraction.mq.producer.service.impl;
 
-import javax.annotation.Resource;
-
+import com.alibaba.fastjson.JSONObject;
+import com.jichuangsi.school.classinteraction.model.AddToCourseModel;
+import com.jichuangsi.school.classinteraction.mq.producer.service.ISendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.jichuangsi.school.classinteraction.model.AddToCourseModel;
-import com.jichuangsi.school.classinteraction.mq.producer.service.ISendService;
+import javax.annotation.Resource;
 
 /**
  * @author huangjiajun
@@ -24,6 +23,7 @@ public class SendServiceDefImpl implements ISendService {
 
 	@Value("${custom.mq.producer.queue-name.course-studentAdd}")
 	private String studentAdd;
+
 
 	@Resource
 	private AmqpTemplate rabbitTemplate;
@@ -37,5 +37,6 @@ public class SendServiceDefImpl implements ISendService {
 		rabbitTemplate.convertAndSend(studentAdd, msg);
 		logger.debug("Send " + studentAdd + " messgae sucess");
 	}
+
 
 }

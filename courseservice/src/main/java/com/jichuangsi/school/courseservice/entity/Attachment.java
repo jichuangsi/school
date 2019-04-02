@@ -1,12 +1,19 @@
 package com.jichuangsi.school.courseservice.entity;
 
-import java.util.Arrays;
-
 public class Attachment {
 
     private String name;
     private String sub;
     private String contentType;
+    private String publishStatus = "0";
+
+    public String getPublishStatus() {
+        return publishStatus;
+    }
+
+    public void setPublishStatus(String publishStatus) {
+        this.publishStatus = publishStatus;
+    }
 
     public Attachment(){}
 

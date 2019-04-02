@@ -14,8 +14,62 @@ public class SchoolInfo {
     private String name;
     private String address;
     private List<String> gradeIds = new ArrayList<String>();
+    private List<String> phraseIds = new ArrayList<String>();
     private long createTime;
     private long updateTime = new Date().getTime();
+    private String deleteFlag = "0";
+    private String creatorId;
+    private String creatorName;
+    private String updateId;
+    private String updateName;
+
+    public List<String> getPhraseIds() {
+        return phraseIds;
+    }
+
+    public void setPhraseIds(List<String> phraseIds) {
+        this.phraseIds = phraseIds;
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
+    public String getUpdateId() {
+        return updateId;
+    }
+
+    public void setUpdateId(String updateId) {
+        this.updateId = updateId;
+    }
+
+    public String getUpdateName() {
+        return updateName;
+    }
+
+    public void setUpdateName(String updateName) {
+        this.updateName = updateName;
+    }
+
+    public String getDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(String deleteFlag) {
+        this.deleteFlag = deleteFlag;
+    }
 
     public String getId() {
         return id;

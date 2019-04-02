@@ -4,7 +4,6 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
-import com.jichuangsi.school.questionsrepository.model.Base64TransferFile;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
@@ -118,4 +117,6 @@ public class SchoolQuestionsRepositoryController {
         schoolQuestionService.deleteQuestionPic(userInfo,questionPic.getQuestionPic());
         return ResponseModel.sucessWithEmptyData("");
     }
+
+
 }

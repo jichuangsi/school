@@ -4,7 +4,9 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.model.school.GradeModel;
+import com.jichuangsi.school.user.model.school.PhraseModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.model.school.SubjectModel;
 import com.jichuangsi.school.user.service.ISchoolService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,10 +15,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/school")
 @Api("关于学校和年级的contoller")
+@CrossOrigin
 public class SchoolController {
 
     @Resource
@@ -26,10 +30,10 @@ public class SchoolController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/insertSchool",consumes =  "application/json")
+    @PostMapping(value = "/insertSchool")
     public ResponseModel insertSchool(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolModel model){
         try {
-            schoolService.insertSchool(model);
+            schoolService.insertSchool(userInfo,model);
         } catch (SchoolServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
@@ -40,10 +44,10 @@ public class SchoolController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/updateSchool",consumes =  "application/json")
+    @PostMapping(value = "/updateSchool")
     public ResponseModel updateSchool(@ModelAttribute UserInfoForToken userInfo,@RequestBody SchoolModel model){
         try {
-            schoolService.updateSchool(model);
+            schoolService.updateSchool(userInfo, model);
         } catch (SchoolServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
@@ -54,22 +58,200 @@ public class SchoolController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/grade/insertGrade",consumes =  "application/json")
+    @PostMapping(value = "/grade/insertGrade")
     public ResponseModel insertGrade(@ModelAttribute UserInfoForToken userInfo, @RequestBody GradeModel model){
         try {
-            schoolService.insertGrade(model);
+            schoolService.insertGrade(userInfo, model);
         } catch (SchoolServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
         return  ResponseModel.sucessWithEmptyData("");
     }
 
-    @ApiOperation(value = "年级的添加", notes = "")
+    @ApiOperation(value = "年级的修改", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/grade/updateGrade",consumes =  "application/json")
+    @PostMapping(value = "/grade/updateGrade")
     public ResponseModel updateGrade(@ModelAttribute UserInfoForToken userInfo,@RequestBody GradeModel model){
+        try {
+            schoolService.updateGrade(userInfo, model);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "获取系统内所有非删除的学校", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getSchools")
+    public ResponseModel<List<SchoolModel>> getSchools(@ModelAttribute UserInfoForToken userInfo){
+        try {
+            return ResponseModel.sucess("",schoolService.getSchools());
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "获取学校内所有非删除的年级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getGrades")
+    public ResponseModel<List<GradeModel>> getGrades(@ModelAttribute UserInfoForToken userInfo,@RequestParam("schoolId") String schoolId){
+        try {
+            return ResponseModel.sucess("",schoolService.getGrades(schoolId));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "删除学校", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/deleteSchool/{schoolId}")
+    public ResponseModel deleteSchool(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId){
+        try {
+            schoolService.deleteSchool(userInfo, schoolId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "删除年级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/deleteGrade/{gradeId}")
+    public ResponseModel deleteGrade(@ModelAttribute UserInfoForToken userInfo,@PathVariable String gradeId){
+        try {
+            schoolService.deleteGrade(userInfo, gradeId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "添加学科", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/subject/insertSubject")
+    public ResponseModel insertSubject(@ModelAttribute UserInfoForToken userInfo, @RequestBody SubjectModel model){
+        try {
+            schoolService.insertSubject(userInfo, model);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "获取学科", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/subject/getSubjects")
+    public ResponseModel<List<SubjectModel>> getSubjects(@ModelAttribute UserInfoForToken userInfo){
+        return ResponseModel.sucess("",schoolService.getSubjects(userInfo));
+    }
+
+    @ApiOperation(value = "添加年段", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/phrase/insertPhrase")
+    public ResponseModel insertPhrase(@ModelAttribute UserInfoForToken userInfo, @RequestBody PhraseModel model){
+        try {
+            schoolService.insertPhrase(userInfo,model);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return  ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "根据学校，查询年段", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/phrase/getPhraseBySchool")
+    public ResponseModel<List<PhraseModel>>  getPhraseBySchool(@ModelAttribute UserInfoForToken userInfo,@RequestParam("schoolId") String school){
+        try {
+            return ResponseModel.sucess("",schoolService.getPhraseBySchool(school));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据年段，查询年级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/grade/getGradeByPhrase")
+    public ResponseModel<List<GradeModel>> getGradeByPhrase(@ModelAttribute UserInfoForToken userInfo,@RequestParam("phraseId") String phraseId){
+        try {
+            return ResponseModel.sucess("",schoolService.getGradeByPhrase(phraseId));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "删除科目", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/deleteSubject/{subjectId}")
+    public ResponseModel deleteSubject(@ModelAttribute UserInfoForToken userInfo,@PathVariable String subjectId){
+        try {
+            schoolService.deleteSubject(userInfo, subjectId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "删除年段", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/deletePhrase/{phraseId}")
+    public ResponseModel deletePhrase(@ModelAttribute UserInfoForToken userInfo,@PathVariable String phraseId){
+        try {
+            schoolService.deletePhrase(userInfo, phraseId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "学科的修改", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/subject/updateSubject")
+    public ResponseModel updateSubject(@ModelAttribute UserInfoForToken userInfo , @RequestBody SubjectModel model){
+        try {
+            schoolService.updateSubject(userInfo, model);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "学段的修改", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/phrase/updatePhrase")
+    public ResponseModel updatePhrase(@ModelAttribute UserInfoForToken userInfo,@RequestBody PhraseModel model){
+        try {
+            schoolService.updatePhrase(userInfo, model);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
         return ResponseModel.sucessWithEmptyData("");
     }
 }

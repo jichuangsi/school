@@ -3,16 +3,15 @@
  */
 package com.jichuangsi.school.classinteraction.websocket.controller;
 
-import javax.annotation.Resource;
-
+import com.jichuangsi.microservice.common.constant.ResultCode;
+import com.jichuangsi.microservice.common.model.ResponseModel;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jichuangsi.microservice.common.constant.ResultCode;
-import com.jichuangsi.microservice.common.model.ResponseModel;
+import javax.annotation.Resource;
 
 
 /**
@@ -34,6 +33,12 @@ public class ClassInteractionForStudentController {
 	// 订阅某堂课的信息（包含发布题目和终止作答，两者都属于课堂信息）
 	@SubscribeMapping("${custom.ws.sub.student.courseIntercationPre}{courseId}")
 	public ResponseModel<Object> subCourseForStudent(@DestinationVariable String courseId, StompHeaderAccessor sha) {
+		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
+	}
+
+	// 订阅某堂课发布附件的消息
+	@SubscribeMapping("${custom.ws.sub.student.coursePublishFile}{courseId}")
+	public ResponseModel<Object> subCoursePublish(@DestinationVariable String courseId) {
 		return ResponseModel.sucess(ResultCode.SUCESS_MSG, null);
 	}
 

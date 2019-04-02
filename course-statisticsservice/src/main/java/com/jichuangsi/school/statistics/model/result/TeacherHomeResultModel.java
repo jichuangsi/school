@@ -9,7 +9,8 @@ public class TeacherHomeResultModel {
     private Integer submitNum;
     private Integer subjectiveNum;
     private Integer objectiveNum;
-    private List<QuestionResultModel> models = new ArrayList<QuestionResultModel>();
+    private List<QuestionResultModel> objective = new ArrayList<QuestionResultModel>();
+    private List<QuestionResultModel> subjective = new ArrayList<QuestionResultModel>();
 
     public Integer getStudentNum() {
         return studentNum;
@@ -43,11 +44,19 @@ public class TeacherHomeResultModel {
         this.objectiveNum = objectiveNum;
     }
 
-    public List<QuestionResultModel> getModels() {
-        return models;
+    public List<QuestionResultModel> getObjective() {
+        return objective;
     }
 
-    public void setModels(List<QuestionResultModel> models) {
-        this.models = models;
+    public void setObjective(List<QuestionResultModel> objective) {
+        this.objective = objective;
+    }
+
+    public List<QuestionResultModel> getSubjective() {
+        return subjective;
+    }
+
+    public void setSubjective(List<QuestionResultModel> subjective) {
+        this.subjective = subjective;
     }
 }

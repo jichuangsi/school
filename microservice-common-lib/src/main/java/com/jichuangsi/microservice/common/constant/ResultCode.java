@@ -18,4 +18,13 @@ public class ResultCode {
 	public static final String SYS_BUSY_MSG = "系统繁忙";
 
 	public static final String SELECT_NULL_MSG = "查无此信息";
+	public static final String SUBJECT_IS_EXIST = "科目已存在";
+	public static final String PHRASE_IS_EXIST = "年段已存在";
+	public static final String GRADE_IS_EXIST = "年级已存在";
+	public static final String SCHOOL_IS_EXIST = "学校已存在";
+	public static final String USER_IS_EXIST = "账号已存在";
+
+	public static final String EXCEL_IMPORT_MSG = "excel导入失败";
+
+	public static final String ROLE_NOT_RIGHT = "角色不符合";
 }

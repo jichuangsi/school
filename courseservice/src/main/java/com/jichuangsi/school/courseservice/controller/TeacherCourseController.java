@@ -1,6 +1,5 @@
 package com.jichuangsi.school.courseservice.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
@@ -165,7 +164,7 @@ public class TeacherCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getAttachment")
-    public void getAttachment(@ModelAttribute UserInfoForToken userInfo, @RequestBody Attachment attachment, HttpServletResponse resp) throws TeacherCourseServiceException{
+    public void getAttachment(@ModelAttribute UserInfoForToken userInfo, @RequestBody AttachmentModel attachment, HttpServletResponse resp) throws TeacherCourseServiceException{
         try {
             CourseFile file = teacherCourseService.downloadTeacherAttachment(userInfo, attachment.getSub());
             resp.setHeader("content-type", "application/octet-stream");

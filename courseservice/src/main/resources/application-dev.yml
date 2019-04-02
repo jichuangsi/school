@@ -59,6 +59,7 @@ com:
           statistics: course.question.answer.coursestatistics
           share: course.question.answer.share.classinteraction
         exchange: course.start.exchange
+        publish: course.file.publish.classinteraction
       token:
           jwt:
             secret: EC86@34$123c

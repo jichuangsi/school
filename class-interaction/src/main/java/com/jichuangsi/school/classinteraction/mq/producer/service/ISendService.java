@@ -15,4 +15,6 @@ public interface ISendService {
 	 * 发送上课消息
 	 */
 	void snedAddToCourse(AddToCourseModel addToCourseModel);
+
+
 }

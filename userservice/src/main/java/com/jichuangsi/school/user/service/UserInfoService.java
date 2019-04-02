@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service;
 
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.model.System.User;
@@ -7,7 +8,10 @@ import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
+import com.jichuangsi.school.user.model.user.StudentModel;
+import com.jichuangsi.school.user.model.user.TeacherModel;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -129,4 +133,10 @@ public interface UserInfoService {
 
     @Transactional
     List<TransferStudent> getStudentsByClassId(String classId);
+
+    void saveTeacher(UserInfoForToken userInfo , TeacherModel model) throws UserServiceException;
+
+    void saveStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException;
+
+    String saveExcelStudents(MultipartFile file,UserInfoForToken userInfo) throws UserServiceException;
 }

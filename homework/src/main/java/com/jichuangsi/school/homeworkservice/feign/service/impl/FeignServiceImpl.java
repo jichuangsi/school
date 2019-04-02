@@ -61,6 +61,9 @@ public class FeignServiceImpl implements IFeignService {
         }
         double count = 0;
         for (StudentAnswer studentAnswer : studentAnswers) {
+            if (StringUtils.isEmpty(studentAnswer)){
+                continue;
+            }
             if (Result.CORRECT.getName().equals(studentAnswer.getResult())) {
                 count = count + 1;
             } else if (Result.PASS.getName().equals(studentAnswer.getResult())) {
@@ -100,6 +103,9 @@ public class FeignServiceImpl implements IFeignService {
         }
         double count = 0;
         for (StudentAnswer studentAnswer : studentAnswers) {
+            if (StringUtils.isEmpty(studentAnswer)){
+                continue;
+            }
             if (Result.CORRECT.getName().equals(studentAnswer.getResult())) {
                 count = count + 1 ;
             } else if (Result.PASS.getName().equals(studentAnswer.getResult())) {
@@ -113,7 +119,7 @@ public class FeignServiceImpl implements IFeignService {
     public List<HomeworkModelForTeacher> getHomeWorkByTeacherIdAndclassId(String teacherId, String classId) throws FeignControllerException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.DAY_OF_WEEK,-1);
+        calendar.add(Calendar.WEEK_OF_MONTH,-1);
         calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.SECOND,0);
@@ -146,7 +152,8 @@ public class FeignServiceImpl implements IFeignService {
         int countObjective = 0 ;
         int countSubmit = 0 ;
         List<String> questionIds = homework.getQuestionIds();
-        List<QuestionResultModel> questionRateModels = new ArrayList<QuestionResultModel>();
+        List<QuestionResultModel> objective = new ArrayList<QuestionResultModel>();
+        List<QuestionResultModel> subjective = new ArrayList<QuestionResultModel>();
         for (String questionId : questionIds){
             Question question = questionRepository.findFirstById(questionId);
             if (null == question){
@@ -165,15 +172,17 @@ public class FeignServiceImpl implements IFeignService {
             countSubmit = countSubmit < studentAnswers.size() ? studentAnswers.size() : countSubmit ;
             model.setQuestionType(question.getTypeInCN());
             model.setTrueNum(count);
-            questionRateModels.add(model);
             if (QuestionType.OBJECTIVE.getName().equals(question.getType())){
                 countObjective ++ ;
+                objective.add(model);
             }else if (QuestionType.SUBJECTIVE.getName().equals(question.getType())){
                 countSubjective ++ ;
+                subjective.add(model);
             }
         }
         TeacherHomeResultModel model = new TeacherHomeResultModel();
-        model.setModels(questionRateModels);
+        model.setSubjective(subjective);
+        model.setObjective(objective);
         model.setObjectiveNum(countObjective);
         model.setSubjectiveNum(countSubjective);
         model.setSubmitNum(countSubmit);

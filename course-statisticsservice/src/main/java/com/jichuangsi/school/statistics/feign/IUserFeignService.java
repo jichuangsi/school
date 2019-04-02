@@ -7,9 +7,14 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @FeignClient(value = "userservice",fallback = UserFallBackFeignServiceImpl.class)
 public interface IUserFeignService {
 
     @RequestMapping("/feign/getClassDetail")
     ResponseModel<ClassDetailModel> getClassDetail(@RequestParam("classId") String classId);
+
+    @RequestMapping("/feign/getTeachClassIds")
+    ResponseModel<List<String>> getTeachClassIds(@RequestParam("teacherId") String teacherId);
 }

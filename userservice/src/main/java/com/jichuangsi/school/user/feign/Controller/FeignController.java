@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/feign")
@@ -26,6 +27,16 @@ public class FeignController {
     public ResponseModel<ClassDetailModel>  getClassDetail(@RequestParam("classId") String classId){
         try {
             return ResponseModel.sucess("",feignService.findClassDetailByClassId(classId));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据老师id，获取所有执教班级", notes = "")
+    @GetMapping("/getTeachClassIds")
+    public ResponseModel<List<String>> getTeachClassIds(@RequestParam("teacherId") String teacherId){
+        try {
+            return ResponseModel.sucess("",feignService.getClassIdsByTeacherId(teacherId));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

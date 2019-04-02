@@ -368,7 +368,10 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         }
         ClassDetailModel classDetailModel = responseModel.getData();
         model.setStudentNum(classDetailModel.getStudentNum());
-        for (QuestionResultModel questionResultModel : model.getModels()) {
+        for (QuestionResultModel questionResultModel : model.getObjective()) {
+            questionResultModel.setWrongNum(classDetailModel.getStudentNum() - questionResultModel.getTrueNum());
+        }
+        for (QuestionResultModel questionResultModel : model.getSubjective()) {
             questionResultModel.setWrongNum(classDetailModel.getStudentNum() - questionResultModel.getTrueNum());
         }
         return model;

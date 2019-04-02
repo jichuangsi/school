@@ -22,4 +22,5 @@ public class MqConsumerConfig implements RabbitListenerConfigurer {
         registrar.setMessageHandlerMethodFactory(myHandlerMethodFactory());
     }
 
+
 }

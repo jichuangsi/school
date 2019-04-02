@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.List;
 @RequestMapping("/console")
 @RestController
 @Api("CourseConsoleController测试开发相关的api")
+@CrossOrigin
 public class CourseConsoleController {
 
     @Resource
@@ -258,7 +260,7 @@ public class CourseConsoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/saveCourseAttachment")
-    public ResponseModel<Attachment> saveCourseAttachment(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) {
+    public ResponseModel<AttachmentModel> saveCourseAttachment(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo) {
         try {
             return ResponseModel.sucess("", courseConsoleService.uploadAttachment(userInfo, new CourseFile(file.getOriginalFilename(), file.getContentType(), file.getBytes())));
         } catch (TeacherCourseServiceException e) {
@@ -307,5 +309,20 @@ public class CourseConsoleController {
             rcs.add(rc);
         });
         return rcs;
+    }
+
+    @ApiOperation(value = "老师发布附件", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
+    @PostMapping("/publishFile/{courseId}/{fileName}/{fileId}")
+    public ResponseModel publishFile(@PathVariable("courseId") String courseId,@PathVariable("fileName") String fileName,
+                                     @PathVariable("fileId") String fileId,@ModelAttribute @ApiIgnore UserInfoForToken userInfo){
+        try {
+            courseConsoleService.publishFileByTeacher(fileName,fileId,courseId,userInfo);
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
     }
 }

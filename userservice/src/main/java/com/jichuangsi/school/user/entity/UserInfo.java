@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -17,8 +18,8 @@ public class UserInfo {
 	private String sex;
 	private List<RoleInfo> roleInfos=new ArrayList<RoleInfo>();
 	private String status;
-	private long createTime;
-	private long updateTime;
+	private long createTime = new Date().getTime();
+	private long updateTime = new Date().getTime();
 
 	public String getId() {
 		return id;

@@ -214,5 +214,6 @@ public class TeacherInfo extends RoleInfo {
             this.schoolName = schoolName;
         }
     }
+
 }
 

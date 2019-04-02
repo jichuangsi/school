@@ -6,6 +6,10 @@ import org.springframework.stereotype.Repository;
 import com.jichuangsi.school.user.entity.UserInfo;
 
 @Repository
-public interface UserRepository extends MongoRepository<UserInfo, String>{
-	UserInfo findOneByAccount(String account);
+public interface UserRepository extends MongoRepository<UserInfo, String> {
+    UserInfo findOneByAccount(String account);
+
+    int countByAccount(String account);
+
+    UserInfo findFirstById(String id);
 }

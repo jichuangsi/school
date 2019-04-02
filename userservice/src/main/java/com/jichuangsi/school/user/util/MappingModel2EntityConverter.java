@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.util;
 
+import com.jichuangsi.school.user.commons.Md5Util;
 import com.jichuangsi.school.user.entity.RoleInfo;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
@@ -9,11 +10,13 @@ import com.jichuangsi.school.user.entity.org.GradeInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
+import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
-import com.jichuangsi.school.user.model.org.Class;
 import com.jichuangsi.school.user.model.school.GradeModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.model.user.StudentModel;
+import com.jichuangsi.school.user.model.user.TeacherModel;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -88,7 +91,7 @@ public  final class MappingModel2EntityConverter {
         return roleInfos;
     }
 
-    public static final ClassInfo ConvertClass(Class c){
+    public static final ClassInfo ConvertClass(ClassModel c){
         ClassInfo classInfo = new ClassInfo();
         classInfo.setId(StringUtils.isEmpty(c.getClassId())?UUID.randomUUID().toString().replaceAll("-", ""):c.getClassId());
         classInfo.setName(c.getClassName());
@@ -115,5 +118,55 @@ public  final class MappingModel2EntityConverter {
         info.setName(model.getGradeName());
         info.setUpdateTime(null == model.getUpdateTime() ? new Date().getTime() : model.getUpdateTime());
         return info;
+    }
+
+    public static UserInfo CONVERTEERFROMTEACHERMODEL(TeacherModel model){
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(model.getId());
+        userInfo.setAccount(model.getAccount());
+        userInfo.setName(model.getName());
+        userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        userInfo.setSex(model.getSex());
+        userInfo.setStatus(model.getStatus());
+        TeacherInfo teacher = new TeacherInfo();
+        teacher.setPrimarySubject(model.getPrimarySubject().getSubjectId(),model.getPrimarySubject().getSubjectName());
+        model.getSecondaryClass().forEach(classModel -> {
+            teacher.addSecondaryClasses(classModel.getClassId(),classModel.getClassName());
+        });
+        model.getSecondaryGrades().forEach(gradeModel -> {
+            teacher.addSecondaryGrades(gradeModel.getGradeId(),gradeModel.getGradeName());
+        });
+        model.getSecondarySubjects().forEach(subject -> {
+            teacher.addSecondarySubjects(subject.getSubjectId(),subject.getSubjectName());
+        });
+        teacher.setPhrase(model.getPhrase().getPhraseId(),model.getPhrase().getPhraseName());
+        teacher.setPrimaryClass(model.getPrimaryClass().getClassId(),model.getPrimaryClass().getClassName());
+        teacher.setPrimaryGrade(model.getPrimaryGrade().getGradeId(),model.getPrimaryGrade().getGradeName());
+        teacher.setSchool(model.getSchool().getSchoolId(),model.getSchool().getSchoolName());
+        teacher.setRoleName("Teacher");
+        List<RoleInfo> roles = new ArrayList<RoleInfo>();
+        roles.add(teacher);
+        userInfo.setRoleInfos(roles);
+        return userInfo;
+    }
+
+    public static UserInfo CONVERTEERFROMSTUDENTMODEL(StudentModel model){
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(model.getId());
+        userInfo.setAccount(model.getAccount());
+        userInfo.setName(model.getName());
+        userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        userInfo.setSex(model.getSex());
+        userInfo.setStatus(model.getStatus());
+        TeacherInfo teacher = new TeacherInfo();
+        teacher.setPhrase(model.getPhrase().getPhraseId(),model.getPhrase().getPhraseName());
+        teacher.setPrimaryClass(model.getPrimaryClass().getClassId(),model.getPrimaryClass().getClassName());
+        teacher.setPrimaryGrade(model.getPrimaryGrade().getGradeId(),model.getPrimaryGrade().getGradeName());
+        teacher.setSchool(model.getSchool().getSchoolId(),model.getSchool().getSchoolName());
+        teacher.setRoleName("Student");
+        List<RoleInfo> roles = new ArrayList<RoleInfo>();
+        roles.add(teacher);
+        userInfo.setRoleInfos(roles);
+        return userInfo;
     }
 }

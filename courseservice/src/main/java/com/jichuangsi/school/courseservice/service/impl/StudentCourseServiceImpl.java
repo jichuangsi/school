@@ -109,6 +109,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
         List<Question> questions = questionRepository.findQuestionsByClassIdAndCourseId(userInfo.getClassId(), courseId);
         CourseForStudent courseForStudent = MappingEntity2ModelConverter.ConvertStudentCourse(course);
         courseForStudent.getQuestions().addAll(convertQuestionList(questions));
+        courseForStudent.setAttachments(converterfromEntity(course.getAttachments()));
         courseForStudent.getQuestions().forEach(question -> {
             question.setFavor(mongoTemplate.exists(new Query(Criteria.where("studentId").is(userInfo.getUserId()).and("questionIds").is(question.getQuestionId())), StudentFavorQuestion.class));
             Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), userInfo.getUserId()));
@@ -383,12 +384,34 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
     public List<CourseForStudent> getCourseOnWeek(String classId) throws StudentCourseServiceException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.DAY_OF_WEEK,-1);
+        c.add(Calendar.WEEK_OF_MONTH,-1);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         if (StringUtils.isEmpty(classId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
         List<Course> courses = courseRepository.findOneWeekCourseByClassIdAndStatusAndEndTime(classId, c.getTimeInMillis());
         return convertCourseList(courses);
+    }
+
+    private List<AttachmentModel> converterfromEntity(List<Attachment> attachments){
+        List<AttachmentModel> newAttachments = new ArrayList<AttachmentModel>();
+        for (Attachment attachment : attachments){
+            if (StringUtils.isEmpty(attachment.getPublishStatus())){
+                continue;
+            }
+            if (attachment.getPublishStatus().equals("1")){
+                newAttachments.add(MappingEntity2ModelConverter.CONVERTERFROMATTACHMENT(attachment));
+            }
+        }
+        return newAttachments;
+    }
+
+    @Override
+    public CourseFile downloadStudentAttachment(UserInfoForToken userInfo, String fileName) throws StudentCourseServiceException {
+        try {
+            return fileStoreService.donwloadCourseFile(fileName);
+        } catch (Exception exp) {
+            throw new StudentCourseServiceException(exp.getMessage());
+        }
     }
 }

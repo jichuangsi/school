@@ -46,6 +46,9 @@ public class RabbitMqConfig {
     @Value("${spring.rabbitmq.host}")
     private String host;
 
+    @Value("${com.jichuangsi.school.mq.publish}")
+    private String publishFile;
+
     @Bean(name="courses")
     public Queue coursesMessage(RabbitAdmin rabbitAdmin) {
         /*Map<String, Object> argss = new HashMap<String, Object>();
@@ -53,6 +56,13 @@ public class RabbitMqConfig {
         Queue courses = new Queue(coursesMq,true, false, false);
         rabbitAdmin.declareQueue(courses);
         return courses;
+    }
+
+    @Bean(name="publishFile")
+    public Queue publishFileMessage(RabbitAdmin rabbitAdmin) {
+        Queue publish = new Queue(publishFile,true, false, false);
+        rabbitAdmin.declareQueue(publish);
+        return publish;
     }
 
     @Bean(name="questionsPub")

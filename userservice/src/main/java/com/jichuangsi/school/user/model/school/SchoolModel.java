@@ -12,6 +12,13 @@ public class SchoolModel {
     private Long createdTime;
     private Long updateTime;
 
+    public SchoolModel(){}
+
+    public SchoolModel(String schoolId,String schoolName){
+        this.schoolId = schoolId;
+        this.schoolName = schoolName;
+    }
+
     public String getSchoolId() {
         return schoolId;
     }

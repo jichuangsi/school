@@ -18,4 +18,8 @@ public interface CourseRepository extends MongoRepository<Course, String>, Cours
     List<Course> findByClassIdAndStatus(String classId, String status);
 
     List<Course> findByTeacherIdAndStatus(String teacherId, String status);
+
+    Course findFirstByIdAndTeacherId(String id,String teacherId);
+
+    List<Course> findByClassIdAndStatusAndEndTimeGreaterThanOrderByCreateTime(String classId,String status,long endTime);
 }

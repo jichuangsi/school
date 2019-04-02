@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.statistics.feign.ICourseFeignService;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
+import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,11 @@ public class CourseFallBackFeignServiceImpl implements ICourseFeignService {
 
     @Override
     public ResponseModel<Double> getQuetsionIdsCrossByMD5(QuestionRateModel model) {
+        return ResponseModel.fail("");
+    }
+
+    @Override
+    public ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<String> classIds) {
         return ResponseModel.fail("");
     }
 }

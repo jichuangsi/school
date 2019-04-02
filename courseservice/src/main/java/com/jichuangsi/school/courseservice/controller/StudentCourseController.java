@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
+import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.repository.QuestionQueryModel;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -181,6 +184,26 @@ public class StudentCourseController {
 	public ResponseModel<List<QuestionForStudent>> aiPushQuestions(@ModelAttribute UserInfoForToken userInfo, @RequestBody QuestionQueryModel questionQueryModel)throws StudentCourseServiceException {
 
 		return ResponseModel.sucess("", studentCourseService.findSimilarQuestionsList(userInfo, questionQueryModel));
+	}
+
+	//获取指定文件名的上傳附件
+	@ApiOperation(value = "根据id和文件名下载指定的上傳附件", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+	@PostMapping("/getAttachment")
+	public void getAttachment(@ModelAttribute UserInfoForToken userInfo, @RequestBody AttachmentModel attachment, HttpServletResponse resp) throws TeacherCourseServiceException{
+		try {
+			CourseFile file = studentCourseService.downloadStudentAttachment(userInfo, attachment.getSub());
+			resp.setHeader("content-type", "application/octet-stream");
+			resp.setContentType("application/octet-stream");
+			resp.setHeader("Content-Disposition", "attachment;filename=" + file.getName());
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			byteArrayOutputStream.write(file.getContent());
+			resp.setHeader("content-length", byteArrayOutputStream.size() + "");
+			resp.getOutputStream().write(byteArrayOutputStream.toByteArray());
+		}catch (Exception e) {
+			throw new TeacherCourseServiceException(e.getMessage());
+		}
 	}
 }
 

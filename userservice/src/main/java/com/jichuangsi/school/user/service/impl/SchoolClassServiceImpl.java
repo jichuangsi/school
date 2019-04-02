@@ -6,9 +6,11 @@ import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.entity.org.GradeInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.exception.ClassServiceException;
+import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
-import com.jichuangsi.school.user.model.org.Class;
+import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
+import com.jichuangsi.school.user.repository.IClassInfoRepository;
 import com.jichuangsi.school.user.repository.IGradeInfoRepository;
 import com.jichuangsi.school.user.repository.ISchoolInfoRepository;
 import com.jichuangsi.school.user.service.ISchoolClassService;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,18 +38,20 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     private ISchoolInfoRepository schoolInfoRepository;
     @Resource
     private UserInfoService userInfoService;
+    @Resource
+    private IClassInfoRepository classInfoRepository;
 
     @Override
-    public void saveOrUpClass(String schoolId, String gradeId, Class classModel) throws ClassServiceException {
+    public void saveOrUpClass(String schoolId, String gradeId, ClassModel classModel) throws ClassServiceException {
         if(StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(gradeId)) throw new ClassServiceException(MyResultCode.PARAM_MISS_MSG);
         SchoolInfo schoolInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(schoolId).andOperator(Criteria.where("gradeIds").is(gradeId))), SchoolInfo.class);
-        if(schoolInfo == null) new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
+        if(schoolInfo == null) throw new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
         ClassInfo classInfo = MappingModel2EntityConverter.ConvertClass(classModel);
         mongoTemplate.save(classInfo);
         GradeInfo gradeInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(gradeId).andOperator(Criteria.where("classIds").is(classInfo.getId()))), GradeInfo.class);
         if(gradeInfo == null){
             gradeInfo = mongoTemplate.findAndModify(new Query(Criteria.where("id").in(gradeId)), new Update().push("classIds", classInfo.getId()), GradeInfo.class);
-            if(gradeInfo == null) new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
+            if(gradeInfo == null) throw  new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
         }
     }
 
@@ -61,7 +66,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     }
 
     @Override
-    public Class getClassInfo(String schoolId, String gradeId, String classId) throws ClassServiceException{
+    public ClassModel getClassInfo(String schoolId, String gradeId, String classId) throws ClassServiceException{
         SchoolInfo schoolInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(schoolId).andOperator(Criteria.where("gradeIds").is(gradeId))), SchoolInfo.class);
         if(schoolInfo == null) new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
         GradeInfo gradeInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(gradeId).andOperator(Criteria.where("classIds").is(classId))), GradeInfo.class);
@@ -76,7 +81,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         if (null == gradeInfo) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
         SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContaining(gradeInfo.getId());
         if (null == schoolInfo) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
-        Class classModel = getClassInfo(schoolInfo.getId(),gradeInfo.getId(),classId);
+        ClassModel classModel = getClassInfo(schoolInfo.getId(),gradeInfo.getId(),classId);
         ClassDetailModel model = new ClassDetailModel();
         model.setClassId(classId);
         model.setClassName(classModel.getClassName());
@@ -88,5 +93,20 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         if (null == transferStudents) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
         model.setStudentNum(transferStudents.size());
         return model;
+    }
+
+    @Override
+    public List<ClassModel> getClassesByGradeId(String gradeId) throws SchoolServiceException {
+        GradeInfo gradeInfo = gradeInfoRepository.findFirstById(gradeId);
+        if (null == gradeInfo){
+            throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        List<String> classIds = gradeInfo.getClassIds();
+        List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlag(classIds,"0");
+        List<ClassModel> classModels = new ArrayList<ClassModel>();
+        classInfos.forEach(classInfo -> {
+            classModels.add(MappingEntity2ModelConverter.TransferClass(classInfo));
+        });
+        return classModels;
     }
 }

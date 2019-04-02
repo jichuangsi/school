@@ -4,7 +4,8 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.MyResultCode;
 import com.jichuangsi.school.user.exception.ClassServiceException;
-import com.jichuangsi.school.user.model.org.Class;
+import com.jichuangsi.school.user.exception.SchoolServiceException;
+import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
@@ -15,10 +16,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Api("关于班级的crud")
 @RequestMapping("/class")
+@CrossOrigin
 public class ClassCRUDController {
 
     @Resource
@@ -31,23 +34,22 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/saveClass",consumes =  "application/json")
-    public ResponseModel saveClass(@ModelAttribute UserInfoForToken userInfo, @RequestBody Class classModel) throws ClassServiceException{
-        if(userInfo==null||classModel==null){
+    @PostMapping(value = "/saveClass", consumes = "application/json")
+    public ResponseModel saveClass(@ModelAttribute UserInfoForToken userInfo, @RequestBody ClassModel classModel) throws ClassServiceException {
+        if (userInfo == null || classModel == null) {
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
         }
-        schoolClassService.saveOrUpClass(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), classModel.getGradeId(), classModel);
+        schoolClassService.saveOrUpClass(classModel.getSchoolId(), classModel.getGradeId(), classModel);
         return ResponseModel.sucessWithEmptyData("");
     }
-
 
     @ApiOperation(value = "班级的删除", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/deleteClass/{gradeId}/{classId}",consumes =  "application/json")
+    @GetMapping(value = "/deleteClass/{gradeId}/{classId}", consumes = "application/json")
     public ResponseModel deleteClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException {
-        if(userInfo==null|| StringUtils.isEmpty(gradeId)|| StringUtils.isEmpty(classId)){
+        if (userInfo == null || StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
         }
         schoolClassService.deleteClass(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), gradeId, classId);
@@ -58,13 +60,24 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/findClass/{gradeId}/{classId}",consumes =  "application/json")
-    public ResponseModel<Class> findClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException{
-        if(userInfo==null|| StringUtils.isEmpty(gradeId)|| StringUtils.isEmpty(classId)){
+    @GetMapping(value = "/findClass/{gradeId}/{classId}", consumes = "application/json")
+    public ResponseModel<ClassModel> findClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException {
+        if (userInfo == null || StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
         }
-        return ResponseModel.sucess("",schoolClassService.getClassInfo(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), gradeId, classId));
+        return ResponseModel.sucess("", schoolClassService.getClassInfo(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), gradeId, classId));
     }
 
-
+    @ApiOperation(value = "查询年级内所有班级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/findClasses/{gradeId}", consumes = "application/json")
+    public ResponseModel<List<ClassModel>> findClasses(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId){
+        try {
+           return ResponseModel.sucess("",schoolClassService.getClassesByGradeId(gradeId)) ;
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

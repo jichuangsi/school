@@ -21,7 +21,7 @@ public class Course {
     private String coursePic;
     private String subjectName;
     private String subjectId;
-    private List<Attachment> attachments = new ArrayList<Attachment>();
+    private List<AttachmentModel> attachments = new ArrayList<AttachmentModel>();
     private List<String> questionIds = new ArrayList<String>();
 
     private int pageNum;
@@ -171,11 +171,11 @@ public class Course {
         this.subjectId = subjectId;
     }
 
-    public List<Attachment> getAttachments() {
+    public List<AttachmentModel> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(List<Attachment> attachments) {
+    public void setAttachments(List<AttachmentModel> attachments) {
         this.attachments = attachments;
     }
 }

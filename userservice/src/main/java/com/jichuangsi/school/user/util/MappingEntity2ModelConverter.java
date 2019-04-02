@@ -7,17 +7,19 @@ import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
-import com.jichuangsi.school.user.entity.org.ClassInfo;
+import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.app.AppInfoModule;
 import com.jichuangsi.school.user.model.basic.Phrase;
 import com.jichuangsi.school.user.model.basic.Subject;
-import com.jichuangsi.school.user.model.org.Grade;
-import com.jichuangsi.school.user.model.org.School;
+import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
-import com.jichuangsi.school.user.model.org.Class;
+import com.jichuangsi.school.user.model.school.GradeModel;
+import com.jichuangsi.school.user.model.school.PhraseModel;
+import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.model.school.SubjectModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -53,21 +55,21 @@ public final class MappingEntity2ModelConverter {
                 TeacherInfo teacherInfo = (TeacherInfo) roleInfo;
                 teacher.setRoleName(teacherInfo.getRoleName());
                 if(teacherInfo.getSchool()!=null)
-                    teacher.setSchool(new School(teacherInfo.getSchool().getSchoolId(), teacherInfo.getSchool().getSchoolName()));
+                    teacher.setSchool(new SchoolModel(teacherInfo.getSchool().getSchoolId(), teacherInfo.getSchool().getSchoolName()));
                 if(teacherInfo.getPhrase()!=null)
                     teacher.setPhrase(new Phrase(teacherInfo.getPhrase().getPhraseId(), teacherInfo.getPhrase().getPhraseName()));
                 if(teacherInfo.getPrimaryClass()!=null)
-                    teacher.setPrimaryClass(new Class(teacherInfo.getPrimaryClass().getClassId(), teacherInfo.getPrimaryClass().getClassName()));
-                List<Class> classes = new ArrayList<Class>();
+                    teacher.setPrimaryClass(new ClassModel(teacherInfo.getPrimaryClass().getClassId(), teacherInfo.getPrimaryClass().getClassName()));
+                List<ClassModel> classes = new ArrayList<ClassModel>();
                 teacherInfo.getSecondaryClasses().forEach(c -> {
-                    classes.add(new Class(c.getClassId(), c.getClassName()));
+                    classes.add(new ClassModel(c.getClassId(), c.getClassName()));
                 });
                 teacher.setSecondaryClass(classes);
                 if(teacherInfo.getPrimaryGrade()!=null)
-                    teacher.setPrimaryGrade(new Grade(teacherInfo.getPrimaryGrade().getGradeId(), teacherInfo.getPrimaryGrade().getGradeName()));
-                List<Grade> grades = new ArrayList<Grade>();
+                    teacher.setPrimaryGrade(new GradeModel(teacherInfo.getPrimaryGrade().getGradeId(), teacherInfo.getPrimaryGrade().getGradeName()));
+                List<GradeModel> grades = new ArrayList<GradeModel>();
                 teacherInfo.getSecondaryGrades().forEach(g -> {
-                    grades.add(new Grade(g.getGradeId(), g.getGradeName()));
+                    grades.add(new GradeModel(g.getGradeId(), g.getGradeName()));
                 });
                 teacher.setSecondaryGrades(grades);
                 if(teacherInfo.getPrimarySubject()!=null)
@@ -83,13 +85,13 @@ public final class MappingEntity2ModelConverter {
                 StudentInfo studentInfo = (StudentInfo)roleInfo;
                 student.setRoleName(studentInfo.getRoleName());
                 if(studentInfo.getSchool()!=null)
-                    student.setSchool(new School(studentInfo.getSchool().getSchoolId(), studentInfo.getSchool().getSchoolName()));
+                    student.setSchool(new SchoolModel(studentInfo.getSchool().getSchoolId(), studentInfo.getSchool().getSchoolName()));
                 if(studentInfo.getPhrase()!=null)
                     student.setPhrase(new Phrase(studentInfo.getPhrase().getPhraseId(), studentInfo.getPhrase().getPhraseName()));
                 if(studentInfo.getPrimaryClass()!=null)
-                    student.setPrimaryClass(new Class(studentInfo.getPrimaryClass().getClassId(), studentInfo.getPrimaryClass().getClassName()));
+                    student.setPrimaryClass(new ClassModel(studentInfo.getPrimaryClass().getClassId(), studentInfo.getPrimaryClass().getClassName()));
                 if(studentInfo.getPrimaryGrade()!=null)
-                    student.setPrimaryGrade(new Grade(studentInfo.getPrimaryGrade().getGradeId(), studentInfo.getPrimaryGrade().getGradeName()));
+                    student.setPrimaryGrade(new GradeModel(studentInfo.getPrimaryGrade().getGradeId(), studentInfo.getPrimaryGrade().getGradeName()));
                 roles.add(student);
             }
         });
@@ -158,13 +160,12 @@ public final class MappingEntity2ModelConverter {
         return transferSchool;
     }
 
-    public static final Class TransferClass(ClassInfo classInfo){
-        Class c = new Class();
+    public static final ClassModel TransferClass(ClassInfo classInfo){
+        ClassModel c = new ClassModel();
         c.setClassId(classInfo.getId());
         c.setClassName(classInfo.getName());
         c.setCreateTime(classInfo.getCreateTime());
         c.setUpdateTime(classInfo.getUpdateTime());
-
         return c;
     }
 
@@ -185,5 +186,48 @@ public final class MappingEntity2ModelConverter {
         appInfoModule.setMandatory(appInfoEntity.isMandatory());
 
         return appInfoModule;
+    }
+
+
+    public static SchoolModel CONVERTEFROMSCHOOLINFO(SchoolInfo info){
+        SchoolModel model = new SchoolModel();
+        model.setAddress(info.getAddress());
+        model.setCreatedTime(info.getCreateTime());
+        model.setSchoolId(info.getId());
+        model.setSchoolName(info.getName());
+        model.setUpdateTime(info.getUpdateTime());
+        return model;
+    }
+
+    public static GradeModel CONVERTERFROMGRADEINFO(GradeInfo info){
+        GradeModel model = new GradeModel();
+        model.setCreatedTime(info.getCreateTime());
+        model.setGradeId(info.getId());
+        model.setGradeName(info.getName());
+        model.setUpdateTime(info.getUpdateTime());
+        return model;
+    }
+
+    public static ClassModel CONVERTERFRONCLASSINFO(ClassInfo info){
+        ClassModel model = new ClassModel();
+        model.setClassId(info.getId());
+        model.setClassName(info.getName());
+        model.setCreateTime(info.getCreateTime());
+        model.setUpdateTime(info.getUpdateTime());
+        return model;
+    }
+
+    public static SubjectModel CONVERTERFROMSUBJECTINFO(SubjectInfo info){
+        SubjectModel model = new SubjectModel();
+        model.setId(info.getId());
+        model.setSubjectName(info.getSubjectName());
+        return model;
+    }
+
+    public static PhraseModel CONVERTERFROMPHRASEINFO(PhraseInfo info){
+        PhraseModel model = new PhraseModel();
+        model.setId(info.getId());
+        model.setPhraseName(info.getPhraseName());
+        return model;
     }
 }

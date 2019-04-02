@@ -1,6 +1,6 @@
 package com.jichuangsi.school.user.model.org;
 
-public class Class {
+public class ClassModel {
 
     private String classId;
     private String className;
@@ -25,9 +25,9 @@ public class Class {
         this.gradeId = gradeId;
     }
 
-    public Class(){}
+    public ClassModel(){}
 
-    public Class(String classId, String className){
+    public ClassModel(String classId, String className){
         this.classId = classId;
         this.className = className;
     }

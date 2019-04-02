@@ -1,13 +1,13 @@
 package com.jichuangsi.school.courseservice.model;
 
-public class Attachment {
+public class AttachmentModel {
     private String name;
     private String contentType;
     private String sub;
 
-    public Attachment(){}
+    public AttachmentModel(){}
 
-    public Attachment(String name, String sub, String contentType){
+    public AttachmentModel(String name, String sub, String contentType){
         this.name = name;
         this.sub = sub;
         this.contentType = contentType;

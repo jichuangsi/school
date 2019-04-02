@@ -9,8 +9,24 @@ public class GradeModel {
     private String gradeName;
     private List<String> classIds = new ArrayList<String>();
     private String schoolId;
+    private String phraseId;
     private Long createdTime;
     private Long updateTime;
+
+    public GradeModel(){}
+
+    public GradeModel(String gradeId,String gradeName){
+        this.gradeId = gradeId;
+        this.gradeName = gradeName;
+    }
+
+    public String getPhraseId() {
+        return phraseId;
+    }
+
+    public void setPhraseId(String phraseId) {
+        this.phraseId = phraseId;
+    }
 
     public Long getCreatedTime() {
         return createdTime;

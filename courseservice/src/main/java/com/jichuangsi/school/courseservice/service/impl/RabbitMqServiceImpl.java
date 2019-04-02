@@ -2,9 +2,8 @@ package com.jichuangsi.school.courseservice.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.Course;
-import com.jichuangsi.school.courseservice.model.Question;
+import com.jichuangsi.school.courseservice.model.TeacherPublishFile;
 import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
 import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
 import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-public class RabbitMqServiceImpl implements IMqService{
+public class RabbitMqServiceImpl implements IMqService {
 
     @Resource
     private AmqpTemplate template;
@@ -55,6 +54,9 @@ public class RabbitMqServiceImpl implements IMqService{
     @Value("${com.jichuangsi.school.mq.answers.share}")
     private String answersShareMq;
 
+    @Value("${com.jichuangsi.school.mq.publish}")
+    private String publishFile;
+
     @Resource
     private ConnectionFactory connectionFactory;
 
@@ -79,7 +81,7 @@ public class RabbitMqServiceImpl implements IMqService{
     }
 
     @Override
-    public void sendMsg4StartCourse(CourseMessageModel courseMsg){
+    public void sendMsg4StartCourse(CourseMessageModel courseMsg) {
         //rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSONObject.parseObject(JSON.toJSONString(courseMsg), CourseMessageModel.class));
         logger.debug("Send " + coursesMq + " messgae:" + courseMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, coursesMq, JSON.toJSONString(courseMsg));
@@ -87,7 +89,7 @@ public class RabbitMqServiceImpl implements IMqService{
     }
 
     @Override
-    public void sendMsg4PublishQuestion(QuestionMessageModel questionMsg){
+    public void sendMsg4PublishQuestion(QuestionMessageModel questionMsg) {
         logger.debug("Send " + questionsPubMq + " messgae:" + questionMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, questionsPubMq, JSON.toJSONString(questionMsg));
         logger.debug("Send " + questionsPubMq + "  messgae sucess");
@@ -101,19 +103,26 @@ public class RabbitMqServiceImpl implements IMqService{
     }
 
     @Override
-    public void sendMsg4SubmitAnswer(AnswerMessageModel answerMsg){
+    public void sendMsg4SubmitAnswer(AnswerMessageModel answerMsg) {
         logger.debug("Send " + answersStatisticsMq + " messgae:" + answerMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, answersStatisticsMq, JSON.toJSONString(answerMsg));
         logger.debug("Send " + answersStatisticsMq + "  messgae sucess");
     }
 
     @Override
-    public void sendMsg4ShareAnswer(ShareAnswerMessageModel shareAnswerMsg){
+    public void sendMsg4ShareAnswer(ShareAnswerMessageModel shareAnswerMsg) {
         logger.debug("Send " + answersShareMq + " messgae:" + shareAnswerMsg.toString());
         rabbitMessagingTemplate.convertAndSend(exchange, answersShareMq, JSON.toJSONString(shareAnswerMsg));
         logger.debug("Send " + answersShareMq + "  messgae sucess");
     }
 
+    @Override
+    public void sendPublishFile(TeacherPublishFile teacherPublishFile) {
+        String msg = JSONObject.toJSONString(teacherPublishFile);
+        logger.debug("Send " + publishFile + " messgae:" + msg);
+        rabbitMessagingTemplate.convertAndSend( publishFile, msg);
+        logger.debug("Send " + publishFile + " messgae sucess");
+    }
 }
 
 

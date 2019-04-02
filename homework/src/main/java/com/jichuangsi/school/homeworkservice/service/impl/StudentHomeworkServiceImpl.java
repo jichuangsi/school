@@ -204,7 +204,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
     public List<HomeworkModelForStudent> getHomeworksListOnWeek(String userId, String subject) throws StudentHomeworkServiceException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.DAY_OF_WEEK, -1);
+        c.add(Calendar.WEEK_OF_MONTH, -1);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);

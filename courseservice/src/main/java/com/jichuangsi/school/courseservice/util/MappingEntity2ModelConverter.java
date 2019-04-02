@@ -2,11 +2,11 @@ package com.jichuangsi.school.courseservice.util;
 
 import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.Status;
+import com.jichuangsi.school.courseservice.entity.*;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
-import com.jichuangsi.school.courseservice.entity.StudentAnswer;
-import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.Knowledge;
 
 public final class MappingEntity2ModelConverter {
 
@@ -31,7 +31,7 @@ public final class MappingEntity2ModelConverter {
         courseForTeacher.setSubjectId(course.getSubjectId());
         if(course.getAttachments()!=null&&course.getAttachments().size()>0){
             course.getAttachments().forEach(attachment -> {
-                courseForTeacher.getAttachments().add(new Attachment(attachment.getName(),attachment.getSub(), attachment.getContentType()));
+                courseForTeacher.getAttachments().add(new AttachmentModel(attachment.getName(),attachment.getSub(), attachment.getContentType()));
             });
         }
         return courseForTeacher;
@@ -141,5 +141,13 @@ public final class MappingEntity2ModelConverter {
         answerForTeacher.setUpdateTime(teacherAnswer.getUpdateTime());
         answerForTeacher.setShareTime(teacherAnswer.getShareTime());
         return answerForTeacher;
+    }
+
+    public static AttachmentModel CONVERTERFROMATTACHMENT(Attachment attachment){
+        AttachmentModel model = new AttachmentModel();
+        model.setContentType(attachment.getContentType());
+        model.setName(attachment.getName());
+        model.setSub(attachment.getSub());
+        return model;
     }
 }

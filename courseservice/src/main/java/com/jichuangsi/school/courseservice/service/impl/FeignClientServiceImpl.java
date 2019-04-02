@@ -5,12 +5,15 @@ import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceExcepti
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
+import com.jichuangsi.school.courseservice.constant.Status;
+import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.Knowledge;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
@@ -95,6 +98,9 @@ public class FeignClientServiceImpl implements IFeignClientService {
                 return 0;
             }
             for (AnswerForStudent answerForStudent : answerForStudents) {
+                if (StringUtils.isEmpty(answerForStudent.getResult())) {
+                    continue;
+                }
                 if (Result.CORRECT.getName().equals(answerForStudent.getResult().getName())) {
                     count = count + 1;
                 } else if (Result.PASS.getName().equals(answerForStudent.getResult().getName())) {
@@ -109,7 +115,7 @@ public class FeignClientServiceImpl implements IFeignClientService {
 
     @Override
     public List<ResultKnowledgeModel> getQuestionKnowledges(List<String> questionIds) throws StudentCourseServiceException {
-        if (null == questionIds || !(questionIds.size() > 0)) {
+        if (null == questionIds) {
             throw new StudentCourseServiceException(ResultCode.SELECT_NULL_MSG);
         }
         List<ResultKnowledgeModel> resultKnowledgeModels = new ArrayList<ResultKnowledgeModel>();
@@ -146,6 +152,9 @@ public class FeignClientServiceImpl implements IFeignClientService {
         }
         double count = 0;
         for (StudentAnswer studentAnswer : studentAnswers) {
+            if (StringUtils.isEmpty(studentAnswer.getResult())) {
+                continue;
+            }
             if (Result.CORRECT.getName().equals(studentAnswer.getResult())) {
                 count = count + 1;
             } else if (Result.PASS.getName().equals(studentAnswer.getResult())) {
@@ -153,5 +162,30 @@ public class FeignClientServiceImpl implements IFeignClientService {
             }
         }
         return count / studentAnswers.size();
+    }
+
+    @Override
+    public List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<String> classIds) throws FeignControllerException {
+        if (null == classIds || !(classIds.size() > 0)) {
+            throw new FeignControllerException(ResultCode.CLASSID_IS_NULL);
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MONTH, -1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        List<ClassStatisticsModel> classStatisticsModels = new ArrayList<ClassStatisticsModel>();
+        for (String classId : classIds) {
+            ClassStatisticsModel model = new ClassStatisticsModel();
+            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanOrderByCreateTime(classId, Status.FINISH.getName(), calendar.getTimeInMillis());
+            for (Course course : courses){
+                model.setClassId(course.getClassId());
+                model.setClassName(course.getClassName());
+                model.getCourseIds().add(course.getId());
+            }
+            classStatisticsModels.add(model);
+        }
+        return classStatisticsModels;
     }
 }
