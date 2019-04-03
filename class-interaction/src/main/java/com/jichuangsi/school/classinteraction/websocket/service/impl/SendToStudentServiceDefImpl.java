@@ -61,6 +61,6 @@ public class SendToStudentServiceDefImpl implements ISendToStudentService {
 	@Override
 	public void sendPublishFileInfo(TeacherPublishFile publishFile) {
 		messagingTemplate.convertAndSend(coursePublishPre + publishFile.getCourseId(),
-				JSONObject.toJSONString(ResponseModel.sucess("",publishFile)));
+				JSONObject.toJSONString(ResponseModel.sucess("",publishFile.getFileId())));
 	}
 }

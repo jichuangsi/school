@@ -6,10 +6,7 @@ import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,6 +34,16 @@ public class FeignController {
     public ResponseModel<List<String>> getTeachClassIds(@RequestParam("teacherId") String teacherId){
         try {
             return ResponseModel.sucess("",feignService.getClassIdsByTeacherId(teacherId));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "获取班级s最新信息，包括班级人数，年级", notes = "")
+    @PostMapping("/getClassDetail")
+    public ResponseModel<List<ClassDetailModel>> getClassDetailByIds(@RequestBody List<String> classIds){
+        try {
+            return ResponseModel.sucess("",feignService.findClassDetailByClassIds(classIds));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

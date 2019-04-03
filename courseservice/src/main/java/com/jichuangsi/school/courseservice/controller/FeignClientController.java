@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.courseservice.Exception.FeignControllerException;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
@@ -82,9 +83,9 @@ public class FeignClientController {
     @ApiOperation(value = "根据班级ids查询班级近一个月的学习情况", notes = "")
     @ApiImplicitParams({})
     @PostMapping("/getClassStatisticsByClassIdsOnMonth")
-    public ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(@RequestBody List<String> classIds){
+    public ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(@RequestBody List<ClassDetailModel> classModels){
         try {
-            return ResponseModel.sucess("",iFeignClientService.getClassStatisticsByClassIdsOnMonth(classIds));
+            return ResponseModel.sucess("",iFeignClientService.getClassStatisticsByClassIdsOnMonth(classModels));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

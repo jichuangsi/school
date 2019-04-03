@@ -325,4 +325,17 @@ public class CourseConsoleController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+
+    @ApiOperation(value = "根据错题集ids获取一月内错题汇总", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+           })
+    @PostMapping("/getWrongQuestionDetails")
+    public ResponseModel<List<QuestionForTeacher>> getWrongQuestionDetails(@ModelAttribute UserInfoForToken userInfo,@RequestBody List<String> questionIds){
+        try {
+            return ResponseModel.sucess("",courseConsoleService.getWrongQuestions(questionIds));
+        } catch (TeacherCourseServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

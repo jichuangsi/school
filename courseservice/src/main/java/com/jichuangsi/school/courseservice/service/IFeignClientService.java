@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.service;
 import com.jichuangsi.school.courseservice.Exception.FeignControllerException;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
@@ -23,6 +24,6 @@ public interface IFeignClientService {
 
     double getQuetsionIdsCrossByMD5(QuestionRateModel model) throws FeignControllerException;
 
-    List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<String> ids) throws FeignControllerException;
+    List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classModels) throws FeignControllerException;
 }
 

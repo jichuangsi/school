@@ -47,7 +47,7 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/deleteClass/{gradeId}/{classId}", consumes = "application/json")
+    @GetMapping(value = "/deleteClass/{gradeId}/{classId}")
     public ResponseModel deleteClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException {
         if (userInfo == null || StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
@@ -60,7 +60,7 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/findClass/{gradeId}/{classId}", consumes = "application/json")
+    @GetMapping(value = "/findClass/{gradeId}/{classId}")
     public ResponseModel<ClassModel> findClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException {
         if (userInfo == null || StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
@@ -72,7 +72,7 @@ public class ClassCRUDController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/findClasses/{gradeId}", consumes = "application/json")
+    @GetMapping(value = "/findClasses/{gradeId}")
     public ResponseModel<List<ClassModel>> findClasses(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId){
         try {
            return ResponseModel.sucess("",schoolClassService.getClassesByGradeId(gradeId)) ;

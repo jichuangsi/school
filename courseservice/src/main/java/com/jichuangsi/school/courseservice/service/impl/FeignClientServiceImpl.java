@@ -13,7 +13,10 @@ import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.Knowledge;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.KnowledgeResultModel;
+import com.jichuangsi.school.courseservice.model.result.QuestionStatisticsRateModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
@@ -165,8 +168,8 @@ public class FeignClientServiceImpl implements IFeignClientService {
     }
 
     @Override
-    public List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<String> classIds) throws FeignControllerException {
-        if (null == classIds || !(classIds.size() > 0)) {
+    public List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classModels) throws FeignControllerException {
+        if (null == classModels || !(classModels.size() > 0)) {
             throw new FeignControllerException(ResultCode.CLASSID_IS_NULL);
         }
         Calendar calendar = Calendar.getInstance();
@@ -176,14 +179,84 @@ public class FeignClientServiceImpl implements IFeignClientService {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         List<ClassStatisticsModel> classStatisticsModels = new ArrayList<ClassStatisticsModel>();
-        for (String classId : classIds) {
+        for (ClassDetailModel classModel : classModels) {
+            int wrong = 0;
+            int weak = 0;
+            List<ResultKnowledgeModel> resultKnowledgeModels = new ArrayList<ResultKnowledgeModel>();
             ClassStatisticsModel model = new ClassStatisticsModel();
-            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanOrderByCreateTime(classId, Status.FINISH.getName(), calendar.getTimeInMillis());
-            for (Course course : courses){
-                model.setClassId(course.getClassId());
-                model.setClassName(course.getClassName());
+            Map<String, QuestionStatisticsRateModel> questionCalendar = new HashMap<String, QuestionStatisticsRateModel>();
+            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanOrderByCreateTime(classModel.getClassId(), Status.FINISH.getName(), calendar.getTimeInMillis());
+            model.setClassId(classModel.getClassId());
+            model.setClassName(classModel.getClassName());
+            List<String> questionMonth = new ArrayList<String>();
+            for (Course course : courses) {
                 model.getCourseIds().add(course.getId());
+                List<String> questionIds = course.getQuestionIds();
+                for (String questionId : questionIds) {
+                    try {
+                        TransferKnowledge transferKnowledge = getKnowledgeOfParticularQuestion(questionId);
+                        ResultKnowledgeModel resultKnowledgeModel = new ResultKnowledgeModel();
+                        resultKnowledgeModel.setCourseId(course.getId());
+                        resultKnowledgeModel.setQuestionId(questionId);
+                        resultKnowledgeModel.setTransferKnowledge(transferKnowledge);
+                        resultKnowledgeModels.add(resultKnowledgeModel);
+                        questionMonth.add(questionId);
+                        QuestionStatisticsRateModel statisticsRateModel = new QuestionStatisticsRateModel();
+                        List<StudentAnswer> studentAnswers = studentAnswerRepository.findAllByQuestionId(questionId);
+                        for (StudentAnswer studentAnswer : studentAnswers) {
+                            if (Result.CORRECT.getName().equals(studentAnswer.getResult())) {
+                                statisticsRateModel.setTrueNum(statisticsRateModel.getTrueNum() + 1);
+                            } else if (Result.PASS.getName().equals(studentAnswer.getResult())) {
+                                //todo 没全对计分
+                            }
+                        }
+                        statisticsRateModel.setWrongNum(classModel.getStudentNum() - statisticsRateModel.getTrueNum());
+                        statisticsRateModel.setQuestionId(questionId);
+                        if (statisticsRateModel.getWrongNum() / classModel.getStudentNum() > 0.3) {
+                            wrong++;
+                            model.getWrongQuestionIds().add(questionId);
+                        }
+                        if (questionCalendar.containsKey(questionId)) {
+                            statisticsRateModel.setTrueNum(statisticsRateModel.getTrueNum() + questionCalendar.get(questionId).getTrueNum());
+                        }
+                        questionCalendar.put(questionId, statisticsRateModel);
+                    } catch (StudentCourseServiceException e) {
+                        throw new FeignControllerException(e.getMessage());
+                    }
+                }
             }
+            model.setWrongQuestionNum(wrong);
+            Map<String, List<String>> questionMap = new HashMap<String, List<String>>();
+            for (ResultKnowledgeModel knowledgeModel : resultKnowledgeModels) {
+                for (Knowledge knowledge : knowledgeModel.getTransferKnowledge().getKnowledges()) {
+                    if (StringUtils.isEmpty(knowledge.getKnowledge())) {
+                        knowledge.setKnowledge("综合分类");
+                    }
+                    List<String> questionIds = new ArrayList<String>();
+                    if (questionMap.containsKey(knowledge.getKnowledge())) {
+                        questionIds.addAll(questionMap.get(knowledge.getKnowledge()));
+                    }
+                    questionIds.add(knowledgeModel.getQuestionId());
+                    questionMap.put(knowledge.getKnowledge(), questionIds);
+                }
+            }
+            for (String key : questionMap.keySet()) {
+                List<String> qids = questionMap.get(key);
+                KnowledgeResultModel resultModel = new KnowledgeResultModel();
+                resultModel.setKnowledgeName(key);
+                for (String qid : qids) {
+                    QuestionStatisticsRateModel questionStatisticsRateModel = questionCalendar.get(qid);
+                    resultModel.setTrueNum(resultModel.getTrueNum() + questionStatisticsRateModel.getTrueNum());
+                    resultModel.setWrongNum(resultModel.getWrongNum() + questionStatisticsRateModel.getWrongNum());
+                }
+                int sumNum = resultModel.getTrueNum() + resultModel.getWrongNum();
+                if (resultModel.getWrongNum() / sumNum > 0.3){
+                    weak ++ ;
+                }
+                model.getKnowledgeResultModels().add(resultModel);
+            }
+            model.setWeakQuestionNum(weak);
+            model.setMonthQuestionIds(questionMonth);
             classStatisticsModels.add(model);
         }
         return classStatisticsModels;

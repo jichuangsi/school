@@ -2,6 +2,7 @@ package com.jichuangsi.school.statistics.feign;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.statistics.feign.impl.CourseFallBackFeignServiceImpl;
+import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
@@ -28,5 +29,5 @@ public interface ICourseFeignService {
     ResponseModel<Double> getQuetsionIdsCrossByMD5(@RequestBody QuestionRateModel model);
 
     @RequestMapping("/feign/getClassStatisticsByClassIdsOnMonth")
-    ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<String> classIds);
+    ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classIds);
 }

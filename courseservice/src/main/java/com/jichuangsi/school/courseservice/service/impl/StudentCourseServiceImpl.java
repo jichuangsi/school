@@ -384,7 +384,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
     public List<CourseForStudent> getCourseOnWeek(String classId) throws StudentCourseServiceException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.WEEK_OF_MONTH,-1);
+        c.add(Calendar.WEEK_OF_MONTH, -1);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
@@ -393,15 +393,10 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
         return convertCourseList(courses);
     }
 
-    private List<AttachmentModel> converterfromEntity(List<Attachment> attachments){
+    private List<AttachmentModel> converterfromEntity(List<Attachment> attachments) {
         List<AttachmentModel> newAttachments = new ArrayList<AttachmentModel>();
-        for (Attachment attachment : attachments){
-            if (StringUtils.isEmpty(attachment.getPublishStatus())){
-                continue;
-            }
-            if (attachment.getPublishStatus().equals("1")){
-                newAttachments.add(MappingEntity2ModelConverter.CONVERTERFROMATTACHMENT(attachment));
-            }
+        for (Attachment attachment : attachments) {
+            newAttachments.add(MappingEntity2ModelConverter.CONVERTERFROMATTACHMENT(attachment));
         }
         return newAttachments;
     }

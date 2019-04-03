@@ -6,6 +6,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.exception.QuestionResultException;
 import com.jichuangsi.school.statistics.feign.ICourseFeignService;
 import com.jichuangsi.school.statistics.feign.IUserFeignService;
+import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,15 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         if (!ResultCode.SUCESS.equals(responseModel.getCode())){
             throw new QuestionResultException(responseModel.getMsg());
         }
-        ResponseModel<List<ClassStatisticsModel>> response = courseFeignService.getClassStatisticsByClassIdsOnMonth(responseModel.getData());
+        ResponseModel<List<ClassDetailModel>> response1 = userFeignService.getClassDetailByIds(responseModel.getData());
+        if (!ResultCode.SUCESS.equals(response1.getCode())){
+            throw new QuestionResultException(response1.getMsg());
+        }
+        ResponseModel<List<ClassStatisticsModel>> response = courseFeignService.getClassStatisticsByClassIdsOnMonth(response1.getData());
         if (!ResultCode.SUCESS.equals(response.getCode())){
             throw new QuestionResultException(response.getMsg());
         }
         List<ClassStatisticsModel> classStatisticsModels = response.getData();
-        for (ClassStatisticsModel model : classStatisticsModels){
-            
-        }
         return classStatisticsModels;
     }
 }

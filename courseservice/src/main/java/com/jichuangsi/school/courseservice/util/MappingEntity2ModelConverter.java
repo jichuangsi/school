@@ -148,6 +148,9 @@ public final class MappingEntity2ModelConverter {
         model.setContentType(attachment.getContentType());
         model.setName(attachment.getName());
         model.setSub(attachment.getSub());
+        model.setPublishFlag(attachment.getPublishStatus());
         return model;
     }
+
+
 }

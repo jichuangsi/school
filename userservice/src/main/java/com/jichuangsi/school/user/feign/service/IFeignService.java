@@ -10,4 +10,6 @@ public interface IFeignService {
     ClassDetailModel findClassDetailByClassId(String classId) throws FeignControllerException;
 
     List<String> getClassIdsByTeacherId(String teacherId) throws FeignControllerException;
+
+    List<ClassDetailModel> findClassDetailByClassIds(List<String> classIds) throws FeignControllerException;
 }

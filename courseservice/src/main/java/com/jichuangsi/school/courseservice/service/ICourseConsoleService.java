@@ -4,10 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
-import com.jichuangsi.school.courseservice.model.AttachmentModel;
-import com.jichuangsi.school.courseservice.model.CourseFile;
-import com.jichuangsi.school.courseservice.model.CourseForTeacher;
-import com.jichuangsi.school.courseservice.model.PageHolder;
+import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,4 +60,6 @@ public interface ICourseConsoleService {
     void removeCourseAttachment(UserInfoForToken userInfo, DeleteQueryModel deleteQueryModel) throws TeacherCourseServiceException;
 
     void publishFileByTeacher(String fileName, String fileId, String courseId, UserInfoForToken userInfo) throws TeacherCourseServiceException;
+
+    List<QuestionForTeacher> getWrongQuestions(List<String> questionIds) throws TeacherCourseServiceException;
 }

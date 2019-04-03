@@ -11,8 +11,10 @@ import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
 import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
+import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.service.*;
 import com.jichuangsi.school.courseservice.util.DateFormateUtil;
+import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +56,9 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
 
     @Resource
     private IMqService mqService;
+
+    @Resource
+    private QuestionRepository questionRepository;
 
     @Override
     public PageHolder<Course> getSortCoursesList(Course course, PageHolder<Course> page, String keyWord, Integer sortNum, Date nowDay) throws TeacherCourseServiceException {
@@ -222,17 +227,17 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
             throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
         }
         Course course = courseRepository.findFirstByIdAndTeacherId(courseId, userInfo.getUserId());
-        if (null == course){
+        if (null == course) {
             throw new TeacherCourseServiceException(ResultCode.SELECT_NULL_MSG);
         }
         // 判断未开始的课不能发布
-        if (course.getStatus().equals(Status.NOTSTART)){
+        if (course.getStatus().equals(Status.NOTSTART)) {
             throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
         }
         // 将题目改为已发布
         List<com.jichuangsi.school.courseservice.entity.Attachment> attachments = course.getAttachments();
         attachments.forEach(attachment -> {
-            if (fileId.equals(attachment.getSub())){
+            if (fileId.equals(attachment.getSub())) {
                 attachment.setPublishStatus("1");
             }
         });
@@ -244,5 +249,18 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
         publishFile.setTeacherId(userInfo.getUserId());
         publishFile.setTeacherName(userInfo.getUserName());
         mqService.sendPublishFile(publishFile);
+    }
+
+    @Override
+    public List<QuestionForTeacher> getWrongQuestions(List<String> questionIds) throws TeacherCourseServiceException {
+        if (null == questionIds || !(questionIds.size() > 0)) {
+            throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<Question> questions = questionRepository.findByIdIn(questionIds);
+        List<QuestionForTeacher> questionForTeachers = new ArrayList<QuestionForTeacher>();
+        questions.forEach(question -> {
+            questionForTeachers.add(MappingEntity2ModelConverter.ConvertTeacherQuestion(question));
+        });
+        return questionForTeachers;
     }
 }

@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.statistics.feign.impl.UserFallBackFeignServiceImpl;
 import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,4 +18,7 @@ public interface IUserFeignService {
 
     @RequestMapping("/feign/getTeachClassIds")
     ResponseModel<List<String>> getTeachClassIds(@RequestParam("teacherId") String teacherId);
+
+    @RequestMapping("/feign/getClassDetail")
+    ResponseModel<List<ClassDetailModel>> getClassDetailByIds(@RequestBody List<String> classIds);
 }

@@ -39,17 +39,28 @@ public class FeignServiceImpl implements IFeignService {
         }
         List<String> classIds = new ArrayList<String>();
         UserInfo userInfo = userRepository.findFirstById(teacherId);
-        if (userInfo.getRoleInfos() instanceof TeacherInfo) {
-            TeacherInfo teacherInfo = (TeacherInfo) userInfo.getRoleInfos();
-            if ("Teacher".equals(teacherInfo.getRoleName())) {
+        TeacherInfo teacherInfo = (TeacherInfo) userInfo.getRoleInfos().get(0);
+        if ("Teacher".equals(teacherInfo.getRoleName())) {
+            if (null != teacherInfo.getSecondaryClasses()) {
                 teacherInfo.getSecondaryClasses().forEach(classInfo -> {
                     classIds.add(classInfo.getClassId());
                 });
-                classIds.add(teacherInfo.getPrimaryClass().getClassId());
-            } else {
-                throw new FeignControllerException(ResultCode.ROLE_NOT_RIGHT);
             }
+            if (null != teacherInfo.getPrimaryClass()) {
+                classIds.add(teacherInfo.getPrimaryClass().getClassId());
+            }
+        } else {
+            throw new FeignControllerException(ResultCode.ROLE_NOT_RIGHT);
         }
         return classIds;
+    }
+
+    @Override
+    public List<ClassDetailModel> findClassDetailByClassIds(List<String> classIds) throws FeignControllerException {
+        List<ClassDetailModel> classDetailModels = new ArrayList<ClassDetailModel>();
+        for (String classId : classIds) {
+            classDetailModels.add(findClassDetailByClassId(classId));
+        }
+        return classDetailModels;
     }
 }

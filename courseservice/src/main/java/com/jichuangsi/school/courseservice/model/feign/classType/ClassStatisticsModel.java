@@ -11,6 +11,24 @@ public class ClassStatisticsModel {
     private Integer wrongQuestionNum;
     private Integer weakQuestionNum;
     List<String> courseIds = new ArrayList<String>();
+    List<String> wrongQuestionIds = new ArrayList<String>();
+    List<String> monthQuestionIds = new ArrayList<String>();
+
+    public List<String> getMonthQuestionIds() {
+        return monthQuestionIds;
+    }
+
+    public void setMonthQuestionIds(List<String> monthQuestionIds) {
+        this.monthQuestionIds = monthQuestionIds;
+    }
+
+    public List<String> getWrongQuestionIds() {
+        return wrongQuestionIds;
+    }
+
+    public void setWrongQuestionIds(List<String> wrongQuestionIds) {
+        this.wrongQuestionIds = wrongQuestionIds;
+    }
 
     public List<String> getCourseIds() {
         return courseIds;

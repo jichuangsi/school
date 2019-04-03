@@ -2,6 +2,7 @@ package com.jichuangsi.school.statistics.feign.impl;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.statistics.feign.ICourseFeignService;
+import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
@@ -33,7 +34,7 @@ public class CourseFallBackFeignServiceImpl implements ICourseFeignService {
     }
 
     @Override
-    public ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<String> classIds) {
+    public ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classIds) {
         return ResponseModel.fail("");
     }
 }

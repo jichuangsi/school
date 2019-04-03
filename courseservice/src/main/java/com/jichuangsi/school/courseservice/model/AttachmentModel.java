@@ -4,6 +4,7 @@ public class AttachmentModel {
     private String name;
     private String contentType;
     private String sub;
+    private String publishFlag;
 
     public AttachmentModel(){}
 
@@ -11,6 +12,14 @@ public class AttachmentModel {
         this.name = name;
         this.sub = sub;
         this.contentType = contentType;
+    }
+
+    public String getPublishFlag() {
+        return publishFlag;
+    }
+
+    public void setPublishFlag(String publishFlag) {
+        this.publishFlag = publishFlag;
     }
 
     public String getName() {

@@ -3,8 +3,8 @@ package com.jichuangsi.school.courseservice.model.feign.classType;
 public class KnowledgeResultModel {
 
     private String knowledgeName;
-    private Integer trueNum;
-    private Integer wrongNum;
+    private Integer trueNum = 0;
+    private Integer wrongNum = 0;
 
     public String getKnowledgeName() {
         return knowledgeName;

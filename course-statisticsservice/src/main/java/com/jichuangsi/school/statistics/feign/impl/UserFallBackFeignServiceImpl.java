@@ -19,4 +19,9 @@ public class UserFallBackFeignServiceImpl implements IUserFeignService {
     public ResponseModel<List<String>> getTeachClassIds(String teacherId) {
         return ResponseModel.fail("");
     }
+
+    @Override
+    public ResponseModel<List<ClassDetailModel>> getClassDetailByIds(List<String> classIds) {
+        return ResponseModel.fail("");
+    }
 }
