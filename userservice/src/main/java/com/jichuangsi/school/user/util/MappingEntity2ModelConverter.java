@@ -120,7 +120,40 @@ public final class MappingEntity2ModelConverter {
                     transferTeacher.setGradeId(teacherInfo.getPrimaryGrade().getGradeId());
                     transferTeacher.setGradeName(teacherInfo.getPrimaryGrade().getGradeName());
                 }
-
+                if (null != teacherInfo.getPrimaryClass()){
+                    transferTeacher.setPrimaryClassId(teacherInfo.getPrimaryClass().getClassId());
+                    transferTeacher.setPrimaryClassName(teacherInfo.getPrimaryClass().getClassName());
+                }
+                if (null != teacherInfo.getSecondaryClasses() && teacherInfo.getSecondaryClasses().size() > 0){
+                    List<ClassModel> classModels = new ArrayList<ClassModel>();
+                    for (TeacherInfo.Class cl : teacherInfo.getSecondaryClasses()){
+                        ClassModel classModel = new ClassModel();
+                        classModel.setClassId(cl.getClassId());
+                        classModel.setClassName(cl.getClassName());
+                        classModels.add(classModel);
+                    }
+                    transferTeacher.setSecondaryClasses(classModels);
+                }
+                if (null != teacherInfo.getSecondarySubjects() && teacherInfo.getSecondarySubjects().size() > 0){
+                    List<SubjectModel> subjectModels = new ArrayList<SubjectModel>();
+                    for (TeacherInfo.Subject subject : teacherInfo.getSecondarySubjects()){
+                        SubjectModel subjectModel = new SubjectModel();
+                        subjectModel.setSubjectName(subject.getSubjectName());
+                        subjectModel.setId(subject.getSubjectId());
+                        subjectModels.add(subjectModel);
+                    }
+                    transferTeacher.setSecondarySubjects(subjectModels);
+                }
+                if (null != teacherInfo.getSecondaryGrades() && teacherInfo.getSecondaryGrades().size() > 0){
+                    List<GradeModel> gradeModels = new ArrayList<GradeModel>();
+                    for (TeacherInfo.Grade grade : teacherInfo.getSecondaryGrades()){
+                        GradeModel gradeModel = new GradeModel();
+                        gradeModel.setGradeName(grade.getGradeName());
+                        gradeModel.setGradeId(grade.getGradeId());
+                        gradeModels.add(gradeModel);
+                    }
+                    transferTeacher.setSecondaryGrades(gradeModels);
+                }
             }
         });
         return transferTeacher;

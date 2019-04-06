@@ -160,6 +160,7 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setDeleteFlag("1");
         info.setUpdateId(userInfo.getUserId());
         info.setUpdateName(userInfo.getUserName());
+        info.setUpdateTime(new Date().getTime());
         schoolInfoRepository.save(info);
     }
 
@@ -172,6 +173,22 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setDeleteFlag("1");
         info.setUpdateId(userInfo.getUserId());
         info.setUpdateName(userInfo.getUserName());
+        SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContaining(gradeId);
+        if (null != schoolInfo) {
+            schoolInfo.getGradeIds().remove(gradeId);
+            schoolInfo.setUpdateName(userInfo.getUserName());
+            schoolInfo.setUpdateId(userInfo.getUserId());
+            schoolInfo.setUpdateTime(new Date().getTime());
+            schoolInfoRepository.save(schoolInfo);
+        }
+        PhraseInfo phraseInfo = phraseInfoRepository.findFirstByGradeIdsContaining(gradeId);
+        if (null != phraseInfo) {
+            phraseInfo.getGradeIds().remove(gradeId);
+            phraseInfo.setUpdateName(userInfo.getUserName());
+            phraseInfo.setUpdateId(userInfo.getUserId());
+            phraseInfo.setUpdatedTime(new Date().getTime());
+            phraseInfoRepository.save(phraseInfo);
+        }
         gradeInfoRepository.save(info);
     }
 
@@ -306,6 +323,14 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setUpdateName(userInfo.getUserName());
         info.setUpdateId(userInfo.getUserId());
         info.setUpdatedTime(new Date().getTime());
+        SchoolInfo schoolInfo = schoolInfoRepository.findFirstByPhraseIdsContaining(phrase);
+        if (null != schoolInfo){
+            schoolInfo.getPhraseIds().remove(phrase);
+            schoolInfo.setUpdateTime(new Date().getTime());
+            schoolInfo.setUpdateId(userInfo.getUserId());
+            schoolInfo.setUpdateName(userInfo.getUserName());
+            schoolInfoRepository.save(schoolInfo);
+        }
         phraseInfoRepository.save(info);
     }
 

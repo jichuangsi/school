@@ -1,5 +1,12 @@
 package com.jichuangsi.school.user.model.transfer;
 
+import com.jichuangsi.school.user.model.org.ClassModel;
+import com.jichuangsi.school.user.model.school.GradeModel;
+import com.jichuangsi.school.user.model.school.SubjectModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransferTeacher {
     private String teacherId;
     private String teacherName;
@@ -9,6 +16,51 @@ public class TransferTeacher {
     private String subjectName;
     private String gradeId;
     private String gradeName;
+    private List<SubjectModel> secondarySubjects = new ArrayList<SubjectModel>();
+    private String primaryClassId;
+    private String primaryClassName;
+    private List<ClassModel> secondaryClasses = new ArrayList<ClassModel>();
+    private List<GradeModel> secondaryGrades = new ArrayList<GradeModel>();
+
+    public List<SubjectModel> getSecondarySubjects() {
+        return secondarySubjects;
+    }
+
+    public void setSecondarySubjects(List<SubjectModel> secondarySubjects) {
+        this.secondarySubjects = secondarySubjects;
+    }
+
+    public String getPrimaryClassId() {
+        return primaryClassId;
+    }
+
+    public void setPrimaryClassId(String primaryClassId) {
+        this.primaryClassId = primaryClassId;
+    }
+
+    public String getPrimaryClassName() {
+        return primaryClassName;
+    }
+
+    public void setPrimaryClassName(String primaryClassName) {
+        this.primaryClassName = primaryClassName;
+    }
+
+    public List<ClassModel> getSecondaryClasses() {
+        return secondaryClasses;
+    }
+
+    public void setSecondaryClasses(List<ClassModel> secondaryClasses) {
+        this.secondaryClasses = secondaryClasses;
+    }
+
+    public List<GradeModel> getSecondaryGrades() {
+        return secondaryGrades;
+    }
+
+    public void setSecondaryGrades(List<GradeModel> secondaryGrades) {
+        this.secondaryGrades = secondaryGrades;
+    }
 
     public String getTeacherId() {
         return teacherId;

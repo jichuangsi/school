@@ -139,4 +139,12 @@ public interface UserInfoService {
     void saveStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException;
 
     String saveExcelStudents(MultipartFile file,UserInfoForToken userInfo) throws UserServiceException;
+
+    List<TransferTeacher> getTeachersByClassId(String classId) throws UserServiceException;
+
+    void coldUserInfo(String userId) throws UserServiceException;
+
+    void updateTeacher(UserInfoForToken userInfo,TeacherModel model) throws UserServiceException;
+
+    void updateStudent(UserInfoForToken userInfo,StudentModel model) throws UserServiceException;
 }

@@ -6,6 +6,8 @@ import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
+import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
+import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,11 @@ public class CourseFallBackFeignServiceImpl implements ICourseFeignService {
 
     @Override
     public ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classIds) {
+        return ResponseModel.fail("");
+    }
+
+    @Override
+    public ResponseModel<List<StudentKnowledgeModel>> getStudentKnowledges(SearchStudentKnowledgeModel model) {
         return ResponseModel.fail("");
     }
 }

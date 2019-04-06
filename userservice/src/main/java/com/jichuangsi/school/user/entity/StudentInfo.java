@@ -149,5 +149,21 @@ public class StudentInfo extends RoleInfo {
             this.schoolName = schoolName;
         }
     }
+
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public void setPhrase(Phrase phrase) {
+        this.phrase = phrase;
+    }
+
+    public void setPrimaryClass(Class primaryClass) {
+        this.primaryClass = primaryClass;
+    }
+
+    public void setPrimaryGrade(Grade primaryGrade) {
+        this.primaryGrade = primaryGrade;
+    }
 }
 

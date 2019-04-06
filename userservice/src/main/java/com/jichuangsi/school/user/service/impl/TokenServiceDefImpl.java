@@ -3,20 +3,17 @@
  */
 package com.jichuangsi.school.user.service.impl;
 
-import javax.annotation.Resource;
-
-import com.jichuangsi.microservice.common.model.UserInfoForToken;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.service.ITokenService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -33,7 +30,7 @@ public class TokenServiceDefImpl implements ITokenService {
 	@Override
 	public String getToken(String userId) {
 		// 获取用户信息
-		UserInfoForToken userInfoForToken = new UserInfoForToken("123", "456","张三","777",String.valueOf(new Date().getTime()));
+		UserInfoForToken userInfoForToken = new UserInfoForToken("123", "456","张三","777",String.valueOf(new Date().getTime()),"");
 
 		String userJson = JSON.toJSONString(userInfoForToken);
 		return JWT.create().withClaim(userClaim, userJson).sign(algorithm);

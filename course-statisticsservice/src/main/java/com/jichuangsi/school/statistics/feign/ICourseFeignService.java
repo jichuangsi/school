@@ -6,6 +6,8 @@ import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
+import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
+import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,4 +32,7 @@ public interface ICourseFeignService {
 
     @RequestMapping("/feign/getClassStatisticsByClassIdsOnMonth")
     ResponseModel<List<ClassStatisticsModel>> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classIds);
+
+    @RequestMapping("/feign/getStudentKnowledges")
+    ResponseModel<List<StudentKnowledgeModel>> getStudentKnowledges(@RequestBody SearchStudentKnowledgeModel model);
 }

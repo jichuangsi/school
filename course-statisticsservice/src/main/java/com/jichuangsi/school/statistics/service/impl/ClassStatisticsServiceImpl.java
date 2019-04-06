@@ -7,7 +7,10 @@ import com.jichuangsi.school.statistics.exception.QuestionResultException;
 import com.jichuangsi.school.statistics.feign.ICourseFeignService;
 import com.jichuangsi.school.statistics.feign.IUserFeignService;
 import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
+import com.jichuangsi.school.statistics.feign.model.TransferStudent;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
+import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
+import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,22 +28,39 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
 
     @Override
     public List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo) throws QuestionResultException {
-        if (StringUtils.isEmpty(userInfo.getUserId())){
+        if (StringUtils.isEmpty(userInfo.getUserId())) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
         }
         ResponseModel<List<String>> responseModel = userFeignService.getTeachClassIds(userInfo.getUserId());
-        if (!ResultCode.SUCESS.equals(responseModel.getCode())){
+        if (!ResultCode.SUCESS.equals(responseModel.getCode())) {
             throw new QuestionResultException(responseModel.getMsg());
         }
         ResponseModel<List<ClassDetailModel>> response1 = userFeignService.getClassDetailByIds(responseModel.getData());
-        if (!ResultCode.SUCESS.equals(response1.getCode())){
+        if (!ResultCode.SUCESS.equals(response1.getCode())) {
             throw new QuestionResultException(response1.getMsg());
         }
         ResponseModel<List<ClassStatisticsModel>> response = courseFeignService.getClassStatisticsByClassIdsOnMonth(response1.getData());
-        if (!ResultCode.SUCESS.equals(response.getCode())){
+        if (!ResultCode.SUCESS.equals(response.getCode())) {
             throw new QuestionResultException(response.getMsg());
         }
         List<ClassStatisticsModel> classStatisticsModels = response.getData();
         return classStatisticsModels;
+    }
+
+    @Override
+    public List<StudentKnowledgeModel> getClassStudentKnowledges(UserInfoForToken userInfo,SearchStudentKnowledgeModel model) throws QuestionResultException {
+        if (StringUtils.isEmpty(model.getClassId()) || !(model.getQuestionIds().size() > 0)) {
+            throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
+        }
+        ResponseModel<List<TransferStudent>> responseModel = userFeignService.getStudentsForClass(model.getClassId());
+        if (!ResultCode.SUCESS.equals(responseModel.getCode())){
+            throw new QuestionResultException(responseModel.getMsg());
+        }
+        model.setTransferStudents(responseModel.getData());
+        ResponseModel<List<StudentKnowledgeModel>> response = courseFeignService.getStudentKnowledges(model);
+        if (!ResultCode.SUCESS.equals(response.getCode())){
+            throw new QuestionResultException(response.getMsg());
+        }
+        return response.getData();
     }
 }

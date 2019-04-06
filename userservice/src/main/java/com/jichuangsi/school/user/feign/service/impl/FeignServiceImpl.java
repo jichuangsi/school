@@ -5,10 +5,14 @@ import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.FeignControllerException;
+import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
+import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.ISchoolClassService;
+import com.jichuangsi.school.user.service.UserInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,6 +26,8 @@ public class FeignServiceImpl implements IFeignService {
     private ISchoolClassService schoolClassService;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private UserInfoService userInfoService;
 
     @Override
     public ClassDetailModel findClassDetailByClassId(String classId) throws FeignControllerException {
@@ -62,5 +68,28 @@ public class FeignServiceImpl implements IFeignService {
             classDetailModels.add(findClassDetailByClassId(classId));
         }
         return classDetailModels;
+    }
+
+    @Override
+    public List<TransferStudent> findStudentsByClassId(String classId) throws FeignControllerException {
+        return userInfoService.getStudentsByClassId(classId);
+    }
+
+    @Override
+    public SchoolModel findSchoolBySchoolId(String schoolId) throws FeignControllerException {
+        try {
+            return schoolClassService.getSchoolBySchoolId(schoolId);
+        } catch (SchoolServiceException e) {
+            throw  new FeignControllerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<SchoolModel> findBackSchools() throws FeignControllerException {
+        try {
+            return schoolClassService.getBackSchools();
+        } catch (SchoolServiceException e) {
+            throw new FeignControllerException(e.getMessage());
+        }
     }
 }

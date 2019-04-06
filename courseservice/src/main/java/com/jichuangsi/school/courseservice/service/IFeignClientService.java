@@ -5,6 +5,8 @@ import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceExcepti
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.SearchStudentKnowledgeModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.StudentKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,5 +27,7 @@ public interface IFeignClientService {
     double getQuetsionIdsCrossByMD5(QuestionRateModel model) throws FeignControllerException;
 
     List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classModels) throws FeignControllerException;
+
+    List<StudentKnowledgeModel> getStudentKnowledges(SearchStudentKnowledgeModel model) throws FeignControllerException;
 }
 

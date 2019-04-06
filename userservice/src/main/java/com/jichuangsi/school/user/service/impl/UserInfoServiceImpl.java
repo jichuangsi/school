@@ -13,6 +13,7 @@ import com.jichuangsi.school.user.constant.MyResultCode;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.RoleInfo;
 import com.jichuangsi.school.user.entity.StudentInfo;
+import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.entity.org.GradeInfo;
@@ -67,6 +68,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     private IGradeInfoRepository gradeInfoRepository;
     @Resource
     private IClassInfoRepository classInfoRepository;
+    @Resource
+    private IUserExtraRepository userExtraRepository;
 //    @Resource
 //    private UserInfoMapper  userInfoMapper;
 
@@ -370,7 +373,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     public List<TransferStudent> getStudentsByClassId(String classId) {
-        Criteria criteria = Criteria.where("roleInfos").elemMatch(Criteria.where("roleName").is("Student").and("primaryClass.classId").is(classId));
+        Criteria criteria = Criteria.where("roleInfos").elemMatch(Criteria.where("roleName").is("Student").and("primaryClass.classId").is(classId)).and("status").is(Status.ACTIVATE.getName());
         Query query = new Query(criteria);
         return convertStudentsList(mongoTemplate.find(query, UserInfo.class));
     }
@@ -540,5 +543,115 @@ public class UserInfoServiceImpl implements UserInfoService {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         return cell.getStringCellValue();
+    }
+
+    @Override
+    public List<TransferTeacher> getTeachersByClassId(String classId) throws UserServiceException {
+        if (StringUtils.isEmpty(classId)){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<UserInfo> userInfos = userExtraRepository.findByRoleInfos(classId);
+        List<TransferTeacher> transferTeachers = new ArrayList<TransferTeacher>();
+        userInfos.forEach(userInfo -> {
+            transferTeachers.add(MappingEntity2ModelConverter.ConvertTransferTeacher(userInfo));
+        });
+        return transferTeachers;
+    }
+
+    @Override
+    public void coldUserInfo(String userId) throws UserServiceException {
+        if (StringUtils.isEmpty(userId)){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo userInfo = userRepository.findFirstById(userId);
+        if(null == userInfo){
+            throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        userInfo.setStatus(Status.DELETE.getName());
+        userRepository.save(userInfo);
+    }
+
+    @Override
+    public void updateTeacher(UserInfoForToken userInfo,TeacherModel model) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getId())){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo teacher = userRepository.findFirstById(model.getId());
+        TeacherInfo info = new TeacherInfo();
+        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
+            info = (TeacherInfo) teacher.getRoleInfos().get(0);
+        }
+        if (null == teacher){
+            throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        UserInfo transferTeacher = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
+        if (transferTeacher.getRoleInfos().get(0) instanceof TeacherInfo){
+            TeacherInfo teacherInfo = (TeacherInfo) transferTeacher.getRoleInfos().get(0);
+            if (null != teacherInfo.getSecondaryGrades() ){
+                info.setSecondaryGrades(teacherInfo.getSecondaryGrades());
+            }
+            if (null != teacherInfo.getSecondarySubjects()){
+                info.setSecondarySubjects(teacherInfo.getSecondarySubjects());
+            }
+            if (null != teacherInfo.getSecondaryClasses()){
+                info.setSecondaryGrades(teacherInfo.getSecondaryGrades());
+            }
+            if (null != teacherInfo.getPrimaryClass()){
+                info.setPrimaryClass(teacherInfo.getPrimaryClass());
+            }
+            if (null != teacherInfo.getPrimaryGrade()){
+                info.setPrimaryGrade(teacherInfo.getPrimaryGrade());
+            }
+            if (null != teacherInfo.getPrimarySubject()){
+                info.setPrimarySubject(teacherInfo.getPrimarySubject());
+            }
+            if (null != teacherInfo.getPhrase()){
+                info.setPhrase(teacherInfo.getPhrase());
+            }
+        }
+        List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
+        roleInfos.add(info);
+        teacher.setRoleInfos(roleInfos);
+        if (StringUtils.isEmpty(transferTeacher.getName())){
+            teacher.setName(transferTeacher.getName());
+        }
+        teacher.setUpdateTime(new Date().getTime());
+        userRepository.save(teacher);
+    }
+
+    @Override
+    public void updateStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getId())){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo student = userRepository.findFirstById(model.getId());
+        StudentInfo info = new StudentInfo();
+        if (student.getRoleInfos().get(0) instanceof StudentInfo){
+            info = (StudentInfo) student.getRoleInfos().get(0);
+        }
+        if (null == student){
+            throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        UserInfo transferStudent = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
+        if (transferStudent.getRoleInfos().get(0) instanceof StudentInfo){
+            StudentInfo studentInfo = (StudentInfo) transferStudent.getRoleInfos().get(0);
+            if (null != studentInfo.getPrimaryClass()){
+                info.setPrimaryClass(studentInfo.getPrimaryClass());
+            }
+            if (null != studentInfo.getPrimaryGrade()){
+                info.setPrimaryGrade(studentInfo.getPrimaryGrade());
+            }
+            if (null != studentInfo.getPhrase()){
+                info.setPhrase(studentInfo.getPhrase());
+            }
+        }
+        List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
+        roleInfos.add(info);
+        student.setRoleInfos(roleInfos);
+        if (!StringUtils.isEmpty(transferStudent.getName())){
+            student.setName(transferStudent.getName());
+        }
+        student.setUpdateTime(new Date().getTime());
+        userRepository.save(student);
     }
 }

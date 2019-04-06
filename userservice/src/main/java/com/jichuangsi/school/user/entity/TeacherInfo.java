@@ -215,5 +215,36 @@ public class TeacherInfo extends RoleInfo {
         }
     }
 
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public void setPhrase(Phrase phrase) {
+        this.phrase = phrase;
+    }
+
+    public void setPrimaryClass(Class primaryClass) {
+        this.primaryClass = primaryClass;
+    }
+
+    public void setSecondaryClasses(List<Class> secondaryClasses) {
+        this.secondaryClasses = secondaryClasses;
+    }
+
+    public void setPrimarySubject(Subject primarySubject) {
+        this.primarySubject = primarySubject;
+    }
+
+    public void setSecondarySubjects(List<Subject> secondarySubjects) {
+        this.secondarySubjects = secondarySubjects;
+    }
+
+    public void setPrimaryGrade(Grade primaryGrade) {
+        this.primaryGrade = primaryGrade;
+    }
+
+    public void setSecondaryGrades(List<Grade> secondaryGrades) {
+        this.secondaryGrades = secondaryGrades;
+    }
 }
 

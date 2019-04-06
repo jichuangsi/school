@@ -4,6 +4,7 @@ import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.model.org.ClassModel;
+import com.jichuangsi.school.user.model.school.SchoolModel;
 
 import java.util.List;
 
@@ -18,4 +19,8 @@ public interface ISchoolClassService {
     ClassDetailModel getClassDetail(String classId) throws ClassServiceException;
 
     List<ClassModel> getClassesByGradeId(String gradeId) throws SchoolServiceException;
+
+    SchoolModel getSchoolBySchoolId(String schoolId) throws SchoolServiceException;
+
+    List<SchoolModel> getBackSchools() throws SchoolServiceException;
 }

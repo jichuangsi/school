@@ -13,12 +13,11 @@ import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.Knowledge;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
-import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
-import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
-import com.jichuangsi.school.courseservice.model.feign.classType.KnowledgeResultModel;
+import com.jichuangsi.school.courseservice.model.feign.classType.*;
 import com.jichuangsi.school.courseservice.model.result.QuestionStatisticsRateModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
+import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
@@ -250,8 +249,8 @@ public class FeignClientServiceImpl implements IFeignClientService {
                     resultModel.setWrongNum(resultModel.getWrongNum() + questionStatisticsRateModel.getWrongNum());
                 }
                 int sumNum = resultModel.getTrueNum() + resultModel.getWrongNum();
-                if (resultModel.getWrongNum() / sumNum > 0.3){
-                    weak ++ ;
+                if (resultModel.getWrongNum() / sumNum > 0.3) {
+                    weak++;
                 }
                 model.getKnowledgeResultModels().add(resultModel);
             }
@@ -260,5 +259,68 @@ public class FeignClientServiceImpl implements IFeignClientService {
             classStatisticsModels.add(model);
         }
         return classStatisticsModels;
+    }
+
+    @Override
+    public List<StudentKnowledgeModel> getStudentKnowledges(SearchStudentKnowledgeModel model) throws FeignControllerException {
+        if (!(model.getQuestionIds().size() > 0) || !(model.getTransferStudents().size() > 0)) {
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        Map<String, List<String>> questionMap = new HashMap<String, List<String>>();
+        try {
+            List<ResultKnowledgeModel> resultKnowledgeModels = getQuestionKnowledges(model.getQuestionIds());
+            for (ResultKnowledgeModel knowledgeModel : resultKnowledgeModels) {
+                for (Knowledge knowledge : knowledgeModel.getTransferKnowledge().getKnowledges()) {
+                    if (StringUtils.isEmpty(knowledge.getKnowledge())) {
+                        knowledge.setKnowledge("综合分类");
+                    }
+                    List<String> questionIds = new ArrayList<String>();
+                    if (questionMap.containsKey(knowledge.getKnowledge())) {
+                        questionIds.addAll(questionMap.get(knowledge.getKnowledge()));
+                    }
+                    questionIds.add(knowledgeModel.getQuestionId());
+                    questionMap.put(knowledge.getKnowledge(), questionIds);
+                }
+            }
+        } catch (StudentCourseServiceException e) {
+            throw new FeignControllerException(e.getMessage());
+        }
+        List<StudentKnowledgeModel> studentKnowledgeModels = new ArrayList<StudentKnowledgeModel>();
+        for (TransferStudent student : model.getTransferStudents()) {
+            StudentKnowledgeModel knowledgeModel = new StudentKnowledgeModel();
+            knowledgeModel.setStudentId(student.getStudentId());
+            knowledgeModel.setStudentName(student.getStudentName());
+            Map<String, String> questionResult = new HashMap<String, String>();
+            for (String questionId : model.getQuestionIds()) {
+                StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentId(questionId, student.getStudentId());
+                String result = "";
+                if (null == studentAnswer || Result.WRONG.getName().equals(studentAnswer.getResult())) {
+                    result = Result.WRONG.getName();
+                } else {
+                    result = studentAnswer.getResult();
+                }
+                questionResult.put(questionId, result);
+            }
+            List<KnowledgeResultModel> resultModels = new ArrayList<KnowledgeResultModel>();
+            for (String key : questionMap.keySet()) {
+                KnowledgeResultModel resultModel = new KnowledgeResultModel();
+                resultModel.setKnowledgeName(key);
+                List<String> questionIds = questionMap.get(key);
+                for (String questionId : questionIds) {
+                    String result = questionResult.get(questionId);
+                    if (Result.CORRECT.getName().equals(result)) {
+                        resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                    } else if (Result.PASS.getName().equals(result)) {
+
+                    } else if (Result.WRONG.getName().equals(result)) {
+                        resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                    }
+                }
+                resultModels.add(resultModel);
+            }
+            knowledgeModel.setKnowledgeResultModels(resultModels);
+            studentKnowledgeModels.add(knowledgeModel);
+        }
+        return studentKnowledgeModels;
     }
 }

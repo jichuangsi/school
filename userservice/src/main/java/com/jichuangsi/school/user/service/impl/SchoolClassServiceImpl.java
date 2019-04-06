@@ -9,6 +9,7 @@ import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.model.org.ClassModel;
+import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.IClassInfoRepository;
 import com.jichuangsi.school.user.repository.IGradeInfoRepository;
@@ -108,5 +109,27 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             classModels.add(MappingEntity2ModelConverter.TransferClass(classInfo));
         });
         return classModels;
+    }
+
+    @Override
+    public SchoolModel getSchoolBySchoolId(String schoolId) throws SchoolServiceException {
+        if (StringUtils.isEmpty(schoolId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        SchoolInfo schoolInfo = schoolInfoRepository.findFirstByDeleteFlagAndId("0",schoolId);
+        if (null == schoolInfo){
+            throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        return MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo);
+    }
+
+    @Override
+    public List<SchoolModel> getBackSchools() throws SchoolServiceException {
+        List<SchoolInfo> schoolInfos = schoolInfoRepository.findByDeleteFlag("0");
+        List<SchoolModel> schoolModels = new ArrayList<SchoolModel>();
+        schoolInfos.forEach(schoolInfo -> {
+            schoolModels.add(MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo));
+        });
+        return schoolModels;
     }
 }

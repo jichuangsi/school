@@ -81,12 +81,12 @@ public class LoginServiceImpl implements LoginService {
         if(userInfo.getRoleInfos().contains(new StudentInfo())){
             for(RoleInfo s : userInfo.getRoleInfos()){
                 if(s instanceof StudentInfo){
-                    userJson = JSON.toJSONString(new  UserInfoForToken(userInfo.getId(),null,userInfo.getName(),((StudentInfo) s).getPrimaryClass().getClassId(),timeStamp));
+                    userJson = JSON.toJSONString(new  UserInfoForToken(userInfo.getId(),null,userInfo.getName(),((StudentInfo) s).getPrimaryClass().getClassId(),timeStamp,""));
                     break;
                 }
             }
         }else{
-            userJson = JSON.toJSONString(new  UserInfoForToken(userInfo.getId(),null,userInfo.getName(),null,timeStamp));
+            userJson = JSON.toJSONString(new  UserInfoForToken(userInfo.getId(),null,userInfo.getName(),null,timeStamp,""));
         }
 
 

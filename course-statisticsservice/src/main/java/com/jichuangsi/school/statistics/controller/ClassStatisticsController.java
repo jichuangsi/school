@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.exception.QuestionResultException;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
+import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,12 +18,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/class")
 @Api("关于班级统计controller")
+@CrossOrigin
 public class ClassStatisticsController {
 
     @Resource
     private IClassStatisticsService classStatisticsService;
 
-    @ApiOperation(value = "根据老师id，班级id查一个月班级统计", notes = "")
+    @ApiOperation(value = "根据老师id查一个月班级s统计", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
@@ -30,6 +32,19 @@ public class ClassStatisticsController {
     public ResponseModel<List<ClassStatisticsModel>> getStatisticsByMonth(@ModelAttribute UserInfoForToken userInfo){
         try {
             return ResponseModel.sucess("",classStatisticsService.getTeachClassStatistics(userInfo));
+        } catch (QuestionResultException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据一个月的问题ids，以及班级id,查询所有学生的知识点分析", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/teacher/getClassStudentKnowledges")
+    public ResponseModel getClassStudentKnowledges(@ModelAttribute UserInfoForToken userInfo, @RequestBody SearchStudentKnowledgeModel model){
+        try {
+            return ResponseModel.sucess("",classStatisticsService.getClassStudentKnowledges(userInfo,model));
         } catch (QuestionResultException e) {
             return ResponseModel.fail("",e.getMessage());
         }

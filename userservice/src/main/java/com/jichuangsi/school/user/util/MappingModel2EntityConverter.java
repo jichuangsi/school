@@ -125,24 +125,42 @@ public  final class MappingModel2EntityConverter {
         userInfo.setId(model.getId());
         userInfo.setAccount(model.getAccount());
         userInfo.setName(model.getName());
-        userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        if (!StringUtils.isEmpty(model.getPwd())) {
+            userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        }
         userInfo.setSex(model.getSex());
         userInfo.setStatus(model.getStatus());
         TeacherInfo teacher = new TeacherInfo();
-        teacher.setPrimarySubject(model.getPrimarySubject().getSubjectId(),model.getPrimarySubject().getSubjectName());
-        model.getSecondaryClass().forEach(classModel -> {
-            teacher.addSecondaryClasses(classModel.getClassId(),classModel.getClassName());
-        });
-        model.getSecondaryGrades().forEach(gradeModel -> {
-            teacher.addSecondaryGrades(gradeModel.getGradeId(),gradeModel.getGradeName());
-        });
-        model.getSecondarySubjects().forEach(subject -> {
-            teacher.addSecondarySubjects(subject.getSubjectId(),subject.getSubjectName());
-        });
-        teacher.setPhrase(model.getPhrase().getPhraseId(),model.getPhrase().getPhraseName());
-        teacher.setPrimaryClass(model.getPrimaryClass().getClassId(),model.getPrimaryClass().getClassName());
-        teacher.setPrimaryGrade(model.getPrimaryGrade().getGradeId(),model.getPrimaryGrade().getGradeName());
-        teacher.setSchool(model.getSchool().getSchoolId(),model.getSchool().getSchoolName());
+        if (null != model.getPrimarySubject()) {
+            teacher.setPrimarySubject(model.getPrimarySubject().getSubjectId(), model.getPrimarySubject().getSubjectName());
+        }
+        if (null != model.getSecondaryClass()) {
+            model.getSecondaryClass().forEach(classModel -> {
+                teacher.addSecondaryClasses(classModel.getClassId(), classModel.getClassName());
+            });
+        }
+        if (null != model.getSecondaryGrades()) {
+            model.getSecondaryGrades().forEach(gradeModel -> {
+                teacher.addSecondaryGrades(gradeModel.getGradeId(), gradeModel.getGradeName());
+            });
+        }
+        if (null != model.getSecondarySubjects()) {
+            model.getSecondarySubjects().forEach(subject -> {
+                teacher.addSecondarySubjects(subject.getSubjectId(), subject.getSubjectName());
+            });
+        }
+        if (null != model.getPhrase()) {
+            teacher.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName());
+        }
+        if (null != model.getPrimaryClass()) {
+            teacher.setPrimaryClass(model.getPrimaryClass().getClassId(), model.getPrimaryClass().getClassName());
+        }
+        if (null != model.getPrimaryGrade()) {
+            teacher.setPrimaryGrade(model.getPrimaryGrade().getGradeId(), model.getPrimaryGrade().getGradeName());
+        }
+        if (null != model.getSchool()) {
+            teacher.setSchool(model.getSchool().getSchoolId(), model.getSchool().getSchoolName());
+        }
         teacher.setRoleName("Teacher");
         List<RoleInfo> roles = new ArrayList<RoleInfo>();
         roles.add(teacher);
@@ -155,17 +173,27 @@ public  final class MappingModel2EntityConverter {
         userInfo.setId(model.getId());
         userInfo.setAccount(model.getAccount());
         userInfo.setName(model.getName());
-        userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        if (!StringUtils.isEmpty(model.getPwd())) {
+            userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        }
         userInfo.setSex(model.getSex());
         userInfo.setStatus(model.getStatus());
-        TeacherInfo teacher = new TeacherInfo();
-        teacher.setPhrase(model.getPhrase().getPhraseId(),model.getPhrase().getPhraseName());
-        teacher.setPrimaryClass(model.getPrimaryClass().getClassId(),model.getPrimaryClass().getClassName());
-        teacher.setPrimaryGrade(model.getPrimaryGrade().getGradeId(),model.getPrimaryGrade().getGradeName());
-        teacher.setSchool(model.getSchool().getSchoolId(),model.getSchool().getSchoolName());
-        teacher.setRoleName("Student");
+        StudentInfo studentInfo = new StudentInfo();
+        if (null != model.getPhrase()) {
+            studentInfo.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName());
+        }
+        if (null != model.getPrimaryClass()) {
+            studentInfo.setPrimaryClass(model.getPrimaryClass().getClassId(), model.getPrimaryClass().getClassName());
+        }
+        if (null != model.getPrimaryGrade()) {
+            studentInfo.setPrimaryGrade(model.getPrimaryGrade().getGradeId(), model.getPrimaryGrade().getGradeName());
+        }
+        if (null != model.getSchool()) {
+            studentInfo.setSchool(model.getSchool().getSchoolId(), model.getSchool().getSchoolName());
+        }
+        studentInfo.setRoleName("Student");
         List<RoleInfo> roles = new ArrayList<RoleInfo>();
-        roles.add(teacher);
+        roles.add(studentInfo);
         userInfo.setRoleInfos(roles);
         return userInfo;
     }
