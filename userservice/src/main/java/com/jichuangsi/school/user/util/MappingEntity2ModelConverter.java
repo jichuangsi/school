@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.util;
 
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.Sex;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.RoleInfo;
@@ -7,6 +8,7 @@ import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
+import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
 import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
@@ -262,5 +264,15 @@ public final class MappingEntity2ModelConverter {
         model.setId(info.getId());
         model.setPhraseName(info.getPhraseName());
         return model;
+    }
+
+    public final static UserInfoForToken CONVERTERFROMBACKUSERINFO(BackUserInfo userInfo){
+        UserInfoForToken userInfoForToken = new UserInfoForToken();
+        userInfoForToken.setRoleName(userInfo.getRoleName());
+        userInfoForToken.setSchoolId(userInfo.getSchoolId());
+        userInfoForToken.setUserId(userInfo.getId());
+        userInfoForToken.setUserName(userInfo.getUserName());
+        userInfoForToken.setUserNum(userInfo.getAccount());
+        return userInfoForToken;
     }
 }

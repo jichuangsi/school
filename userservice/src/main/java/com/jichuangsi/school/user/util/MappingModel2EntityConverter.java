@@ -5,11 +5,13 @@ import com.jichuangsi.school.user.entity.RoleInfo;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.entity.org.GradeInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
+import com.jichuangsi.school.user.model.backstage.BackRoleModel;
 import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
@@ -196,5 +198,12 @@ public  final class MappingModel2EntityConverter {
         roles.add(studentInfo);
         userInfo.setRoleInfos(roles);
         return userInfo;
+    }
+
+    public static final BackRoleInfo CONVERTERFROMBACKROLEMODEL(BackRoleModel model){
+        BackRoleInfo backRoleInfo = new BackRoleInfo();
+        backRoleInfo.setId(model.getRoleId());
+        backRoleInfo.setRoleName(model.getRoleName());
+        return backRoleInfo;
     }
 }
