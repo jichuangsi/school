@@ -47,4 +47,17 @@ public class ClassInteractionForStudentWithoutWsController {
 		classInteractionForStudentService.addToCourse(addToCourseModel);
 		return ResponseModel.sucessWithEmptyData("");
 	}
+	
+	@ApiOperation(value = "学生抢答", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "raceId", value = "课堂ID", required = true, dataType = "String") })
+	@PostMapping("/raceAnswer/{courseId}/{raceId}")
+	public ResponseModel<Object> raceAnswer(@PathVariable String courseId,@PathVariable String raceId,
+			@ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
+		
+		classInteractionForStudentService.raceAnswer(courseId, raceId,userInfo.getUserId());
+		return ResponseModel.sucessWithEmptyData("");
+	}
 }

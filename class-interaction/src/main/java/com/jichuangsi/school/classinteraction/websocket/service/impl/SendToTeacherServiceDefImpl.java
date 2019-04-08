@@ -57,4 +57,12 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 
 	}
 
+	@Override
+	public void sendRaceAnswerInfo(StudentAnswerModel studentAnswerModel) {	
+		studentAnswerModel.setQuType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_SA);
+		messagingTemplate.convertAndSend(questionAnswerPre + studentAnswerModel.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", studentAnswerModel)));
+		
+	}
+
 }
