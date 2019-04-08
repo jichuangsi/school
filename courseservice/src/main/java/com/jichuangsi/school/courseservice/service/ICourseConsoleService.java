@@ -6,6 +6,7 @@ import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.common.DeleteQueryModel;
+import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -62,4 +63,6 @@ public interface ICourseConsoleService {
     void publishFileByTeacher(String fileName, String fileId, String courseId, UserInfoForToken userInfo) throws TeacherCourseServiceException;
 
     List<QuestionForTeacher> getWrongQuestions(List<String> questionIds) throws TeacherCourseServiceException;
+
+
 }

@@ -14,6 +14,13 @@ public class AttachmentModel {
         this.contentType = contentType;
     }
 
+    public AttachmentModel(String name, String sub, String contentType, String publishFlag){
+        this.name = name;
+        this.sub = sub;
+        this.contentType = contentType;
+        this.publishFlag = publishFlag;
+    }
+
     public String getPublishFlag() {
         return publishFlag;
     }

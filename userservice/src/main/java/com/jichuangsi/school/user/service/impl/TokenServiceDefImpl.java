@@ -30,7 +30,7 @@ public class TokenServiceDefImpl implements ITokenService {
 	@Override
 	public String getToken(String userId) {
 		// 获取用户信息
-		UserInfoForToken userInfoForToken = new UserInfoForToken("123", "456","张三","777",String.valueOf(new Date().getTime()),"");
+		UserInfoForToken userInfoForToken = new UserInfoForToken("123", "456","张三","777",String.valueOf(new Date().getTime()));
 
 		String userJson = JSON.toJSONString(userInfoForToken);
 		return JWT.create().withClaim(userClaim, userJson).sign(algorithm);

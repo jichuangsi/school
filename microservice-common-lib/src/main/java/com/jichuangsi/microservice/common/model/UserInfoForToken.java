@@ -13,19 +13,17 @@ public class UserInfoForToken {
 	private String userName;
 	private String classId;
 	private String timeStamp;
-	private String roleName;
 	private String schoolId;
 
 	public UserInfoForToken() {
 	}
 
-	public UserInfoForToken(String userId, String userNum, String userName, String classId, String timeStamp, String roleName) {
+	public UserInfoForToken(String userId, String userNum, String userName, String classId, String timeStamp) {
 		this.userId = userId;
 		this.userNum = userNum;
 		this.userName = userName;
 		this.classId = classId;
 		this.timeStamp = timeStamp;
-		this.roleName = roleName;
 	}
 
 	public final String getUserId() {
@@ -66,14 +64,6 @@ public class UserInfoForToken {
 
 	public final void setTimeStamp(String timeStamp) {
 		this.timeStamp = timeStamp;
-	}
-
-	public String getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
 	}
 
 	public String getSchoolId() {

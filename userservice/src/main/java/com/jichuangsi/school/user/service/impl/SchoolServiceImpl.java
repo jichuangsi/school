@@ -365,4 +365,16 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setUpdatedTime(new Date().getTime());
         phraseInfoRepository.save(info);
     }
+
+    @Override
+    public SchoolModel getSchoolById(UserInfoForToken userInfo, String schoolId) throws SchoolServiceException {
+        if (StringUtils.isEmpty(schoolId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        SchoolInfo schoolInfo = schoolInfoRepository.findFirstByDeleteFlagAndId("0",schoolId);
+        if (null == schoolInfo){
+            throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        return MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo);
+    }
 }

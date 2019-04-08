@@ -8,11 +8,14 @@ import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
+import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
 import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.app.AppInfoModule;
+import com.jichuangsi.school.user.model.backstage.BackRoleModel;
+import com.jichuangsi.school.user.model.backstage.BackUserModel;
 import com.jichuangsi.school.user.model.basic.Phrase;
 import com.jichuangsi.school.user.model.basic.Subject;
 import com.jichuangsi.school.user.model.org.ClassModel;
@@ -268,11 +271,29 @@ public final class MappingEntity2ModelConverter {
 
     public final static UserInfoForToken CONVERTERFROMBACKUSERINFO(BackUserInfo userInfo){
         UserInfoForToken userInfoForToken = new UserInfoForToken();
-        userInfoForToken.setRoleName(userInfo.getRoleName());
         userInfoForToken.setSchoolId(userInfo.getSchoolId());
         userInfoForToken.setUserId(userInfo.getId());
         userInfoForToken.setUserName(userInfo.getUserName());
         userInfoForToken.setUserNum(userInfo.getAccount());
         return userInfoForToken;
+    }
+
+    public final static BackRoleModel CONVERTERFROMBACKROLEINFO(BackRoleInfo roleInfo){
+        BackRoleModel model = new BackRoleModel();
+        model.setRoleId(roleInfo.getId());
+        model.setRoleName(roleInfo.getRoleName());
+        return model;
+    }
+
+    public final static BackUserModel CONVERTERFROMBACKUSERINFOTOMODEL(BackUserInfo userInfo){
+        BackUserModel model = new BackUserModel();
+        model.setAccount(userInfo.getAccount());
+        model.setId(userInfo.getId());
+        model.setRoleId(userInfo.getRoleId());
+        model.setRoleName(userInfo.getRoleName());
+        model.setSchoolId(userInfo.getSchoolId());
+        model.setSchoolName(userInfo.getSchoolName());
+        model.setUserName(userInfo.getUserName());
+        return model;
     }
 }

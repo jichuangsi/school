@@ -1,6 +1,10 @@
 package com.jichuangsi.school.user.model.backstage;
 
+import com.jichuangsi.school.user.model.backstage.orz.PromisedModel;
+
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BackUserModel {
 
@@ -8,12 +12,13 @@ public class BackUserModel {
     @Pattern(regexp = "^[a-zA-Z0-9_-]{4,16}$",message = "账号必须是4到16位（字母，数字，下划线，减号）")
     private String account;
     private String userName;
-    @Pattern(regexp = "^.*(?=.{6,})(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$",message = "密码最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符")
+    @Pattern(regexp = "^((?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12})$",message = "密码必须为6-12位数字与字母混合")
     private String pwd;
     private String roleId;
     private String roleName;
     private String schoolId;
     private String schoolName;
+    private List<PromisedModel> promisedModels = new ArrayList<PromisedModel>();
 
     public String getId() {
         return id;
@@ -77,5 +82,13 @@ public class BackUserModel {
 
     public void setSchoolName(String schoolName) {
         this.schoolName = schoolName;
+    }
+
+    public List<PromisedModel> getPromisedModels() {
+        return promisedModels;
+    }
+
+    public void setPromisedModels(List<PromisedModel> promisedModels) {
+        this.promisedModels = promisedModels;
     }
 }

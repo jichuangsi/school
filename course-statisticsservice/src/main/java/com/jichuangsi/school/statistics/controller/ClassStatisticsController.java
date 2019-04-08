@@ -3,6 +3,7 @@ package com.jichuangsi.school.statistics.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.exception.QuestionResultException;
+import com.jichuangsi.school.statistics.feign.model.TransferStudent;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
 import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
@@ -50,4 +51,16 @@ public class ClassStatisticsController {
         }
     }
 
+    @ApiOperation(value = "老师获取当前课堂的签到人数", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
+    @GetMapping("/getCourseSign/{courseId}/{classId}")
+    public ResponseModel<List<TransferStudent>> getCourseSign(@ModelAttribute UserInfoForToken userInfo, @PathVariable("courseId") String courseId,@PathVariable("classId") String classId){
+        try {
+            return ResponseModel.sucess("",classStatisticsService.getCourseSign(userInfo,courseId,classId));
+        } catch (QuestionResultException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

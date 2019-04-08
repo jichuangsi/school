@@ -5,16 +5,20 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.commons.Md5Util;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.constant.Status;
+import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
+import com.jichuangsi.school.user.entity.backstage.orz.PromisedInfo;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.model.backstage.BackUserModel;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
+import com.jichuangsi.school.user.model.backstage.orz.PromisedModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.repository.backstage.IBackRoleInfoRepository;
 import com.jichuangsi.school.user.repository.backstage.IBackUserInfoRepository;
+import com.jichuangsi.school.user.service.BackTokenService;
 import com.jichuangsi.school.user.service.IBackUserService;
 import com.jichuangsi.school.user.service.ISchoolClassService;
-import com.jichuangsi.school.user.service.BackTokenService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,6 +26,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -33,9 +38,11 @@ public class BackUserServiceImpl implements IBackUserService {
     private ISchoolClassService schoolClassService;
     @Resource
     private BackTokenService tokenService;
+    @Resource
+    private IBackRoleInfoRepository backRoleInfoRepository;
 
     @Override
-    public void registBackUser(BackUserModel model) throws BackUserException {
+    public String registBackUser(BackUserModel model) throws BackUserException {
         if (StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())
                 || StringUtils.isEmpty(model.getUserName()) || StringUtils.isEmpty(model.getSchoolId())){
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
@@ -59,7 +66,8 @@ public class BackUserServiceImpl implements IBackUserService {
         backUserInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
         backUserInfo.setUserName(model.getUserName());
         backUserInfo.setStatus(Status.INACTIVATE.getName());
-        backUserInfoRepository.save(backUserInfo);
+        backUserInfo = backUserInfoRepository.save(backUserInfo);
+        return backUserInfo.getId();
     }
 
     @Override
@@ -120,5 +128,73 @@ public class BackUserServiceImpl implements IBackUserService {
             throw new BackUserException(ResultCode.SELECT_NULL_MSG);
         }
         return schoolModels;
+    }
+
+    @Override
+    public List<BackUserModel> getSchoolUserInfo(UserInfoForToken userInfo) throws BackUserException {
+        if (StringUtils.isEmpty(userInfo.getSchoolId())){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<BackUserInfo> backUserInfos = backUserInfoRepository.findBySchoolIdAndStatusNot(userInfo.getSchoolId(),Status.DELETE.getName());
+        if (null == backUserInfos || !(backUserInfos.size() > 0)){
+            throw new BackUserException(ResultCode.USER_ISNOT_EXIST);
+        }
+        List<BackUserModel> backUserModels = new ArrayList<BackUserModel>();
+        backUserInfos.forEach(backUserInfo -> {
+            backUserModels.add(MappingEntity2ModelConverter.CONVERTERFROMBACKUSERINFOTOMODEL(backUserInfo));
+        });
+        return backUserModels;
+    }
+
+    @Override
+    public BackUserModel getUserInfoAndPromised(UserInfoForToken userInfo) throws BackUserException {
+        if (StringUtils.isEmpty(userInfo.getUserId())){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        BackUserInfo backUserInfo = backUserInfoRepository.findFirstByIdAndStatus(userInfo.getUserId(),Status.ACTIVATE.getName());
+        if (null == backUserInfo){
+            throw new BackUserException(ResultCode.USER_ISNOT_EXIST);
+        }
+        BackUserModel model = MappingEntity2ModelConverter.CONVERTERFROMBACKUSERINFOTOMODEL(backUserInfo);
+        if (!StringUtils.isEmpty(model.getRoleId()) && !"M".equals(model.getRoleName())){
+            BackRoleInfo roleInfo = backRoleInfoRepository.findFirstByIdAndDeleteFlag(model.getRoleId(),"0");
+            if (null == roleInfo){
+                throw new BackUserException(ResultCode.ROLE_ISNOT_EXIST);
+            }
+            List<PromisedModel> promisedModels = new ArrayList<PromisedModel>();
+            for (PromisedInfo promisedInfo : roleInfo.getPromisedInfos()){
+                promisedModels.add(changePromisedInfo(promisedInfo));
+            }
+            model.setPromisedModels(promisedModels);
+        }
+        return model;
+    }
+
+    private PromisedModel changePromisedInfo(PromisedInfo info){
+        PromisedModel model = new PromisedModel();
+        model.setId(info.getId());
+        model.setName(info.getName());
+        List<PromisedModel> promisedModels = new ArrayList<PromisedModel>();
+        for (PromisedInfo promisedInfo : info.getPromised() ){
+            promisedModels.add(changePromisedInfo(promisedInfo));
+        }
+        model.setPromisedModels(promisedModels);
+        return model;
+    }
+
+    @Override
+    public void insertSuperMan() throws BackUserException {
+        if (backUserInfoRepository.countByAccount("Admin") > 0){
+            throw new BackUserException(ResultCode.ACCOUNT_ISEXIST_MSG);
+        }
+        BackUserInfo userInfo = new BackUserInfo();
+        userInfo.setStatus(Status.ACTIVATE.getName());
+        userInfo.setRoleId("123456");
+        userInfo.setRoleName("M");
+        userInfo.setAccount("Admin");
+        userInfo.setUserName("admin");
+        userInfo.setPwd(Md5Util.encodeByMd5("admin"));
+        userInfo.setCreatedTime(new Date().getTime());
+        backUserInfoRepository.save(userInfo);
     }
 }

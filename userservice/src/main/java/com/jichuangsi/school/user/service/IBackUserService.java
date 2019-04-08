@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IBackUserService {
 
-    void registBackUser(BackUserModel model) throws BackUserException;
+    String registBackUser(BackUserModel model) throws BackUserException;
 
     String loginBackUser(BackUserModel model) throws BackUserException;
 
@@ -19,6 +19,12 @@ public interface IBackUserService {
     void updateBackUserPwd(UserInfoForToken userInfo, UpdatePwdModel model) throws BackUserException;
 
     List<SchoolModel> getBackSchools() throws BackUserException;
+
+    List<BackUserModel> getSchoolUserInfo(UserInfoForToken userInfo) throws BackUserException;
+
+    BackUserModel getUserInfoAndPromised(UserInfoForToken userInfo) throws BackUserException;
+
+    void insertSuperMan() throws BackUserException;
 }
 
 

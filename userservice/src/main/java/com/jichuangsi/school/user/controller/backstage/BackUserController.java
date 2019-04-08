@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/back/user")
 @Api("后台登录,注册，修改密码，注销账户")
+@CrossOrigin
 public class BackUserController {
 
     @Resource
@@ -28,13 +29,13 @@ public class BackUserController {
     @ApiOperation(value = "注册后台用户", notes = "")
     @ApiImplicitParams({})
     @PostMapping(value = "/registAccount")
-    public ResponseModel registAccount(@Validated @RequestBody BackUserModel model){
+    public ResponseModel<String> registAccount(@Validated @RequestBody BackUserModel model){
         try {
-            backUserService.registBackUser(model);
+            return ResponseModel.sucess("",backUserService.registBackUser(model));
         } catch (BackUserException e) {
             return ResponseModel.fail("",e.getMessage());
         }
-        return ResponseModel.sucessWithEmptyData("");
+
     }
 
     @ApiOperation(value = "后台登录", notes = "")
@@ -82,6 +83,32 @@ public class BackUserController {
     public ResponseModel<List<SchoolModel>> getBackSchools(){
         try {
             return ResponseModel.sucess("",backUserService.getBackSchools());
+        } catch (BackUserException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "查询本校所有的用户", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getSchoolUserInfo")
+    public ResponseModel<List<BackUserModel>>  getSchoolUserInfo(@ModelAttribute UserInfoForToken userInfo){
+        try {
+            return ResponseModel.sucess("",backUserService.getSchoolUserInfo(userInfo));
+        } catch (BackUserException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "返回本人信息及可访问路径", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getUserInfoAndPromised")
+    public ResponseModel<BackUserModel> getUserInfoAndPromised(@ModelAttribute UserInfoForToken userInfo){
+        try {
+            return ResponseModel.sucess("",backUserService.getUserInfoAndPromised(userInfo));
         } catch (BackUserException e) {
             return ResponseModel.fail("",e.getMessage());
         }

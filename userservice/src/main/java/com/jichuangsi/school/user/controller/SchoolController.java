@@ -254,4 +254,17 @@ public class SchoolController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+
+    @ApiOperation(value = "根据学校id获取学校信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getSchoolById/{schoolId}")
+    public ResponseModel<SchoolModel> getSchoolById(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId){
+        try {
+            return ResponseModel.sucess("",schoolService.getSchoolById(userInfo, schoolId));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

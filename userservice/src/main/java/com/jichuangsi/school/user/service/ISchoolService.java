@@ -44,4 +44,6 @@ public interface ISchoolService {
     void updateSubject(UserInfoForToken userInfo,SubjectModel model) throws SchoolServiceException;
 
     void updatePhrase(UserInfoForToken userInfo,PhraseModel model) throws SchoolServiceException;
+
+    SchoolModel getSchoolById(UserInfoForToken userInfo,String schoolId) throws SchoolServiceException;
 }

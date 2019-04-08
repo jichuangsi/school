@@ -338,4 +338,6 @@ public class CourseConsoleController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+
 }
