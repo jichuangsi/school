@@ -15,6 +15,7 @@ import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStuden
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionAnswerShare;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
+import com.jichuangsi.school.classinteraction.websocket.model.RaceQuestion;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentService;
 
 /**
@@ -53,7 +54,14 @@ public class SendToStudentServiceDefImpl implements ISendToStudentService {
 	public void sendQuestionAnswerShareInfo(QuestionAnswerShare answerShare) {
 		messagingTemplate.convertAndSend(courseIntercationPre + answerShare.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", answerShare)));
-		
+
+	}
+
+	@Override
+	public void sendRaceQuestionInfo(RaceQuestion raceQuestion) {
+		messagingTemplate.convertAndSend(courseIntercationPre + raceQuestion.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", raceQuestion)));
+
 	}
 
 }

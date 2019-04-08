@@ -7,6 +7,7 @@ import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStuden
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionAnswerShare;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
+import com.jichuangsi.school.classinteraction.websocket.model.RaceQuestion;
 
 /**
  * @author huangjiajun
@@ -33,5 +34,10 @@ public interface ISendToStudentService {
 	 * 推送题目答案共享信息
 	 */
 	void sendQuestionAnswerShareInfo(QuestionAnswerShare answerShare);
+	
+	/**
+	 * 推送开始抢答信息
+	 */
+	void sendRaceQuestionInfo(RaceQuestion raceQuestion);
 	
 }
