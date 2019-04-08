@@ -6,10 +6,7 @@ package com.jichuangsi.school.classinteraction.websocket.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.classinteraction.model.TeacherPublishFile;
-import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
-import com.jichuangsi.school.classinteraction.websocket.model.QuestionAnswerShare;
-import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
-import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
+import com.jichuangsi.school.classinteraction.websocket.model.*;
 import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -62,5 +59,12 @@ public class SendToStudentServiceDefImpl implements ISendToStudentService {
 	public void sendPublishFileInfo(TeacherPublishFile publishFile) {
 		messagingTemplate.convertAndSend(coursePublishPre + publishFile.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("",publishFile.getFileId())));
+	}
+
+	@Override
+	public void sendRaceQuestionInfo(RaceQuestion raceQuestion) {
+		messagingTemplate.convertAndSend(courseIntercationPre + raceQuestion.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", raceQuestion)));
+
 	}
 }
