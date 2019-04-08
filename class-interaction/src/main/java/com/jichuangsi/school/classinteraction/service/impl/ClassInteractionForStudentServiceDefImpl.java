@@ -44,6 +44,7 @@ public class ClassInteractionForStudentServiceDefImpl implements IClassInteracti
 				StudentAnswerModel studentAnswerModel = new StudentAnswerModel();
 				studentAnswerModel.setCourseId(courseId);
 				studentAnswerModel.setQuestionId(raceId);
+				studentAnswerModel.setStudentId(studentId);
 				studentAnswerModel.setQuType(StudentAnswerModel.QUTYPE_RACE);
 				sendToTeacherService.sendRaceAnswerInfo(studentAnswerModel);
 				raceIdMap.put(raceId, "");
