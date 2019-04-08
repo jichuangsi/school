@@ -13,4 +13,9 @@ public interface IClassInteractionForStudentService {
 	 * 学生加入课堂
 	 */
 	void addToCourse(AddToCourseModel addToCourseModel);
+
+	/**
+	 * 学生抢答
+	 */
+	void raceAnswer(String courseId,String raceId,String studentId);
 }

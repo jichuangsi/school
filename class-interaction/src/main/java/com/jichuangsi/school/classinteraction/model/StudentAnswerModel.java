@@ -14,6 +14,8 @@ public class StudentAnswerModel extends AbstractNotifyInfoForTeacher {
 	public static final String QUTYPE_OBJECTIVE = "objective";
 	public static final String QUTYPE_SUBJECTIVE = "subjective";
 
+	public static final String QUTYPE_RACE = "race";
+
 	private String courseId;
 	private String questionId;
 	private float score;// 题目得分

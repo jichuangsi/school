@@ -28,6 +28,9 @@ public interface ISendToTeacherService {
 	 */
 	void sendQuestionAnswerInfo(StudentAnswerModel studentAnswerModel);
 
-
+	/**
+	 * 推送学生抢答
+	 */
+	void sendRaceAnswerInfo(StudentAnswerModel studentAnswerModel);
 
 }
