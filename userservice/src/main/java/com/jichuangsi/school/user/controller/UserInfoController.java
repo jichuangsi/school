@@ -115,4 +115,5 @@ public class UserInfoController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+
 }

@@ -3,7 +3,7 @@ package com.jichuangsi.school.user.model.backstage;
 import javax.validation.constraints.Pattern;
 
 public class UpdatePwdModel {
-    @Pattern(regexp = "^((?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12})$",message = "密码必须为6-12位数字与字母混合")
+
     private String oldPwd;
     @Pattern(regexp = "^((?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12})$",message = "密码必须为6-12位数字与字母混合")
     private String newPwd;

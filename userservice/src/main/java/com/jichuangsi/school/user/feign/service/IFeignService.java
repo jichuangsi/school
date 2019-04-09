@@ -2,6 +2,7 @@ package com.jichuangsi.school.user.feign.service;
 
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
+import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 
@@ -20,4 +21,6 @@ public interface IFeignService {
     SchoolModel findSchoolBySchoolId(String schoolId) throws FeignControllerException;
 
     List<SchoolModel> findBackSchools() throws FeignControllerException;
+
+    List<ParentStudentModel> getParentStudent(List<String> studentIds) throws FeignControllerException;
 }

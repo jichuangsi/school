@@ -132,10 +132,15 @@ public class BackUserServiceImpl implements IBackUserService {
 
     @Override
     public List<BackUserModel> getSchoolUserInfo(UserInfoForToken userInfo) throws BackUserException {
-        if (StringUtils.isEmpty(userInfo.getSchoolId())){
+        if (StringUtils.isEmpty(userInfo.getSchoolId()) && !"M".equals(userInfo.getRoleName())){
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
-        List<BackUserInfo> backUserInfos = backUserInfoRepository.findBySchoolIdAndStatusNot(userInfo.getSchoolId(),Status.DELETE.getName());
+        List<BackUserInfo> backUserInfos = new ArrayList<BackUserInfo>();
+        if (!"M".equals(userInfo.getRoleName())) {
+            backUserInfos = backUserInfoRepository.findBySchoolIdAndStatusNot(userInfo.getSchoolId(), Status.DELETE.getName());
+        }else {
+            backUserInfos = backUserInfoRepository.findByStatusNot(Status.DELETE.getName());
+        }
         if (null == backUserInfos || !(backUserInfos.size() > 0)){
             throw new BackUserException(ResultCode.USER_ISNOT_EXIST);
         }
@@ -196,5 +201,21 @@ public class BackUserServiceImpl implements IBackUserService {
         userInfo.setPwd(Md5Util.encodeByMd5("admin"));
         userInfo.setCreatedTime(new Date().getTime());
         backUserInfoRepository.save(userInfo);
+    }
+
+    @Override
+    public void updateOtherPwd(UserInfoForToken userInfo, UpdatePwdModel model,String userId) throws BackUserException {
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(model.getNewPwd())){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        BackUserInfo backUserInfo = backUserInfoRepository.findFirstByIdAndStatus(userId,Status.ACTIVATE.getName());
+        if(null == backUserInfo){
+            throw new BackUserException(ResultCode.USER_ISNOT_EXIST);
+        }
+        backUserInfo.setPwd(Md5Util.encodeByMd5(model.getNewPwd()));
+        backUserInfo.setUserName(userInfo.getUserName());
+        backUserInfo.setUpdatedId(userInfo.getUserId());
+        backUserInfo.setUpdatedTime(new Date().getTime());
+        backUserInfoRepository.save(backUserInfo);
     }
 }

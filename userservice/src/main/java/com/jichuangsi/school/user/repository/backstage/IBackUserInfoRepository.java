@@ -18,4 +18,6 @@ public interface IBackUserInfoRepository extends MongoRepository<BackUserInfo,St
     List<BackUserInfo> findBySchoolIdAndStatus(String schoolId,String status);
 
     List<BackUserInfo> findBySchoolIdAndStatusNot(String schoolId,String status);
+
+    List<BackUserInfo> findByStatusNot(String status);
 }

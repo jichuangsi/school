@@ -30,11 +30,11 @@ public class ClassStatisticsController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping(value = "/teacher/getClassCourseByMonth")
-    public ResponseModel<List<ClassStatisticsModel>> getStatisticsByMonth(@ModelAttribute UserInfoForToken userInfo){
+    public ResponseModel<List<ClassStatisticsModel>> getStatisticsByMonth(@ModelAttribute UserInfoForToken userInfo) {
         try {
-            return ResponseModel.sucess("",classStatisticsService.getTeachClassStatistics(userInfo));
+            return ResponseModel.sucess("", classStatisticsService.getTeachClassStatistics(userInfo));
         } catch (QuestionResultException e) {
-            return ResponseModel.fail("",e.getMessage());
+            return ResponseModel.fail("", e.getMessage());
         }
     }
 
@@ -43,24 +43,25 @@ public class ClassStatisticsController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping(value = "/teacher/getClassStudentKnowledges")
-    public ResponseModel getClassStudentKnowledges(@ModelAttribute UserInfoForToken userInfo, @RequestBody SearchStudentKnowledgeModel model){
+    public ResponseModel getClassStudentKnowledges(@ModelAttribute UserInfoForToken userInfo, @RequestBody SearchStudentKnowledgeModel model) {
         try {
-            return ResponseModel.sucess("",classStatisticsService.getClassStudentKnowledges(userInfo,model));
+            return ResponseModel.sucess("", classStatisticsService.getClassStudentKnowledges(userInfo, model));
         } catch (QuestionResultException e) {
-            return ResponseModel.fail("",e.getMessage());
+            return ResponseModel.fail("", e.getMessage());
         }
     }
 
     @ApiOperation(value = "老师获取当前课堂的签到人数", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
+            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "classId", value = "班级ID", required = true, dataType = "String")})
     @GetMapping("/getCourseSign/{courseId}/{classId}")
-    public ResponseModel<List<TransferStudent>> getCourseSign(@ModelAttribute UserInfoForToken userInfo, @PathVariable("courseId") String courseId,@PathVariable("classId") String classId){
+    public ResponseModel<List<TransferStudent>> getCourseSign(@ModelAttribute UserInfoForToken userInfo, @PathVariable("courseId") String courseId, @PathVariable("classId") String classId) {
         try {
-            return ResponseModel.sucess("",classStatisticsService.getCourseSign(userInfo,courseId,classId));
+            return ResponseModel.sucess("", classStatisticsService.getCourseSign(userInfo, courseId, classId));
         } catch (QuestionResultException e) {
-            return ResponseModel.fail("",e.getMessage());
+            return ResponseModel.fail("", e.getMessage());
         }
     }
 }

@@ -1,12 +1,14 @@
 package com.jichuangsi.school.user.feign.service.impl;
 
 import com.jichuangsi.microservice.common.constant.ResultCode;
+import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
+import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -91,5 +93,31 @@ public class FeignServiceImpl implements IFeignService {
         } catch (SchoolServiceException e) {
             throw new FeignControllerException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<ParentStudentModel> getParentStudent(List<String> studentIds) throws FeignControllerException {
+        if (null == studentIds || !(studentIds.size() > 0)){
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<ParentStudentModel> parentStudentModels = new ArrayList<ParentStudentModel>();
+        for (String studentId : studentIds) {
+            UserInfo student = userRepository.findFirstById(studentId);
+            if (null == student) {
+                throw new FeignControllerException(ResultCode.SELECT_NULL_MSG);
+            }
+            ParentStudentModel studentModel = new ParentStudentModel();
+            studentModel.setStudentId(studentId);
+            studentModel.setStudentName(student.getName());
+            if (student.getRoleInfos().get(0) instanceof StudentInfo) {
+                StudentInfo studentInfo = (StudentInfo) student.getRoleInfos().get(0);
+                studentModel.setClassId(studentInfo.getPrimaryClass().getClassId());
+                studentModel.setClassName(studentInfo.getPrimaryClass().getClassName());
+                studentModel.setSchoolId(studentInfo.getSchool().getSchoolId());
+                studentModel.setSchoolName(studentInfo.getSchool().getSchoolName());
+            }
+            parentStudentModels.add(studentModel);
+        }
+        return parentStudentModels;
     }
 }

@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.feign.Controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
+import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -76,6 +77,16 @@ public class FeignController {
     public ResponseModel<List<SchoolModel>> getBackSchools(){
         try {
             return ResponseModel.sucess("",feignService.findBackSchools());
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "家长获取当选学生的信息", notes = "")
+    @PostMapping("/getParentStudent")
+    public ResponseModel<List<ParentStudentModel>> getParentStudent(@RequestBody List<String> studentIds){
+        try {
+            return ResponseModel.sucess("",feignService.getParentStudent(studentIds));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

@@ -14,6 +14,7 @@ public class UserInfoForToken {
 	private String classId;
 	private String timeStamp;
 	private String schoolId;
+	private String roleName;
 
 	public UserInfoForToken() {
 	}
@@ -72,5 +73,13 @@ public class UserInfoForToken {
 
 	public void setSchoolId(String schoolId) {
 		this.schoolId = schoolId;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
 }

@@ -12,4 +12,6 @@ public interface UserRepository extends MongoRepository<UserInfo, String> {
     int countByAccount(String account);
 
     UserInfo findFirstById(String id);
+
+    UserInfo findFirstByIdAndStatus(String id,String status);
 }

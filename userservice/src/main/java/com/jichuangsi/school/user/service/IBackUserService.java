@@ -25,6 +25,8 @@ public interface IBackUserService {
     BackUserModel getUserInfoAndPromised(UserInfoForToken userInfo) throws BackUserException;
 
     void insertSuperMan() throws BackUserException;
+
+    void updateOtherPwd(UserInfoForToken userInfo,UpdatePwdModel model,String userId) throws BackUserException;
 }
 
 

@@ -21,6 +21,7 @@ import com.jichuangsi.school.user.entity.org.PhraseInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.model.System.User;
+import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -653,5 +654,19 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
         student.setUpdateTime(new Date().getTime());
         userRepository.save(student);
+    }
+
+    @Override
+    public void updateOtherPwd(UserInfoForToken userInfo, UpdatePwdModel model, String userId) throws  UserServiceException{
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(model.getNewPwd())){
+            throw new UserServiceException(com.jichuangsi.school.user.constant.ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo otherUser = userRepository.findFirstByIdAndStatus(userId,Status.ACTIVATE.getName());
+        if(null == otherUser){
+            throw new UserServiceException(com.jichuangsi.school.user.constant.ResultCode.USER_ISNOT_EXIST);
+        }
+        otherUser.setPwd(Md5Util.encodeByMd5(model.getNewPwd()));
+        otherUser.setUpdateTime(new Date().getTime());
+        userRepository.save(otherUser);
     }
 }

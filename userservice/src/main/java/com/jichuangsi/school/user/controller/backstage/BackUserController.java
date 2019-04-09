@@ -113,4 +113,18 @@ public class BackUserController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+    @ApiOperation(value = "非本人修改账号密码", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/updateOtherPwd/{userId}")
+    public ResponseModel updateOtherPwd(@ModelAttribute UserInfoForToken userInfo,@Validated @RequestBody UpdatePwdModel model,@PathVariable String userId){
+        try {
+            backUserService.updateOtherPwd(userInfo, model, userId);
+        } catch (BackUserException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
 }
