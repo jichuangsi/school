@@ -1,10 +1,7 @@
 package com.jichuangsi.school.user.util;
 
 import com.jichuangsi.school.user.commons.Md5Util;
-import com.jichuangsi.school.user.entity.RoleInfo;
-import com.jichuangsi.school.user.entity.StudentInfo;
-import com.jichuangsi.school.user.entity.TeacherInfo;
-import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.entity.org.GradeInfo;
@@ -17,6 +14,7 @@ import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
 import com.jichuangsi.school.user.model.school.GradeModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 import com.jichuangsi.school.user.model.user.StudentModel;
 import com.jichuangsi.school.user.model.user.TeacherModel;
 import org.springframework.util.StringUtils;
@@ -164,6 +162,7 @@ public  final class MappingModel2EntityConverter {
             teacher.setSchool(model.getSchool().getSchoolId(), model.getSchool().getSchoolName());
         }
         teacher.setRoleName("Teacher");
+        teacher.setRoleIds(model.getRoleIds());
         List<RoleInfo> roles = new ArrayList<RoleInfo>();
         roles.add(teacher);
         userInfo.setRoleInfos(roles);
@@ -205,5 +204,11 @@ public  final class MappingModel2EntityConverter {
         backRoleInfo.setId(model.getRoleId());
         backRoleInfo.setRoleName(model.getRoleName());
         return backRoleInfo;
+    }
+
+    public static final SchoolRoleInfo CONVERTERFROMSCHOOLROLEMODEL(SchoolRoleModel model){
+        SchoolRoleInfo roleInfo = new SchoolRoleInfo();
+        roleInfo.setRoleName(model.getRoleName());
+        return roleInfo;
     }
 }

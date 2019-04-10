@@ -5,16 +5,16 @@ import java.util.List;
 
 public class Role {
 
-    private String roleId;
+    private List<String> roleIds = new ArrayList<String>();
     private String roleName;
     private List<Privilege> privileges = new ArrayList<Privilege>();
 
-    public String getRoleId() {
-        return roleId;
+    public List<String> getRoleIds() {
+        return roleIds;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setRoleIds(List<String> roleIds) {
+        this.roleIds = roleIds;
     }
 
     public String getRoleName() {

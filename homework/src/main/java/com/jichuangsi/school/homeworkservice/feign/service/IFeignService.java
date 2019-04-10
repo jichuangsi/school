@@ -1,6 +1,7 @@
 package com.jichuangsi.school.homeworkservice.feign.service;
 
 import com.jichuangsi.school.homeworkservice.exception.FeignControllerException;
+import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkParentModel;
 import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.QuestionRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.TeacherHomeResultModel;
@@ -19,4 +20,6 @@ public interface IFeignService {
     List<HomeworkModelForTeacher> getHomeWorkByTeacherIdAndclassId(String teacherId,String classId) throws FeignControllerException;
 
     TeacherHomeResultModel getHomeWorkRate(String teacherId,String homeId) throws  FeignControllerException;
+
+    List<HomeWorkParentModel> getParentHomeWork(String classId,String studentId) throws FeignControllerException;
 }

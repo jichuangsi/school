@@ -27,4 +27,8 @@ public class ResultCode {
 	public static final String EXCEL_IMPORT_MSG = "excel导入失败";
 
 	public static final String ROLE_NOT_RIGHT = "角色不符合";
+	public static final String ROLE_EXIST_MSG = "角色已存在";
+
+	public static final String USER_SELECT_NULL_MSG = "查无此用户信息";
+	public static final String CLASS_SELECT_NULL_MSG = "查无此班级信息";
 }

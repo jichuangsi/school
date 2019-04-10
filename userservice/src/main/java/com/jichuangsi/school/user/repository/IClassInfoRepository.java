@@ -10,4 +10,6 @@ public interface IClassInfoRepository extends MongoRepository<ClassInfo,String> 
     List<ClassInfo> findByIdInAndDeleteFlag(List<String> ids,String delete);
 
     ClassInfo findFirstByDeleteFlagAndNameAndIdInOrderByCreateTimeDesc(String delete,String name,List<String> ids);
+
+    ClassInfo findFirstByIdAndDeleteFlag(String id,String delete);
 }

@@ -7,16 +7,15 @@ import com.jichuangsi.school.homeworkservice.constant.Status;
 import com.jichuangsi.school.homeworkservice.entity.Homework;
 import com.jichuangsi.school.homeworkservice.entity.Question;
 import com.jichuangsi.school.homeworkservice.entity.StudentAnswer;
+import com.jichuangsi.school.homeworkservice.entity.StudentHomeworkCollection;
 import com.jichuangsi.school.homeworkservice.exception.FeignControllerException;
 import com.jichuangsi.school.homeworkservice.exception.StudentHomeworkServiceException;
-import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkRateModel;
-import com.jichuangsi.school.homeworkservice.feign.model.QuestionRateModel;
-import com.jichuangsi.school.homeworkservice.feign.model.QuestionResultModel;
-import com.jichuangsi.school.homeworkservice.feign.model.TeacherHomeResultModel;
+import com.jichuangsi.school.homeworkservice.feign.model.*;
 import com.jichuangsi.school.homeworkservice.feign.service.IFeignService;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForStudent;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
 import com.jichuangsi.school.homeworkservice.repository.HomeworkRepository;
+import com.jichuangsi.school.homeworkservice.repository.IStudentHomeworkCollectionRepository;
 import com.jichuangsi.school.homeworkservice.repository.QuestionRepository;
 import com.jichuangsi.school.homeworkservice.repository.StudentAnswerRepository;
 import com.jichuangsi.school.homeworkservice.service.IStudentHomeworkService;
@@ -47,6 +46,8 @@ public class FeignServiceImpl implements IFeignService {
     private HomeworkRepository homeworkRepository;
     @Resource
     private QuestionRepository questionRepository;
+    @Resource
+    private IStudentHomeworkCollectionRepository studentHomeworkCollectionRepository;
 
     @Override
     public double getStudentQuestionRate(QuestionRateModel model) throws FeignControllerException {
@@ -187,5 +188,23 @@ public class FeignServiceImpl implements IFeignService {
         model.setSubjectiveNum(countSubjective);
         model.setSubmitNum(countSubmit);
         return model;
+    }
+
+    @Override
+    public List<HomeWorkParentModel> getParentHomeWork(String classId, String studentId) throws FeignControllerException {
+        if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(studentId)){
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<Homework> homeworks = homeworkRepository.findByClassIdAndEndTimeGreaterThan(classId,new Date().getTime());
+        List<String> homeIds = new ArrayList<String>();
+        homeworks.forEach(homework -> {
+            homeIds.add(homework.getId());
+        });
+        StudentHomeworkCollection collection = studentHomeworkCollectionRepository.findFirstByStudentId(studentId);
+        if (null == collection){
+            throw new FeignControllerException(ResultCode.SELECT_NULL_MSG);
+        }
+
+        return null;
     }
 }

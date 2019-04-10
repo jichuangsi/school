@@ -5,6 +5,7 @@ import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
+import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -150,4 +151,14 @@ public interface UserInfoService {
     void updateStudent(UserInfoForToken userInfo,StudentModel model) throws UserServiceException;
 
     void updateOtherPwd(UserInfoForToken userInfo, UpdatePwdModel model, String userId) throws UserServiceException;
+
+    void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model) throws UserServiceException;
+
+    void updateSchoolRole(UserInfoForToken userInfo ,SchoolRoleModel model) throws UserServiceException;
+
+    List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo) throws UserServiceException;
+
+    void deleteSchoolRole(UserInfoForToken userInfo , String roleId) throws UserServiceException;
+
+    List<TeacherModel> getTeachers(UserInfoForToken userInfo,String schoolId) throws UserServiceException;
 }

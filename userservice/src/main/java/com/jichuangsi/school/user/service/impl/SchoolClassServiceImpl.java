@@ -1,7 +1,11 @@
 package com.jichuangsi.school.user.service.impl;
 
 import com.jichuangsi.microservice.common.constant.ResultCode;
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.MyResultCode;
+import com.jichuangsi.school.user.entity.RoleInfo;
+import com.jichuangsi.school.user.entity.TeacherInfo;
+import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.entity.org.GradeInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
@@ -10,10 +14,12 @@ import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
+import com.jichuangsi.school.user.model.school.TeacherInsertModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.IClassInfoRepository;
 import com.jichuangsi.school.user.repository.IGradeInfoRepository;
 import com.jichuangsi.school.user.repository.ISchoolInfoRepository;
+import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
@@ -27,6 +33,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -41,6 +48,8 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     private UserInfoService userInfoService;
     @Resource
     private IClassInfoRepository classInfoRepository;
+    @Resource
+    private UserRepository userRepository;
 
     @Override
     public void saveOrUpClass(String schoolId, String gradeId, ClassModel classModel) throws ClassServiceException {
@@ -131,5 +140,70 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             schoolModels.add(MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo));
         });
         return schoolModels;
+    }
+
+    @Override
+    public void classRemoveTeacher(UserInfoForToken userInfo, String classId, String teacherId) throws SchoolServiceException {
+        if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(teacherId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
+        if (null == classInfo){
+            throw new SchoolServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
+        }
+        UserInfo teacher = userRepository.findFirstById(teacherId);
+        if(null == teacher){
+            throw new SchoolServiceException(ResultCode.USER_SELECT_NULL_MSG);
+        }
+        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
+            TeacherInfo teacherInfo = (TeacherInfo) teacher.getRoleInfos().get(0);
+            if (classId.equals(teacherInfo.getPrimaryClass().getClassId())){
+                teacherInfo.setPrimaryClass("","");
+            }
+            for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
+                if (classId.equals(cla.getClassId())){
+                    teacherInfo.getSecondaryClasses().remove(cla);
+                }
+            }
+            List<RoleInfo> roleInfos =  new ArrayList<RoleInfo>();
+            roleInfos.add(teacherInfo);
+            teacher.setRoleInfos(roleInfos);
+            teacher.setUpdateTime(new Date().getTime());
+            userRepository.save(teacher);
+        }
+    }
+
+    @Override
+    public void classInsertTeacher(UserInfoForToken userInfo, TeacherInsertModel model,String teacherId) throws SchoolServiceException {
+        if ((StringUtils.isEmpty(model.getPrimaryClassId()) && StringUtils.isEmpty(model.getSecondaryClassId())) || StringUtils.isEmpty(teacherId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        String classId = "";
+        if (!StringUtils.isEmpty(model.getPrimaryClassId())){
+            classId = model.getPrimaryClassId();
+        }else {
+            classId = model.getSecondaryClassId();
+        }
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
+        if (null == classInfo){
+            throw new SchoolServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
+        }
+        UserInfo teacher = userRepository.findFirstById(teacherId);
+        if (null == teacher){
+            throw new SchoolServiceException(ResultCode.USER_SELECT_NULL_MSG);
+        }
+        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
+            TeacherInfo teacherInfo = (TeacherInfo) teacher.getRoleInfos().get(0);
+            if (!StringUtils.isEmpty(model.getPrimaryClassId())){
+                teacherInfo.setPrimaryClass(classInfo.getId(),classInfo.getName());
+            }else {
+                teacherInfo.addSecondaryClasses(classInfo.getId(),classInfo.getName());
+            }
+            List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
+            roleInfos.add(teacherInfo);
+            teacher.setRoleInfos(roleInfos);
+            teacher.setUpdateTime(new Date().getTime());
+            userRepository.save(teacher);
+        }
     }
 }

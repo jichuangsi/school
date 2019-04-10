@@ -2,6 +2,7 @@ package com.jichuangsi.school.homeworkservice.feign.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.homeworkservice.exception.FeignControllerException;
+import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkParentModel;
 import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.QuestionRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.TeacherHomeResultModel;
@@ -77,5 +78,13 @@ public class FeignController {
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }
+    }
+
+    @ApiOperation(value = "根据班级和学生的id获取作业的完成情况", notes = "")
+    @ApiImplicitParams({ })
+    @GetMapping("/getParentHomeWork")
+    public ResponseModel<List<HomeWorkParentModel>> getParentHomeWork(@RequestParam String classId,@RequestParam String studentId){
+
+        return ResponseModel.sucessWithEmptyData("");
     }
 }

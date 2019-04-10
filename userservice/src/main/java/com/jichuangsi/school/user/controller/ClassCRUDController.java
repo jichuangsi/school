@@ -6,6 +6,7 @@ import com.jichuangsi.school.user.constant.MyResultCode;
 import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.model.org.ClassModel;
+import com.jichuangsi.school.user.model.school.TeacherInsertModel;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
@@ -79,5 +80,34 @@ public class ClassCRUDController {
         } catch (SchoolServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
+    }
+
+    @ApiOperation(value = "移除班级内教师", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/classRemoveTeacher/{classId}/{teacherId}")
+    public ResponseModel classRemoveTeacher(@ModelAttribute UserInfoForToken userInfo,@PathVariable("classId") String classId,
+                                            @PathVariable String teacherId){
+        try {
+            schoolClassService.classRemoveTeacher(userInfo, classId, teacherId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "添加班级内教师", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/classInsertTeacher/{teacherId}")
+    public ResponseModel classInsertTeacher(@ModelAttribute UserInfoForToken userInfo, @RequestBody TeacherInsertModel model,@PathVariable String teacherId){
+        try {
+            schoolClassService.classInsertTeacher(userInfo, model, teacherId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
     }
 }

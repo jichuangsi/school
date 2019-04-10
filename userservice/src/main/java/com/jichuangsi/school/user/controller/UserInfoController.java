@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.UserServiceException;
+import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -114,6 +115,74 @@ public class UserInfoController {
             return ResponseModel.fail("",e.getMessage());
         }
         return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "添加系统用户角色", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/insertSystemRole")
+    public ResponseModel insertSystemRole(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolRoleModel model){
+        try {
+            userInfoService.insertSchoolRole(userInfo, model);
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "修改系统用户角色", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/updateSystemRole")
+    public ResponseModel updateSystemRole(@ModelAttribute UserInfoForToken userInfo,@RequestBody SchoolRoleModel model){
+        try {
+            userInfoService.updateSchoolRole(userInfo, model);
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "查看系统用户角色", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping("/getSystemRoles")
+    public ResponseModel<List<SchoolRoleModel>> getSystemRoles(@ModelAttribute UserInfoForToken userInfo){
+        try {
+            return ResponseModel.sucess("",userInfoService.getSchoolRoles(userInfo));
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "删除系统用户角色", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping("/deleteSystemRole/{roleId}")
+    public ResponseModel deleteSystemRole(@ModelAttribute UserInfoForToken userInfo,@PathVariable String roleId){
+        try {
+            userInfoService.deleteSchoolRole(userInfo, roleId);
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "查询本校老师信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping("/teacher/getTeachers/{schoolId}")
+    public ResponseModel<List<TeacherModel>> getTeachers(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId){
+        try {
+            return ResponseModel.sucess("",userInfoService.getTeachers(userInfo, schoolId));
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
     }
 
 }

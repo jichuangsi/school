@@ -3,10 +3,7 @@ package com.jichuangsi.school.user.util;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.Sex;
 import com.jichuangsi.school.user.constant.Status;
-import com.jichuangsi.school.user.entity.RoleInfo;
-import com.jichuangsi.school.user.entity.StudentInfo;
-import com.jichuangsi.school.user.entity.TeacherInfo;
-import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
 import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
@@ -21,14 +18,12 @@ import com.jichuangsi.school.user.model.basic.Subject;
 import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
-import com.jichuangsi.school.user.model.school.GradeModel;
-import com.jichuangsi.school.user.model.school.PhraseModel;
-import com.jichuangsi.school.user.model.school.SchoolModel;
-import com.jichuangsi.school.user.model.school.SubjectModel;
+import com.jichuangsi.school.user.model.school.*;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
+import com.jichuangsi.school.user.model.user.TeacherModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -275,6 +270,7 @@ public final class MappingEntity2ModelConverter {
         userInfoForToken.setUserId(userInfo.getId());
         userInfoForToken.setUserName(userInfo.getUserName());
         userInfoForToken.setUserNum(userInfo.getAccount());
+        userInfoForToken.setRoleName(userInfo.getRoleName());
         return userInfoForToken;
     }
 
@@ -294,6 +290,32 @@ public final class MappingEntity2ModelConverter {
         model.setSchoolId(userInfo.getSchoolId());
         model.setSchoolName(userInfo.getSchoolName());
         model.setUserName(userInfo.getUserName());
+        return model;
+    }
+
+    public final static SchoolRoleModel CONVERTERFROMSCHOOLROLEINFO(SchoolRoleInfo schoolRoleInfo){
+        SchoolRoleModel model = new SchoolRoleModel();
+        model.setId(schoolRoleInfo.getId());
+        model.setRoleName(schoolRoleInfo.getRoleName());
+        return model;
+    }
+
+    public final static TeacherModel CONVERTERFROMUSERINFO(UserInfo userInfo){
+        TeacherModel model = new TeacherModel();
+        model.setAccount(userInfo.getAccount());
+        model.setId(userInfo.getId());
+        model.setName(userInfo.getName());
+        model.setSex(userInfo.getSex());
+        model.setStatus(userInfo.getStatus());
+        if (userInfo.getRoleInfos().get(0) instanceof  TeacherInfo){
+            TeacherInfo teacherInfo = (TeacherInfo) userInfo.getRoleInfos().get(0);
+            model.setPrimarySubject(new Subject(teacherInfo.getPrimarySubject().getSubjectId(),teacherInfo.getPrimarySubject().getSubjectName()));
+            List<Subject> subjects = new ArrayList<Subject>();
+            teacherInfo.getSecondarySubjects().forEach(subject -> {
+                subjects.add(new Subject(subject.getSubjectId(),subject.getSubjectName()));
+            });
+            model.setSecondarySubjects(subjects);
+        }
         return model;
     }
 }
