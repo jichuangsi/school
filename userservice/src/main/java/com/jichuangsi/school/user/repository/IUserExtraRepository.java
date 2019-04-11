@@ -9,4 +9,6 @@ public interface IUserExtraRepository {
     List<UserInfo> findByRoleInfos(String classId);
 
     List<UserInfo> findBySchoolId(String schoolId);
+
+    int findByPrimaryClassAndTeacher(String classId);
 }

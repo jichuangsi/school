@@ -11,4 +11,6 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
 
     public final static String USER_ISNOT_EXIST = "用户信息不存在";
     public final static String ROLE_ISNOT_EXIST = "角色信息不存在";
+
+    public final static String ADMIN_DELETE_MSG = "不可删除管理员";
 }

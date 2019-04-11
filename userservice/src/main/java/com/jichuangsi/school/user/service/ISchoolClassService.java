@@ -14,7 +14,7 @@ public interface ISchoolClassService {
 
     void saveOrUpClass(String schoolId, String gradeId, ClassModel classModel) throws ClassServiceException;
 
-    void deleteClass(String schoolId, String gradeId, String classId) throws ClassServiceException;
+    void deleteClass( String gradeId, String classId) throws ClassServiceException;
 
     ClassModel getClassInfo(String schoolId, String gradeId, String classId) throws ClassServiceException;
 

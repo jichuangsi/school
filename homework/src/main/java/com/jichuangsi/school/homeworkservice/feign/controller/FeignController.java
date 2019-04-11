@@ -84,7 +84,10 @@ public class FeignController {
     @ApiImplicitParams({ })
     @GetMapping("/getParentHomeWork")
     public ResponseModel<List<HomeWorkParentModel>> getParentHomeWork(@RequestParam String classId,@RequestParam String studentId){
-
-        return ResponseModel.sucessWithEmptyData("");
+        try {
+            return ResponseModel.sucess("",feignService.getParentHomeWork(classId, studentId));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
     }
 }

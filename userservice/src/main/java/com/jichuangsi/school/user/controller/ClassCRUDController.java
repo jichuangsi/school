@@ -49,11 +49,12 @@ public class ClassCRUDController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping(value = "/deleteClass/{gradeId}/{classId}")
-    public ResponseModel deleteClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) throws ClassServiceException {
-        if (userInfo == null || StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
-            throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
+    public ResponseModel deleteClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @PathVariable String classId) {
+        try {
+            schoolClassService.deleteClass( gradeId, classId);
+        } catch (ClassServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
         }
-        schoolClassService.deleteClass(userInfoService.getSchoolInfoById(userInfo.getUserId()).getSchoolId(), gradeId, classId);
         return ResponseModel.sucessWithEmptyData("");
     }
 

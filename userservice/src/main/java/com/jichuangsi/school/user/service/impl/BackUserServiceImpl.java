@@ -92,12 +92,16 @@ public class BackUserServiceImpl implements IBackUserService {
         if (StringUtils.isEmpty(model.getId())){
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
-        BackUserInfo backUserInfo = backUserInfoRepository.findFirstByIdAndStatus(model.getId(),Status.ACTIVATE.getName());
+        BackUserInfo backUserInfo = backUserInfoRepository.findFirstByIdAndStatusNot(model.getId(),Status.ACTIVATE.getName());
         if (null == backUserInfo){
             throw new BackUserException(ResultCode.ACCOUNT_NOTEXIST_MSG);
         }
-        if (!userInfo.getSchoolId().equals(backUserInfo.getSchoolId())){
-            throw new BackUserException(ResultCode.ACCOUNT_DELETEPOWER_MSG);
+        try {
+            if (!backUserInfo.getSchoolId().equals(userInfo.getSchoolId()) && !"M".equals(userInfo.getRoleName())){
+                throw new BackUserException(ResultCode.ACCOUNT_DELETEPOWER_MSG);
+            }
+        } catch (Exception e) {
+            throw new BackUserException(ResultCode.ADMIN_DELETE_MSG);
         }
         backUserInfo.setStatus(Status.DELETE.getName());
         backUserInfoRepository.save(backUserInfo);

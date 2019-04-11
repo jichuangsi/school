@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ISchoolRoleInfoRepository extends MongoRepository<SchoolRoleInfo,String> {
 
-    int countByRoleNameAndDeleteFlag(String roleName,String delete);
+    int countByRoleNameAndDeleteFlagAndSchoolId(String roleName,String delete,String schoolId);
 
     SchoolRoleInfo findFirstByIdAndDeleteFlag(String id,String delete);
 
-    List<SchoolRoleInfo> findByDeleteFlag(String delete);
+    List<SchoolRoleInfo> findByDeleteFlagAndSchoolId(String delete,String schoolId);
 }

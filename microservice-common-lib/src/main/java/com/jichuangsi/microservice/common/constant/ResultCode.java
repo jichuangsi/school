@@ -31,4 +31,7 @@ public class ResultCode {
 
 	public static final String USER_SELECT_NULL_MSG = "查无此用户信息";
 	public static final String CLASS_SELECT_NULL_MSG = "查无此班级信息";
+	public static final String SCHOOL_SELECT_NULL_MSG = "查无此学校信息";
+
+	public static final String HEADMASTER_EXIST_MSG = "已有班主任，请先离任";
 }

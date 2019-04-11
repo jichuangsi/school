@@ -7,7 +7,9 @@ import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
+import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
+import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.school.SchoolModel;
@@ -82,7 +84,7 @@ public class FeignServiceImpl implements IFeignService {
         try {
             return schoolClassService.getSchoolBySchoolId(schoolId);
         } catch (SchoolServiceException e) {
-            throw  new FeignControllerException(e.getMessage());
+            throw new FeignControllerException(e.getMessage());
         }
     }
 
@@ -97,7 +99,7 @@ public class FeignServiceImpl implements IFeignService {
 
     @Override
     public List<ParentStudentModel> getParentStudent(List<String> studentIds) throws FeignControllerException {
-        if (null == studentIds || !(studentIds.size() > 0)){
+        if (null == studentIds || !(studentIds.size() > 0)) {
             throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
         }
         List<ParentStudentModel> parentStudentModels = new ArrayList<ParentStudentModel>();
@@ -119,5 +121,36 @@ public class FeignServiceImpl implements IFeignService {
             parentStudentModels.add(studentModel);
         }
         return parentStudentModels;
+    }
+
+    @Override
+    public ClassDetailModel getStudentClassDetail(String studentId) throws FeignControllerException {
+        if (StringUtils.isEmpty(studentId)) {
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo student = userRepository.findFirstById(studentId);
+        if (null == student) {
+            throw new FeignControllerException(ResultCode.USER_SELECT_NULL_MSG);
+        }
+        ClassDetailModel model = new ClassDetailModel();
+        if (student.getRoleInfos().get(0) instanceof StudentInfo) {
+            StudentInfo studentInfo = (StudentInfo) student.getRoleInfos().get(0);
+            model.setClassId(studentInfo.getPrimaryClass().getClassId());
+            model.setClassName(studentInfo.getPrimaryClass().getClassName());
+        }
+        return model;
+    }
+
+    @Override
+    public List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws FeignControllerException {
+        if (StringUtils.isEmpty(studentId)) {
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        try {
+            List<ClassTeacherInfoModel> userInfos = userInfoService.getStudentTeachers(studentId);
+            return userInfos;
+        } catch (UserServiceException e) {
+            throw new FeignControllerException(e.getMessage());
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.service;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.exception.UserServiceException;
+import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
@@ -152,7 +153,7 @@ public interface UserInfoService {
 
     void updateOtherPwd(UserInfoForToken userInfo, UpdatePwdModel model, String userId) throws UserServiceException;
 
-    void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model) throws UserServiceException;
+    void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model,String schoolId) throws UserServiceException;
 
     void updateSchoolRole(UserInfoForToken userInfo ,SchoolRoleModel model) throws UserServiceException;
 
@@ -161,4 +162,6 @@ public interface UserInfoService {
     void deleteSchoolRole(UserInfoForToken userInfo , String roleId) throws UserServiceException;
 
     List<TeacherModel> getTeachers(UserInfoForToken userInfo,String schoolId) throws UserServiceException;
+
+    List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws UserServiceException;
 }

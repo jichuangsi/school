@@ -4,10 +4,7 @@ import com.jichuangsi.school.homeworkservice.constant.QuestionType;
 import com.jichuangsi.school.homeworkservice.constant.Result;
 import com.jichuangsi.school.homeworkservice.constant.ResultCode;
 import com.jichuangsi.school.homeworkservice.constant.Status;
-import com.jichuangsi.school.homeworkservice.entity.Homework;
-import com.jichuangsi.school.homeworkservice.entity.Question;
-import com.jichuangsi.school.homeworkservice.entity.StudentAnswer;
-import com.jichuangsi.school.homeworkservice.entity.StudentHomeworkCollection;
+import com.jichuangsi.school.homeworkservice.entity.*;
 import com.jichuangsi.school.homeworkservice.exception.FeignControllerException;
 import com.jichuangsi.school.homeworkservice.exception.StudentHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.feign.model.*;
@@ -195,16 +192,32 @@ public class FeignServiceImpl implements IFeignService {
         if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(studentId)){
             throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
         }
+        List<HomeWorkParentModel> homeWorkParentModels = new ArrayList<HomeWorkParentModel>();
         List<Homework> homeworks = homeworkRepository.findByClassIdAndEndTimeGreaterThan(classId,new Date().getTime());
-        List<String> homeIds = new ArrayList<String>();
-        homeworks.forEach(homework -> {
-            homeIds.add(homework.getId());
-        });
         StudentHomeworkCollection collection = studentHomeworkCollectionRepository.findFirstByStudentId(studentId);
         if (null == collection){
             throw new FeignControllerException(ResultCode.SELECT_NULL_MSG);
         }
-
-        return null;
+        for (HomeworkSummary summary : collection.getHomeworks()){
+            for (Homework  homework : homeworks){
+                if (summary.getHomeworkId().equals(homework.getId())){
+                    HomeWorkParentModel model = new HomeWorkParentModel();
+                    model.setEndTime(homework.getEndTime());
+                    model.setHomeWorkId(homework.getId());
+                    model.setHomeWorkName(homework.getName());
+                    model.setPulishTime(homework.getPublishTime());
+                    model.setStudentId(studentId);
+                    model.setSubjectName(homework.getSubjectName());
+                    model.setStudentName(collection.getStudentName());
+                    if (summary.getCompletedTime() > 0){
+                        model.setStatus("已提交");
+                    }else{
+                        model.setStatus("未提交");
+                    }
+                    homeWorkParentModels.add(model);
+                }
+            }
+        }
+        return homeWorkParentModels;
     }
 }

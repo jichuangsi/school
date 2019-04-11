@@ -34,4 +34,11 @@ public class UserExtraRepositoryImpl implements IUserExtraRepository {
         Query query = new Query(criteria);
         return mongoTemplate.find(query,UserInfo.class);
     }
+
+    @Override
+    public int findByPrimaryClassAndTeacher(String classId) {
+        Criteria criteria1 = Criteria.where("primaryClass.classId").is(classId).and("roleName").is("Teacher");
+        Criteria criteria = Criteria.where("roleInfos").elemMatch(criteria1).and("status").is(Status.ACTIVATE.getName());
+        return (int) mongoTemplate.count(new Query(criteria),UserInfo.class);
+    }
 }

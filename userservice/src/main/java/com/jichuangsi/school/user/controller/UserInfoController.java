@@ -121,10 +121,10 @@ public class UserInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping("/insertSystemRole")
-    public ResponseModel insertSystemRole(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolRoleModel model){
+    @PostMapping("/insertSystemRole/{schoolId}")
+    public ResponseModel insertSystemRole(@ModelAttribute UserInfoForToken userInfo, @RequestBody SchoolRoleModel model,@PathVariable String schoolId){
         try {
-            userInfoService.insertSchoolRole(userInfo, model);
+            userInfoService.insertSchoolRole(userInfo, model,schoolId);
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

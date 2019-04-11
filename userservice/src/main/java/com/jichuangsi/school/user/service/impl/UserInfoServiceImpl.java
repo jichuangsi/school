@@ -17,6 +17,7 @@ import com.jichuangsi.school.user.entity.org.GradeInfo;
 import com.jichuangsi.school.user.entity.org.PhraseInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.exception.UserServiceException;
+import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
@@ -325,9 +326,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public TransferSchool getSchoolInfoById(String id) {
-        Optional<UserInfo> result = userRepository.findById(id);
-        if (!result.isPresent()) return null;
-        return MappingEntity2ModelConverter.TransferSchoolInfoFromTeacher(result.get());
+        UserInfo userInfo = userRepository.findFirstById(id);
+        return MappingEntity2ModelConverter.TransferSchoolInfoFromTeacher(userInfo);
     }
 
     @Override
@@ -671,11 +671,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getRoleName())){
+    public void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model,String schoolId) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getRoleName()) || StringUtils.isEmpty(schoolId)){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        if (schoolRoleInfoRepository.countByRoleNameAndDeleteFlag(model.getRoleName(),"0") > 0){
+        if (!(schoolInfoRepository.countByIdAndDeleteFlag(schoolId,"0") > 0)){
+            throw new UserServiceException(ResultCode.SCHOOL_SELECT_NULL_MSG);
+        }
+        if (schoolRoleInfoRepository.countByRoleNameAndDeleteFlagAndSchoolId(model.getRoleName(),"0",schoolId) > 0){
             throw new UserServiceException(ResultCode.ROLE_EXIST_MSG);
         }
         SchoolRoleInfo roleInfo = MappingModel2EntityConverter.CONVERTERFROMSCHOOLROLEMODEL(model);
@@ -683,6 +686,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         roleInfo.setCreatedName(userInfo.getUserName());
         roleInfo.setUpdatedId(userInfo.getUserId());
         roleInfo.setUpdatedName(userInfo.getUserName());
+        roleInfo.setSchoolId(schoolId);
         schoolRoleInfoRepository.save(roleInfo);
     }
 
@@ -704,7 +708,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo) throws UserServiceException {
-        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlag("0");
+        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndSchoolId("0",userInfo.getSchoolId());
         List<SchoolRoleModel> schoolRoleModels = new ArrayList<SchoolRoleModel>();
         schoolRoleInfos.forEach(schoolRoleInfo -> {
             schoolRoleModels.add(MappingEntity2ModelConverter.CONVERTERFROMSCHOOLROLEINFO(schoolRoleInfo));
@@ -739,5 +743,43 @@ public class UserInfoServiceImpl implements UserInfoService {
             teacherModels.add(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1));
         });
         return teacherModels;
+    }
+
+    @Override
+    public List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws UserServiceException {
+        if (StringUtils.isEmpty(studentId)){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo student = userRepository.findFirstById(studentId);
+        if (null == student){
+            throw new UserServiceException(ResultCode.USER_SELECT_NULL_MSG);
+        }
+        String classId = "";
+        if (student.getRoleInfos().get(0) instanceof StudentInfo){
+            StudentInfo studentInfo = (StudentInfo) student.getRoleInfos().get(0);
+            classId = studentInfo.getPrimaryClass().getClassId();
+        }
+        List<UserInfo> userInfos = userExtraRepository.findByRoleInfos(classId);
+        List<ClassTeacherInfoModel> classTeacherInfoModels = new ArrayList<ClassTeacherInfoModel>();
+        for(UserInfo userInfo : userInfos){
+            ClassTeacherInfoModel model = new ClassTeacherInfoModel();
+            model.setId(userInfo.getId());
+            model.setName(userInfo.getName());
+            if (userInfo.getRoleInfos().get(0) instanceof TeacherInfo){
+                TeacherInfo teacherInfo = (TeacherInfo) userInfo.getRoleInfos().get(0);
+                model.setSubject(teacherInfo.getPrimarySubject().getSubjectName());
+                if (null != teacherInfo.getPrimaryClass() && classId.equals(teacherInfo.getPrimaryClass().getClassId())){
+                    model.setHeadMaster("班主任");
+                }
+                List<String> roleNames = new ArrayList<String>();
+                for (String roleId : teacherInfo.getRoleIds()){
+                    SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(roleId,"0");
+                    if (null != roleInfo){
+                        roleNames.add(roleInfo.getRoleName());
+                    }
+                }
+            }
+        }
+        return classTeacherInfoModels;
     }
 }

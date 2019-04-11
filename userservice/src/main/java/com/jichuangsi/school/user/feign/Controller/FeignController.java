@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.feign.Controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
+import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.school.SchoolModel;
@@ -87,6 +88,26 @@ public class FeignController {
     public ResponseModel<List<ParentStudentModel>> getParentStudent(@RequestBody List<String> studentIds){
         try {
             return ResponseModel.sucess("",feignService.getParentStudent(studentIds));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据学生id获取班级信息", notes = "")
+    @GetMapping("/getStudentClassDetail")
+    public ResponseModel<ClassDetailModel> getStudentClassDetail(@RequestParam String studentId){
+        try {
+            return ResponseModel.sucess("",feignService.getStudentClassDetail(studentId));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据学生id获取班级老师信息", notes = "")
+    @GetMapping("/getStudentTeachers")
+    public ResponseModel<List<ClassTeacherInfoModel>> getStudentTeachers(@RequestParam String studentId){
+        try {
+            return ResponseModel.sucess("",feignService.getStudentTeachers(studentId));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

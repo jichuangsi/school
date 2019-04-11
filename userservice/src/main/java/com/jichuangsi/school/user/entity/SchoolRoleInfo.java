@@ -21,6 +21,7 @@ public class SchoolRoleInfo {
     private String updatedId;
     private String updatedName;
     private String deleteFlag = "0";
+    private String schoolId;
 
     public String getId() {
         return id;
@@ -101,4 +102,13 @@ public class SchoolRoleInfo {
     public void setDeleteFlag(String deleteFlag) {
         this.deleteFlag = deleteFlag;
     }
+
+    public String getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(String schoolId) {
+        this.schoolId = schoolId;
+    }
+
 }

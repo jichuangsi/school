@@ -16,10 +16,7 @@ import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.school.TeacherInsertModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
-import com.jichuangsi.school.user.repository.IClassInfoRepository;
-import com.jichuangsi.school.user.repository.IGradeInfoRepository;
-import com.jichuangsi.school.user.repository.ISchoolInfoRepository;
-import com.jichuangsi.school.user.repository.UserRepository;
+import com.jichuangsi.school.user.repository.*;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
@@ -50,6 +47,8 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     private IClassInfoRepository classInfoRepository;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private IUserExtraRepository userExtraRepository;
 
     @Override
     public void saveOrUpClass(String schoolId, String gradeId, ClassModel classModel) throws ClassServiceException {
@@ -66,13 +65,18 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     }
 
     @Override
-    public void deleteClass(String schoolId, String gradeId, String classId) throws ClassServiceException{
-        SchoolInfo schoolInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(schoolId).andOperator(Criteria.where("gradeIds").is(gradeId))), SchoolInfo.class);
-        if(schoolInfo == null) new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
-        GradeInfo gradeInfo = mongoTemplate.findAndModify(new Query(Criteria.where("id").in(gradeId)), new Update().pull("classIds", classId), GradeInfo.class);
-        if(gradeInfo == null) new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
-        ClassInfo classInfo = mongoTemplate.findAndRemove(new Query(Criteria.where("id").in(classId)), ClassInfo.class);
-        if(classInfo == null) new ClassServiceException(MyResultCode.CLASS_FAIL2REMOVE);
+    public void deleteClass( String gradeId, String classId) throws ClassServiceException{
+        if (StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
+            throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
+        }
+        GradeInfo gradeInfo = gradeInfoRepository.findFirstById(gradeId);
+        if(gradeInfo == null) throw new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
+        if(classInfo == null) throw new ClassServiceException(MyResultCode.CLASS_FAIL2REMOVE);
+        gradeInfo.getClassIds().remove(classId);
+        gradeInfoRepository.save(gradeInfo);
+        classInfo.setDeleteFlag("1");
+        classInfoRepository.save(classInfo);
     }
 
     @Override
@@ -160,9 +164,9 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             if (classId.equals(teacherInfo.getPrimaryClass().getClassId())){
                 teacherInfo.setPrimaryClass("","");
             }
-            for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
-                if (classId.equals(cla.getClassId())){
-                    teacherInfo.getSecondaryClasses().remove(cla);
+            for (int i = teacherInfo.getSecondaryClasses().size() - 1; i >= 0 ; i--){
+                if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())){
+                    teacherInfo.getSecondaryClasses().remove(teacherInfo.getSecondaryClasses().get(i));
                 }
             }
             List<RoleInfo> roleInfos =  new ArrayList<RoleInfo>();
@@ -181,6 +185,9 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         String classId = "";
         if (!StringUtils.isEmpty(model.getPrimaryClassId())){
             classId = model.getPrimaryClassId();
+            if (userExtraRepository.findByPrimaryClassAndTeacher(classId) > 0){
+                throw new SchoolServiceException(ResultCode.HEADMASTER_EXIST_MSG);
+            }
         }else {
             classId = model.getSecondaryClassId();
         }
