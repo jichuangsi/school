@@ -1,8 +1,8 @@
 package com.jichuangsi.school.user.service.impl;
 
-import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.MyResultCode;
+import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.entity.RoleInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;

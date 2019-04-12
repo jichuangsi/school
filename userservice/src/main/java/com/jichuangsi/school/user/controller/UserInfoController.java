@@ -1,9 +1,11 @@
 package com.jichuangsi.school.user.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
+import com.jichuangsi.school.user.model.school.UserConditionModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -149,10 +151,10 @@ public class UserInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping("/getSystemRoles")
-    public ResponseModel<List<SchoolRoleModel>> getSystemRoles(@ModelAttribute UserInfoForToken userInfo){
+    @GetMapping("/getSystemRoles/{schoolId}")
+    public ResponseModel<List<SchoolRoleModel>> getSystemRoles(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId){
         try {
-            return ResponseModel.sucess("",userInfoService.getSchoolRoles(userInfo));
+            return ResponseModel.sucess("",userInfoService.getSchoolRoles(userInfo,schoolId));
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
@@ -185,4 +187,29 @@ public class UserInfoController {
         }
     }
 
+    @ApiOperation(value = "根据条件查老师", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/teacher/getTeacherByCondition")
+    public ResponseModel<PageInfo<TeacherModel>> getTeacherByCondition(@ModelAttribute UserInfoForToken userInfo, @RequestBody UserConditionModel model){
+        try {
+            return ResponseModel.sucess("",userInfoService.getTeachersByCondition(userInfo, model));
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据条件查学生", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/student/getStudentByCondition")
+    public ResponseModel<PageInfo<StudentModel>> getStudentByCondition(@ModelAttribute UserInfoForToken userInfo,@RequestBody UserConditionModel model){
+        try {
+            return ResponseModel.sucess("",userInfoService.getStudentByCondition(userInfo, model));
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

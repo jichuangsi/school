@@ -11,4 +11,9 @@ public interface IUserExtraRepository {
     List<UserInfo> findBySchoolId(String schoolId);
 
     int findByPrimaryClassAndTeacher(String classId);
+
+    List<UserInfo> findByCondition(String schoolId,String pharseId,String gradeId,String classId,String userName,String roleName,String subjectId,int pageIndex,int pageSize);
+
+    int countByCondition(String schoolId,String pharseId,String gradeId,String classId,String userName,String roleName,String subjectId);
+
 }

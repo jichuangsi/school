@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.exception.UserServiceException;
@@ -7,6 +8,7 @@ import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
+import com.jichuangsi.school.user.model.school.UserConditionModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -157,11 +159,15 @@ public interface UserInfoService {
 
     void updateSchoolRole(UserInfoForToken userInfo ,SchoolRoleModel model) throws UserServiceException;
 
-    List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo) throws UserServiceException;
+    List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo,String schoolId) throws UserServiceException;
 
     void deleteSchoolRole(UserInfoForToken userInfo , String roleId) throws UserServiceException;
 
     List<TeacherModel> getTeachers(UserInfoForToken userInfo,String schoolId) throws UserServiceException;
 
     List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws UserServiceException;
+
+    PageInfo<TeacherModel> getTeachersByCondition(UserInfoForToken userInfo, UserConditionModel model) throws UserServiceException;
+
+    PageInfo<StudentModel> getStudentByCondition(UserInfoForToken userInfo,UserConditionModel model) throws UserServiceException;
 }

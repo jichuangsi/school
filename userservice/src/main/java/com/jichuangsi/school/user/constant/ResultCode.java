@@ -13,4 +13,21 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public final static String ROLE_ISNOT_EXIST = "角色信息不存在";
 
     public final static String ADMIN_DELETE_MSG = "不可删除管理员";
+
+    public static final String SUBJECT_IS_EXIST = "科目已存在";
+    public static final String PHRASE_IS_EXIST = "年段已存在";
+    public static final String GRADE_IS_EXIST = "年级已存在";
+    public static final String SCHOOL_IS_EXIST = "学校已存在";
+    public static final String USER_IS_EXIST = "账号已存在";
+
+    public static final String EXCEL_IMPORT_MSG = "excel导入失败";
+
+    public static final String ROLE_NOT_RIGHT = "角色不符合";
+    public static final String ROLE_EXIST_MSG = "角色已存在";
+
+    public static final String USER_SELECT_NULL_MSG = "查无此用户信息";
+    public static final String CLASS_SELECT_NULL_MSG = "查无此班级信息";
+    public static final String SCHOOL_SELECT_NULL_MSG = "查无此学校信息";
+
+    public static final String HEADMASTER_EXIST_MSG = "已有班主任，请先离任";
 }

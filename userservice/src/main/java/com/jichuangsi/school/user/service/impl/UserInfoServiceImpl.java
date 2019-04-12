@@ -5,11 +5,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.commons.Md5Util;
 import com.jichuangsi.school.user.commons.PageResult;
 import com.jichuangsi.school.user.constant.MyResultCode;
+import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
@@ -21,6 +21,7 @@ import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
+import com.jichuangsi.school.user.model.school.UserConditionModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -707,8 +708,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo) throws UserServiceException {
-        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndSchoolId("0",userInfo.getSchoolId());
+    public List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo,String schoolId) throws UserServiceException {
+        if (StringUtils.isEmpty(schoolId)){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndSchoolId("0",schoolId);
         List<SchoolRoleModel> schoolRoleModels = new ArrayList<SchoolRoleModel>();
         schoolRoleInfos.forEach(schoolRoleInfo -> {
             schoolRoleModels.add(MappingEntity2ModelConverter.CONVERTERFROMSCHOOLROLEINFO(schoolRoleInfo));
@@ -781,5 +785,41 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
         }
         return classTeacherInfoModels;
+    }
+
+    @Override
+    public PageInfo<TeacherModel> getTeachersByCondition(UserInfoForToken userInfo, UserConditionModel model) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getSchoolId())){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<UserInfo> userInfos = userExtraRepository.findByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Teacher",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
+        List<TeacherModel> models = new ArrayList<TeacherModel>();
+        userInfos.forEach(userInfo1 -> {
+            models.add(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1));
+        });
+        PageInfo<TeacherModel> pageInfo = new PageInfo<TeacherModel>();
+        pageInfo.setList(models);
+        pageInfo.setPageNum(model.getPageIndex());
+        pageInfo.setPageSize(model.getPageSize());
+        pageInfo.setTotal(userExtraRepository.countByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Teacher",model.getSubjectId()));
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<StudentModel> getStudentByCondition(UserInfoForToken userInfo, UserConditionModel model) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getSchoolId())){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<UserInfo> userInfos = userExtraRepository.findByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Student",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
+        List<StudentModel> studentModels = new ArrayList<StudentModel>();
+        userInfos.forEach(userInfo1 -> {
+            studentModels.add(MappingEntity2ModelConverter.CONVERTESTUDENTMODELRFROMUSERINFO(userInfo1));
+        });
+        PageInfo<StudentModel> pageInfo = new PageInfo<StudentModel>();
+        pageInfo.setTotal(userExtraRepository.countByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Student",model.getSubjectId()));
+        pageInfo.setPageSize(model.getPageSize());
+        pageInfo.setPageNum(model.getPageIndex());
+        pageInfo.setList(studentModels);
+        return pageInfo;
     }
 }

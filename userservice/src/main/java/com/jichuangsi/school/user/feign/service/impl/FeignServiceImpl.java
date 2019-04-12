@@ -1,6 +1,6 @@
 package com.jichuangsi.school.user.feign.service.impl;
 
-import com.jichuangsi.microservice.common.constant.ResultCode;
+import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;

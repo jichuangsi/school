@@ -23,6 +23,7 @@ import com.jichuangsi.school.user.model.transfer.TransferClass;
 import com.jichuangsi.school.user.model.transfer.TransferSchool;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
+import com.jichuangsi.school.user.model.user.StudentModel;
 import com.jichuangsi.school.user.model.user.TeacherModel;
 
 import java.util.ArrayList;
@@ -315,6 +316,23 @@ public final class MappingEntity2ModelConverter {
                 subjects.add(new Subject(subject.getSubjectId(),subject.getSubjectName()));
             });
             model.setSecondarySubjects(subjects);
+        }
+        return model;
+    }
+
+    public final static StudentModel CONVERTESTUDENTMODELRFROMUSERINFO(UserInfo userInfo){
+        StudentModel model = new StudentModel();
+        model.setAccount(userInfo.getAccount());
+        model.setId(userInfo.getId());
+        model.setName(userInfo.getName());
+        model.setSex(userInfo.getSex());
+        model.setStatus(userInfo.getStatus());
+        if (userInfo.getRoleInfos().get(0) instanceof StudentInfo) {
+            StudentInfo studentInfo = (StudentInfo) userInfo.getRoleInfos().get(0);
+            model.setPhrase(new Phrase(studentInfo.getPhrase().getPhraseId(),studentInfo.getPhrase().getPhraseName()));
+            model.setPrimaryClass(new ClassModel(studentInfo.getPrimaryClass().getClassId(),studentInfo.getPrimaryClass().getClassName()));
+            model.setPrimaryGrade(new GradeModel(studentInfo.getPrimaryGrade().getGradeId(),studentInfo.getPrimaryGrade().getGradeName()));
+            model.setSchool(new SchoolModel(studentInfo.getSchool().getSchoolId(),studentInfo.getSchool().getSchoolName()));
         }
         return model;
     }
