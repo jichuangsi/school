@@ -22,4 +22,10 @@ public interface CourseRepository extends MongoRepository<Course, String>, Cours
     Course findFirstByIdAndTeacherId(String id,String teacherId);
 
     List<Course> findByClassIdAndStatusAndEndTimeGreaterThanOrderByCreateTime(String classId,String status,long endTime);
+
+    List<Course> findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(String classId,String status,long beignTime,long endTime);
+
+    List<Course> findByClassIdAndStatusAndEndTimeGreaterThanAndSubjectNameLikeOrderByCreateTime(String classId,String status,long endTime,String subjectName);
+
+    List<Course> findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(String classId,String status,long beignTime,long endTime,String subjectName);
 }

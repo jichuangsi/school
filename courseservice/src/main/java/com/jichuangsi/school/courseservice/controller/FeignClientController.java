@@ -8,6 +8,8 @@ import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailMode
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.StudentKnowledgeModel;
+import com.jichuangsi.school.courseservice.model.feign.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.courseservice.model.feign.statistics.ParentStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import com.jichuangsi.school.courseservice.service.IFeignClientService;
@@ -99,6 +101,17 @@ public class FeignClientController {
     public ResponseModel<List<StudentKnowledgeModel>> getStudentKnowledges(@RequestBody SearchStudentKnowledgeModel model){
         try {
             return ResponseModel.sucess("",iFeignClientService.getStudentKnowledges(model));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "家长端查询学生知识点统计", notes = "")
+    @ApiImplicitParams({})
+    @PostMapping("/getParentStatistics")
+    public ResponseModel<List<KnowledgeStatisticsModel>> getParentStatistics(@RequestBody ParentStatisticsModel model){
+        try {
+            return ResponseModel.sucess("",iFeignClientService.getParentStatistics(model));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

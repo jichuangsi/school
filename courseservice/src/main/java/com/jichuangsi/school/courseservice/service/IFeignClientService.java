@@ -7,6 +7,8 @@ import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailMode
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.StudentKnowledgeModel;
+import com.jichuangsi.school.courseservice.model.feign.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.courseservice.model.feign.statistics.ParentStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,5 +31,7 @@ public interface IFeignClientService {
     List<ClassStatisticsModel> getClassStatisticsByClassIdsOnMonth(List<ClassDetailModel> classModels) throws FeignControllerException;
 
     List<StudentKnowledgeModel> getStudentKnowledges(SearchStudentKnowledgeModel model) throws FeignControllerException;
+
+    List<KnowledgeStatisticsModel> getParentStatistics(ParentStatisticsModel model) throws FeignControllerException;
 }
 

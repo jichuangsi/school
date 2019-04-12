@@ -14,6 +14,8 @@ import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.Knowledge;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.*;
+import com.jichuangsi.school.courseservice.model.feign.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.courseservice.model.feign.statistics.ParentStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.QuestionStatisticsRateModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
@@ -322,5 +324,95 @@ public class FeignClientServiceImpl implements IFeignClientService {
             studentKnowledgeModels.add(knowledgeModel);
         }
         return studentKnowledgeModels;
+    }
+
+    @Override
+    public List<KnowledgeStatisticsModel> getParentStatistics(ParentStatisticsModel model) throws FeignControllerException {
+        if (StringUtils.isEmpty(model.getClassId()) || StringUtils.isEmpty(model.getStudentId()) || StringUtils.isEmpty(model.getSubjectName()) || 0 == model.getStudentNum()) {
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<Course> courses = new ArrayList<Course>();
+        if (model.getBeignTime() > 0) {
+            courses.addAll(courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndSubjectNameLikeOrderByCreateTime(model.getClassId(), Status.FINISH.getName(), model.getBeignTime(), model.getSubjectName()));
+        } else {
+            if (!(model.getStatisticsTimes().size() > 0)) {
+                throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+            }
+            for (Long beignTime : model.getStatisticsTimes()) {
+                if (null == beignTime) {
+                    continue;
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date(beignTime));
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                courses.addAll(courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.FINISH.getName(), beignTime, calendar.getTimeInMillis(), model.getSubjectName()));
+            }
+        }
+        List<String> questionIds = new ArrayList<String>();
+        for (Course course : courses) {
+            questionIds.addAll(course.getQuestionIds());
+        }
+        Map<String,Integer> selfTrue = new HashMap<String, Integer>();
+        Map<String,Integer> classTrue = new HashMap<String, Integer>();
+        for (String qid : questionIds){
+            int trueNum = 0;
+            int selfNum = 0;
+            List<StudentAnswer> answers = studentAnswerRepository.findAllByQuestionId(qid);
+            for (StudentAnswer answer : answers){
+                if (Result.CORRECT.getName().equals(answer.getResult())){
+                    trueNum ++;
+                }else if (Result.PASS.getName().equals(answer.getResult())){
+                    //todo 主观题统计
+                }
+                if (model.getStudentId().equals(answer.getStudentId())){
+                    selfNum = 1;
+                }
+            }
+            selfTrue.put(qid,selfNum);
+            classTrue.put(qid,trueNum);
+        }
+        try {
+            List<ResultKnowledgeModel> resultKnowledgeModels = getQuestionKnowledges(questionIds);
+            Map<String, List<String>> questionMap = new HashMap<String, List<String>>();
+            for (ResultKnowledgeModel knowledgeModel : resultKnowledgeModels) {
+                for (Knowledge knowledge : knowledgeModel.getTransferKnowledge().getKnowledges()) {
+                    if (StringUtils.isEmpty(knowledge.getKnowledge())) {
+                        knowledge.setKnowledge("综合分类");
+                    }
+                    List<String> qIds = new ArrayList<String>();
+                    if (questionMap.containsKey(knowledge.getKnowledge())) {
+                        qIds.addAll(questionMap.get(knowledge.getKnowledge()));
+                    }
+                    questionIds.add(knowledgeModel.getQuestionId());
+                    questionMap.put(knowledge.getKnowledge(), qIds);
+                }
+            }
+            int questionNum = 0;
+            for (String key : questionMap.keySet()){
+                questionNum = questionNum + questionMap.get(key).size();
+            }
+            List<KnowledgeStatisticsModel> models = new ArrayList<KnowledgeStatisticsModel>();
+            for (String key : questionMap.keySet()){
+                int trueNum = 0;
+                int classNum = 0;
+                for (String questionId: questionMap.get(key)){
+                    trueNum = trueNum + selfTrue.get(questionId);
+                    classNum = classNum + classTrue.get(questionId);
+                }
+                KnowledgeStatisticsModel statisticsModel = new KnowledgeStatisticsModel();
+                statisticsModel.setClassRightAvgRate(classNum / (model.getStudentNum() * questionMap.get(key).size()));
+                statisticsModel.setKnowledgeName(key);
+                if (0 != questionNum) {
+                    statisticsModel.setKnowledgeRate(questionMap.get(key).size() / questionNum);
+                }
+                statisticsModel.setStudentRightRate(trueNum / questionMap.get(key).size());
+                models.add(statisticsModel);
+            }
+            return models;
+        } catch (StudentCourseServiceException e) {
+            throw new FeignControllerException(e.getMessage());
+        }
     }
 }

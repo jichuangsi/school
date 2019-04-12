@@ -191,7 +191,7 @@ public class UserInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping("/teacher/getTeacherByCondition")
+    @PostMapping(value = "/teacher/getTeacherByCondition")
     public ResponseModel<PageInfo<TeacherModel>> getTeacherByCondition(@ModelAttribute UserInfoForToken userInfo, @RequestBody UserConditionModel model){
         try {
             return ResponseModel.sucess("",userInfoService.getTeachersByCondition(userInfo, model));

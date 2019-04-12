@@ -6,6 +6,8 @@ import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkParentModel;
 import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.QuestionRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.TeacherHomeResultModel;
+import com.jichuangsi.school.homeworkservice.feign.model.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.homeworkservice.feign.model.statistics.ParentStatisticsModel;
 import com.jichuangsi.school.homeworkservice.feign.service.IFeignService;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
 import io.swagger.annotations.Api;
@@ -89,5 +91,13 @@ public class FeignController {
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }
+    }
+
+    @ApiOperation(value = "获取家长端学生的作业统计", notes = "")
+    @ApiImplicitParams({ })
+    @PostMapping("/getParentStudentHomeworkStatistics")
+    public ResponseModel<List<KnowledgeStatisticsModel>> getParentStudentHomeworkStatistics(@RequestBody ParentStatisticsModel model){
+
+        return ResponseModel.sucessWithEmptyData("");
     }
 }

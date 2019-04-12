@@ -135,8 +135,7 @@ public class FeignServiceImpl implements IFeignService {
         ClassDetailModel model = new ClassDetailModel();
         if (student.getRoleInfos().get(0) instanceof StudentInfo) {
             StudentInfo studentInfo = (StudentInfo) student.getRoleInfos().get(0);
-            model.setClassId(studentInfo.getPrimaryClass().getClassId());
-            model.setClassName(studentInfo.getPrimaryClass().getClassName());
+            model = findClassDetailByClassId(studentInfo.getPrimaryClass().getClassId());
         }
         return model;
     }
