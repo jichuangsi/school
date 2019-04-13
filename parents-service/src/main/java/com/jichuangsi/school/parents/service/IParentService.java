@@ -6,6 +6,7 @@ import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.model.MessageBoardModel;
 import com.jichuangsi.school.parents.model.NoticeModel;
 import com.jichuangsi.school.parents.model.ParentMessageModel;
+import com.jichuangsi.school.parents.model.ParentModel;
 
 import java.util.List;
 
@@ -22,4 +23,8 @@ public interface IParentService {
     List<NoticeModel> parentGetNewNotices(UserInfoForToken userInfo) throws ParentsException;
 
     void deleteParentNotice(UserInfoForToken userInfo,String noticeId) throws ParentsException;
+
+    String loginParentService(UserInfoForToken userInfo,String openId) throws ParentsException;
+
+    void registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException;
 }

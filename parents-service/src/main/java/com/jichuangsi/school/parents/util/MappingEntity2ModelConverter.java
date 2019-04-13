@@ -1,6 +1,8 @@
 package com.jichuangsi.school.parents.util;
 
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.entity.GrowthDay;
+import com.jichuangsi.school.parents.entity.ParentInfo;
 import com.jichuangsi.school.parents.entity.ParentMessage;
 import com.jichuangsi.school.parents.entity.ParentNotice;
 import com.jichuangsi.school.parents.model.GrowthModel;
@@ -45,5 +47,14 @@ public class MappingEntity2ModelConverter {
         model.setParentName(notice.getParentName());
         model.setTitle(notice.getTitle());
         return model;
+    }
+
+    public static final UserInfoForToken CONVERTERFROMPARENTINFO(ParentInfo parentInfo){
+        UserInfoForToken userInfo = new UserInfoForToken();
+        userInfo.setUserNum(parentInfo.getAccount());
+        userInfo.setUserId(parentInfo.getId());
+        userInfo.setUserName(parentInfo.getUserName());
+        userInfo.setRoleName("P");
+        return userInfo;
     }
 }

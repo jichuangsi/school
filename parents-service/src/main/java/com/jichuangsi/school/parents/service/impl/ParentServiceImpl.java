@@ -1,5 +1,6 @@
 package com.jichuangsi.school.parents.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
@@ -14,13 +15,16 @@ import com.jichuangsi.school.parents.feign.model.TransferStudent;
 import com.jichuangsi.school.parents.model.MessageBoardModel;
 import com.jichuangsi.school.parents.model.NoticeModel;
 import com.jichuangsi.school.parents.model.ParentMessageModel;
+import com.jichuangsi.school.parents.model.ParentModel;
 import com.jichuangsi.school.parents.repository.*;
 import com.jichuangsi.school.parents.service.IParentService;
+import com.jichuangsi.school.parents.service.TokenService;
 import com.jichuangsi.school.parents.util.MappingEntity2ModelConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +43,8 @@ public class ParentServiceImpl implements IParentService {
     private IUserFeignService userFeignService;
     @Resource
     private IParentNoticeRepository parentNoticeRepository;
+    @Resource
+    private TokenService tokenService;
 
     @Override
     public void sendParentMessage(UserInfoForToken userInfo, ParentMessageModel model) throws ParentsException {
@@ -127,6 +133,34 @@ public class ParentServiceImpl implements IParentService {
         }
         notice.setDeleteFlag("1");
         parentNoticeRepository.save(notice);
+    }
 
+    @Override
+    public String loginParentService(UserInfoForToken userInfo, String openId) throws ParentsException {
+        if (StringUtils.isEmpty(openId)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByWeChat(openId);
+        if (null == parentInfo){
+            throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
+        }
+        userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
+        try {
+            return tokenService.createdToken(JSONObject.toJSONString(userInfo));
+        } catch (UnsupportedEncodingException e) {
+            throw new ParentsException(ResultCode.TOKEN_CHECK_ERR_MSG);
+        }
+    }
+
+    @Override
+    public void registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
+        if (StringUtils.isEmpty(model.getOpenId())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = new ParentInfo();
+        parentInfo.setPhone(model.getPhone());
+        parentInfo.setUserName(model.getUserName());
+        parentInfo.setWeChat(model.getOpenId());
+        parentInfoRepository.save(parentInfo);
     }
 }
