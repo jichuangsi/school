@@ -185,7 +185,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             teacher.setUpdateTime(new Date().getTime());
             userRepository.save(teacher);
             for (SubjectTeacherInfo subjectTeacherInfo: classInfo.getTeacherInfos()){
-                if (teacherInfo.getPrimarySubject().getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || teacherInfo.getPrimarySubject().getSubjectName().equals(subjectTeacherInfo.getSubjectName())){
+                if (teacher.getId().equals(subjectTeacherInfo.getTeacherId())){
                     subjectTeacherInfo.setTeacherId("");
                     subjectTeacherInfo.setTeacherName("");
                 }
