@@ -20,6 +20,24 @@ public class ClassInfo {
     private String updateId;
     private String updateName;
     List<SubjectTeacherInfo> teacherInfos = new ArrayList<SubjectTeacherInfo>();
+    private String headMasterId;
+    private String headMasterName;
+
+    public String getHeadMasterId() {
+        return headMasterId;
+    }
+
+    public void setHeadMasterId(String headMasterId) {
+        this.headMasterId = headMasterId;
+    }
+
+    public String getHeadMasterName() {
+        return headMasterName;
+    }
+
+    public void setHeadMasterName(String headMasterName) {
+        this.headMasterName = headMasterName;
+    }
 
     public String getCreatorId() {
         return creatorId;

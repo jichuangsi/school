@@ -28,4 +28,6 @@ public interface IFeignService {
     ClassDetailModel getStudentClassDetail(String studentId) throws FeignControllerException;
 
     List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws FeignControllerException;
+
+    TransferStudent getStudentByAccount(String account) throws FeignControllerException;
 }

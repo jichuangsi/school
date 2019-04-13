@@ -1,6 +1,7 @@
 package com.jichuangsi.school.user.feign.service.impl;
 
 import com.jichuangsi.school.user.constant.ResultCode;
+import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
@@ -17,6 +18,7 @@ import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
+import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -151,5 +153,17 @@ public class FeignServiceImpl implements IFeignService {
         } catch (UserServiceException e) {
             throw new FeignControllerException(e.getMessage());
         }
+    }
+
+    @Override
+    public TransferStudent getStudentByAccount(String account) throws FeignControllerException {
+        if (StringUtils.isEmpty(account)){
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo userInfo = userRepository.findFirstByAccountAndStatus(account, Status.ACTIVATE.getName());
+        if (null == userInfo){
+            throw new FeignControllerException(ResultCode.USER_ISNOT_EXIST);
+        }
+        return MappingEntity2ModelConverter.TransferStudent(userInfo);
     }
 }

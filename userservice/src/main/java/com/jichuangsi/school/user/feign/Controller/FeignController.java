@@ -112,4 +112,14 @@ public class FeignController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+    @ApiOperation(value = "根据学生account获取学生信息", notes = "")
+    @GetMapping("/getStudentByAccount")
+    public ResponseModel<TransferStudent> getStudentByAccount(@RequestParam("account") String account){
+        try {
+            return ResponseModel.sucess("",feignService.getStudentByAccount(account));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

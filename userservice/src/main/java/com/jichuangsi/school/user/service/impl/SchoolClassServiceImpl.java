@@ -190,6 +190,10 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                     subjectTeacherInfo.setTeacherName("");
                 }
             }
+            if (teacher.getId().equals(classInfo.getHeadMasterId())){
+                classInfo.setHeadMasterId("");
+                classInfo.setHeadMasterName("");
+            }
             classInfoRepository.save(classInfo);
         }
     }
@@ -265,6 +269,10 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                     subjectTeacherInfo.setTeacherId(teacher.getId());
                     subjectTeacherInfo.setTeacherName(teacher.getName());
                 }
+            }
+            if (!StringUtils.isEmpty(model.getPrimaryClassId())){
+                classInfo.setHeadMasterName(teacher.getName());
+                classInfo.setHeadMasterId(teacher.getId());
             }
             classInfoRepository.save(classInfo);
         }

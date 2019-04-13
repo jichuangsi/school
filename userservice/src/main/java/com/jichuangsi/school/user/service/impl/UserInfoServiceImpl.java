@@ -589,11 +589,26 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (StringUtils.isEmpty(classId)){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        List<UserInfo> userInfos = userExtraRepository.findByRoleInfos(classId);
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
+        if (null == classInfo){
+            throw new UserServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
+        }
         List<TransferTeacher> transferTeachers = new ArrayList<TransferTeacher>();
-        userInfos.forEach(userInfo -> {
-            transferTeachers.add(MappingEntity2ModelConverter.ConvertTransferTeacher(userInfo));
+        classInfo.getTeacherInfos().forEach(teacherInfo -> {
+            TransferTeacher transferTeacher = new TransferTeacher();
+            transferTeacher.setSubjectId(teacherInfo.getSubjectId());
+            transferTeacher.setSubjectName(teacherInfo.getSubjectName());
+            transferTeacher.setTeacherId(teacherInfo.getTeacherId());
+            transferTeacher.setTeacherName(teacherInfo.getTeacherName());
+            transferTeacher.setPrimaryClassName(classInfo.getName());
+            transferTeacher.setPrimaryClassId(classInfo.getId());
+            transferTeachers.add(transferTeacher);
         });
+        for (TransferTeacher teacher : transferTeachers){
+            if (teacher.getTeacherId().equals(classInfo.getHeadMasterId())){
+                teacher.setHeadMaster("1");
+            }
+        }
         return transferTeachers;
     }
 
