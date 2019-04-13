@@ -50,7 +50,7 @@ public class StudentServiceImpl implements IStudentService {
         if (StringUtils.isEmpty(userInfo.getUserId())) {
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
-        ParentInfo parentInfo = parentInfoRepository.findFirstById(userInfo.getUserId());
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
         if (null == parentInfo.getStudentIds() || !(parentInfo.getStudentIds().size() > 0)) {
             throw new ParentsException(ResultCode.STUDNET_NOTBIND_MSG);
         }
@@ -66,7 +66,7 @@ public class StudentServiceImpl implements IStudentService {
         if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(studentId)) {
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
-        ParentInfo parentInfo = parentInfoRepository.findFirstById(userInfo.getUserId());
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
         if (null == parentInfo) {
             throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
         }

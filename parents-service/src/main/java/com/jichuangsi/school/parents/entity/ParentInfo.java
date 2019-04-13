@@ -16,6 +16,15 @@ public class ParentInfo {
     private List<String> studentIds = new ArrayList<String>();
     private String phone;
     private String weChat;
+    private String deleteFlag = "0";
+
+    public String getDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(String deleteFlag) {
+        this.deleteFlag = deleteFlag;
+    }
 
     public String getId() {
         return id;

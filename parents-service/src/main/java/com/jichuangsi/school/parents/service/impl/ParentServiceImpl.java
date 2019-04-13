@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.parents.commons.Md5Util;
 import com.jichuangsi.school.parents.commons.ResultCode;
 import com.jichuangsi.school.parents.entity.MessageBoard;
 import com.jichuangsi.school.parents.entity.ParentInfo;
@@ -12,10 +13,7 @@ import com.jichuangsi.school.parents.entity.ParentNotice;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.IUserFeignService;
 import com.jichuangsi.school.parents.feign.model.TransferStudent;
-import com.jichuangsi.school.parents.model.MessageBoardModel;
-import com.jichuangsi.school.parents.model.NoticeModel;
-import com.jichuangsi.school.parents.model.ParentMessageModel;
-import com.jichuangsi.school.parents.model.ParentModel;
+import com.jichuangsi.school.parents.model.*;
 import com.jichuangsi.school.parents.repository.*;
 import com.jichuangsi.school.parents.service.IParentService;
 import com.jichuangsi.school.parents.service.TokenService;
@@ -101,7 +99,7 @@ public class ParentServiceImpl implements IParentService {
             throw new ParentsException(responseModel.getMsg());
         }
         TransferStudent student = responseModel.getData();
-        ParentInfo parentInfo = parentInfoRepository.findFirstById(userInfo.getUserId());
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
         if (StringUtils.isEmpty(parentInfo)){
             throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
         }
@@ -140,7 +138,7 @@ public class ParentServiceImpl implements IParentService {
         if (StringUtils.isEmpty(openId)){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
-        ParentInfo parentInfo = parentInfoRepository.findFirstByWeChat(openId);
+        ParentInfo parentInfo = parentInfoRepository.findFirstByWeChatAndDeleteFlag(openId,"0");
         if (null == parentInfo){
             throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
         }
@@ -162,5 +160,64 @@ public class ParentServiceImpl implements IParentService {
         parentInfo.setUserName(model.getUserName());
         parentInfo.setWeChat(model.getOpenId());
         parentInfoRepository.save(parentInfo);
+    }
+
+    @Override
+    public void setParentAccount(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
+        if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
+        if (null == parentInfo){
+            throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
+        }
+        if (!StringUtils.isEmpty(parentInfo.getAccount())){
+            throw new ParentsException(ResultCode.ACCOUNT_EXIST_MSG);
+        }
+        if (parentInfoRepository.countByAccountAndDeleteFlag(model.getAccount(),"0") > 0){
+            throw new ParentsException(ResultCode.ACCOUNT_ISEXIST_MSG);
+        }
+        parentInfo.setAccount(model.getAccount());
+        parentInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
+        parentInfoRepository.save(parentInfo);
+    }
+
+    @Override
+    public void setParentNewPwd(UserInfoForToken userInfo, UpdatePwdModel model) throws ParentsException {
+        if (StringUtils.isEmpty(model.getNewPwd()) ||StringUtils.isEmpty(model.getOldPwd())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
+        if (null == parentInfo){
+            throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
+        }
+        if (StringUtils.isEmpty(parentInfo.getAccount())){
+            throw new ParentsException(ResultCode.ACCOUNT_NOTBIND_MSG);
+        }
+        if (!Md5Util.encodeByMd5(model.getOldPwd()).equals(Md5Util.encodeByMd5(parentInfo.getPwd()))){
+            throw new ParentsException(ResultCode.PWD_VALIDATE_ERR);
+        }
+        parentInfo.setPwd(Md5Util.encodeByMd5(model.getNewPwd()));
+        parentInfoRepository.save(parentInfo);
+    }
+
+    @Override
+    public String loginParentServiceByAccount(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
+        if (StringUtils.isEmpty(model.getPwd()) || StringUtils.isEmpty(model.getAccount())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        if (!(parentInfoRepository.countByAccountAndDeleteFlag(model.getAccount(),"0") > 0)){
+            throw new ParentsException(ResultCode.ACCOUNT_REGIST_ERR);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByAccountAndPwdAndDeleteFlag(model.getAccount(),Md5Util.encodeByMd5(model.getPwd()),"0");
+        if (null == parentInfo){
+            throw new ParentsException(ResultCode.PWD_VALIDATE_ERR);
+        }
+        userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
+        try {
+            return tokenService.createdToken(JSONObject.toJSONString(userInfo));
+        } catch (UnsupportedEncodingException e) {
+            throw new ParentsException(ResultCode.TOKEN_CHECK_ERR_MSG);
+        }
     }
 }

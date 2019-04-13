@@ -10,4 +10,13 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public static final String FILE_DELETE_ERR = "文件删除错误";
 
     public static final String GROWTH_NOTEXIST_ERR = "成长记录不存在";
+
+    public static final String ACCOUNT_EXIST_MSG = "账号已绑定";
+    public static final String ACCOUNT_ISEXIST_MSG = "该账号已注册";
+
+    public static final String ACCOUNT_NOTBIND_MSG = "尚未绑定账号";
+
+    public static final String PWD_VALIDATE_ERR = "密码验证失败";
+
+    public static final String ACCOUNT_REGIST_ERR = "账号尚未注册或已注销";
 }

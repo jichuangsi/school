@@ -3,10 +3,7 @@ package com.jichuangsi.school.parents.service;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.exception.ParentsException;
-import com.jichuangsi.school.parents.model.MessageBoardModel;
-import com.jichuangsi.school.parents.model.NoticeModel;
-import com.jichuangsi.school.parents.model.ParentMessageModel;
-import com.jichuangsi.school.parents.model.ParentModel;
+import com.jichuangsi.school.parents.model.*;
 
 import java.util.List;
 
@@ -27,4 +24,10 @@ public interface IParentService {
     String loginParentService(UserInfoForToken userInfo,String openId) throws ParentsException;
 
     void registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException;
+
+    void setParentAccount(UserInfoForToken userInfo,ParentModel model) throws ParentsException;
+
+    void setParentNewPwd(UserInfoForToken userInfo, UpdatePwdModel model) throws ParentsException;
+
+    String loginParentServiceByAccount(UserInfoForToken userInfo,ParentModel model) throws ParentsException;
 }

@@ -690,7 +690,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
         roleInfos.add(info);
         teacher.setRoleInfos(roleInfos);
-        if (StringUtils.isEmpty(transferTeacher.getName())){
+        if (!StringUtils.isEmpty(transferTeacher.getName())){
             teacher.setName(transferTeacher.getName());
         }
         teacher.setUpdateTime(new Date().getTime());
