@@ -134,11 +134,11 @@ public  final class MappingModel2EntityConverter {
         if (null != model.getPrimarySubject()) {
             teacher.setPrimarySubject(model.getPrimarySubject().getSubjectId(), model.getPrimarySubject().getSubjectName());
         }
-        if (null != model.getSecondaryClass()) {
+    /*    if (null != model.getSecondaryClass()) {
             model.getSecondaryClass().forEach(classModel -> {
                 teacher.addSecondaryClasses(classModel.getClassId(), classModel.getClassName());
             });
-        }
+        }*/
         if (null != model.getSecondaryGrades()) {
             model.getSecondaryGrades().forEach(gradeModel -> {
                 teacher.addSecondaryGrades(gradeModel.getGradeId(), gradeModel.getGradeName());
@@ -152,9 +152,9 @@ public  final class MappingModel2EntityConverter {
         if (null != model.getPhrase()) {
             teacher.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName());
         }
-        if (null != model.getPrimaryClass()) {
+     /*   if (null != model.getPrimaryClass()) {
             teacher.setPrimaryClass(model.getPrimaryClass().getClassId(), model.getPrimaryClass().getClassName());
-        }
+        }*/
         if (null != model.getPrimaryGrade()) {
             teacher.setPrimaryGrade(model.getPrimaryGrade().getGradeId(), model.getPrimaryGrade().getGradeName());
         }
@@ -177,7 +177,9 @@ public  final class MappingModel2EntityConverter {
         if (!StringUtils.isEmpty(model.getPwd())) {
             userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
         }
-        userInfo.setSex(model.getSex());
+        if (!StringUtils.isEmpty(model.getSex())) {
+            userInfo.setSex(model.getSex());
+        }
         userInfo.setStatus(model.getStatus());
         StudentInfo studentInfo = new StudentInfo();
         if (null != model.getPhrase()) {

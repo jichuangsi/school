@@ -30,4 +30,8 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public static final String SCHOOL_SELECT_NULL_MSG = "查无此学校信息";
 
     public static final String HEADMASTER_EXIST_MSG = "已有班主任，请先离任";
+    public static final String TEACHER_INNER_CLASS_MES = "已执教该班";
+    public static final String CLASS_SUBJECT_MES = "该班已有该科目老师，请先离任上一个老师";
+
+    public static final String TEACHER_SUBJECT_MSG = "该老师不教该科目";
 }

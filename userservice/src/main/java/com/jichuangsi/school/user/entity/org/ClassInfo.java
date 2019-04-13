@@ -3,6 +3,9 @@ package com.jichuangsi.school.user.entity.org;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "school_class")
 public class ClassInfo {
 
@@ -16,6 +19,7 @@ public class ClassInfo {
     private String creatorName;
     private String updateId;
     private String updateName;
+    List<SubjectTeacherInfo> teacherInfos = new ArrayList<SubjectTeacherInfo>();
 
     public String getCreatorId() {
         return creatorId;
@@ -87,5 +91,13 @@ public class ClassInfo {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public List<SubjectTeacherInfo> getTeacherInfos() {
+        return teacherInfos;
+    }
+
+    public void setTeacherInfos(List<SubjectTeacherInfo> teacherInfos) {
+        this.teacherInfos = teacherInfos;
     }
 }

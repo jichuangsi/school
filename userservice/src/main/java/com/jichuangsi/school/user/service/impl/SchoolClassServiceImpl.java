@@ -6,9 +6,7 @@ import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.entity.RoleInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
-import com.jichuangsi.school.user.entity.org.ClassInfo;
-import com.jichuangsi.school.user.entity.org.GradeInfo;
-import com.jichuangsi.school.user.entity.org.SchoolInfo;
+import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
@@ -49,6 +47,9 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     private UserRepository userRepository;
     @Resource
     private IUserExtraRepository userExtraRepository;
+    @Resource
+    private ISubjectInfoRepository subjectInfoRepository;
+
 
     @Override
     public void saveOrUpClass(String schoolId, String gradeId, ClassModel classModel) throws ClassServiceException {
@@ -56,6 +57,15 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         SchoolInfo schoolInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(schoolId).andOperator(Criteria.where("gradeIds").is(gradeId))), SchoolInfo.class);
         if(schoolInfo == null) throw new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
         ClassInfo classInfo = MappingModel2EntityConverter.ConvertClass(classModel);
+        List<SubjectInfo> subjectInfos = subjectInfoRepository.findByDeleteFlag("0");
+        List<SubjectTeacherInfo> teacherInfos = new ArrayList<SubjectTeacherInfo>();
+        for (SubjectInfo subjectInfo : subjectInfos){
+            SubjectTeacherInfo teacherInfo = new SubjectTeacherInfo();
+            teacherInfo.setSubjectId(subjectInfo.getId());
+            teacherInfo.setSubjectName(subjectInfo.getSubjectName());
+            teacherInfos.add(teacherInfo);
+        }
+        classInfo.setTeacherInfos(teacherInfos);
         mongoTemplate.save(classInfo);
         GradeInfo gradeInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(gradeId).andOperator(Criteria.where("classIds").is(classInfo.getId()))), GradeInfo.class);
         if(gradeInfo == null){
@@ -174,12 +184,20 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             teacher.setRoleInfos(roleInfos);
             teacher.setUpdateTime(new Date().getTime());
             userRepository.save(teacher);
+            for (SubjectTeacherInfo subjectTeacherInfo: classInfo.getTeacherInfos()){
+                if (teacherInfo.getPrimarySubject().getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || teacherInfo.getPrimarySubject().getSubjectName().equals(subjectTeacherInfo.getSubjectName())){
+                    subjectTeacherInfo.setTeacherId("");
+                    subjectTeacherInfo.setTeacherName("");
+                }
+            }
+            classInfoRepository.save(classInfo);
         }
     }
 
     @Override
     public void classInsertTeacher(UserInfoForToken userInfo, TeacherInsertModel model,String teacherId) throws SchoolServiceException {
-        if ((StringUtils.isEmpty(model.getPrimaryClassId()) && StringUtils.isEmpty(model.getSecondaryClassId())) || StringUtils.isEmpty(teacherId)){
+        if ((StringUtils.isEmpty(model.getPrimaryClassId()) && StringUtils.isEmpty(model.getSecondaryClassId())) || StringUtils.isEmpty(teacherId)
+                ||StringUtils.isEmpty(model.getSubjectId()) ||StringUtils.isEmpty(model.getSubjectName())){
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
         String classId = "";
@@ -201,9 +219,40 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         }
         if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
             TeacherInfo teacherInfo = (TeacherInfo) teacher.getRoleInfos().get(0);
+            if (null != teacherInfo.getPrimarySubject() && !model.getSubjectId().equals(teacherInfo.getPrimarySubject().getSubjectId())){
+                if (null != teacherInfo.getSecondarySubjects()){
+                    boolean flag = true;
+                    for (TeacherInfo.Subject subject : teacherInfo.getSecondarySubjects()){
+                        if (model.getSubjectId().equals(subject.getSubjectId()) || model.getSubjectName().equals(subject.getSubjectName())){
+                            flag = false;
+                        }
+                    }
+                    if (flag){ throw new SchoolServiceException(ResultCode.TEACHER_SUBJECT_MSG);}
+                }
+            }
+            for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()){
+                if (model.getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || model.getSubjectName().equals(subjectTeacherInfo.getSubjectName())){
+                    if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())){
+                        throw new SchoolServiceException(ResultCode.CLASS_SUBJECT_MES);
+                    }
+                }
+            }
             if (!StringUtils.isEmpty(model.getPrimaryClassId())){
                 teacherInfo.setPrimaryClass(classInfo.getId(),classInfo.getName());
+                for (int i = teacherInfo.getSecondaryClasses().size() -1 ; i >= 0 ; i--){
+                    if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())){
+                        teacherInfo.getSecondaryClasses().remove(teacherInfo.getSecondaryClasses().get(i));
+                    }
+                }
             }else {
+                if (classId.equals(teacherInfo.getPrimaryClass().getClassId())){
+                    throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
+                }
+                for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
+                    if (cla.getClassId().equals(classId)){
+                        throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
+                    }
+                }
                 teacherInfo.addSecondaryClasses(classInfo.getId(),classInfo.getName());
             }
             List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
@@ -211,6 +260,13 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             teacher.setRoleInfos(roleInfos);
             teacher.setUpdateTime(new Date().getTime());
             userRepository.save(teacher);
+            for (SubjectTeacherInfo subjectTeacherInfo: classInfo.getTeacherInfos()){
+                if (model.getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || model.getSubjectName().equals(subjectTeacherInfo.getSubjectName())){
+                    subjectTeacherInfo.setTeacherId(teacher.getId());
+                    subjectTeacherInfo.setTeacherName(teacher.getName());
+                }
+            }
+            classInfoRepository.save(classInfo);
         }
     }
 }

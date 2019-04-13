@@ -15,9 +15,9 @@ public class UserInfo {
 	private String account;
 	private String name;
 	private String pwd;
-	private String sex;
+	private String sex = "M";
 	private List<RoleInfo> roleInfos=new ArrayList<RoleInfo>();
-	private String status;
+	private String status = "I";
 	private long createTime = new Date().getTime();
 	private long updateTime = new Date().getTime();
 

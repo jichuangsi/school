@@ -12,10 +12,7 @@ import com.jichuangsi.school.user.constant.MyResultCode;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.*;
-import com.jichuangsi.school.user.entity.org.ClassInfo;
-import com.jichuangsi.school.user.entity.org.GradeInfo;
-import com.jichuangsi.school.user.entity.org.PhraseInfo;
-import com.jichuangsi.school.user.entity.org.SchoolInfo;
+import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
@@ -398,9 +395,43 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void saveTeacher(UserInfoForToken userInfo, TeacherModel model) throws UserServiceException {
+        if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
         try {
             UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
             info.setStatus(Status.ACTIVATE.getName());
+          /*  if (info.getRoleInfos().get(0) instanceof TeacherInfo){
+                TeacherInfo teacherInfo = (TeacherInfo) info.getRoleInfos().get(0);
+                if (null != teacherInfo.getSecondaryClasses()){
+                    for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
+                        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(cla.getClassId(),"0");
+                        if (null == classInfo){
+                            throw new UserServiceException(cla.getClassName()+"不存在");
+                        }
+                        for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()){
+                            if (subjectTeacherInfo.getSubjectId().equals(teacherInfo.getPrimarySubject().getSubjectId()) || subjectTeacherInfo.getSubjectName().equals(teacherInfo.getPrimarySubject().getSubjectName())){
+                                if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())){
+                                    throw new UserServiceException(ResultCode.CLASS_SUBJECT_MES);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (null != teacherInfo.getPrimaryClass()){
+                    ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(teacherInfo.getPrimaryClass().getClassId(),"0");
+                    if (null == classInfo){
+                        throw new UserServiceException(teacherInfo.getPrimaryClass().getClassName()+"不存在");
+                    }
+                    for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()){
+                        if (subjectTeacherInfo.getSubjectId().equals(teacherInfo.getPrimarySubject().getSubjectId()) || subjectTeacherInfo.getSubjectName().equals(teacherInfo.getPrimarySubject().getSubjectName())){
+                            if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())){
+                                throw new UserServiceException(ResultCode.CLASS_SUBJECT_MES);
+                            }
+                        }
+                    }
+                }
+            }*/
             userRepository.save(info);
         } catch (Exception e) {
             throw new UserServiceException(ResultCode.PARAM_ERR_MSG);
@@ -409,6 +440,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void saveStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException {
+        if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
+        }
         try {
             UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
             info.setStatus(Status.ACTIVATE.getName());
@@ -495,6 +529,9 @@ public class UserInfoServiceImpl implements UserInfoService {
                 default:
                     break;
             }
+        }
+        if (StringUtils.isEmpty(account) || StringUtils.isEmpty(pwd)){
+            throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         if (accounts.contains(account)) {
             throw new UserServiceException(ResultCode.USER_IS_EXIST);
@@ -595,12 +632,6 @@ public class UserInfoServiceImpl implements UserInfoService {
             if (null != teacherInfo.getSecondarySubjects()){
                 info.setSecondarySubjects(teacherInfo.getSecondarySubjects());
             }
-            if (null != teacherInfo.getSecondaryClasses()){
-                info.setSecondaryGrades(teacherInfo.getSecondaryGrades());
-            }
-            if (null != teacherInfo.getPrimaryClass()){
-                info.setPrimaryClass(teacherInfo.getPrimaryClass());
-            }
             if (null != teacherInfo.getPrimaryGrade()){
                 info.setPrimaryGrade(teacherInfo.getPrimaryGrade());
             }
@@ -610,6 +641,36 @@ public class UserInfoServiceImpl implements UserInfoService {
             if (null != teacherInfo.getPhrase()){
                 info.setPhrase(teacherInfo.getPhrase());
             }
+          /*  if (null != teacherInfo.getSecondaryClasses()){
+                for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
+                    ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(cla.getClassId(),"0");
+                    if (null == classInfo){
+                        throw new UserServiceException(cla.getClassName()+"不存在");
+                    }
+                    for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()){
+                        if (subjectTeacherInfo.getSubjectId().equals(info.getPrimarySubject().getSubjectId()) || subjectTeacherInfo.getSubjectName().equals(info.getPrimarySubject().getSubjectName())){
+                            if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())){
+                                throw new UserServiceException(ResultCode.CLASS_SUBJECT_MES);
+                            }
+                        }
+                    }
+                }
+                info.setSecondaryClasses(teacherInfo.getSecondaryClasses());
+            }
+            if (null != teacherInfo.getPrimaryClass()){
+                ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(teacherInfo.getPrimaryClass().getClassId(),"0");
+                if (null == classInfo){
+                    throw new UserServiceException(teacherInfo.getPrimaryClass().getClassName()+"不存在");
+                }
+                for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()){
+                    if (subjectTeacherInfo.getSubjectId().equals(info.getPrimarySubject().getSubjectId()) || subjectTeacherInfo.getSubjectName().equals(info.getPrimarySubject().getSubjectName())){
+                        if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())){
+                            throw new UserServiceException(ResultCode.CLASS_SUBJECT_MES);
+                        }
+                    }
+                }
+                info.setPrimaryClass(teacherInfo.getPrimaryClass());
+            }*/
         }
         List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
         roleInfos.add(info);
