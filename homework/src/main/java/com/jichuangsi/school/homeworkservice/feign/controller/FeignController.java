@@ -97,7 +97,10 @@ public class FeignController {
     @ApiImplicitParams({ })
     @PostMapping("/getParentStudentHomeworkStatistics")
     public ResponseModel<List<KnowledgeStatisticsModel>> getParentStudentHomeworkStatistics(@RequestBody ParentStatisticsModel model){
-
-        return ResponseModel.sucessWithEmptyData("");
+        try {
+            return ResponseModel.sucess("",feignService.getParentStudentStistics(model));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
     }
 }

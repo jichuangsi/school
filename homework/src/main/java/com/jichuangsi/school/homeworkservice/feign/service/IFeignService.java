@@ -5,6 +5,8 @@ import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkParentModel;
 import com.jichuangsi.school.homeworkservice.feign.model.HomeWorkRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.QuestionRateModel;
 import com.jichuangsi.school.homeworkservice.feign.model.TeacherHomeResultModel;
+import com.jichuangsi.school.homeworkservice.feign.model.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.homeworkservice.feign.model.statistics.ParentStatisticsModel;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
 
 import java.util.List;
@@ -22,4 +24,6 @@ public interface IFeignService {
     TeacherHomeResultModel getHomeWorkRate(String teacherId,String homeId) throws  FeignControllerException;
 
     List<HomeWorkParentModel> getParentHomeWork(String classId,String studentId) throws FeignControllerException;
+
+    List<KnowledgeStatisticsModel> getParentStudentStistics(ParentStatisticsModel model) throws FeignControllerException;
 }

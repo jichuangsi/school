@@ -14,4 +14,8 @@ public interface HomeworkRepository extends MongoRepository<Homework, String>, S
     Homework findByTeacherIdAndId(String teacherId,String homeId);
 
     List<Homework> findByClassIdAndEndTimeGreaterThan(String classId,long endTime);
+
+    List<Homework> findByClassIdAndStatusAndEndTimeGreaterThan(String classId,String status,long endTime);
+
+    List<Homework> findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(String classId,String status,long beginTime,long endTime);
 }
