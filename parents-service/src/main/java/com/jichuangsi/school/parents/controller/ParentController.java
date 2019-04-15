@@ -5,6 +5,8 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.model.*;
+import com.jichuangsi.school.parents.model.http.HttpTokenModel;
+import com.jichuangsi.school.parents.model.http.WxUserInfoModel;
 import com.jichuangsi.school.parents.service.IParentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -23,6 +25,7 @@ public class ParentController {
 
     @Resource
     private IParentService parentService;
+
 
     @ApiOperation(value = "发送家长留言", notes = "")
     @ApiImplicitParams({
@@ -168,6 +171,32 @@ public class ParentController {
     public ResponseModel loginParentServiceByAccount(@ModelAttribute UserInfoForToken userInfo,@RequestBody ParentModel model){
         try {
             return ResponseModel.sucess("",parentService.loginParentServiceByAccount(userInfo, model));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "家长端获取wx_token", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getWxToken/{code}")
+    public ResponseModel<HttpTokenModel> getWxToken(@ModelAttribute UserInfoForToken userInfo, @PathVariable String code){
+        try {
+            return ResponseModel.sucess("",parentService.findTokenByCode(code));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "家长端获取家长端信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getParentInfo/{access_token}/{openid}/{code}")
+    public ResponseModel<WxUserInfoModel> getParentInfo(@ModelAttribute UserInfoForToken userInfo, @PathVariable String access_token, @PathVariable String openid,@PathVariable String code){
+        try {
+            return ResponseModel.sucess("",parentService.findWxUserInfo(access_token, openid,code));
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }

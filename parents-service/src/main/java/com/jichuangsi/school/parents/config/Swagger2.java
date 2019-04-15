@@ -30,7 +30,7 @@ public class Swagger2 {
 	public Docket createRestApi() {
 		return new Docket(DocumentationType.SWAGGER_2).enable(enableSwagger).apiInfo(apiInfo()).select()
 				// 为当前包路径
-				.apis(RequestHandlerSelectors.basePackage("com.jichuangsi.school.user.controller"))
+				.apis(RequestHandlerSelectors.basePackage("com.jichuangsi.school.parents.controller"))
 				.paths(PathSelectors.any()).build();
 	}
 

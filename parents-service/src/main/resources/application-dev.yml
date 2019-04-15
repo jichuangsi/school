@@ -28,3 +28,14 @@ com:
             userClaim : userInfo
       swagger:
         enable: true
+      wx:
+        host: "https://api.weixin.qq.com"
+        source: "source"
+        formatStr: "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+        timeZone: "GMT"
+        secretKey: "K5oMIj9A5z8JqRvcrq1IHruy9LQiQN5XgxupUc9o"
+        secretId: "AKIDl044BUeuP5wN9eTwU0j3U4t5xV9C1TvlBNlm"
+        getToken:
+          path: "/sns/oauth2/access_token"
+          method: "GET"
+

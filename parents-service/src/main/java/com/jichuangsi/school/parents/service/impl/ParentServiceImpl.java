@@ -10,11 +10,16 @@ import com.jichuangsi.school.parents.entity.MessageBoard;
 import com.jichuangsi.school.parents.entity.ParentInfo;
 import com.jichuangsi.school.parents.entity.ParentMessage;
 import com.jichuangsi.school.parents.entity.ParentNotice;
+import com.jichuangsi.school.parents.exception.ParentHttpException;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.IUserFeignService;
 import com.jichuangsi.school.parents.feign.model.TransferStudent;
 import com.jichuangsi.school.parents.model.*;
+import com.jichuangsi.school.parents.model.http.HttpTokenModel;
+import com.jichuangsi.school.parents.model.http.WxErrorModel;
+import com.jichuangsi.school.parents.model.http.WxUserInfoModel;
 import com.jichuangsi.school.parents.repository.*;
+import com.jichuangsi.school.parents.service.IHttpService;
 import com.jichuangsi.school.parents.service.IParentService;
 import com.jichuangsi.school.parents.service.TokenService;
 import com.jichuangsi.school.parents.util.MappingEntity2ModelConverter;
@@ -43,6 +48,8 @@ public class ParentServiceImpl implements IParentService {
     private IParentNoticeRepository parentNoticeRepository;
     @Resource
     private TokenService tokenService;
+    @Resource
+    private IHttpService httpService;
 
     @Override
     public void sendParentMessage(UserInfoForToken userInfo, ParentMessageModel model) throws ParentsException {
@@ -228,5 +235,44 @@ public class ParentServiceImpl implements IParentService {
         } catch (UnsupportedEncodingException e) {
             throw new ParentsException(ResultCode.TOKEN_CHECK_ERR_MSG);
         }
+    }
+
+    @Override
+    public HttpTokenModel findTokenByCode(String code) throws ParentsException {
+        if (StringUtils.isEmpty(code)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        String result = "";
+        try {
+            result = httpService.findWxTokenModel(code);
+        } catch (ParentHttpException e) {
+            throw new ParentsException(e.getMessage());
+        }
+        HttpTokenModel tokenModel =  JSONObject.parseObject(result,HttpTokenModel.class);
+        if (StringUtils.isEmpty(tokenModel.getAccess_token())){
+            WxErrorModel model = new WxErrorModel();
+            model = JSONObject.parseObject(result,WxErrorModel.class);
+            throw new ParentsException(model.getErrmsg());
+        }
+        return tokenModel;
+    }
+
+    @Override
+    public WxUserInfoModel findWxUserInfo(String access_token, String openid,String code) throws ParentsException{
+        if (StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        String result = "";
+        try {
+            result = httpService.findWxUserInfo(access_token,openid,code);
+        } catch (ParentHttpException e) {
+            throw new ParentsException(e.getMessage());
+        }
+        WxUserInfoModel wx =  JSONObject.parseObject(result,WxUserInfoModel.class);
+        if (StringUtils.isEmpty(wx.getOpenid())){
+            WxErrorModel model = JSONObject.parseObject(result,WxErrorModel.class);
+            throw new ParentsException(model.getErrmsg());
+        }
+        return wx;
     }
 }

@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.model.*;
+import com.jichuangsi.school.parents.model.http.HttpTokenModel;
+import com.jichuangsi.school.parents.model.http.WxUserInfoModel;
 
 import java.util.List;
 
@@ -30,4 +32,8 @@ public interface IParentService {
     void setParentNewPwd(UserInfoForToken userInfo, UpdatePwdModel model) throws ParentsException;
 
     String loginParentServiceByAccount(UserInfoForToken userInfo,ParentModel model) throws ParentsException;
+
+    HttpTokenModel findTokenByCode(String coed) throws ParentsException;
+
+    WxUserInfoModel findWxUserInfo(String access_token,String openid,String code) throws ParentsException;
 }
