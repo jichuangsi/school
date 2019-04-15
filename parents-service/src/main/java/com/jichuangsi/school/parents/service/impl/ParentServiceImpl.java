@@ -151,15 +151,24 @@ public class ParentServiceImpl implements IParentService {
     }
 
     @Override
-    public void registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
+    public String registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
         if (StringUtils.isEmpty(model.getOpenId())){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
-        ParentInfo parentInfo = new ParentInfo();
-        parentInfo.setPhone(model.getPhone());
-        parentInfo.setUserName(model.getUserName());
-        parentInfo.setWeChat(model.getOpenId());
-        parentInfoRepository.save(parentInfo);
+        ParentInfo parentInfo = parentInfoRepository.findFirstByWeChatAndDeleteFlag(model.getOpenId(),"0");
+        if (null == parentInfo){
+            parentInfo = new ParentInfo();
+            parentInfo.setPhone(model.getPhone());
+            parentInfo.setUserName(model.getUserName());
+            parentInfo.setWeChat(model.getOpenId());
+            parentInfoRepository.save(parentInfo);
+        }
+        userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
+        try {
+            return tokenService.createdToken(JSONObject.toJSONString(userInfo));
+        } catch (UnsupportedEncodingException e) {
+            throw new ParentsException(ResultCode.TOKEN_CHECK_ERR_MSG);
+        }
     }
 
     @Override

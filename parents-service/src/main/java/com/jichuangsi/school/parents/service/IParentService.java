@@ -23,7 +23,7 @@ public interface IParentService {
 
     String loginParentService(UserInfoForToken userInfo,String openId) throws ParentsException;
 
-    void registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException;
+    String registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException;
 
     void setParentAccount(UserInfoForToken userInfo,ParentModel model) throws ParentsException;
 

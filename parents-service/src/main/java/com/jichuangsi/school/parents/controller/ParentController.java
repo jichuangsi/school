@@ -106,7 +106,7 @@ public class ParentController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
-    @ApiOperation(value = "家长端通过微信openId登录，返回token(请求token为固定token即可)", notes = "")
+/*    @ApiOperation(value = "家长端通过微信openId登录，返回token(请求token为固定token即可)", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
@@ -117,20 +117,19 @@ public class ParentController {
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }
-    }
+    }*/
 
-    @ApiOperation(value = "家长端通过微信openId注册，返回token(请求token为固定token即可)", notes = "")
+    @ApiOperation(value = "家长端通过微信openId注册登录，返回token(请求token为固定token即可)", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/registParentService/{openId}")
-    public ResponseModel registParentService(@ModelAttribute UserInfoForToken userInfo, @RequestBody ParentModel model){
+    @PostMapping(value = "/loginParentService")
+    public ResponseModel<String> registParentService(@ModelAttribute UserInfoForToken userInfo, @RequestBody ParentModel model){
         try {
-            parentService.registParentService(userInfo, model);
+            return ResponseModel.sucess("",parentService.registParentService(userInfo, model)) ;
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }
-        return ResponseModel.sucessWithEmptyData("");
     }
 
     @ApiOperation(value = "家长端设置账号密码,仅允许一次设置账号", notes = "")
