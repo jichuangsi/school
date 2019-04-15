@@ -102,7 +102,12 @@ public class UserCRUDController {
 //             ) {
 //            System.out.println(id);
 //        }
-        return ResponseModel.sucess("", String.valueOf(userInfoService.deleteUserInfo(ids)));
+        try {
+            userInfoService.deleteUserInfo(ids);
+        } catch (UserServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
     }
 
     //批量真正删除用户信息

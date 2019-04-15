@@ -32,7 +32,7 @@ public interface UserInfoService {
      * 删除用户
      * */
     @Transactional
-    long deleteUserInfo(String[] ids) throws UserServiceException;
+    void deleteUserInfo(String[] ids) throws UserServiceException;
 
     /**
      * 修改用户信息

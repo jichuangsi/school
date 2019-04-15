@@ -201,9 +201,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     /*
      * 根据用户Id批量删除用户
      * */
-    public long deleteUserInfo(String[] ids) throws UserServiceException {
-        UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").in(ids)), new Update().set("status", Status.DELETE.getName()), UserInfo.class);
-        return result.getModifiedCount();
+    public void deleteUserInfo(String[] ids) throws UserServiceException {
+        List<UserInfo> userInfos = userRepository.findByIdIn(Arrays.asList(ids));
+       /* UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").in(ids)), new Update().set("status", Status.DELETE.getName()), UserInfo.class);
+        return result.getModifiedCount();*/
+       for (UserInfo userInfo : userInfos){
+           userInfo.setStatus(Status.DELETE.getName());
+       }
+       userRepository.saveAll(userInfos);
         /*List<String> fail = new ArrayList<String>();
         try {
             for (String id : ids) {
@@ -602,11 +607,16 @@ public class UserInfoServiceImpl implements UserInfoService {
             transferTeacher.setTeacherName(teacherInfo.getTeacherName());
             transferTeacher.setPrimaryClassName(classInfo.getName());
             transferTeacher.setPrimaryClassId(classInfo.getId());
+            if (StringUtils.isEmpty(teacherInfo.getTeacherId())){
+                transferTeacher.setHeadMaster("0");
+            }
             transferTeachers.add(transferTeacher);
         });
         for (TransferTeacher teacher : transferTeachers){
-            if (teacher.getTeacherId().equals(classInfo.getHeadMasterId())){
-                teacher.setHeadMaster("1");
+            if(!StringUtils.isEmpty(teacher.getTeacherId())) {
+                if (teacher.getTeacherId().equals(classInfo.getHeadMasterId())) {
+                    teacher.setHeadMaster("1");
+                }
             }
         }
         return transferTeachers;

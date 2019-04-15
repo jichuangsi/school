@@ -22,7 +22,6 @@ import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -50,16 +49,16 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     @Resource
     private ISubjectInfoRepository subjectInfoRepository;
 
-
     @Override
     public void saveOrUpClass(String schoolId, String gradeId, ClassModel classModel) throws ClassServiceException {
-        if(StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(gradeId)) throw new ClassServiceException(MyResultCode.PARAM_MISS_MSG);
-        SchoolInfo schoolInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(schoolId).andOperator(Criteria.where("gradeIds").is(gradeId))), SchoolInfo.class);
-        if(schoolInfo == null) throw new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
+        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(gradeId))
+            throw new ClassServiceException(MyResultCode.PARAM_MISS_MSG);
+        SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContainingAndId(gradeId, schoolId);
+        if (schoolInfo == null) throw new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
         ClassInfo classInfo = MappingModel2EntityConverter.ConvertClass(classModel);
         List<SubjectInfo> subjectInfos = subjectInfoRepository.findByDeleteFlag("0");
         List<SubjectTeacherInfo> teacherInfos = new ArrayList<SubjectTeacherInfo>();
-        for (SubjectInfo subjectInfo : subjectInfos){
+        for (SubjectInfo subjectInfo : subjectInfos) {
             SubjectTeacherInfo teacherInfo = new SubjectTeacherInfo();
             teacherInfo.setSubjectId(subjectInfo.getId());
             teacherInfo.setSubjectName(subjectInfo.getSubjectName());
@@ -67,22 +66,23 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         }
         classInfo.setTeacherInfos(teacherInfos);
         mongoTemplate.save(classInfo);
-        GradeInfo gradeInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(gradeId).andOperator(Criteria.where("classIds").is(classInfo.getId()))), GradeInfo.class);
-        if(gradeInfo == null){
-            gradeInfo = mongoTemplate.findAndModify(new Query(Criteria.where("id").in(gradeId)), new Update().push("classIds", classInfo.getId()), GradeInfo.class);
-            if(gradeInfo == null) throw  new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
+        GradeInfo gradeInfo = gradeInfoRepository.findFirstById(gradeId);
+        if (gradeInfo == null) {
+            throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
         }
+        gradeInfo.getClassIds().add(classInfo.getId());
+        gradeInfoRepository.save(gradeInfo);
     }
 
     @Override
-    public void deleteClass( String gradeId, String classId) throws ClassServiceException{
+    public void deleteClass(String gradeId, String classId) throws ClassServiceException {
         if (StringUtils.isEmpty(gradeId) || StringUtils.isEmpty(classId)) {
             throw new ClassServiceException(MyResultCode.PARAM_NOT_EXIST);
         }
         GradeInfo gradeInfo = gradeInfoRepository.findFirstById(gradeId);
-        if(gradeInfo == null) throw new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
-        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
-        if(classInfo == null) throw new ClassServiceException(MyResultCode.CLASS_FAIL2REMOVE);
+        if (gradeInfo == null) throw new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_SYNC);
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId, "0");
+        if (classInfo == null) throw new ClassServiceException(MyResultCode.CLASS_FAIL2REMOVE);
         gradeInfo.getClassIds().remove(classId);
         gradeInfoRepository.save(gradeInfo);
         classInfo.setDeleteFlag("1");
@@ -90,12 +90,12 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     }
 
     @Override
-    public ClassModel getClassInfo(String schoolId, String gradeId, String classId) throws ClassServiceException{
+    public ClassModel getClassInfo(String schoolId, String gradeId, String classId) throws ClassServiceException {
         SchoolInfo schoolInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(schoolId).andOperator(Criteria.where("gradeIds").is(gradeId))), SchoolInfo.class);
-        if(schoolInfo == null) new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
+        if (schoolInfo == null) new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
         GradeInfo gradeInfo = mongoTemplate.findOne(new Query(Criteria.where("id").is(gradeId).andOperator(Criteria.where("classIds").is(classId))), GradeInfo.class);
-        if(gradeInfo == null) new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_MATCH);
-        return MappingEntity2ModelConverter.TransferClass(mongoTemplate.findById(classId,ClassInfo.class));
+        if (gradeInfo == null) new ClassServiceException(MyResultCode.GRADE_CLASS_NOT_MATCH);
+        return MappingEntity2ModelConverter.TransferClass(mongoTemplate.findById(classId, ClassInfo.class));
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         if (null == gradeInfo) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
         SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContaining(gradeInfo.getId());
         if (null == schoolInfo) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
-        ClassModel classModel = getClassInfo(schoolInfo.getId(),gradeInfo.getId(),classId);
+        ClassModel classModel = getClassInfo(schoolInfo.getId(), gradeInfo.getId(), classId);
         ClassDetailModel model = new ClassDetailModel();
         model.setClassId(classId);
         model.setClassName(classModel.getClassName());
@@ -122,11 +122,11 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     @Override
     public List<ClassModel> getClassesByGradeId(String gradeId) throws SchoolServiceException {
         GradeInfo gradeInfo = gradeInfoRepository.findFirstById(gradeId);
-        if (null == gradeInfo){
+        if (null == gradeInfo) {
             throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
         }
         List<String> classIds = gradeInfo.getClassIds();
-        List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlag(classIds,"0");
+        List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlag(classIds, "0");
         List<ClassModel> classModels = new ArrayList<ClassModel>();
         classInfos.forEach(classInfo -> {
             classModels.add(MappingEntity2ModelConverter.TransferClass(classInfo));
@@ -136,11 +136,11 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
 
     @Override
     public SchoolModel getSchoolBySchoolId(String schoolId) throws SchoolServiceException {
-        if (StringUtils.isEmpty(schoolId)){
+        if (StringUtils.isEmpty(schoolId)) {
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        SchoolInfo schoolInfo = schoolInfoRepository.findFirstByDeleteFlagAndId("0",schoolId);
-        if (null == schoolInfo){
+        SchoolInfo schoolInfo = schoolInfoRepository.findFirstByDeleteFlagAndId("0", schoolId);
+        if (null == schoolInfo) {
             throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
         }
         return MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo);
@@ -158,39 +158,39 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
 
     @Override
     public void classRemoveTeacher(UserInfoForToken userInfo, String classId, String teacherId) throws SchoolServiceException {
-        if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(teacherId)){
+        if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(teacherId)) {
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
-        if (null == classInfo){
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId, "0");
+        if (null == classInfo) {
             throw new SchoolServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
         }
         UserInfo teacher = userRepository.findFirstById(teacherId);
-        if(null == teacher){
+        if (null == teacher) {
             throw new SchoolServiceException(ResultCode.USER_SELECT_NULL_MSG);
         }
-        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
+        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo) {
             TeacherInfo teacherInfo = (TeacherInfo) teacher.getRoleInfos().get(0);
-            if (classId.equals(teacherInfo.getPrimaryClass().getClassId())){
-                teacherInfo.setPrimaryClass("","");
+            if (null != teacherInfo.getPrimaryClass() && classId.equals(teacherInfo.getPrimaryClass().getClassId())) {
+                teacherInfo.setPrimaryClass("", "");
             }
-            for (int i = teacherInfo.getSecondaryClasses().size() - 1; i >= 0 ; i--){
-                if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())){
+            for (int i = teacherInfo.getSecondaryClasses().size() - 1; i >= 0; i--) {
+                if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())) {
                     teacherInfo.getSecondaryClasses().remove(teacherInfo.getSecondaryClasses().get(i));
                 }
             }
-            List<RoleInfo> roleInfos =  new ArrayList<RoleInfo>();
+            List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
             roleInfos.add(teacherInfo);
             teacher.setRoleInfos(roleInfos);
             teacher.setUpdateTime(new Date().getTime());
             userRepository.save(teacher);
-            for (SubjectTeacherInfo subjectTeacherInfo: classInfo.getTeacherInfos()){
-                if (teacher.getId().equals(subjectTeacherInfo.getTeacherId())){
+            for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()) {
+                if (teacher.getId().equals(subjectTeacherInfo.getTeacherId())) {
                     subjectTeacherInfo.setTeacherId("");
                     subjectTeacherInfo.setTeacherName("");
                 }
             }
-            if (teacher.getId().equals(classInfo.getHeadMasterId())){
+            if (teacher.getId().equals(classInfo.getHeadMasterId())) {
                 classInfo.setHeadMasterId("");
                 classInfo.setHeadMasterName("");
             }
@@ -199,78 +199,97 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     }
 
     @Override
-    public void classInsertTeacher(UserInfoForToken userInfo, TeacherInsertModel model,String teacherId) throws SchoolServiceException {
+    public void classInsertTeacher(UserInfoForToken userInfo, TeacherInsertModel model, String teacherId) throws SchoolServiceException {
         if ((StringUtils.isEmpty(model.getPrimaryClassId()) && StringUtils.isEmpty(model.getSecondaryClassId())) || StringUtils.isEmpty(teacherId)
-                ||StringUtils.isEmpty(model.getSubjectId()) ||StringUtils.isEmpty(model.getSubjectName())){
+                || StringUtils.isEmpty(model.getSubjectId()) || StringUtils.isEmpty(model.getSubjectName())) {
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
         String classId = "";
-        if (!StringUtils.isEmpty(model.getPrimaryClassId())){
+        if (!StringUtils.isEmpty(model.getPrimaryClassId())) {
             classId = model.getPrimaryClassId();
-            if (userExtraRepository.findByPrimaryClassAndTeacher(classId) > 0){
+            if (userExtraRepository.findByPrimaryClassAndTeacher(classId) > 0) {
                 throw new SchoolServiceException(ResultCode.HEADMASTER_EXIST_MSG);
             }
-        }else {
+        } else {
             classId = model.getSecondaryClassId();
         }
-        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
-        if (null == classInfo){
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId, "0");
+        if (null == classInfo) {
             throw new SchoolServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
         }
         UserInfo teacher = userRepository.findFirstById(teacherId);
-        if (null == teacher){
+        if (null == teacher) {
             throw new SchoolServiceException(ResultCode.USER_SELECT_NULL_MSG);
         }
-        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
+        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo) {
             TeacherInfo teacherInfo = (TeacherInfo) teacher.getRoleInfos().get(0);
-            if (null != teacherInfo.getPrimarySubject() && !model.getSubjectId().equals(teacherInfo.getPrimarySubject().getSubjectId())){
-                if (null != teacherInfo.getSecondarySubjects()){
-                    boolean flag = true;
-                    for (TeacherInfo.Subject subject : teacherInfo.getSecondarySubjects()){
-                        if (model.getSubjectId().equals(subject.getSubjectId()) || model.getSubjectName().equals(subject.getSubjectName())){
-                            flag = false;
-                        }
-                    }
-                    if (flag){ throw new SchoolServiceException(ResultCode.TEACHER_SUBJECT_MSG);}
+            if (null != teacherInfo.getPrimaryClass()) {
+                if (classId.equals(teacherInfo.getPrimaryClass().getClassId())) {
+                    throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
                 }
             }
-            for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()){
-                if (model.getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || model.getSubjectName().equals(subjectTeacherInfo.getSubjectName())){
-                    if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())){
+            if (null != teacherInfo.getSecondaryClasses()) {
+                for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()) {
+                    if (classId.equals(cla.getClassId())) {
+                        throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
+                    }
+                }
+            }
+            boolean flag = true;
+            if (null != teacherInfo.getSecondarySubjects()) {
+                for (TeacherInfo.Subject subject : teacherInfo.getSecondarySubjects()) {
+                    if (model.getSubjectId().equals(subject.getSubjectId()) || model.getSubjectName().equals(subject.getSubjectName())) {
+                        flag = false;
+                    }
+                }
+            }
+            if (null != teacherInfo.getPrimarySubject()) {
+                if (model.getSubjectId().equals(teacherInfo.getPrimarySubject().getSubjectId()) || model.getSubjectName().equals(teacherInfo.getPrimarySubject().getSubjectName())) {
+                    flag = false;
+                }
+            }
+            if (flag) {
+                throw new SchoolServiceException(ResultCode.TEACHER_SUBJECT_MSG);
+            }
+            for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()) {
+                if (model.getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || model.getSubjectName().equals(subjectTeacherInfo.getSubjectName())) {
+                    if (!StringUtils.isEmpty(subjectTeacherInfo.getTeacherId())) {
                         throw new SchoolServiceException(ResultCode.CLASS_SUBJECT_MES);
                     }
                 }
             }
-            if (!StringUtils.isEmpty(model.getPrimaryClassId())){
-                teacherInfo.setPrimaryClass(classInfo.getId(),classInfo.getName());
-                for (int i = teacherInfo.getSecondaryClasses().size() -1 ; i >= 0 ; i--){
-                    if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())){
+            if (!StringUtils.isEmpty(model.getPrimaryClassId())) {
+                teacherInfo.setPrimaryClass(classInfo.getId(), classInfo.getName());
+                for (int i = teacherInfo.getSecondaryClasses().size() - 1; i >= 0; i--) {
+                    if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())) {
                         teacherInfo.getSecondaryClasses().remove(teacherInfo.getSecondaryClasses().get(i));
                     }
                 }
-            }else {
-                if (classId.equals(teacherInfo.getPrimaryClass().getClassId())){
+            } else {
+                if (null != teacherInfo.getPrimaryClass() && classId.equals(teacherInfo.getPrimaryClass().getClassId())) {
                     throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
                 }
-                for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
-                    if (cla.getClassId().equals(classId)){
-                        throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
+                if (null != teacherInfo.getSecondaryClasses()) {
+                    for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()) {
+                        if (cla.getClassId().equals(classId)) {
+                            throw new SchoolServiceException(ResultCode.TEACHER_INNER_CLASS_MES);
+                        }
                     }
                 }
-                teacherInfo.addSecondaryClasses(classInfo.getId(),classInfo.getName());
+                teacherInfo.addSecondaryClasses(classInfo.getId(), classInfo.getName());
             }
             List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
             roleInfos.add(teacherInfo);
             teacher.setRoleInfos(roleInfos);
             teacher.setUpdateTime(new Date().getTime());
             userRepository.save(teacher);
-            for (SubjectTeacherInfo subjectTeacherInfo: classInfo.getTeacherInfos()){
-                if (model.getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || model.getSubjectName().equals(subjectTeacherInfo.getSubjectName())){
+            for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()) {
+                if (model.getSubjectId().equals(subjectTeacherInfo.getSubjectId()) || model.getSubjectName().equals(subjectTeacherInfo.getSubjectName())) {
                     subjectTeacherInfo.setTeacherId(teacher.getId());
                     subjectTeacherInfo.setTeacherName(teacher.getName());
                 }
             }
-            if (!StringUtils.isEmpty(model.getPrimaryClassId())){
+            if (!StringUtils.isEmpty(model.getPrimaryClassId())) {
                 classInfo.setHeadMasterName(teacher.getName());
                 classInfo.setHeadMasterId(teacher.getId());
             }

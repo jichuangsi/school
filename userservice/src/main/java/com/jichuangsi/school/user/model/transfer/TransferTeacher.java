@@ -21,7 +21,7 @@ public class TransferTeacher {
     private String primaryClassName;
     private List<ClassModel> secondaryClasses = new ArrayList<ClassModel>();
     private List<GradeModel> secondaryGrades = new ArrayList<GradeModel>();
-    private String headMaster = "0";
+    private String headMaster = "2";
 
     public String getHeadMaster() {
         return headMaster;
