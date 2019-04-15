@@ -161,6 +161,9 @@ public  final class MappingModel2EntityConverter {
         if (null != model.getSchool()) {
             teacher.setSchool(model.getSchool().getSchoolId(), model.getSchool().getSchoolName());
         }
+        if (null != model.getRoleIds()){
+            teacher.setRoleIds(model.getRoleIds());
+        }
         teacher.setRoleName("Teacher");
         teacher.setRoleIds(model.getRoleIds());
         List<RoleInfo> roles = new ArrayList<RoleInfo>();

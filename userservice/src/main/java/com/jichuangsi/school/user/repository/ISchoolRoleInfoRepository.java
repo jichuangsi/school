@@ -12,4 +12,6 @@ public interface ISchoolRoleInfoRepository extends MongoRepository<SchoolRoleInf
     SchoolRoleInfo findFirstByIdAndDeleteFlag(String id,String delete);
 
     List<SchoolRoleInfo> findByDeleteFlagAndSchoolId(String delete,String schoolId);
+
+    List<SchoolRoleInfo> findByDeleteFlagAndIdIn(String delete,List<String> ids);
 }

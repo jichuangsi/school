@@ -85,7 +85,7 @@ public interface UserInfoService {
      * @throws UserServiceException
      */
     @Transactional
-    long restoreUsers(String[] ids)throws UserServiceException;
+    void restoreUsers(String[] ids)throws UserServiceException;
 
     /**
      * 通过老师ID获取老师信息
@@ -134,7 +134,7 @@ public interface UserInfoService {
      * @return
      * @throws UserServiceException
      */
-    Long TrulyDeleted(String[] ids)throws UserServiceException;
+    void TrulyDeleted(String[] ids)throws UserServiceException;
 
     @Transactional
     List<TransferStudent> getStudentsByClassId(String classId);

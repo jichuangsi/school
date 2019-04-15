@@ -12,7 +12,10 @@ import com.jichuangsi.school.user.constant.MyResultCode;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.*;
-import com.jichuangsi.school.user.entity.org.*;
+import com.jichuangsi.school.user.entity.org.ClassInfo;
+import com.jichuangsi.school.user.entity.org.GradeInfo;
+import com.jichuangsi.school.user.entity.org.PhraseInfo;
+import com.jichuangsi.school.user.entity.org.SchoolInfo;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
@@ -29,7 +32,6 @@ import com.jichuangsi.school.user.repository.*;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
-import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -269,10 +271,12 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param ids
      */
     @Override
-    public long restoreUsers(String[] ids) throws UserServiceException {
-
-        UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").in(ids)), new Update().set("status", Status.ACTIVATE.getName()), UserInfo.class);
-        return result.getModifiedCount();
+    public void restoreUsers(String[] ids) throws UserServiceException {
+       List<UserInfo> userInfos = userRepository.findByIdIn(Arrays.asList(ids));
+       for (UserInfo userInfo : userInfos){
+           userInfo.setStatus(Status.ACTIVATE.getName());
+       }
+       userRepository.saveAll(userInfos);
         /*List<String> fail = new ArrayList<String>();
         try {
             for (String id : ids) {
@@ -370,10 +374,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public Long TrulyDeleted(String[] ids) throws UserServiceException {
-        DeleteResult result = mongoTemplate.remove(new Query(Criteria.where("id").in(ids)), UserInfo.class);
-        long deletedCount = result.getDeletedCount();
-        return deletedCount;
+    public void TrulyDeleted(String[] ids) throws UserServiceException {
+        List<UserInfo> userInfos = userRepository.findByIdIn(Arrays.asList(ids));
+        userRepository.deleteAll(userInfos);
     }
 
     public List<TransferStudent> getStudentsByClassId(String classId) {
@@ -666,6 +669,9 @@ public class UserInfoServiceImpl implements UserInfoService {
             if (null != teacherInfo.getPhrase()){
                 info.setPhrase(teacherInfo.getPhrase());
             }
+            if (null != teacherInfo.getRoleIds()){
+                info.setRoleIds(teacherInfo.getRoleIds());
+            }
           /*  if (null != teacherInfo.getSecondaryClasses()){
                 for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()){
                     ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(cla.getClassId(),"0");
@@ -881,7 +887,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         List<UserInfo> userInfos = userExtraRepository.findByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Teacher",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
         List<TeacherModel> models = new ArrayList<TeacherModel>();
         userInfos.forEach(userInfo1 -> {
-            models.add(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1));
+            models.add(getTeacherRoles(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1)));
         });
         PageInfo<TeacherModel> pageInfo = new PageInfo<TeacherModel>();
         pageInfo.setList(models);
@@ -907,5 +913,13 @@ public class UserInfoServiceImpl implements UserInfoService {
         pageInfo.setPageNum(model.getPageIndex());
         pageInfo.setList(studentModels);
         return pageInfo;
+    }
+
+    private TeacherModel getTeacherRoles(TeacherModel model){
+        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndIdIn("0",model.getRoleIds());
+        for (SchoolRoleInfo schoolRoleInfo : schoolRoleInfos){
+            model.getRoleInfos().add(new SchoolRoleModel(schoolRoleInfo.getId(),schoolRoleInfo.getRoleName()));
+        }
+        return model;
     }
 }

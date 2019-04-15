@@ -1,8 +1,11 @@
 package com.jichuangsi.school.user.model.user;
 
 import com.jichuangsi.school.user.model.roles.Teacher;
+import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeacherModel extends Teacher{
     private String id;
@@ -13,6 +16,15 @@ public class TeacherModel extends Teacher{
     private String pwd;
     private String sex;
     private String status;
+    private List<SchoolRoleModel> roleInfos = new ArrayList<SchoolRoleModel>();
+
+    public List<SchoolRoleModel> getRoleInfos() {
+        return roleInfos;
+    }
+
+    public void setRoleInfos(List<SchoolRoleModel> roleInfos) {
+        this.roleInfos = roleInfos;
+    }
 
     public String getId() {
         return id;

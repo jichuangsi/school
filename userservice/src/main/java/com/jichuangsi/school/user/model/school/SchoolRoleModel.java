@@ -6,6 +6,14 @@ public class SchoolRoleModel {
     private String roleName;
     private String schoolId;
 
+    public SchoolRoleModel() {
+    }
+
+    public SchoolRoleModel(String id, String roleName) {
+        this.id = id;
+        this.roleName = roleName;
+    }
+
     public String getSchoolId() {
         return schoolId;
     }

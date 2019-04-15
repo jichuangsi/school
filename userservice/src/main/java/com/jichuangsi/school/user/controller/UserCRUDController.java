@@ -116,7 +116,8 @@ public class UserCRUDController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/TrulyDeleted")
     public ResponseModel<String> TrulyDeleted(@ModelAttribute UserInfoForToken userInfo, String[] ids) throws UserServiceException {
-        return ResponseModel.sucess("", String.valueOf(userInfoService.TrulyDeleted(ids)));
+        userInfoService.TrulyDeleted(ids);
+        return ResponseModel.sucessWithEmptyData("");
     }
 
     //根据用户id删除用户信息
@@ -145,8 +146,8 @@ public class UserCRUDController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/restore")
     public ResponseModel<String> RestoreUsers(@ModelAttribute UserInfoForToken userInfo, String[] ids) throws UserServiceException {
-        ;
-        return ResponseModel.sucess("", String.valueOf(userInfoService.restoreUsers(ids)));
+        userInfoService.restoreUsers(ids);
+        return ResponseModel.sucessWithEmptyData("");
     }
 
     @ApiOperation(value = "保存老师信息", notes = "")

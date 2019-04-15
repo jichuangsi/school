@@ -52,21 +52,25 @@ public class UserExtraRepositoryImpl implements IUserExtraRepository {
             criteria.and("phrase.phraseId").is(pharseId);
         }
         if ("Teacher".equals(roleName)){
+            Criteria criteriaC = new Criteria();
             if (!StringUtils.isEmpty(classId)) {
                 Criteria criteria1 = Criteria.where("primaryClass.classId").is(classId);
                 Criteria criteria2 = Criteria.where("secondaryClasses").elemMatch(Criteria.where("classId").is(classId));
-                criteria.andOperator(new Criteria().orOperator(criteria1,criteria2));
+                criteriaC.orOperator(criteria1,criteria2);
             }
+            Criteria criteriaG = new Criteria();
             if (!StringUtils.isEmpty(gradeId)){
                 Criteria criteria1 = Criteria.where("primaryGrade.gradeId").is(gradeId);
                 Criteria criteria2 = Criteria.where("secondaryGrades").elemMatch(Criteria.where("gradeId").is(gradeId));
-                criteria.andOperator(new Criteria().orOperator(criteria1,criteria2));
+                criteriaG.orOperator(criteria1,criteria2);
             }
+            Criteria criteriaS = new Criteria();
             if (!StringUtils.isEmpty(subjectId)){
                 Criteria criteria1 = Criteria.where("primarySubject.subjectId").is(subjectId);
                 Criteria criteria2 = Criteria.where("secondarySubjects").elemMatch(Criteria.where("subjectId").is(subjectId));
-                criteria.andOperator(new Criteria().orOperator(criteria1,criteria2));
+                criteriaS.orOperator(criteria1,criteria2);
             }
+            criteria.andOperator(criteriaS,criteriaC,criteriaG);
         }else {
             if (!StringUtils.isEmpty(classId)) {
                 criteria.and("primaryClass.classId").is(classId);
