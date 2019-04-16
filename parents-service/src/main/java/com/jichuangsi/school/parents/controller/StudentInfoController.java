@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.parents.feign.model.HomeWorkParentModel;
+import com.jichuangsi.school.parents.feign.model.TimeTableModel;
 import com.jichuangsi.school.parents.model.GrowthModel;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
 import com.jichuangsi.school.parents.model.statistics.KnowledgeStatisticsModel;
@@ -24,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/studentInfo")
 @Api("家长关注学生信息")
+@CrossOrigin
 public class StudentInfoController {
 
     @Resource
@@ -144,6 +146,19 @@ public class StudentInfoController {
     public ResponseModel<List<KnowledgeStatisticsModel>> getStudentHomeworkScore(@ModelAttribute UserInfoForToken userInfo,@RequestBody ParentStatisticsModel model){
         try {
             return ResponseModel.sucess("",studentService.getParentHomeworkStatistics(userInfo, model));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "获取学生的课程安排", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getStudentTimeTable/{studentId}")
+    public ResponseModel<TimeTableModel> getStudentTimeTable(@ModelAttribute UserInfoForToken userInfo,@PathVariable String studentId){
+        try {
+            return ResponseModel.sucess("",studentService.getStudentTimeTable(userInfo, studentId));
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }

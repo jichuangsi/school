@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.parents.feign.model.HomeWorkParentModel;
+import com.jichuangsi.school.parents.feign.model.TimeTableModel;
 import com.jichuangsi.school.parents.model.GrowthModel;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
 import com.jichuangsi.school.parents.model.statistics.KnowledgeStatisticsModel;
@@ -32,4 +33,6 @@ public interface IStudentService {
     List<KnowledgeStatisticsModel> getParentCourseStatistics(UserInfoForToken userInfo, ParentStatisticsModel model) throws ParentsException;
 
     List<KnowledgeStatisticsModel> getParentHomeworkStatistics(UserInfoForToken userInfo, ParentStatisticsModel model) throws ParentsException;
+
+    TimeTableModel getStudentTimeTable(UserInfoForToken userInfo,String studentId) throws ParentsException;
 }

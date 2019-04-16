@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/parent")
 @Api("关于家长端的controller")
+@CrossOrigin
 public class ParentController {
 
     @Resource
@@ -200,5 +201,19 @@ public class ParentController {
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }
+    }
+
+    @ApiOperation(value = "家长端绑定学生信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getBindStudentInfo")
+    public ResponseModel getBindStudentInfo(@ModelAttribute UserInfoForToken userInfo){
+        try {
+            parentService.getBindStudentInfo(userInfo);
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
     }
 }

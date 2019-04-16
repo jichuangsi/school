@@ -12,6 +12,7 @@ import com.jichuangsi.school.parents.feign.IUserFeignService;
 import com.jichuangsi.school.parents.feign.model.ClassDetailModel;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.parents.feign.model.HomeWorkParentModel;
+import com.jichuangsi.school.parents.feign.model.TimeTableModel;
 import com.jichuangsi.school.parents.model.GrowthModel;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
 import com.jichuangsi.school.parents.model.file.ParentFile;
@@ -220,5 +221,17 @@ public class StudentServiceImpl implements IStudentService {
             throw new ParentsException(response.getMsg());
         }
         return response.getData();
+    }
+
+    @Override
+    public TimeTableModel getStudentTimeTable(UserInfoForToken userInfo, String studentId) throws ParentsException {
+        if (StringUtils.isEmpty(studentId)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ResponseModel<TimeTableModel> responseModel = userFeignService.getStudentTimeTable(studentId);
+        if(!ResultCode.SUCESS.equals(responseModel.getCode())){
+            throw new ParentsException(responseModel.getMsg());
+        }
+        return responseModel.getData();
     }
 }

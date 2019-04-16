@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.parents.feign.impl.UserFallBackFeignServiceImpl;
 import com.jichuangsi.school.parents.feign.model.ClassDetailModel;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
+import com.jichuangsi.school.parents.feign.model.TimeTableModel;
 import com.jichuangsi.school.parents.feign.model.TransferStudent;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,4 +28,7 @@ public interface IUserFeignService {
 
     @RequestMapping("/feign/getStudentByAccount")
     ResponseModel<TransferStudent> getStudentByAccount(@RequestParam("account") String account);
+
+    @RequestMapping("/feign/getStudentTimeTable")
+    ResponseModel<TimeTableModel> getStudentTimeTable(@RequestParam("studentId") String studentId);
 }

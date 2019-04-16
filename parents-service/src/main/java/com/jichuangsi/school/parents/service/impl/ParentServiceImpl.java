@@ -172,7 +172,8 @@ public class ParentServiceImpl implements IParentService {
         }
         userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
         try {
-            return tokenService.createdToken(JSONObject.toJSONString(userInfo));
+            String userStr = JSONObject.toJSONString(userInfo);
+            return tokenService.createdToken(userStr);
         } catch (UnsupportedEncodingException e) {
             throw new ParentsException(ResultCode.TOKEN_CHECK_ERR_MSG);
         }
@@ -274,5 +275,19 @@ public class ParentServiceImpl implements IParentService {
             throw new ParentsException(model.getErrmsg());
         }
         return wx;
+    }
+
+    @Override
+    public void getBindStudentInfo(UserInfoForToken userInfo) throws ParentsException {
+        if (StringUtils.isEmpty(userInfo.getUserId())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
+        if (null == parentInfo){
+            throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
+        }
+        if (!(parentInfo.getStudentIds().size() > 0)){
+            throw new ParentsException(ResultCode.STUDNET_NOTBIND_MSG);
+        }
     }
 }
