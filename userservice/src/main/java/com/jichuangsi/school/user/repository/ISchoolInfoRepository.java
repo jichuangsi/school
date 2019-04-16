@@ -11,7 +11,7 @@ public interface ISchoolInfoRepository extends MongoRepository<SchoolInfo,String
 
     SchoolInfo findFirstById(String id);
 
-    List<SchoolInfo> findByDeleteFlag(String delete);
+    List<SchoolInfo> findByDeleteFlagOrderByCreateTime(String delete);
 
     int countByDeleteFlagAndName(String delete,String name);
 

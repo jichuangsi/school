@@ -179,9 +179,9 @@ public class UserInfoController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping("/teacher/getTeachers/{schoolId}")
-    public ResponseModel<List<TeacherModel>> getTeachers(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId){
+    public ResponseModel<PageInfo<TeacherModel>> getTeachers(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId,@RequestParam("pageIndex") int pageIndex,@RequestParam("pageSize") int pageSize){
         try {
-            return ResponseModel.sucess("",userInfoService.getTeachers(userInfo, schoolId));
+            return ResponseModel.sucess("",userInfoService.getTeachers(userInfo, schoolId,pageIndex,pageSize));
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

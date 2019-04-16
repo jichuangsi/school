@@ -7,12 +7,14 @@ import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
 import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
+import com.jichuangsi.school.user.entity.backstage.TimeTableInfo;
 import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.app.AppInfoModule;
 import com.jichuangsi.school.user.model.backstage.BackRoleModel;
 import com.jichuangsi.school.user.model.backstage.BackUserModel;
+import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.basic.Phrase;
 import com.jichuangsi.school.user.model.basic.Subject;
 import com.jichuangsi.school.user.model.org.ClassModel;
@@ -335,6 +337,34 @@ public final class MappingEntity2ModelConverter {
             model.setPrimaryClass(new ClassModel(studentInfo.getPrimaryClass().getClassId(),studentInfo.getPrimaryClass().getClassName()));
             model.setPrimaryGrade(new GradeModel(studentInfo.getPrimaryGrade().getGradeId(),studentInfo.getPrimaryGrade().getGradeName()));
             model.setSchool(new SchoolModel(studentInfo.getSchool().getSchoolId(),studentInfo.getSchool().getSchoolName()));
+        }
+        return model;
+    }
+
+    public final static TimeTableModel CONVERTERFROMTIMETABLEINFO(TimeTableInfo tableInfo){
+        TimeTableModel model = new TimeTableModel();
+        model.setClassId(tableInfo.getClassId());
+        model.setClassName(tableInfo.getClassName());
+        model.setId(tableInfo.getId());
+        for (int i = 0;i < tableInfo.getClassBegin().size() ; i++){
+            List<String> info = new ArrayList<String>();
+            info.add(tableInfo.getClassBegin().get(i));
+            if (tableInfo.getMonday().size() > i){
+                info.add(tableInfo.getMonday().get(i));
+            }
+            if (tableInfo.getTuesday().size() > i){
+                info.add(tableInfo.getTuesday().get(i));
+            }
+            if (tableInfo.getWednesday().size() > i){
+                info.add(tableInfo.getWednesday().get(i));
+            }
+            if (tableInfo.getThursday().size() > i){
+                info.add(tableInfo.getThursday().get(i));
+            }
+            if (tableInfo.getFriday().size() > i){
+                info.add(tableInfo.getFriday().get(i));
+            }
+            model.getMap().put(i+1+"",info);
         }
         return model;
     }

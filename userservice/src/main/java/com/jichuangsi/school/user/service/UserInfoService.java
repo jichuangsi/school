@@ -163,7 +163,7 @@ public interface UserInfoService {
 
     void deleteSchoolRole(UserInfoForToken userInfo , String roleId) throws UserServiceException;
 
-    List<TeacherModel> getTeachers(UserInfoForToken userInfo,String schoolId) throws UserServiceException;
+    PageInfo<TeacherModel> getTeachers(UserInfoForToken userInfo,String schoolId,int pageIndex,int pageSize) throws UserServiceException;
 
     List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws UserServiceException;
 

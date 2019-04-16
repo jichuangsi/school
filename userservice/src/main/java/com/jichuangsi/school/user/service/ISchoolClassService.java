@@ -34,4 +34,8 @@ public interface ISchoolClassService {
 
     @Transactional(rollbackFor = Exception.class)
     void classInsertTeacher(UserInfoForToken userInfo , TeacherInsertModel model,String teacherId) throws SchoolServiceException;
+
+    void updateClassInsertSubject(UserInfoForToken userInfo,String subjectId,String classId) throws SchoolServiceException;
+
+    void updateClassDelSubject(UserInfoForToken userInfo,String subjectId,String classId) throws SchoolServiceException;
 }

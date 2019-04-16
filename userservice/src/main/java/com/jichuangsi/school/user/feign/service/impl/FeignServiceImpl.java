@@ -5,17 +5,17 @@ import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
-import com.jichuangsi.school.user.exception.ClassServiceException;
-import com.jichuangsi.school.user.exception.FeignControllerException;
-import com.jichuangsi.school.user.exception.SchoolServiceException;
-import com.jichuangsi.school.user.exception.UserServiceException;
+import com.jichuangsi.school.user.entity.backstage.TimeTableInfo;
+import com.jichuangsi.school.user.exception.*;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
+import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.UserRepository;
+import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
@@ -34,6 +34,8 @@ public class FeignServiceImpl implements IFeignService {
     private UserRepository userRepository;
     @Resource
     private UserInfoService userInfoService;
+    @Resource
+    private IBackSchoolService backSchoolService;
 
     @Override
     public ClassDetailModel findClassDetailByClassId(String classId) throws FeignControllerException {
@@ -165,5 +167,23 @@ public class FeignServiceImpl implements IFeignService {
             throw new FeignControllerException(ResultCode.USER_ISNOT_EXIST);
         }
         return MappingEntity2ModelConverter.TransferStudent(userInfo);
+    }
+
+    @Override
+    public TimeTableModel getStudentTimeTable(String studentId) throws FeignControllerException {
+        if (StringUtils.isEmpty(studentId)){
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        UserInfo student = userRepository.findFirstById(studentId);
+        String classId = "";
+        if (student.getRoleInfos().get(0) instanceof StudentInfo){
+            StudentInfo studentInfo = (StudentInfo) student.getRoleInfos().get(0);
+            classId = studentInfo.getPrimaryClass().getClassId();
+        }
+        try {
+            return backSchoolService.findByClassId(classId);
+        } catch (BackUserException e) {
+            throw new FeignControllerException(e.getMessage());
+        }
     }
 }

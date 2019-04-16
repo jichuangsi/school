@@ -111,4 +111,32 @@ public class ClassCRUDController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+
+    @ApiOperation(value = "修改班级添加学科", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/updateClassInsertSubject/{subjectId}/{classId}")
+    public ResponseModel updateClassInsertSubject(@ModelAttribute UserInfoForToken userInfo,@PathVariable String subjectId,@PathVariable String classId){
+        try {
+            schoolClassService.updateClassInsertSubject(userInfo, subjectId, classId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "修改班级删除学科", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/updateClassDeleteSubject/{subjectId}/{classId}")
+    public ResponseModel updateClassDeleteSubject(@ModelAttribute UserInfoForToken userInfo,@PathVariable String subjectId,@PathVariable String classId){
+        try {
+            schoolClassService.updateClassDelSubject(userInfo, subjectId, classId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
 }

@@ -6,6 +6,7 @@ import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
+import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import io.swagger.annotations.Api;
@@ -118,6 +119,16 @@ public class FeignController {
     public ResponseModel<TransferStudent> getStudentByAccount(@RequestParam("account") String account){
         try {
             return ResponseModel.sucess("",feignService.getStudentByAccount(account));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据学生id获取学生课程表", notes = "")
+    @GetMapping("/getStudentTimeTable")
+    public ResponseModel<TimeTableModel> getStudentTimeTable(@RequestParam("studentId") String studentId){
+        try {
+            return ResponseModel.sucess("",feignService.getStudentTimeTable(studentId));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

@@ -829,16 +829,21 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<TeacherModel> getTeachers(UserInfoForToken userInfo, String schoolId) throws UserServiceException {
+    public PageInfo<TeacherModel> getTeachers(UserInfoForToken userInfo, String schoolId,int pageIndex,int pageSize) throws UserServiceException {
         if (StringUtils.isEmpty(schoolId)){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        List<UserInfo> userInfos = userExtraRepository.findBySchoolId(schoolId);
+        List<UserInfo> userInfos = userExtraRepository.findBySchoolId(schoolId,pageIndex,pageSize);
         List<TeacherModel> teacherModels = new ArrayList<TeacherModel>();
         userInfos.forEach(userInfo1 -> {
             teacherModels.add(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1));
         });
-        return teacherModels;
+        PageInfo<TeacherModel> pageInfo = new PageInfo<>();
+        pageInfo.setList(teacherModels);
+        pageInfo.setPageNum(pageIndex);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal(userExtraRepository.countBySchoolId(schoolId));
+        return pageInfo;
     }
 
     @Override
@@ -884,7 +889,26 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (StringUtils.isEmpty(model.getSchoolId())){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        List<UserInfo> userInfos = userExtraRepository.findByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Teacher",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
+        List<String> classIds = new ArrayList<String>();
+        if (!StringUtils.isEmpty(model.getClassId())){
+            classIds.add(model.getClassId());
+        }else if (!StringUtils.isEmpty(model.getGradeId())){
+            GradeInfo gradeInfo = gradeInfoRepository.findFirstById(model.getGradeId());
+            if (null == gradeInfo){
+                throw new UserServiceException(ResultCode.GRADE_SELECT_NULL_MSG);
+            }
+            classIds.addAll(gradeInfo.getClassIds());
+        }else if (!StringUtils.isEmpty(model.getPhraseId())){
+            PhraseInfo phraseInfo = phraseInfoRepository.findFirstById(model.getPhraseId());
+            if (null == phraseInfo){
+                throw new UserServiceException(ResultCode.PHRASE_SELECT_NULL_MSG);
+            }
+            List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0",phraseInfo.getGradeIds());
+            for (GradeInfo gradeInfo : gradeInfos){
+                classIds.addAll(gradeInfo.getClassIds());
+            }
+        }
+        List<UserInfo> userInfos = userExtraRepository.findByConditions(model.getSchoolId(),classIds,model.getUserName(),"Teacher",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
         List<TeacherModel> models = new ArrayList<TeacherModel>();
         userInfos.forEach(userInfo1 -> {
             models.add(getTeacherRoles(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1)));
@@ -893,7 +917,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         pageInfo.setList(models);
         pageInfo.setPageNum(model.getPageIndex());
         pageInfo.setPageSize(model.getPageSize());
-        pageInfo.setTotal(userExtraRepository.countByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Teacher",model.getSubjectId()));
+        pageInfo.setTotal(userExtraRepository.countByConditions(model.getSchoolId(),classIds,model.getUserName(),"Teacher",model.getSubjectId()));
         return pageInfo;
     }
 

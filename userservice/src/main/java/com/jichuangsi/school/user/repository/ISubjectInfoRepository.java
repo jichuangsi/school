@@ -7,9 +7,11 @@ import java.util.List;
 
 public interface ISubjectInfoRepository extends MongoRepository<SubjectInfo,String> {
 
-    List<SubjectInfo> findByDeleteFlag(String delete);
+    List<SubjectInfo> findByDeleteFlagOrderByCreatedTime(String delete);
 
     int countByDeleteFlagAndSubjectName(String delete,String subjectName);
 
     SubjectInfo findFirstById(String id);
+
+    SubjectInfo findFirstByIdAndDeleteFlag(String id,String delete);
 }

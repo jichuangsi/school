@@ -28,10 +28,22 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public static final String USER_SELECT_NULL_MSG = "查无此用户信息";
     public static final String CLASS_SELECT_NULL_MSG = "查无此班级信息";
     public static final String SCHOOL_SELECT_NULL_MSG = "查无此学校信息";
+    public static final String GRADE_SELECT_NULL_MSG = "查无此年级信息";
+    public static final String PHRASE_SELECT_NULL_MSG = "查无此年段信息";
 
     public static final String HEADMASTER_EXIST_MSG = "已有班主任，请先离任";
     public static final String TEACHER_INNER_CLASS_MES = "已执教该班";
     public static final String CLASS_SUBJECT_MES = "该班已有该科目老师，请先离任上一个老师";
 
     public static final String TEACHER_SUBJECT_MSG = "该老师不教该科目";
+    public static final String SUBJECT_ISEXIST_MSG = "该班存在该科目";
+
+    public static final String SUBJECT_ISNOT_EXIST = "科目不存在";
+    public static final String SUBJECT_TEACHER_EXIST = "该科目老师尚未离任";
+
+    public static final String FILE_DELETE_ERR ="文件删除失败";
+
+    public static final String FILE_CHANGE_ERR = "文件转换失败";
+    public static final String CLASS_TABLE_NULL_MSG = "该班没有课程表";
+    public static final String CLASS_TABLE_EXIST_MSG = "该班已有课程表";
 }

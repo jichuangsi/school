@@ -56,7 +56,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContainingAndId(gradeId, schoolId);
         if (schoolInfo == null) throw new ClassServiceException(MyResultCode.SCHOOL_GRADE_NOT_MATCH);
         ClassInfo classInfo = MappingModel2EntityConverter.ConvertClass(classModel);
-        List<SubjectInfo> subjectInfos = subjectInfoRepository.findByDeleteFlag("0");
+        List<SubjectInfo> subjectInfos = subjectInfoRepository.findByDeleteFlagOrderByCreatedTime("0");
         List<SubjectTeacherInfo> teacherInfos = new ArrayList<SubjectTeacherInfo>();
         for (SubjectInfo subjectInfo : subjectInfos) {
             SubjectTeacherInfo teacherInfo = new SubjectTeacherInfo();
@@ -126,7 +126,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
         }
         List<String> classIds = gradeInfo.getClassIds();
-        List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlag(classIds, "0");
+        List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlagOrderByCreateTime(classIds, "0");
         List<ClassModel> classModels = new ArrayList<ClassModel>();
         classInfos.forEach(classInfo -> {
             classModels.add(MappingEntity2ModelConverter.TransferClass(classInfo));
@@ -148,7 +148,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
 
     @Override
     public List<SchoolModel> getBackSchools() throws SchoolServiceException {
-        List<SchoolInfo> schoolInfos = schoolInfoRepository.findByDeleteFlag("0");
+        List<SchoolInfo> schoolInfos = schoolInfoRepository.findByDeleteFlagOrderByCreateTime("0");
         List<SchoolModel> schoolModels = new ArrayList<SchoolModel>();
         schoolInfos.forEach(schoolInfo -> {
             schoolModels.add(MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo));
@@ -295,5 +295,66 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             }
             classInfoRepository.save(classInfo);
         }
+    }
+
+    @Override
+    public void updateClassInsertSubject(UserInfoForToken userInfo, String subjectId,String classId) throws SchoolServiceException {
+        if (StringUtils.isEmpty(subjectId) || StringUtils.isEmpty(classId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
+        if (null == classInfo){
+            throw new SchoolServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
+        }
+        SubjectInfo subjectInfo = subjectInfoRepository.findFirstByIdAndDeleteFlag(subjectId,"0");
+        if (null == subjectInfo){
+            throw new SchoolServiceException(ResultCode.SUBJECT_ISNOT_EXIST);
+        }
+        for (SubjectTeacherInfo teacherInfo : classInfo.getTeacherInfos()){
+            if (subjectId.equals(teacherInfo.getSubjectId())){
+                throw new SchoolServiceException(ResultCode.SUBJECT_ISEXIST_MSG);
+            }
+        }
+        SubjectTeacherInfo subjectTeacherInfo = new SubjectTeacherInfo();
+        subjectTeacherInfo.setSubjectName(subjectInfo.getSubjectName());
+        subjectTeacherInfo.setSubjectId(subjectId);
+        classInfo.getTeacherInfos().add(subjectTeacherInfo);
+        classInfo.setUpdateTime(new Date().getTime());
+        classInfo.setUpdateId(userInfo.getUserId());
+        classInfo.setUpdateName(userInfo.getUserName());
+        classInfoRepository.save(classInfo);
+    }
+
+    @Override
+    public void updateClassDelSubject(UserInfoForToken userInfo, String subjectId, String classId) throws SchoolServiceException {
+        if (StringUtils.isEmpty(subjectId) || StringUtils.isEmpty(classId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
+        if (null == classInfo){
+            throw new SchoolServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
+        }
+        SubjectInfo subjectInfo = subjectInfoRepository.findFirstByIdAndDeleteFlag(subjectId,"0");
+        if (null == subjectInfo){
+            throw new SchoolServiceException(ResultCode.SUBJECT_ISNOT_EXIST);
+        }
+        boolean flag = true;
+        for (SubjectTeacherInfo teacherInfo : classInfo.getTeacherInfos()){
+            if (subjectId.equals(teacherInfo.getSubjectId())){
+                if (!StringUtils.isEmpty(teacherInfo.getTeacherId())){
+                    throw new SchoolServiceException(ResultCode.SUBJECT_TEACHER_EXIST);
+                }
+                classInfo.getTeacherInfos().remove(teacherInfo);
+                flag = false;
+                break;
+            }
+        }
+        if (flag){
+            throw new SchoolServiceException(ResultCode.SUBJECT_ISNOT_EXIST);
+        }
+        classInfo.setUpdateName(userInfo.getUserName());
+        classInfo.setUpdateId(userInfo.getUserId());
+        classInfo.setUpdateTime(new Date().getTime());
+        classInfoRepository.save(classInfo);
     }
 }

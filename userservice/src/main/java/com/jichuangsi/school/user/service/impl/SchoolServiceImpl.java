@@ -120,7 +120,7 @@ public class SchoolServiceImpl implements ISchoolService {
 
     @Override
     public List<SchoolModel> getSchools() throws SchoolServiceException {
-        List<SchoolInfo> schools = schoolInfoRepository.findByDeleteFlag("0");
+        List<SchoolInfo> schools = schoolInfoRepository.findByDeleteFlagOrderByCreateTime("0");
         if (!(schools.size() > 0)) {
             throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
         }
@@ -143,7 +143,7 @@ public class SchoolServiceImpl implements ISchoolService {
         if (null == gradeIds || !(gradeIds.size() > 0)) {
             return gradeModels;
         }
-        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdIn("0", gradeIds);
+        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0", gradeIds);
         gradeInfos.forEach(gradeInfo -> {
             GradeModel model = MappingEntity2ModelConverter.CONVERTERFROMGRADEINFO(gradeInfo);
             gradeModels.add(model);
@@ -212,7 +212,7 @@ public class SchoolServiceImpl implements ISchoolService {
 
     @Override
     public List<SubjectModel> getSubjects(UserInfoForToken userInfo) {
-        List<SubjectInfo> subjectInfos = subjectInfoRepository.findByDeleteFlag("0");
+        List<SubjectInfo> subjectInfos = subjectInfoRepository.findByDeleteFlagOrderByCreatedTime("0");
         return converterfromsubjectInfos(subjectInfos);
     }
 
@@ -282,7 +282,7 @@ public class SchoolServiceImpl implements ISchoolService {
             throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
         }
         List<String> gradeIds = phraseInfo.getGradeIds();
-        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdIn("0",gradeIds);
+        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0",gradeIds);
         return converterListGradeInfo(gradeInfos);
     }
 
