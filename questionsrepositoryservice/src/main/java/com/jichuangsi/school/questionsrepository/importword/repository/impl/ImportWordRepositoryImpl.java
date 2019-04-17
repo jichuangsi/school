@@ -6,6 +6,7 @@ import com.jichuangsi.school.questionsrepository.exception.QuestionRepositorySer
 import com.jichuangsi.school.questionsrepository.importword.repository.IImportWordRepository;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Repository;
 
 /**
  * Created by 窝里横 on 2019/4/16.
