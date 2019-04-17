@@ -9,23 +9,23 @@ import java.util.List;
 public class SelfQuestions {
 
     @Id
-    private String id;
-    private String content;
-    private List<String> options = new ArrayList<String>();
-    private String answer;
-    private String answerDetail;
-    private String parse;
-    private String type;
-    private String difficulty;
-    private String subjectId;
-    private String gradeId;
-    private List<Knowledge> knowledges = new ArrayList<Knowledge>();
-    private String questionIdMD52;
-    private String teacherId;
-    private String teacherName;
-    private String questionPic;
-    private long createTime;
-    private long updateTime;
+    private String id;//id1
+    private String content;//题干1
+    private List<String> options = new ArrayList<String>();//选项1
+    private String answer;//答案0
+    private String answerDetail;//？？0
+    private String parse;//？？
+    private String type;//题型0
+    private String difficulty;//难度0
+    private String subjectId;//学科id1
+    private String gradeId;//班级id0
+    private List<Knowledge> knowledges = new ArrayList<Knowledge>();//知识点0
+    private String questionIdMD52;//关联原题目0
+    private String teacherId;//老师id1
+    private String teacherName;//1
+    private String questionPic;//图片数据0
+    private long createTime;//0
+    private long updateTime;//0
 
     public String getId() {
         return id;
