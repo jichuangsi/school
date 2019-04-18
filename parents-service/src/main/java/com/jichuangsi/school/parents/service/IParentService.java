@@ -38,4 +38,6 @@ public interface IParentService {
     WxUserInfoModel findWxUserInfo(String access_token,String openid,String code) throws ParentsException;
 
     void getBindStudentInfo(UserInfoForToken userInfo) throws ParentsException;
+
+    NoticeModel findNoticeDetails(UserInfoForToken userInfo,String noticeId) throws ParentsException;
 }

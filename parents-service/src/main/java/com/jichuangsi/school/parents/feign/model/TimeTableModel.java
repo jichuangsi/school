@@ -1,15 +1,14 @@
 package com.jichuangsi.school.parents.feign.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TimeTableModel {
 
     private String id;
     private String classId;
     private String className;
-    Map<String,List<String>> map = new HashMap<String, List<String>>();
+    List<List<String>> dataInfo = new ArrayList<List<String>>();
     private String delete = "0";
 
     public String getId() {
@@ -36,12 +35,12 @@ public class TimeTableModel {
         this.className = className;
     }
 
-    public Map<String, List<String>> getMap() {
-        return map;
+    public List<List<String>> getDataInfo() {
+        return dataInfo;
     }
 
-    public void setMap(Map<String, List<String>> map) {
-        this.map = map;
+    public void setDataInfo(List<List<String>> dataInfo) {
+        this.dataInfo = dataInfo;
     }
 
     public String getDelete() {

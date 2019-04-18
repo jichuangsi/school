@@ -216,4 +216,17 @@ public class ParentController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+
+    @ApiOperation(value = "家长端根据noticeId获取通知具体信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getNoticeByNoticeId/{noticeId}")
+    public ResponseModel<NoticeModel> getNoticeByNoticeId(@ModelAttribute UserInfoForToken userInfo,@PathVariable String noticeId){
+        try {
+            return ResponseModel.sucess("",parentService.findNoticeDetails(userInfo, noticeId));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

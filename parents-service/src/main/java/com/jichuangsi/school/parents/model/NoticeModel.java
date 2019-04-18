@@ -7,10 +7,28 @@ public class NoticeModel {
     private String id;
     private String parentId;
     private String parentName;
+    private String noticeId;
     private String title;
     private String content;
     private long createdTime = new Date().getTime();
     private String noticeType;
+    private String read;
+
+    public String getRead() {
+        return read;
+    }
+
+    public void setRead(String read) {
+        this.read = read;
+    }
+
+    public String getNoticeId() {
+        return noticeId;
+    }
+
+    public void setNoticeId(String noticeId) {
+        this.noticeId = noticeId;
+    }
 
     public String getId() {
         return id;

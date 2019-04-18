@@ -290,4 +290,22 @@ public class ParentServiceImpl implements IParentService {
             throw new ParentsException(ResultCode.STUDNET_NOTBIND_MSG);
         }
     }
+
+    @Override
+    public NoticeModel findNoticeDetails(UserInfoForToken userInfo, String noticeId) throws ParentsException {
+        if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(noticeId)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentNotice parentNotice = parentNoticeRepository.findFirstByIdAndParentId(userInfo.getUserId(),noticeId);
+        if (null == parentNotice){
+            throw new ParentsException(ResultCode.SELECT_NULL_MSG);
+        }
+        parentNotice.setRead("1");
+        parentNoticeRepository.save(parentNotice);
+        ResponseModel<NoticeModel> responseModel = userFeignService.getNoticeDetails(parentNotice.getMessageId());
+        if (!ResultCode.SUCESS.equals(responseModel.getCode())){
+            throw new ParentsException(responseModel.getMsg());
+        }
+        return responseModel.getData();
+    }
 }

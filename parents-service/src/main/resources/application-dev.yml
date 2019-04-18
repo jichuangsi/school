@@ -7,7 +7,10 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
-
+  servlet:
+    multipart:
+      max-request-size: 5MB
+      max-file-size: 5MB
 server:
   port: 7979
 

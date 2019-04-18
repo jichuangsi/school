@@ -6,6 +6,7 @@ import com.jichuangsi.school.parents.feign.model.ClassDetailModel;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.parents.feign.model.TimeTableModel;
 import com.jichuangsi.school.parents.feign.model.TransferStudent;
+import com.jichuangsi.school.parents.model.NoticeModel;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,4 +32,7 @@ public interface IUserFeignService {
 
     @RequestMapping("/feign/getStudentTimeTable")
     ResponseModel<TimeTableModel> getStudentTimeTable(@RequestParam("studentId") String studentId);
+
+    @RequestMapping("/feign/getNoticeDetails")
+    ResponseModel<NoticeModel> getNoticeDetails(@RequestParam("noticeId") String noticeId);
 }

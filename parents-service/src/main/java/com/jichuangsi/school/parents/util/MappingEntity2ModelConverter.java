@@ -46,6 +46,8 @@ public class MappingEntity2ModelConverter {
         model.setParentId(notice.getParentId());
         model.setParentName(notice.getParentName());
         model.setTitle(notice.getTitle());
+        model.setNoticeId(notice.getMessageId());
+        model.setRead(notice.getRead());
         return model;
     }
 

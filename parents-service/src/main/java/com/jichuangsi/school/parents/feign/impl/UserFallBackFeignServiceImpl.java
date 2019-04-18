@@ -6,6 +6,7 @@ import com.jichuangsi.school.parents.feign.model.ClassDetailModel;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.parents.feign.model.TimeTableModel;
 import com.jichuangsi.school.parents.feign.model.TransferStudent;
+import com.jichuangsi.school.parents.model.NoticeModel;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,11 @@ public class UserFallBackFeignServiceImpl implements IUserFeignService {
 
     @Override
     public ResponseModel<TimeTableModel> getStudentTimeTable(String studentId) {
+        return ResponseModel.fail("",ERR_MSG);
+    }
+
+    @Override
+    public ResponseModel<NoticeModel> getNoticeDetails(String noticeId) {
         return ResponseModel.fail("",ERR_MSG);
     }
 }
