@@ -7,6 +7,7 @@ import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
 import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
+import com.jichuangsi.school.user.entity.backstage.SchoolAttachment;
 import com.jichuangsi.school.user.entity.backstage.TimeTableInfo;
 import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.model.System.Role;
@@ -17,6 +18,7 @@ import com.jichuangsi.school.user.model.backstage.BackUserModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.basic.Phrase;
 import com.jichuangsi.school.user.model.basic.Subject;
+import com.jichuangsi.school.user.model.file.UserFile;
 import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.roles.Student;
 import com.jichuangsi.school.user.model.roles.Teacher;
@@ -364,8 +366,16 @@ public final class MappingEntity2ModelConverter {
             if (tableInfo.getFriday().size() > i){
                 info.add(tableInfo.getFriday().get(i));
             }
-            model.getMap().put(i+1+"",info);
+            model.getDataInfo().add(info);
         }
         return model;
+    }
+
+    public static  final UserFile CONVERTERFROMSCHOOLATTACHMENT(SchoolAttachment schoolAttachment){
+        UserFile userFile = new UserFile();
+        userFile.setContentType(schoolAttachment.getContentType());
+        userFile.setName(schoolAttachment.getSubName());
+        userFile.setOriginalName(schoolAttachment.getOriginalName());
+        return userFile;
     }
 }

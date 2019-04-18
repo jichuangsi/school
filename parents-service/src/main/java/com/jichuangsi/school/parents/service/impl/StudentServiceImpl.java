@@ -86,7 +86,7 @@ public class StudentServiceImpl implements IStudentService {
     public void uploadGrowth(MultipartFile file, UserInfoForToken userInfo, GrowthModel model) throws ParentsException {
         ParentFile parentFile;
         try {
-            parentFile = new ParentFile(file.getOriginalFilename(),file.getContentType(),file.getBytes());
+            parentFile = new ParentFile(file.getContentType(),file.getOriginalFilename(),file.getBytes());
             fileStoreService.uploadFile(parentFile);
         } catch (Exception e) {
             throw new ParentsException(ResultCode.FILE_CHANGE_ERR);

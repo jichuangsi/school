@@ -2,17 +2,30 @@ package com.jichuangsi.school.user.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.ResultCode;
+import com.jichuangsi.school.user.entity.UserInfo;
+import com.jichuangsi.school.user.entity.backstage.SchoolAttachment;
+import com.jichuangsi.school.user.entity.backstage.SchoolNoticeInfo;
 import com.jichuangsi.school.user.entity.backstage.TimeTableInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
+import com.jichuangsi.school.user.entity.org.GradeInfo;
+import com.jichuangsi.school.user.entity.org.PhraseInfo;
+import com.jichuangsi.school.user.entity.org.SchoolInfo;
+import com.jichuangsi.school.user.entity.parent.ParentInfo;
+import com.jichuangsi.school.user.entity.parent.ParentNotice;
 import com.jichuangsi.school.user.exception.BackUserException;
+import com.jichuangsi.school.user.model.SchoolMessageModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.file.UserFile;
-import com.jichuangsi.school.user.repository.IClassInfoRepository;
-import com.jichuangsi.school.user.repository.ITimeTableInfoRepository;
+import com.jichuangsi.school.user.repository.*;
+import com.jichuangsi.school.user.repository.backstage.ISchoolAttachmentRepository;
+import com.jichuangsi.school.user.repository.parent.IParentInfoRepository;
+import com.jichuangsi.school.user.repository.parent.IParentNoticeRepository;
 import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.IFileStoreService;
 import com.jichuangsi.school.user.util.ExcelReadUtils;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +44,27 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
     private IClassInfoRepository classInfoRepository;
     @Resource
     private ITimeTableInfoRepository timeTableInfoRepository;
+    @Resource
+    private ISchoolAttachmentRepository schoolAttachmentRepository;
+    @Resource
+    private IGradeInfoRepository gradeInfoRepository;
+    @Resource
+    private IPhraseInfoRepository phraseInfoRepository;
+    @Resource
+    private ISchoolInfoRepository schoolInfoRepository;
+    @Resource
+    private ISchoolNoticeInfoRepository schoolNoticeInfoRepository;
+    @Resource
+    private IUserExtraRepository userExtraRepository;
+    @Resource
+    private IParentInfoRepository parentInfoRepository;
+    @Resource
+    private IParentNoticeRepository parentNoticeRepository;
+    @Resource
+    private AmqpTemplate rabbitTemplate;
+
+    @Value("${com.jichuangsi.school.mq.send_parent_notice}")
+    private String sendNotice;
 
     @Override
     public TimeTableModel findByClassId(String classId) throws BackUserException {
@@ -122,5 +156,120 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
             result.add(values.get(i));
         }
         return result;
+    }
+
+    @Override
+    public List<UserFile> getAttachments(UserInfoForToken userInfo) throws BackUserException {
+        List<SchoolAttachment> schoolAttachments = schoolAttachmentRepository.findAll();
+        List<UserFile> userFiles = new ArrayList<UserFile>();
+        schoolAttachments.forEach(schoolAttachment -> {
+            userFiles.add(MappingEntity2ModelConverter.CONVERTERFROMSCHOOLATTACHMENT(schoolAttachment));
+        });
+        return userFiles;
+    }
+
+    @Override
+    public UserFile downAttachment(UserInfoForToken userInfo, String subName) throws BackUserException {
+        if (StringUtils.isEmpty(subName)){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        try {
+            UserFile file = fileStoreService.downFile(subName);
+         /*   saveFile(file);*/
+            return file;
+        } catch (Exception e) {
+            throw new BackUserException(e.getMessage());
+        }
+    }
+
+    //测试是否成功下载
+   /* public static void saveFile(UserFile userFile)throws Exception{
+        if(userFile.getContent() != null){
+            String filepath ="F:\\file\\" + userFile.getOriginalName();
+            File file  = new File(filepath);
+            if(file.exists()){
+                file.delete();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(userFile.getContent(),0,userFile.getContent().length);
+            fos.flush();
+            fos.close();
+        }
+    }*/
+
+    @Override
+    public void sendSchoolMessage(UserInfoForToken userInfo, String schoolId, SchoolMessageModel model) throws BackUserException {
+        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(model.getTiltle()) || StringUtils.isEmpty(model.getContent())){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<String> classIds = new ArrayList<String>();
+        if(!StringUtils.isEmpty(model.getClassId())){
+            classIds.add(model.getClassId());
+        }else if(!StringUtils.isEmpty(model.getGradeId())){
+            List<String> gradeIds = new ArrayList<String>();
+            gradeIds.add(model.getGradeId());
+            classIds.addAll(getClassIdsByGradeIds(gradeIds));
+        }else if (StringUtils.isEmpty(model.getPharseId())){
+            List<String> ids = new ArrayList<String>();
+            ids.add(model.getPharseId());
+            ids = getGradeIdsByPharseIds(ids);
+            classIds.addAll(getClassIdsByGradeIds(ids));
+        }else {
+            SchoolInfo schoolInfo = schoolInfoRepository.findFirstById(schoolId);
+            if (null == schoolInfo){
+                throw new BackUserException(ResultCode.SCHOOL_SELECT_NULL_MSG);
+            }
+            List<String> id = schoolInfo.getPhraseIds();
+            classIds.addAll(getClassIdsByGradeIds(getGradeIdsByPharseIds(id)));
+        }
+        SchoolNoticeInfo noticeInfo = new SchoolNoticeInfo();
+        noticeInfo.setClassIds(classIds);
+        noticeInfo.setContent(model.getContent());
+        noticeInfo.setCreatorId(userInfo.getUserId());
+        noticeInfo.setCreatorName(userInfo.getUserName());
+        noticeInfo.setTitle(model.getTiltle());
+        noticeInfo.setUpdatedId(userInfo.getUserId());
+        noticeInfo.setUpdatedName(userInfo.getUserName());
+        noticeInfo = schoolNoticeInfoRepository.save(noticeInfo);
+        List<UserInfo> userInfos = getStudentsByClassIds(classIds,schoolId);
+        List<String> studentIds = new ArrayList<String>();
+        for (UserInfo student : userInfos){
+            studentIds.add(student.getId());
+        }
+        List<ParentInfo> parentInfos = parentInfoRepository.findByStudentIdsIn(studentIds);
+        List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
+        for (ParentInfo parentInfo : parentInfos){
+            ParentNotice notice = new ParentNotice();
+            notice.setMessageId(noticeInfo.getId());
+            notice.setNoticeType(ParentNotice.COLLEGE_NOTICE);
+            notice.setParentId(parentInfo.getId());
+            notice.setParentName(parentInfo.getUserName());
+            notice.setTitle(model.getTiltle());
+            parentNotices.add(notice);
+        }
+        parentNoticeRepository.saveAll(parentNotices);
+    }
+
+    private List<String> getClassIdsByGradeIds(List<String> gradeIds){
+        List<String> classIds = new ArrayList<String>();
+        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0",gradeIds);
+        for (GradeInfo gradeInfo : gradeInfos){
+            classIds.addAll(gradeInfo.getClassIds());
+        }
+        return classIds;
+    }
+
+    private List<String> getGradeIdsByPharseIds(List<String> pharseIds){
+        List<String> gradeIds = new ArrayList<String>();
+        List<PhraseInfo> phraseInfos = phraseInfoRepository.findByDeleteFlagAndIdIn("0",pharseIds);
+        for (PhraseInfo phraseInfo : phraseInfos){
+            gradeIds.addAll(phraseInfo.getGradeIds());
+        }
+        return gradeIds;
+    }
+
+    private List<UserInfo> getStudentsByClassIds(List<String> classIds,String schoolId){
+        List<UserInfo> students = userExtraRepository.findByConditions(schoolId,classIds,"","Student","",0,0);
+        return students;
     }
 }

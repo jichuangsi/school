@@ -13,6 +13,17 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  cache:
+    cache-names: statisticsCache
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=43200s
+    type: caffeine
+    multi:
+      caffeine:
+        expireAfterAccess: 300000
+      redis:
+        defaultExpiration: 600000
+
 
 server:
   port: 8084

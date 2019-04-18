@@ -62,7 +62,7 @@ public class StudentInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/insertGrowth/{studentId}")
+    @PostMapping(value = "/insertGrowth")
     public ResponseModel insertGrowth(@RequestParam MultipartFile file, @ModelAttribute UserInfoForToken userInfo, GrowthModel model){
         try {
             studentService.uploadGrowth(file, userInfo, model);

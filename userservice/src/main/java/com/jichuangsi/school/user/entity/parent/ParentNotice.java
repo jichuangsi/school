@@ -1,4 +1,4 @@
-package com.jichuangsi.school.parents.entity;
+package com.jichuangsi.school.user.entity.parent;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,6 +11,7 @@ public class ParentNotice {
     public final static String COLLEGE_NOTICE ="C";
     public final static String SYSTEM_NOTICE = "S";
 
+
     @Id
     private String id;
     private String parentId;
@@ -21,7 +22,7 @@ public class ParentNotice {
     private long createdTime = new Date().getTime();
     private String deleteFlag = "0";
     private String noticeType;
-    private String read;
+    private String read = "0";
 
     public String getRead() {
         return read;

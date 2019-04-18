@@ -20,7 +20,7 @@ public class MappingEntity2ModelConverter {
         model.setCreatedTime(growthDay.getCreatedTime());
         model.setStudentId(growthDay.getStudentId());
         model.setTitle(growthDay.getTitle());
-        model.setFile(file);
+        model.setParentFile(file);
         return model;
     }
 

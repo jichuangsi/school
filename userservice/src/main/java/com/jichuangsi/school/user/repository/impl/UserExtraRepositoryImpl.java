@@ -168,7 +168,9 @@ public class UserExtraRepositoryImpl implements IUserExtraRepository {
             criteria1.and("name").regex(pattern);
         }
         Query query = new Query(criteria1);
-        query.skip((pageIndex-1)*pageSize).limit(pageSize).with(new Sort(Sort.Direction.ASC,"createTime"));
+        if (pageIndex > 0) {
+            query.skip((pageIndex - 1) * pageSize).limit(pageSize).with(new Sort(Sort.Direction.ASC, "createTime"));
+        }
         return mongoTemplate.find(query,UserInfo.class);
     }
 

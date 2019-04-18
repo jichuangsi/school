@@ -16,6 +16,7 @@ import com.jichuangsi.school.statistics.model.result.TeacherHomeResultModel;
 import com.jichuangsi.school.statistics.model.result.TeacherResultModel;
 import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
 import com.jichuangsi.school.statistics.service.IQuestionResultService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -36,6 +37,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
     //获取课堂检测统计
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "getStudentSubjectResultKeyGenerator")
     public List<StudentResultModel> getStudentSubjectResult(UserInfoForToken userInfo, String subject) throws QuestionResultException {
         if (StringUtils.isEmpty(userInfo.getClassId())) {
             throw new QuestionResultException(ResultCode.CLASS_NOT_FOUND);
@@ -146,6 +148,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
     //获取学生习题统计
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "getStudentSubjectResultKeyGenerator")
     public List<StudentResultModel> getStudentQuestionResult(UserInfoForToken userInfo, String subject) throws QuestionResultException {
         if (StringUtils.isEmpty(userInfo.getUserId())) {
             throw new QuestionResultException(ResultCode.CLASS_NOT_FOUND);
@@ -248,6 +251,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
     //获取老师课堂统计（按班级划分）
     @Override
+    @Cacheable(unless = "#result == null",key = "T(String).valueOf(#classId).concat('-').concat(#subject)")
     public TeacherResultModel getTeacherCourseResult(UserInfoForToken userInfo, String classId, String subject) throws QuestionResultException {
         if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(subject)) {
             throw new QuestionResultException(ResultCode.PARAM_ERR_MSG);
@@ -341,6 +345,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
     //获取近一周该老师的习题列表
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "getSubjectQuestionKeyGenerator")
     public List<HomeworkModelForTeacher> getSubjectQuestion(UserInfoForToken userInfo, String classId) throws QuestionResultException {
         if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(classId))
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
@@ -353,6 +358,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
     //获取该次习题测验的统计结果
     @Override
+    @Cacheable(unless = "#result == null",key = "T(String).valueOf(#homeId).concat('-').concat(#classId)")
     public TeacherHomeResultModel getSubjectQuestionRate(UserInfoForToken userInfoForToken, String homeId, String classId) throws QuestionResultException {
         if (StringUtils.isEmpty(userInfoForToken.getUserId()) || StringUtils.isEmpty(homeId) || StringUtils.isEmpty(classId)) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);

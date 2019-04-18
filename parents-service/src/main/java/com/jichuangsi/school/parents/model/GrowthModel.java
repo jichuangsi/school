@@ -9,7 +9,7 @@ public class GrowthModel {
     private long createdTime;
     private String studentId;
     private String studentName;
-    private ParentFile file;
+    private ParentFile parentFile;
 
     public String getId() {
         return id;
@@ -51,11 +51,11 @@ public class GrowthModel {
         this.studentName = studentName;
     }
 
-    public ParentFile getFile() {
-        return file;
+    public ParentFile getParentFile() {
+        return parentFile;
     }
 
-    public void setFile(ParentFile file) {
-        this.file = file;
+    public void setParentFile(ParentFile parentFile) {
+        this.parentFile = parentFile;
     }
 }

@@ -4,6 +4,9 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/school
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
 server:
   port: 8083
 
@@ -25,3 +28,5 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
+      mq:
+        send_parent_notice: parent.notice.share.classinteraction

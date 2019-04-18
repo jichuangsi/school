@@ -14,6 +14,7 @@ import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeMo
 import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
 import com.jichuangsi.school.statistics.repository.StudentAddCourseRepository;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -31,6 +32,7 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
     private StudentAddCourseRepository studentAddCourseRepository;
 
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "classStatisticsKeyGenerator")
     public List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo) throws QuestionResultException {
         if (StringUtils.isEmpty(userInfo.getUserId())) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
@@ -52,6 +54,7 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
     }
 
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "classStudentKnowledgesKeyGenerator")
     public List<StudentKnowledgeModel> getClassStudentKnowledges(UserInfoForToken userInfo, SearchStudentKnowledgeModel model) throws QuestionResultException {
         if (StringUtils.isEmpty(model.getClassId()) || !(model.getQuestionIds().size() > 0)) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
@@ -69,6 +72,7 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
     }
 
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "getCourseSignKeyGenerator")
     public List<TransferStudent> getCourseSign(UserInfoForToken userInfo, String courseId,String classId) throws QuestionResultException {
         if (StringUtils.isEmpty(courseId) || StringUtils.isEmpty(classId)) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
