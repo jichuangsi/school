@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.entity.UserInfo;
@@ -14,6 +15,7 @@ import com.jichuangsi.school.user.entity.parent.ParentInfo;
 import com.jichuangsi.school.user.entity.parent.ParentNotice;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.model.SchoolMessageModel;
+import com.jichuangsi.school.user.model.backstage.SchoolNoticeModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.file.UserFile;
 import com.jichuangsi.school.user.repository.*;
@@ -24,7 +26,6 @@ import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.IFileStoreService;
 import com.jichuangsi.school.user.util.ExcelReadUtils;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -61,7 +62,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
     @Resource
     private IParentNoticeRepository parentNoticeRepository;
     @Resource
-    private AmqpTemplate rabbitTemplate;
+    private ISchoolNoticeInfoExtraRepository schoolNoticeInfoExtraRepository;
 
     @Value("${com.jichuangsi.school.mq.send_parent_notice}")
     private String sendNotice;
@@ -203,17 +204,21 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
         List<String> classIds = new ArrayList<String>();
+        SchoolNoticeInfo noticeInfo = new SchoolNoticeInfo();
         if(!StringUtils.isEmpty(model.getClassId())){
             classIds.add(model.getClassId());
+            noticeInfo.setClassName(model.getClassName());
         }else if(!StringUtils.isEmpty(model.getGradeId())){
             List<String> gradeIds = new ArrayList<String>();
             gradeIds.add(model.getGradeId());
             classIds.addAll(getClassIdsByGradeIds(gradeIds));
-        }else if (StringUtils.isEmpty(model.getPharseId())){
+            noticeInfo.setGradeName(model.getGradeName());
+        }else if (!StringUtils.isEmpty(model.getPharseId())){
             List<String> ids = new ArrayList<String>();
             ids.add(model.getPharseId());
             ids = getGradeIdsByPharseIds(ids);
             classIds.addAll(getClassIdsByGradeIds(ids));
+            noticeInfo.setPharseName(model.getPharseName());
         }else {
             SchoolInfo schoolInfo = schoolInfoRepository.findFirstById(schoolId);
             if (null == schoolInfo){
@@ -222,7 +227,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
             List<String> id = schoolInfo.getPhraseIds();
             classIds.addAll(getClassIdsByGradeIds(getGradeIdsByPharseIds(id)));
         }
-        SchoolNoticeInfo noticeInfo = new SchoolNoticeInfo();
+        noticeInfo.setSchoolId(schoolId);
         noticeInfo.setClassIds(classIds);
         noticeInfo.setContent(model.getContent());
         noticeInfo.setCreatorId(userInfo.getUserId());
@@ -271,5 +276,40 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
     private List<UserInfo> getStudentsByClassIds(List<String> classIds,String schoolId){
         List<UserInfo> students = userExtraRepository.findByConditions(schoolId,classIds,"","Student","",0,0);
         return students;
+    }
+
+    @Override
+    public PageInfo<SchoolNoticeModel> getSchoolNotices(UserInfoForToken userInfo, String schoolId, int pageIndex, int pageSize) throws BackUserException {
+        if (StringUtils.isEmpty(schoolId)){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+
+        List<SchoolNoticeInfo> noticeInfos = schoolNoticeInfoExtraRepository.pageBySchoolIdAndDeleteFlagOrderByCreatedTimeDesc(schoolId,"0",pageIndex,pageSize);
+        List<SchoolNoticeModel> models = new ArrayList<SchoolNoticeModel>();
+        for (SchoolNoticeInfo info : noticeInfos){
+            models.add(MappingEntity2ModelConverter.CONVERTERFROMSCHOOLNOTICEINFOTOSCHOOLNOTICEMODEL(info));
+        }
+        PageInfo<SchoolNoticeModel> pageInfo = new PageInfo<>();
+        pageInfo.setTotal(schoolNoticeInfoRepository.countBySchoolIdAndDeleteFlagOrderByCreatedTimeDesc(schoolId,"0"));
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setPageNum(pageIndex);
+        pageInfo.setList(models);
+        return pageInfo;
+    }
+
+    @Override
+    public void deleteSchoolNotice(UserInfoForToken userInfo, String schoolId, String noticeId) throws BackUserException {
+        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(noticeId)){
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        SchoolNoticeInfo schoolNoticeInfo = schoolNoticeInfoRepository.findFirstByIdAndDeleteFlagAndSchoolId(noticeId,"0",schoolId);
+        if (null == schoolNoticeInfo){
+            throw new BackUserException(ResultCode.SELECT_NULL_MSG);
+        }
+        schoolNoticeInfo.setDeleteFlag("1");
+        schoolNoticeInfo.setUpdatedName(userInfo.getUserName());
+        schoolNoticeInfo.setUpdatedId(userInfo.getUserId());
+        schoolNoticeInfo.setUpdatedTime(new Date().getTime());
+        schoolNoticeInfoRepository.save(schoolNoticeInfo);
     }
 }

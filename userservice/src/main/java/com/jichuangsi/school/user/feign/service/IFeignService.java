@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.feign.service;
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
+import com.jichuangsi.school.user.feign.model.NoticeModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
@@ -33,4 +34,6 @@ public interface IFeignService {
     TransferStudent getStudentByAccount(String account) throws FeignControllerException;
 
     TimeTableModel getStudentTimeTable(String studentId) throws FeignControllerException;
+
+    NoticeModel getNoticeDetailByNoticeId(String noticeId) throws FeignControllerException;
 }

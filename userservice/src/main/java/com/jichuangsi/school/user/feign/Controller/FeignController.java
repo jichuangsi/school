@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.user.exception.FeignControllerException;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
+import com.jichuangsi.school.user.feign.model.NoticeModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
@@ -129,6 +130,16 @@ public class FeignController {
     public ResponseModel<TimeTableModel> getStudentTimeTable(@RequestParam("studentId") String studentId){
         try {
             return ResponseModel.sucess("",feignService.getStudentTimeTable(studentId));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "根据noticeId获取通知详情", notes = "")
+    @RequestMapping("/feign/getNoticeDetails")
+    public ResponseModel<NoticeModel> getNoticeDetails(@RequestParam("noticeId") String noticeId){
+        try {
+            return ResponseModel.sucess("",feignService.getNoticeDetailByNoticeId(noticeId));
         } catch (FeignControllerException e) {
             return ResponseModel.fail("",e.getMessage());
         }

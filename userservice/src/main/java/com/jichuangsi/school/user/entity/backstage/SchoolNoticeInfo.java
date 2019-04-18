@@ -20,6 +20,43 @@ public class SchoolNoticeInfo {
     private String updatedId;
     private String updatedName;
     private String deleteFlag = "0";
+    private String schoolId;
+
+    private String pharseName;
+    private String gradeName;
+    private String className;
+
+    public String getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(String schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    public String getPharseName() {
+        return pharseName;
+    }
+
+    public void setPharseName(String pharseName) {
+        this.pharseName = pharseName;
+    }
+
+    public String getGradeName() {
+        return gradeName;
+    }
+
+    public void setGradeName(String gradeName) {
+        this.gradeName = gradeName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     public String getId() {
         return id;

@@ -5,16 +5,15 @@ import com.jichuangsi.school.user.constant.Sex;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.app.AppInfoEntity;
-import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
-import com.jichuangsi.school.user.entity.backstage.BackUserInfo;
-import com.jichuangsi.school.user.entity.backstage.SchoolAttachment;
-import com.jichuangsi.school.user.entity.backstage.TimeTableInfo;
+import com.jichuangsi.school.user.entity.backstage.*;
 import com.jichuangsi.school.user.entity.org.*;
+import com.jichuangsi.school.user.feign.model.NoticeModel;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.app.AppInfoModule;
 import com.jichuangsi.school.user.model.backstage.BackRoleModel;
 import com.jichuangsi.school.user.model.backstage.BackUserModel;
+import com.jichuangsi.school.user.model.backstage.SchoolNoticeModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.basic.Phrase;
 import com.jichuangsi.school.user.model.basic.Subject;
@@ -377,5 +376,26 @@ public final class MappingEntity2ModelConverter {
         userFile.setName(schoolAttachment.getSubName());
         userFile.setOriginalName(schoolAttachment.getOriginalName());
         return userFile;
+    }
+
+    public static final NoticeModel CONVERTERFROMSCHOOLNOTICEINFO(SchoolNoticeInfo schoolNoticeInfo){
+        NoticeModel model = new NoticeModel();
+        model.setContent(schoolNoticeInfo.getContent());
+        model.setCreatedTime(schoolNoticeInfo.getCreatedTime());
+        model.setId(schoolNoticeInfo.getId());
+        model.setTitle(schoolNoticeInfo.getTitle());
+        return model;
+    }
+
+    public static final SchoolNoticeModel CONVERTERFROMSCHOOLNOTICEINFOTOSCHOOLNOTICEMODEL(SchoolNoticeInfo schoolNoticeInfo){
+        SchoolNoticeModel model = new SchoolNoticeModel();
+        model.setClassName(schoolNoticeInfo.getClassName());
+        model.setContent(schoolNoticeInfo.getContent());
+        model.setCreatedTime(schoolNoticeInfo.getCreatedTime());
+        model.setGradeName(schoolNoticeInfo.getGradeName());
+        model.setId(schoolNoticeInfo.getId());
+        model.setPharseName(schoolNoticeInfo.getPharseName());
+        model.setTitle(schoolNoticeInfo.getTitle());
+        return model;
     }
 }

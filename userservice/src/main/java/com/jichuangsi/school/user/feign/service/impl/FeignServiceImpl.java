@@ -5,15 +5,17 @@ import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
-import com.jichuangsi.school.user.entity.backstage.TimeTableInfo;
+import com.jichuangsi.school.user.entity.backstage.SchoolNoticeInfo;
 import com.jichuangsi.school.user.exception.*;
 import com.jichuangsi.school.user.feign.model.ClassDetailModel;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
+import com.jichuangsi.school.user.feign.model.NoticeModel;
 import com.jichuangsi.school.user.feign.model.ParentStudentModel;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
+import com.jichuangsi.school.user.repository.ISchoolNoticeInfoRepository;
 import com.jichuangsi.school.user.repository.UserRepository;
 import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.ISchoolClassService;
@@ -36,6 +38,8 @@ public class FeignServiceImpl implements IFeignService {
     private UserInfoService userInfoService;
     @Resource
     private IBackSchoolService backSchoolService;
+    @Resource
+    private ISchoolNoticeInfoRepository schoolNoticeInfoRepository;
 
     @Override
     public ClassDetailModel findClassDetailByClassId(String classId) throws FeignControllerException {
@@ -185,5 +189,17 @@ public class FeignServiceImpl implements IFeignService {
         } catch (BackUserException e) {
             throw new FeignControllerException(e.getMessage());
         }
+    }
+
+    @Override
+    public NoticeModel getNoticeDetailByNoticeId(String noticeId) throws FeignControllerException {
+        if (StringUtils.isEmpty(noticeId)){
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        SchoolNoticeInfo noticeInfo = schoolNoticeInfoRepository.findFirstByIdAndDeleteFlag(noticeId,"0");
+        if (null == noticeInfo){
+            throw new FeignControllerException(ResultCode.SELECT_NULL_MSG);
+        }
+        return MappingEntity2ModelConverter.CONVERTERFROMSCHOOLNOTICEINFO(noticeInfo);
     }
 }

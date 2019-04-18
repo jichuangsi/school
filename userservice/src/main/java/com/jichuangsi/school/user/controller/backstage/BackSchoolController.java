@@ -1,9 +1,11 @@
 package com.jichuangsi.school.user.controller.backstage;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.model.SchoolMessageModel;
+import com.jichuangsi.school.user.model.backstage.SchoolNoticeModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.file.UserFile;
 import com.jichuangsi.school.user.service.IBackSchoolService;
@@ -101,6 +103,33 @@ public class BackSchoolController {
     public ResponseModel sendSchoolMessage(@ModelAttribute UserInfoForToken userInfo, @PathVariable String schoolId, @RequestBody SchoolMessageModel messageModel){
         try {
             backSchoolService.sendSchoolMessage(userInfo, schoolId, messageModel);
+        } catch (BackUserException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "获取校园通知", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getSchoolNotices/{schoolId}")
+    public ResponseModel<PageInfo<SchoolNoticeModel>> getSchoolNotices(@ModelAttribute UserInfoForToken userInfo, @PathVariable String schoolId, @RequestParam("pageIndex") int pageIndex, @RequestParam("pageSize") int pageSize){
+        try {
+            return ResponseModel.sucess("",backSchoolService.getSchoolNotices(userInfo, schoolId,pageIndex,pageSize));
+        } catch (BackUserException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "删除校园通知", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/deleteSchoolNotice/{schoolId}/{notice}")
+    public ResponseModel deleteSchoolNotice(@ModelAttribute UserInfoForToken userInfo,@PathVariable String schoolId,@PathVariable String notice){
+        try {
+            backSchoolService.deleteSchoolNotice(userInfo, schoolId, notice);
         } catch (BackUserException e) {
             return ResponseModel.fail("",e.getMessage());
         }
