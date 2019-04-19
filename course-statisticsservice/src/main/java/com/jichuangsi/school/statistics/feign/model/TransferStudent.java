@@ -6,6 +6,7 @@ public class TransferStudent {
     private String studentAccount;
     private String studentName;
     private String signFlag = "0";
+    private int commendFlag = 0;
 
     public TransferStudent(){}
 
@@ -39,6 +40,14 @@ public class TransferStudent {
 
     public void setSignFlag(String signFlag) {
         this.signFlag = signFlag;
+    }
+
+    public int getCommendFlag() {
+        return commendFlag;
+    }
+
+    public void setCommendFlag(int commendFlag) {
+        this.commendFlag = commendFlag;
     }
 }
 

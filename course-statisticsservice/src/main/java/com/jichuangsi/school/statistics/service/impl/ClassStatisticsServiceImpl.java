@@ -4,6 +4,8 @@ import com.jichuangsi.microservice.common.constant.ResultCode;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.entity.StudentAddCourseEntity;
+import com.jichuangsi.school.statistics.entity.StudentStatisticsEntity;
+import com.jichuangsi.school.statistics.entity.performance.student.CoursePerformanceEntity;
 import com.jichuangsi.school.statistics.exception.QuestionResultException;
 import com.jichuangsi.school.statistics.feign.ICourseFeignService;
 import com.jichuangsi.school.statistics.feign.IUserFeignService;
@@ -16,11 +18,15 @@ import com.jichuangsi.school.statistics.repository.StudentAddCourseRepository;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @CacheConfig(cacheNames = {"statisticsCache"})
@@ -32,7 +38,9 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
     private ICourseFeignService courseFeignService;
     @Resource
     private StudentAddCourseRepository studentAddCourseRepository;
-
+	@Resource
+    private MongoTemplate mongoTemplate;
+	
     @Override
     @Cacheable(unless = "#result.empty",keyGenerator = "classStatisticsKeyGenerator")
     public List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo) throws QuestionResultException {
@@ -82,6 +90,7 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         return getSignStudents(courseId, classId);
     }
 
+	@Override
     /*@Cacheable(unless = "#result.empty",key = "T(String).valueOf(#courseId).concat('-').concat(#classId)")*/
     public List<TransferStudent> getSignStudents(String courseId,String classId) throws QuestionResultException{
         List<StudentAddCourseEntity> studentAddCourseEntitys = studentAddCourseRepository
@@ -93,10 +102,25 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         for (StudentAddCourseEntity studentAddCourseEntity : studentAddCourseEntitys) {
             for (TransferStudent transferStudent : responseModel.getData()){
                 if (studentAddCourseEntity.getUserId().equals(transferStudent.getStudentId())){
-                    transferStudent.setSignFlag("1");
+                    transferStudent.setCommendFlag(this.getCommendInCourse(courseId, transferStudent.getStudentId()));
+					transferStudent.setSignFlag("1");
                 }
             }
         }
         return responseModel.getData();
+    }
+	
+	private int getCommendInCourse(String courseId, String studentId){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("studentId").is(studentId).and("coursePerformance.courseId").is(courseId));
+        StudentStatisticsEntity studentStatisticsEntity = mongoTemplate.findOne(query, StudentStatisticsEntity.class);
+        if(studentStatisticsEntity==null){
+            return 0;
+        }else{
+            CoursePerformanceEntity o = studentStatisticsEntity.getCoursePerformance()
+                    .stream().filter(p->p.getCourseId().equalsIgnoreCase(courseId)).findFirst().get();
+            if(o == null) return -1;
+            else return o.getCommend();
+        }
     }
 }

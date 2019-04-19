@@ -38,6 +38,7 @@ custom:
       queue-name:
         courseStudentAdd: course.student.add.coursestatistics
         answerQuestion: course.question.answer.coursestatistics
+        performance: student.performance.studentstatistics
   swagger:
     enable: true
         
