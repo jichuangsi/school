@@ -14,6 +14,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 
 import org.springframework.data.mongodb.core.mapping.TextScore;
+import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
@@ -34,8 +35,8 @@ import java.util.regex.Pattern;
 
 public class ImportWord {
 
-    public static List<SelfQuestion> breakUpWord(File word) throws IOException, TranscoderException {
-        InputStream in = new FileInputStream(word);
+    public static List<SelfQuestion> breakUpWord(MultipartFile word) throws IOException, TranscoderException {
+        InputStream in = word.getInputStream();
         XWPFDocument xwpfDocument = new XWPFDocument(in);
         List<XWPFParagraph> paragraphList = xwpfDocument.getParagraphs();
         //切割文本
@@ -169,21 +170,22 @@ public class ImportWord {
         int n=1;
         for (String qt:question
         ) {
-            String[] qtSplit = qt.split("[A-Z]\\.\\s|[A-Z]\\．\\s|\\sD\\．$|\\sD\\.$|\\sD\\．\\s|\\sD\\.\\s");
-            SelfQuestions questions = new SelfQuestions();
+            String[] qtSplit = qt.split("[A-Z]\\.|[A-Z]\\．|\\sD\\．$|\\sD\\.$|\\sD\\．\\s|\\sD\\.\\s");
+            SelfQuestion questions = new SelfQuestion();
             if (qtSplit.length==1){
-                questions.setContent(qtSplit[0]);
+                questions.setQuestionContent(qtSplit[0]);
             }else{
                 List<String> options =new ArrayList<>();
                 for (int i = 0; i <qtSplit.length ; i++) {
                     if (i==0){
-                        questions.setContent(qtSplit[i]);
+                        questions.setQuestionContent(qtSplit[i]);
                     }else {
                         options.add(qtSplit[i]);
                     }
                 }
                 questions.setOptions(options);
             }
+            selfQuestionsList.add(questions);
         }
 
         in.close();

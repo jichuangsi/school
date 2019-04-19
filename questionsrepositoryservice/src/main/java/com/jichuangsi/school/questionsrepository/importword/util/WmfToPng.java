@@ -20,12 +20,6 @@ import java.util.zip.GZIPOutputStream;
 
 public class WmfToPng {
 
-    public static void main(String[] args) {
-
-        String result = convert("d:\\80814378377.wmf");
-        System.out.println(result);
-
-    }
 
     @Deprecated
     public static String convert2(String path) throws TranscoderException,

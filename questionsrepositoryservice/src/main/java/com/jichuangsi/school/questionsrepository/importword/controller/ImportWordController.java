@@ -34,6 +34,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/importword")
 @Api("操作上传的word文档的api")
+@CrossOrigin
 public class ImportWordController {
     @Resource
     private IImportWordService iImportWordService;
@@ -46,8 +47,7 @@ public class ImportWordController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     public ResponseModel analyzeWord(@ModelAttribute UserInfoForToken userInfo, @RequestParam MultipartFile file) throws IImportWordServiceException, IOException, TranscoderException {
         String subjectName= file.getName();
-        File subjectWord=(File)file;
-        List<SelfQuestion> selfQuestionsList = ImportWord.breakUpWord(subjectWord);
+        List<SelfQuestion> selfQuestionsList = ImportWord.breakUpWord(file);
         return ResponseModel.sucess("",selfQuestionsList);
     }
     @ApiOperation(value = "保存题目到mongodb数据库", notes = "")

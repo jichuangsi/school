@@ -27,13 +27,7 @@ import java.util.List;
  */
 public class Word2Html {
 
-    public static void main(String argv[]) {
-        try {
-            convert2Html("D:\\test\\2222222222222222222.doc","D:\\test\\2222222222222222222.html");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public static void writeFile(String content, String path) {
         FileOutputStream fos = null;
