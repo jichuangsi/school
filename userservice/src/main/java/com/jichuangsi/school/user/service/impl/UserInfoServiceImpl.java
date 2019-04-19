@@ -406,7 +406,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        try {
+        //try {
+            if (userRepository.countByAccount(model.getAccount()) > 0) {
+                throw new UserServiceException(ResultCode.USER_IS_EXIST);
+            }
             UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
             info.setStatus(Status.ACTIVATE.getName());
           /*  if (info.getRoleInfos().get(0) instanceof TeacherInfo){
@@ -441,9 +444,9 @@ public class UserInfoServiceImpl implements UserInfoService {
                 }
             }*/
             userRepository.save(info);
-        } catch (Exception e) {
-            throw new UserServiceException(ResultCode.PARAM_ERR_MSG);
-        }
+        /*} catch (Exception e) {
+            throw new UserServiceException(ResultCode.);
+        }*/
     }
 
     @Override
@@ -451,13 +454,16 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        try {
+        //try {
+            if (userRepository.countByAccount(model.getAccount()) > 0) {
+                throw new UserServiceException(ResultCode.USER_IS_EXIST);
+            }
             UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
             info.setStatus(Status.ACTIVATE.getName());
             userRepository.save(info);
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             throw new UserServiceException(ResultCode.PARAM_ERR_MSG);
-        }
+        }*/
     }
 
     @Override
