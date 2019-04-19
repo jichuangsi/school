@@ -101,8 +101,8 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         }
         for (StudentAddCourseEntity studentAddCourseEntity : studentAddCourseEntitys) {
             for (TransferStudent transferStudent : responseModel.getData()){
+                transferStudent.setCommendFlag(this.getCommendInCourse(courseId, transferStudent.getStudentId()));
                 if (studentAddCourseEntity.getUserId().equals(transferStudent.getStudentId())){
-                    transferStudent.setCommendFlag(this.getCommendInCourse(courseId, transferStudent.getStudentId()));
 					transferStudent.setSignFlag("1");
                 }
             }
