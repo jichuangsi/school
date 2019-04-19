@@ -14,6 +14,7 @@ import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeMo
 import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
 import com.jichuangsi.school.statistics.repository.StudentAddCourseRepository;
 import com.jichuangsi.school.statistics.service.IClassStatisticsService;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"statisticsCache"})
 public class ClassStatisticsServiceImpl implements IClassStatisticsService {
 
     @Resource
@@ -72,11 +74,16 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
     }
 
     @Override
-    @Cacheable(unless = "#result.empty",keyGenerator = "getCourseSignKeyGenerator")
+    @Cacheable(unless = "#result.isEmpty()",keyGenerator = "getCourseSignKeyGenerator")
     public List<TransferStudent> getCourseSign(UserInfoForToken userInfo, String courseId,String classId) throws QuestionResultException {
         if (StringUtils.isEmpty(courseId) || StringUtils.isEmpty(classId)) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
         }
+        return getSignStudents(courseId, classId);
+    }
+
+    @Cacheable(unless = "#result.empty",keyGenerator = "getCourseSignKeyGenerator")
+    public List<TransferStudent> getSignStudents(String courseId,String classId) throws QuestionResultException{
         List<StudentAddCourseEntity> studentAddCourseEntitys = studentAddCourseRepository
                 .findByCourseId(courseId);
         ResponseModel<List<TransferStudent>> responseModel = userFeignService.getStudentsForClass(classId);

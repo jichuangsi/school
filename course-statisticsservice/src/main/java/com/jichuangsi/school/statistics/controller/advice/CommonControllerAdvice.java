@@ -3,8 +3,11 @@
  */
 package com.jichuangsi.school.statistics.controller.advice;
 
-import java.io.UnsupportedEncodingException;
-
+import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.jichuangsi.microservice.common.model.ResponseModel;
+import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,11 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.alibaba.fastjson.JSONObject;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.jichuangsi.microservice.common.model.ResponseModel;
-import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import java.io.UnsupportedEncodingException;
 
 /**
  * @author huangjiajun
@@ -41,7 +40,8 @@ public class CommonControllerAdvice {
 			DecodedJWT jwt = JWT.decode(accessToken);
 			String user = jwt.getClaim(userClaim).asString();
 			//model.addAttribute(userClaim, JSONObject.parseObject(user,UserInfoForToken.class));
-			return JSONObject.parseObject(user,UserInfoForToken.class);
+			UserInfoForToken userInfo = JSONObject.parseObject(user,UserInfoForToken.class);
+			return userInfo;
 		}
 		return null;
 	}

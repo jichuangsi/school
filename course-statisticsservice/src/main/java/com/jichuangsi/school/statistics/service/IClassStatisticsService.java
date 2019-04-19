@@ -16,4 +16,6 @@ public interface IClassStatisticsService {
     List<StudentKnowledgeModel> getClassStudentKnowledges(UserInfoForToken userInfo,SearchStudentKnowledgeModel model) throws QuestionResultException;
 
     List<TransferStudent> getCourseSign(UserInfoForToken userInfo, String courseId,String classId) throws QuestionResultException;
+
+    List<TransferStudent> getSignStudents(String courseId,String classId) throws QuestionResultException;
 }

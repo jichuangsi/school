@@ -14,7 +14,7 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
   cache:
-    cache-names: statisticsCache
+    cache-names: courseCache
     caffeine:
       spec: maximumSize=500,expireAfterAccess=43200s
     type: caffeine

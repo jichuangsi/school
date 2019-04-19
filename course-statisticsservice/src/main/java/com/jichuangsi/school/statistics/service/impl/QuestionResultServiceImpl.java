@@ -16,6 +16,7 @@ import com.jichuangsi.school.statistics.model.result.TeacherHomeResultModel;
 import com.jichuangsi.school.statistics.model.result.TeacherResultModel;
 import com.jichuangsi.school.statistics.service.ICourseStatisticsService;
 import com.jichuangsi.school.statistics.service.IQuestionResultService;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 @Service
+@CacheConfig(cacheNames = {"statisticsCache"})
 public class QuestionResultServiceImpl implements IQuestionResultService {
 
     @Resource

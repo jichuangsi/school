@@ -136,7 +136,7 @@ public class FeignController {
     }
 
     @ApiOperation(value = "根据noticeId获取通知详情", notes = "")
-    @RequestMapping("/feign/getNoticeDetails")
+    @RequestMapping("/getNoticeDetails")
     public ResponseModel<NoticeModel> getNoticeDetails(@RequestParam("noticeId") String noticeId){
         try {
             return ResponseModel.sucess("",feignService.getNoticeDetailByNoticeId(noticeId));
@@ -144,4 +144,11 @@ public class FeignController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+    @ApiOperation(value = "获取学生课堂签到信息", notes = "")
+    @PostMapping("/getStudentCourseNotice")
+    public ResponseModel getStudentCourseNotice(){
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
 }

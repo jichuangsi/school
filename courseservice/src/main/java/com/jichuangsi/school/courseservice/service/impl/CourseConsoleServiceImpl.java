@@ -18,6 +18,7 @@ import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,6 +30,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 @Service
+@CacheConfig(cacheNames = "courseCache")
 public class CourseConsoleServiceImpl implements ICourseConsoleService {
 
     @Value("${com.jichuangsi.school.result.date-format1}")

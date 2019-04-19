@@ -1,5 +1,6 @@
 package com.jichuangsi.school.courseservice.service.impl;
 
+import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.Result;
@@ -9,13 +10,23 @@ import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
+import com.jichuangsi.school.courseservice.feign.service.IStatisticsFeignService;
 import com.jichuangsi.school.courseservice.model.*;
-import com.jichuangsi.school.courseservice.repository.*;
+import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
+import com.jichuangsi.school.courseservice.repository.CourseRepository;
+import com.jichuangsi.school.courseservice.repository.QuestionRepository;
+import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
+import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
 import com.jichuangsi.school.courseservice.service.IUserInfoService;
-import com.jichuangsi.school.courseservice.util.*;
+import com.jichuangsi.school.courseservice.util.CollectionsTools;
+import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
+import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
+import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -32,6 +43,8 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Value("${com.jichuangsi.school.result.page-size}")
     private int defaultPageSize;
+
+    private Logger logger = LoggerFactory.getLogger(TeacherCourseServiceImpl.class);
 
     @Resource
     private IMqService mqService;
@@ -56,6 +69,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Resource
+    private IStatisticsFeignService statisticsFeignService;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException {
@@ -195,6 +211,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                     if (course2Update != null) {
                         this.finishQuestionInCourse(course2Update);
                     }
+                    sendNoticeToParent(course2Update.getId(),course2Update.getClassId());
                 } else if (Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())) {
                     throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
                 } else if (Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())) {
@@ -457,5 +474,21 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             answerForStudents.add(MappingEntity2ModelConverter.ConvertStudentAnswer(studentAnswer));
         });
         return answerForStudents;
+    }
+
+    private void sendNoticeToParent(String courseId,String classId){
+        try {
+            if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(courseId)){
+                throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+            }
+            ResponseModel<List<TransferStudent>> responseModel = statisticsFeignService.getSignStudents(courseId, classId);
+            if (!ResultCode.SUCESS.equals(responseModel.getCode())){
+                throw new TeacherCourseServiceException(responseModel.getMsg());
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
     }
 }
