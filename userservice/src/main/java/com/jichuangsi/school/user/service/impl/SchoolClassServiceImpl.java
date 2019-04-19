@@ -101,7 +101,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     @Override
     public ClassDetailModel getClassDetail(String classId) throws ClassServiceException {
         if (StringUtils.isEmpty(classId)) throw new ClassServiceException(ResultCode.PARAM_MISS_MSG);
-        GradeInfo gradeInfo = gradeInfoRepository.findByClassIdsContaining(classId);
+        GradeInfo gradeInfo = gradeInfoRepository.findFirstByClassIdsContaining(classId);
         if (null == gradeInfo) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);
         SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContaining(gradeInfo.getId());
         if (null == schoolInfo) throw new ClassServiceException(ResultCode.SELECT_NULL_MSG);

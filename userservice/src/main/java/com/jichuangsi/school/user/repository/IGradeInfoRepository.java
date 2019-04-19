@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IGradeInfoRepository extends MongoRepository<GradeInfo,String> {
 
-    GradeInfo findByClassIdsContaining(String classId);
+    GradeInfo findFirstByClassIdsContaining(String classId);
 
     GradeInfo findFirstById(String id);
 

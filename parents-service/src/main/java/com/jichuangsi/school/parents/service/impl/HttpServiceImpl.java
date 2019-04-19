@@ -23,6 +23,11 @@ public class HttpServiceImpl implements IHttpService {
     private String getTokenPath;
     @Value("${com.jichuangsi.school.wx.getToken.method}")
     private String getTokenMethod;
+    @Value("${com.jichuangsi.school.wx.appid}")
+    private String appId;
+    @Value("${com.jichuangsi.school.wx.appSecret}")
+    private String appSecret;
+
     @Resource
     private HttpHeaderConfig httpHeaderConfig;
 
@@ -30,8 +35,8 @@ public class HttpServiceImpl implements IHttpService {
     public String findWxTokenModel(String code) throws ParentHttpException {
         Map<String,String> headers = httpHeaderConfig.getheaders();
         Map<String,String> querys = new HashMap<String,String>();
-        querys.put("appid","wx6242cfcc7e43e927");
-        querys.put("secret","be8cfbba1effe57abb0b08ce6d3e0834");
+        querys.put("appid",appId);
+        querys.put("secret",appSecret);
         querys.put("code",code);
         querys.put("grant_type","authorization_code");
         HttpResponse response = null;
@@ -49,8 +54,8 @@ public class HttpServiceImpl implements IHttpService {
         Map<String,String> headers = httpHeaderConfig.getheaders();
         Map<String,String> querys = new HashMap<String,String>();
         querys.put("access_token",token);
-        querys.put("appid","wx6242cfcc7e43e927");
-        querys.put("secret","be8cfbba1effe57abb0b08ce6d3e0834");
+        querys.put("appid",appId);
+        querys.put("secret",appSecret);
         querys.put("grant_type","authorization_code");
         querys.put("code",code);
         querys.put("openid",openId);
