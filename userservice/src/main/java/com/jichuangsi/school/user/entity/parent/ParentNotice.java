@@ -23,6 +23,86 @@ public class ParentNotice {
     private String deleteFlag = "0";
     private String noticeType;
     private String read = "0";
+    private Course course;
+
+
+
+    public class Course{
+        private String courseId;
+        private String courseName;
+        private String teacherName;
+        private String teacherId;
+        private String subjectName;
+        private String subjectId;
+
+        public Course() {
+        }
+
+        public Course(String courseId, String courseName, String teacherName, String teacherId, String subjectName,String subjectId) {
+            this.courseId = courseId;
+            this.courseName = courseName;
+            this.teacherName = teacherName;
+            this.teacherId = teacherId;
+            this.subjectName = subjectName;
+            this.subjectId = subjectId;
+        }
+
+        public String getSubjectId() {
+            return subjectId;
+        }
+
+        public void setSubjectId(String subjectId) {
+            this.subjectId = subjectId;
+        }
+
+        public String getCourseId() {
+            return courseId;
+        }
+
+        public void setCourseId(String courseId) {
+            this.courseId = courseId;
+        }
+
+        public String getCourseName() {
+            return courseName;
+        }
+
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
+        }
+
+        public String getTeacherName() {
+            return teacherName;
+        }
+
+        public void setTeacherName(String teacherName) {
+            this.teacherName = teacherName;
+        }
+
+        public String getTeacherId() {
+            return teacherId;
+        }
+
+        public void setTeacherId(String teacherId) {
+            this.teacherId = teacherId;
+        }
+
+        public String getSubjectName() {
+            return subjectName;
+        }
+
+        public void setSubjectName(String subjectName) {
+            this.subjectName = subjectName;
+        }
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(String courseId, String courseName, String teacherName, String teacherId, String subjectName,String subjectId) {
+        this.course = new Course(courseId, courseName, teacherName, teacherId, subjectName,subjectId);
+    }
 
     public String getRead() {
         return read;

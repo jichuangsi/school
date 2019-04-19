@@ -24,7 +24,7 @@ public class FeignController {
     private IFeignService feignService;
 
 
-    @ApiOperation(value = "根据questionIds和studentId获取学生的正确率", notes = "")
+    @ApiOperation(value = "根据courseId和classId获取学生签到", notes = "")
     @ApiImplicitParams({ })
     @GetMapping("/getSignStudents")
     public ResponseModel<List<TransferStudent>> getSignStudents(@RequestParam("courseId") String courseId,@RequestParam("classId") String classId){

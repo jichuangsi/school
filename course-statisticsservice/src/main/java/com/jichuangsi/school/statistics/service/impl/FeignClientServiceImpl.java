@@ -7,11 +7,13 @@ import com.jichuangsi.school.statistics.service.IClassStatisticsService;
 import com.jichuangsi.school.statistics.service.IFeignService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class FeignClientServiceImpl implements IFeignService {
 
+    @Resource
     private IClassStatisticsService classStatisticsService;
 
     @Override

@@ -6,17 +6,18 @@ import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.backstage.SchoolNoticeInfo;
+import com.jichuangsi.school.user.entity.parent.ParentInfo;
+import com.jichuangsi.school.user.entity.parent.ParentNotice;
 import com.jichuangsi.school.user.exception.*;
-import com.jichuangsi.school.user.feign.model.ClassDetailModel;
-import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
-import com.jichuangsi.school.user.feign.model.NoticeModel;
-import com.jichuangsi.school.user.feign.model.ParentStudentModel;
+import com.jichuangsi.school.user.feign.model.*;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.ISchoolNoticeInfoRepository;
 import com.jichuangsi.school.user.repository.UserRepository;
+import com.jichuangsi.school.user.repository.parent.IParentInfoRepository;
+import com.jichuangsi.school.user.repository.parent.IParentNoticeRepository;
 import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
@@ -40,6 +41,10 @@ public class FeignServiceImpl implements IFeignService {
     private IBackSchoolService backSchoolService;
     @Resource
     private ISchoolNoticeInfoRepository schoolNoticeInfoRepository;
+    @Resource
+    private IParentNoticeRepository parentNoticeRepository;
+    @Resource
+    private IParentInfoRepository parentInfoRepository;
 
     @Override
     public ClassDetailModel findClassDetailByClassId(String classId) throws FeignControllerException {
@@ -201,5 +206,31 @@ public class FeignServiceImpl implements IFeignService {
             throw new FeignControllerException(ResultCode.SELECT_NULL_MSG);
         }
         return MappingEntity2ModelConverter.CONVERTERFROMSCHOOLNOTICEINFO(noticeInfo);
+    }
+
+    @Override
+    public void sendParentStudentMsg(CourseSignModel model) throws FeignControllerException {
+        if (StringUtils.isEmpty(model.getCourseId()) || StringUtils.isEmpty(model.getCourseName())){
+            throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
+        for (TransferStudent student : model.getStudents()) {
+            try {
+                ParentInfo parentInfo = parentInfoRepository.findFirstByStudentIdsContainingAndDeleteFlag(student.getStudentId(),"0");
+                ParentNotice notice = new ParentNotice();
+                notice.setTitle("课堂：" + model.getCourseName());
+                notice.setCourse(model.getCourseId(), model.getCourseName(), model.getTeacherName(), model.getTeacherId(), model.getSubjectName(),model.getSubjectId());
+                notice.setNoticeType(ParentNotice.SYSTEM_NOTICE);
+                if ("0".equals(student.getSignFlag())){
+                    notice.setContent(student.getStudentName()+"未到堂上课");
+                }
+                notice.setParentName(StringUtils.isEmpty(parentInfo.getUserName())?"":parentInfo.getUserName());
+                notice.setParentId(parentInfo.getId());
+                parentNotices.add(notice);
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        parentNoticeRepository.saveAll(parentNotices);
     }
 }

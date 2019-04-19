@@ -16,4 +16,8 @@ public interface IParentInfoRepository extends MongoRepository<ParentInfo,String
     ParentInfo findFirstByAccountAndPwdAndDeleteFlag(String account, String pwd, String delete);
 
     List<ParentInfo> findByStudentIdsIn(List<String> studentIds);
+
+    List<ParentInfo> findByStudentIdsContaining(String studentId);
+
+    ParentInfo findFirstByStudentIdsContainingAndDeleteFlag(String studentId,String delete);
 }

@@ -296,7 +296,7 @@ public class ParentServiceImpl implements IParentService {
         if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(noticeId)){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
-        ParentNotice parentNotice = parentNoticeRepository.findFirstByIdAndParentId(userInfo.getUserId(),noticeId);
+        ParentNotice parentNotice = parentNoticeRepository.findFirstByIdAndParentId(noticeId,userInfo.getUserId());
         if (null == parentNotice){
             throw new ParentsException(ResultCode.SELECT_NULL_MSG);
         }

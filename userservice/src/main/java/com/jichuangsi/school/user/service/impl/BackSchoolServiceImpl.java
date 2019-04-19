@@ -69,11 +69,11 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
     @Override
     public TimeTableModel findByClassId(String classId) throws BackUserException {
-        if (StringUtils.isEmpty(classId)){
+        if (StringUtils.isEmpty(classId)) {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
-        TimeTableInfo timeTableInfo = timeTableInfoRepository.findFirstByClassIdAndDeleteOrderByCreatedTimeDesc(classId,"0");
-        if (null == timeTableInfo){
+        TimeTableInfo timeTableInfo = timeTableInfoRepository.findFirstByClassIdAndDeleteOrderByCreatedTimeDesc(classId, "0");
+        if (null == timeTableInfo) {
             throw new BackUserException(ResultCode.CLASS_TABLE_NULL_MSG);
         }
         return MappingEntity2ModelConverter.CONVERTERFROMTIMETABLEINFO(timeTableInfo);
@@ -89,7 +89,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         if (null == classInfo) {
             throw new BackUserException(ResultCode.CLASS_SELECT_NULL_MSG);
         }
-        if (timeTableInfoRepository.countByClassIdAndDelete(classId,"0") > 0){
+        if (timeTableInfoRepository.countByClassIdAndDelete(classId, "0") > 0) {
             throw new BackUserException(ResultCode.CLASS_TABLE_EXIST_MSG);
         }
         UserFile userFile = new UserFile();
@@ -113,19 +113,19 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         List<String> thursday = new ArrayList<String>();
         List<String> friday = new ArrayList<String>();
         List<String> classBegin = new ArrayList<String>();
-        for (int i = 0; i < 9; i++){
+        for (int i = 0; i < 9; i++) {
             List<String> results = new ArrayList<>();
             try {
-                results = ExcelReadUtils.getOneRow(i,file);
+                results = ExcelReadUtils.getOneRow(i, file);
             } catch (Exception e) {
                 throw new BackUserException(ResultCode.FILE_CHANGE_ERR);
             }
-            classBegin = insertListValue(0,results,classBegin);
-            monday = insertListValue(1,results,monday);
-            tuesday = insertListValue(2,results,tuesday);
-            wednesday = insertListValue(3,results,wednesday);
-            thursday = insertListValue(4,results,thursday);
-            friday = insertListValue(5,results,friday);
+            classBegin = insertListValue(0, results, classBegin);
+            monday = insertListValue(1, results, monday);
+            tuesday = insertListValue(2, results, tuesday);
+            wednesday = insertListValue(3, results, wednesday);
+            thursday = insertListValue(4, results, thursday);
+            friday = insertListValue(5, results, friday);
         }
         timeTableInfo.setClassBegin(classBegin);
         timeTableInfo.setMonday(monday);
@@ -138,11 +138,11 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
     @Override
     public void delTimeTable(String tableId, String classId, UserInfoForToken userInfo) throws BackUserException {
-        if (StringUtils.isEmpty(tableId) || StringUtils.isEmpty(classId)){
+        if (StringUtils.isEmpty(tableId) || StringUtils.isEmpty(classId)) {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
-        TimeTableInfo timeTableInfo = timeTableInfoRepository.findFirstByIdAndClassIdAndDelete(tableId,classId,"0");
-        if (null == timeTableInfo){
+        TimeTableInfo timeTableInfo = timeTableInfoRepository.findFirstByIdAndClassIdAndDelete(tableId, classId, "0");
+        if (null == timeTableInfo) {
             throw new BackUserException(ResultCode.CLASS_TABLE_NULL_MSG);
         }
         timeTableInfo.setDelete("1");
@@ -152,8 +152,8 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         timeTableInfoRepository.save(timeTableInfo);
     }
 
-    private List<String> insertListValue(int i,List<String> values,List<String> result){
-        if (values.size() >= i+1){
+    private List<String> insertListValue(int i, List<String> values, List<String> result) {
+        if (values.size() >= i + 1) {
             result.add(values.get(i));
         }
         return result;
@@ -171,12 +171,12 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
     @Override
     public UserFile downAttachment(UserInfoForToken userInfo, String subName) throws BackUserException {
-        if (StringUtils.isEmpty(subName)){
+        if (StringUtils.isEmpty(subName)) {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
         try {
             UserFile file = fileStoreService.downFile(subName);
-         /*   saveFile(file);*/
+            /*   saveFile(file);*/
             return file;
         } catch (Exception e) {
             throw new BackUserException(e.getMessage());
@@ -200,28 +200,28 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
     @Override
     public void sendSchoolMessage(UserInfoForToken userInfo, String schoolId, SchoolMessageModel model) throws BackUserException {
-        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(model.getTiltle()) || StringUtils.isEmpty(model.getContent())){
+        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(model.getTiltle()) || StringUtils.isEmpty(model.getContent())) {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
         List<String> classIds = new ArrayList<String>();
         SchoolNoticeInfo noticeInfo = new SchoolNoticeInfo();
-        if(!StringUtils.isEmpty(model.getClassId())){
+        if (!StringUtils.isEmpty(model.getClassId())) {
             classIds.add(model.getClassId());
             noticeInfo.setClassName(model.getClassName());
-        }else if(!StringUtils.isEmpty(model.getGradeId())){
+        } else if (!StringUtils.isEmpty(model.getGradeId())) {
             List<String> gradeIds = new ArrayList<String>();
             gradeIds.add(model.getGradeId());
             classIds.addAll(getClassIdsByGradeIds(gradeIds));
             noticeInfo.setGradeName(model.getGradeName());
-        }else if (!StringUtils.isEmpty(model.getPharseId())){
+        } else if (!StringUtils.isEmpty(model.getPharseId())) {
             List<String> ids = new ArrayList<String>();
             ids.add(model.getPharseId());
             ids = getGradeIdsByPharseIds(ids);
             classIds.addAll(getClassIdsByGradeIds(ids));
             noticeInfo.setPharseName(model.getPharseName());
-        }else {
+        } else {
             SchoolInfo schoolInfo = schoolInfoRepository.findFirstById(schoolId);
-            if (null == schoolInfo){
+            if (null == schoolInfo) {
                 throw new BackUserException(ResultCode.SCHOOL_SELECT_NULL_MSG);
             }
             List<String> id = schoolInfo.getPhraseIds();
@@ -236,61 +236,64 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         noticeInfo.setUpdatedId(userInfo.getUserId());
         noticeInfo.setUpdatedName(userInfo.getUserName());
         noticeInfo = schoolNoticeInfoRepository.save(noticeInfo);
-        List<UserInfo> userInfos = getStudentsByClassIds(classIds,schoolId);
+        List<UserInfo> userInfos = getStudentsByClassIds(classIds, schoolId);
         List<String> studentIds = new ArrayList<String>();
-        for (UserInfo student : userInfos){
+        for (UserInfo student : userInfos) {
             studentIds.add(student.getId());
         }
-        List<ParentInfo> parentInfos = parentInfoRepository.findByStudentIdsIn(studentIds);
         List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
-        for (ParentInfo parentInfo : parentInfos){
-            ParentNotice notice = new ParentNotice();
-            notice.setMessageId(noticeInfo.getId());
-            notice.setNoticeType(ParentNotice.COLLEGE_NOTICE);
-            notice.setParentId(parentInfo.getId());
-            notice.setParentName(parentInfo.getUserName());
-            notice.setTitle(model.getTiltle());
-            parentNotices.add(notice);
+        for (String studentId : studentIds) {
+            List<ParentInfo> parentInfos = parentInfoRepository.findByStudentIdsContaining(studentId);
+            for (ParentInfo parentInfo : parentInfos) {
+                ParentNotice notice = new ParentNotice();
+                notice.setMessageId(noticeInfo.getId());
+                notice.setNoticeType(ParentNotice.COLLEGE_NOTICE);
+                notice.setParentId(parentInfo.getId());
+                notice.setParentName(StringUtils.isEmpty(parentInfo.getUserName()) ? "" : parentInfo.getUserName());
+                notice.setTitle(model.getTiltle());
+                parentNotices.add(notice);
+            }
         }
         parentNoticeRepository.saveAll(parentNotices);
+
     }
 
-    private List<String> getClassIdsByGradeIds(List<String> gradeIds){
+    private List<String> getClassIdsByGradeIds(List<String> gradeIds) {
         List<String> classIds = new ArrayList<String>();
-        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0",gradeIds);
-        for (GradeInfo gradeInfo : gradeInfos){
+        List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0", gradeIds);
+        for (GradeInfo gradeInfo : gradeInfos) {
             classIds.addAll(gradeInfo.getClassIds());
         }
         return classIds;
     }
 
-    private List<String> getGradeIdsByPharseIds(List<String> pharseIds){
+    private List<String> getGradeIdsByPharseIds(List<String> pharseIds) {
         List<String> gradeIds = new ArrayList<String>();
-        List<PhraseInfo> phraseInfos = phraseInfoRepository.findByDeleteFlagAndIdIn("0",pharseIds);
-        for (PhraseInfo phraseInfo : phraseInfos){
+        List<PhraseInfo> phraseInfos = phraseInfoRepository.findByDeleteFlagAndIdIn("0", pharseIds);
+        for (PhraseInfo phraseInfo : phraseInfos) {
             gradeIds.addAll(phraseInfo.getGradeIds());
         }
         return gradeIds;
     }
 
-    private List<UserInfo> getStudentsByClassIds(List<String> classIds,String schoolId){
-        List<UserInfo> students = userExtraRepository.findByConditions(schoolId,classIds,"","Student","",0,0);
+    private List<UserInfo> getStudentsByClassIds(List<String> classIds, String schoolId) {
+        List<UserInfo> students = userExtraRepository.findByConditions(schoolId, classIds, "", "Student", "", 0, 0);
         return students;
     }
 
     @Override
     public PageInfo<SchoolNoticeModel> getSchoolNotices(UserInfoForToken userInfo, String schoolId, int pageIndex, int pageSize) throws BackUserException {
-        if (StringUtils.isEmpty(schoolId)){
+        if (StringUtils.isEmpty(schoolId)) {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
 
-        List<SchoolNoticeInfo> noticeInfos = schoolNoticeInfoExtraRepository.pageBySchoolIdAndDeleteFlagOrderByCreatedTimeDesc(schoolId,"0",pageIndex,pageSize);
+        List<SchoolNoticeInfo> noticeInfos = schoolNoticeInfoExtraRepository.pageBySchoolIdAndDeleteFlagOrderByCreatedTimeDesc(schoolId, "0", pageIndex, pageSize);
         List<SchoolNoticeModel> models = new ArrayList<SchoolNoticeModel>();
-        for (SchoolNoticeInfo info : noticeInfos){
+        for (SchoolNoticeInfo info : noticeInfos) {
             models.add(MappingEntity2ModelConverter.CONVERTERFROMSCHOOLNOTICEINFOTOSCHOOLNOTICEMODEL(info));
         }
         PageInfo<SchoolNoticeModel> pageInfo = new PageInfo<>();
-        pageInfo.setTotal(schoolNoticeInfoRepository.countBySchoolIdAndDeleteFlagOrderByCreatedTimeDesc(schoolId,"0"));
+        pageInfo.setTotal(schoolNoticeInfoRepository.countBySchoolIdAndDeleteFlagOrderByCreatedTimeDesc(schoolId, "0"));
         pageInfo.setPageSize(pageSize);
         pageInfo.setPageNum(pageIndex);
         pageInfo.setList(models);
@@ -299,11 +302,11 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
     @Override
     public void deleteSchoolNotice(UserInfoForToken userInfo, String schoolId, String noticeId) throws BackUserException {
-        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(noticeId)){
+        if (StringUtils.isEmpty(schoolId) || StringUtils.isEmpty(noticeId)) {
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);
         }
-        SchoolNoticeInfo schoolNoticeInfo = schoolNoticeInfoRepository.findFirstByIdAndDeleteFlagAndSchoolId(noticeId,"0",schoolId);
-        if (null == schoolNoticeInfo){
+        SchoolNoticeInfo schoolNoticeInfo = schoolNoticeInfoRepository.findFirstByIdAndDeleteFlagAndSchoolId(noticeId, "0", schoolId);
+        if (null == schoolNoticeInfo) {
             throw new BackUserException(ResultCode.SELECT_NULL_MSG);
         }
         schoolNoticeInfo.setDeleteFlag("1");

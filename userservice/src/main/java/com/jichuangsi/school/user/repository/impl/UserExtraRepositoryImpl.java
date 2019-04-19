@@ -158,7 +158,7 @@ public class UserExtraRepositoryImpl implements IUserExtraRepository {
             }
             criteria.andOperator(criteriaS,criteriaC);
         }else {
-            if (!(classIds.size() > 0)) {
+            if (classIds.size() > 0) {
                 criteria.and("primaryClass.classId").in(classIds);
             }
         }

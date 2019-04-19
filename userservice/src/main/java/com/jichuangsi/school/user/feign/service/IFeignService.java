@@ -1,10 +1,7 @@
 package com.jichuangsi.school.user.feign.service;
 
 import com.jichuangsi.school.user.exception.FeignControllerException;
-import com.jichuangsi.school.user.feign.model.ClassDetailModel;
-import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
-import com.jichuangsi.school.user.feign.model.NoticeModel;
-import com.jichuangsi.school.user.feign.model.ParentStudentModel;
+import com.jichuangsi.school.user.feign.model.*;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
@@ -36,4 +33,6 @@ public interface IFeignService {
     TimeTableModel getStudentTimeTable(String studentId) throws FeignControllerException;
 
     NoticeModel getNoticeDetailByNoticeId(String noticeId) throws FeignControllerException;
+
+    void sendParentStudentMsg(CourseSignModel model) throws FeignControllerException;
 }

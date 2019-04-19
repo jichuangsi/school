@@ -10,7 +10,9 @@ import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
+import com.jichuangsi.school.courseservice.feign.model.CourseSignModel;
 import com.jichuangsi.school.courseservice.feign.service.IStatisticsFeignService;
+import com.jichuangsi.school.courseservice.feign.service.IUserFeignService;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
@@ -72,6 +74,9 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
 
     @Resource
     private IStatisticsFeignService statisticsFeignService;
+
+    @Resource
+    private IUserFeignService userFeignService;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException {
@@ -211,7 +216,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                     if (course2Update != null) {
                         this.finishQuestionInCourse(course2Update);
                     }
-                    sendNoticeToParent(course2Update.getId(),course2Update.getClassId());
+                    sendNoticeToParent(course2Update.getId(),course2Update.getClassId(),course2Update.getName(),course2Update.getTeacherId(),course2Update.getTeacherName(),course2Update.getSubjectName(),course2Update.getSubjectId());
                 } else if (Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())) {
                     throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
                 } else if (Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())) {
@@ -476,7 +481,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
         return answerForStudents;
     }
 
-    private void sendNoticeToParent(String courseId,String classId){
+    private void sendNoticeToParent(String courseId,String classId,String courseName,String teacherId,String teacherName,String subjectName,String subjectId){
         try {
             if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(courseId)){
                 throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
@@ -485,7 +490,18 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             if (!ResultCode.SUCESS.equals(responseModel.getCode())){
                 throw new TeacherCourseServiceException(responseModel.getMsg());
             }
-
+            CourseSignModel model = new CourseSignModel();
+            model.setCourseId(courseId);
+            model.setCourseName(courseName);
+            model.setStudents(responseModel.getData());
+            model.setSubjectId(subjectId);
+            model.setSubjectName(subjectName);
+            model.setTeacherId(teacherId);
+            model.setTeacherName(teacherName);
+            ResponseModel response = userFeignService.sendParentStudentMsg(model);
+            if (!ResultCode.SUCESS.equals(response.getCode())){
+                throw new TeacherCourseServiceException(response.getMsg());
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

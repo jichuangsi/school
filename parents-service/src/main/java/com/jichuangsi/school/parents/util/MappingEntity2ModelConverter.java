@@ -48,6 +48,14 @@ public class MappingEntity2ModelConverter {
         model.setTitle(notice.getTitle());
         model.setNoticeId(notice.getMessageId());
         model.setRead(notice.getRead());
+        if(null != notice.getCourse()){
+            model.setTeacherId(notice.getCourse().getTeacherId());
+            model.setTeacherName(notice.getCourse().getTeacherName());
+            model.setCourseId(notice.getCourse().getCourseId());
+            model.setCourseName(notice.getCourse().getCourseName());
+            model.setSubjectId(notice.getCourse().getSubjectId());
+            model.setSubjectName(notice.getCourse().getSubjectName());
+        }
         return model;
     }
 

@@ -1,11 +1,8 @@
-package com.jichuangsi.school.user.feign.Controller;
+package com.jichuangsi.school.user.feign.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.user.exception.FeignControllerException;
-import com.jichuangsi.school.user.feign.model.ClassDetailModel;
-import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
-import com.jichuangsi.school.user.feign.model.NoticeModel;
-import com.jichuangsi.school.user.feign.model.ParentStudentModel;
+import com.jichuangsi.school.user.feign.model.*;
 import com.jichuangsi.school.user.feign.service.IFeignService;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
@@ -145,9 +142,14 @@ public class FeignController {
         }
     }
 
-    @ApiOperation(value = "获取学生课堂签到信息", notes = "")
-    @PostMapping("/getStudentCourseNotice")
-    public ResponseModel getStudentCourseNotice(){
+    @ApiOperation(value = "发送学生的签到信息", notes = "")
+    @PostMapping("/sendParentStudentMsg")
+    public ResponseModel sendParentStudentMsg(@RequestBody CourseSignModel model){
+        try {
+            feignService.sendParentStudentMsg(model);
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
         return ResponseModel.sucessWithEmptyData("");
     }
 

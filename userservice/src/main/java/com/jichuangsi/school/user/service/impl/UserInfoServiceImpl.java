@@ -879,7 +879,9 @@ public class UserInfoServiceImpl implements UserInfoService {
                         roleNames.add(roleInfo.getRoleName());
                     }
                 }
+                model.setRoleName(roleNames);
             }
+            classTeacherInfoModels.add(model);
         }
         return classTeacherInfoModels;
     }
