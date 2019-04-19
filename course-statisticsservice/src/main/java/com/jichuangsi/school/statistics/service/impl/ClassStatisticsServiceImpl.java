@@ -99,9 +99,9 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         if (!ResultCode.SUCESS.equals(responseModel.getCode())){
             throw new QuestionResultException(responseModel.getMsg());
         }
-        for (StudentAddCourseEntity studentAddCourseEntity : studentAddCourseEntitys) {
-            for (TransferStudent transferStudent : responseModel.getData()){
-                transferStudent.setCommendFlag(this.getCommendInCourse(courseId, transferStudent.getStudentId()));
+        for (TransferStudent transferStudent : responseModel.getData()){
+            transferStudent.setCommendFlag(this.getCommendInCourse(courseId, transferStudent.getStudentId()));
+            for (StudentAddCourseEntity studentAddCourseEntity : studentAddCourseEntitys) {
                 if (studentAddCourseEntity.getUserId().equals(transferStudent.getStudentId())){
 					transferStudent.setSignFlag("1");
                 }
