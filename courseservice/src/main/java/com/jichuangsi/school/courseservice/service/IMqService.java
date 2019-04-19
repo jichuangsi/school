@@ -2,10 +2,7 @@ package com.jichuangsi.school.courseservice.service;
 
 import com.jichuangsi.school.courseservice.model.Course;
 import com.jichuangsi.school.courseservice.model.TeacherPublishFile;
-import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
-import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
-import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
-import com.jichuangsi.school.courseservice.model.message.ShareAnswerMessageModel;
+import com.jichuangsi.school.courseservice.model.message.*;
 
 public interface IMqService {
     void send(Course course);
@@ -22,4 +19,6 @@ public interface IMqService {
 
     //发送发布附件消息
     void sendPublishFile(TeacherPublishFile teacherPublishFile);
+
+    void sendMsg4Performance(StudentPerformanceMessageModel performanceMsg);
 }

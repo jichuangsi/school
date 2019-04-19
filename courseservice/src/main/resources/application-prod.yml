@@ -13,6 +13,16 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  cache:
+    cache-names: courseCache
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=43200s
+    type: caffeine
+    multi:
+      caffeine:
+        expireAfterAccess: 300000
+      redis:
+        defaultExpiration: 600000
 
 server:
   port: 8084
@@ -58,6 +68,8 @@ com:
         answers:
           statistics: course.question.answer.coursestatistics
           share: course.question.answer.share.classinteraction
+        performance:
+          course: student.performance.studentstatistics
         exchange: course.start.exchange
       token:
           jwt:

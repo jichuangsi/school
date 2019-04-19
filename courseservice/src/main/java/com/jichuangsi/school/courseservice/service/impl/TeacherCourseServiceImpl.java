@@ -15,10 +15,9 @@ import com.jichuangsi.school.courseservice.feign.service.IStatisticsFeignService
 import com.jichuangsi.school.courseservice.feign.service.IUserFeignService;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
-import com.jichuangsi.school.courseservice.repository.CourseRepository;
-import com.jichuangsi.school.courseservice.repository.QuestionRepository;
-import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
-import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
+import com.jichuangsi.school.courseservice.model.common.CommendModel;
+import com.jichuangsi.school.courseservice.model.message.StudentCoursePerformanceMessageModel;
+import com.jichuangsi.school.courseservice.repository.*;
 import com.jichuangsi.school.courseservice.service.IFileStoreService;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
@@ -435,6 +434,69 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             } else {
                 throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
             }
+        }
+    }
+
+    @Override
+    public boolean commendStudentInCourse(UserInfoForToken userInfo, CommendModel commendModel) throws TeacherCourseServiceException{
+        if (StringUtils.isEmpty(userInfo.getUserId())
+                ||StringUtils.isEmpty(commendModel.getCourseId())
+                ||StringUtils.isEmpty(commendModel.getStudentId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        final String lock = commendModel.getCourseId() + "-" + commendModel.getStudentId();
+        synchronized (lock.intern()) {
+            Optional<Course> result = courseRepository.findById(commendModel.getCourseId());
+            if (result.isPresent()) {
+                if (Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())
+                        ||Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())) {
+                    StudentCoursePerformanceMessageModel m = new StudentCoursePerformanceMessageModel();
+                    m.setCourseId(commendModel.getCourseId());
+                    m.setCourseName(result.get().getName());
+                    m.setStudentId(commendModel.getStudentId());
+                    m.setStudentName(commendModel.getStudentName());
+                    m.setTeacherId(userInfo.getUserId());
+                    m.setTeacherName(userInfo.getUserName());
+                    m.setOperId(userInfo.getUserId());
+                    m.setCommend(1);
+                    m.setTimestamp(new Date().getTime());
+                    mqService.sendMsg4Performance(m);
+                } else if (Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())) {
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
+                } else {
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+                }
+            } else {
+                throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            }
+            return true;
+        }
+    }
+
+    @Override
+    public boolean discommendStudentInCourse(UserInfoForToken userInfo, String courseId, String studentId) throws TeacherCourseServiceException{
+        if (StringUtils.isEmpty(userInfo.getUserId())
+                ||StringUtils.isEmpty(courseId)
+                ||StringUtils.isEmpty(studentId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        final String lock = courseId + "-" +studentId;
+        synchronized (lock.intern()) {
+            Optional<Course> result = courseRepository.findById(courseId);
+            if (result.isPresent()) {
+                if (Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())
+                        ||Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())) {
+                    StudentCoursePerformanceMessageModel m = new StudentCoursePerformanceMessageModel();
+                    m.setCourseId(courseId);
+                    m.setStudentId(studentId);
+                    m.setCommend(-1);
+                    m.setTimestamp(new Date().getTime());
+                    mqService.sendMsg4Performance(m);
+                } else if (Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())) {
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOTSTART);
+                } else {
+                    throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+                }
+            } else {
+                throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
+            }
+            return true;
         }
     }
 

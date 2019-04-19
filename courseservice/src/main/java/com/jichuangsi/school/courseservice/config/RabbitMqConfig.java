@@ -49,6 +49,9 @@ public class RabbitMqConfig {
     @Value("${com.jichuangsi.school.mq.publish}")
     private String publishFile;
 
+    @Value("${com.jichuangsi.school.mq.performance.course}")
+    private String coursePerformanceMq;
+
     @Bean(name="courses")
     public Queue coursesMessage(RabbitAdmin rabbitAdmin) {
         /*Map<String, Object> argss = new HashMap<String, Object>();
@@ -93,6 +96,13 @@ public class RabbitMqConfig {
         return answers;
     }
 
+    @Bean(name="coursePerformance")
+    public Queue coursePerformanceMessage(RabbitAdmin rabbitAdmin) {
+        Queue performance = new Queue(coursePerformanceMq,true, false, false);
+        rabbitAdmin.declareQueue(performance);
+        return performance;
+    }
+
     @Bean
     public TopicExchange exchange(RabbitAdmin rabbitAdmin) {
         TopicExchange topicExchange = new TopicExchange(exchange);
@@ -123,6 +133,11 @@ public class RabbitMqConfig {
     @Bean
     public Binding answersShareMqBinding(RabbitAdmin rabbitAdmin) {
         return BindingBuilder.bind(answersShareMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(answersShareMq);
+    }
+
+    @Bean
+    public Binding coursePerformanceMqBinding(RabbitAdmin rabbitAdmin) {
+        return BindingBuilder.bind(coursePerformanceMessage(rabbitAdmin)).to(exchange(rabbitAdmin)).with(coursePerformanceMq);
     }
 
     /*@Bean

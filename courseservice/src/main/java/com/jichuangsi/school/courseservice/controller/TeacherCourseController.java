@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.common.CommendModel;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -293,5 +294,29 @@ public class TeacherCourseController {
     public ResponseModel<List<QuestionForTeacher>> editQuestions(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId,
                                                         @RequestBody List<QuestionForTeacher> questions) throws TeacherCourseServiceException{
         return ResponseModel.sucess("",  teacherCourseService.saveQuestions(courseId, questions));
+    }
+
+    //点赞学生课堂
+    @ApiOperation(value = "点赞学生课堂", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "studentId", value = "学生ID", required = true, dataType = "String")
+    })
+    @PostMapping("/commendCourse")
+    public ResponseModel commendCourse(@ModelAttribute UserInfoForToken userInfo, @RequestBody CommendModel commendModel) throws TeacherCourseServiceException{
+        return ResponseModel.sucess("", teacherCourseService.commendStudentInCourse(userInfo, commendModel));
+    }
+
+    //取消点赞学生课堂
+    @ApiOperation(value = "取消点赞学生课堂", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "studentId", value = "学生ID", required = true, dataType = "String")
+    })
+    @PutMapping("/discommendCourse/{courseId}/{studentId}")
+    public ResponseModel discommendCourse(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @PathVariable String studentId) throws TeacherCourseServiceException{ ;
+        return ResponseModel.sucess("", teacherCourseService.discommendStudentInCourse(userInfo, courseId, studentId));
     }
 }

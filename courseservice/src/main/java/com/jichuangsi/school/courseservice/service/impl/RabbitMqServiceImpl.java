@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jichuangsi.school.courseservice.model.Course;
 import com.jichuangsi.school.courseservice.model.TeacherPublishFile;
-import com.jichuangsi.school.courseservice.model.message.AnswerMessageModel;
-import com.jichuangsi.school.courseservice.model.message.CourseMessageModel;
-import com.jichuangsi.school.courseservice.model.message.QuestionMessageModel;
-import com.jichuangsi.school.courseservice.model.message.ShareAnswerMessageModel;
+import com.jichuangsi.school.courseservice.model.message.*;
 import com.jichuangsi.school.courseservice.service.IMqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +53,9 @@ public class RabbitMqServiceImpl implements IMqService {
 
     @Value("${com.jichuangsi.school.mq.publish}")
     private String publishFile;
+
+    @Value("${com.jichuangsi.school.mq.performance.course}")
+    private String coursePerformanceMq;
 
     @Resource
     private ConnectionFactory connectionFactory;
@@ -122,6 +122,13 @@ public class RabbitMqServiceImpl implements IMqService {
         logger.debug("Send " + publishFile + " messgae:" + msg);
         rabbitMessagingTemplate.convertAndSend( publishFile, msg);
         logger.debug("Send " + publishFile + " messgae sucess");
+    }
+
+    @Override
+    public void sendMsg4Performance(StudentPerformanceMessageModel performanceMsg){
+        logger.debug("Send " + coursesMq + " messgae:" + performanceMsg.toString());
+        rabbitMessagingTemplate.convertAndSend(exchange, coursePerformanceMq, JSON.toJSONString(performanceMsg));
+        logger.debug("Send " + coursesMq + "  messgae sucess");
     }
 }
 

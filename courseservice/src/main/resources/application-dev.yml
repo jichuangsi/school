@@ -69,6 +69,8 @@ com:
         answers:
           statistics: course.question.answer.coursestatistics
           share: course.question.answer.share.classinteraction
+        performance:
+          course: student.performance.studentstatistics
         exchange: course.start.exchange
         publish: course.file.publish.classinteraction
       token:

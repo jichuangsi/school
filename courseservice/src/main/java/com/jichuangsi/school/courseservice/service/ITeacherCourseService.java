@@ -3,6 +3,7 @@ package com.jichuangsi.school.courseservice.service;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.model.*;
+import com.jichuangsi.school.courseservice.model.common.CommendModel;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -74,5 +75,12 @@ public interface ITeacherCourseService {
     @Transactional
     CourseFile downloadTeacherAttachment(UserInfoForToken userInfo, String fileName) throws TeacherCourseServiceException;
 
+    @Transactional
     List<AnswerForStudent> getQuestionsResult(List<String> qusetionIds,String studentId) throws TeacherCourseServiceException;
+
+    @Transactional
+    boolean commendStudentInCourse(UserInfoForToken userInfo, CommendModel commendModel) throws TeacherCourseServiceException;
+
+    @Transactional
+    boolean discommendStudentInCourse(UserInfoForToken userInfo, String courseId, String studentId) throws TeacherCourseServiceException;
 }
