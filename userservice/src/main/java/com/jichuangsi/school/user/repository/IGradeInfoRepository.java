@@ -16,4 +16,6 @@ public interface IGradeInfoRepository extends MongoRepository<GradeInfo,String> 
     int countByDeleteFlagAndNameAndIdIn(String delete,String name,List<String> ids);
 
     GradeInfo findFirstByDeleteFlagAndNameAndIdInOrderByCreateTimeDesc(String delete,String name,List<String> ids);
+
+    int countByDeleteFlagAndIdInAndUpdateTimeGreaterThanAndUpdateTimeLessThanOrderByCreateTime(String delete,List<String> ids,long beign,long end);
 }

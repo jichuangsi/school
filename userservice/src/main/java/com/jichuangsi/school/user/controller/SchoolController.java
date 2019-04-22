@@ -1,8 +1,10 @@
 package com.jichuangsi.school.user.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
+import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.school.GradeModel;
 import com.jichuangsi.school.user.model.school.PhraseModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
@@ -267,4 +269,47 @@ public class SchoolController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+    @ApiOperation(value = "查询往届年级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getPastGrades/{graduationTime}/{pharseId}")
+    public ResponseModel<PageInfo<GradeModel>> getPastGrades(@ModelAttribute UserInfoForToken userInfo, @PathVariable String graduationTime, @PathVariable String pharseId,
+                                                             @RequestParam int pageIndex,@RequestParam int pageSize){
+        try {
+            return ResponseModel.sucess("",schoolService.findPastGrades(userInfo, pharseId, graduationTime, pageIndex, pageSize));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "查询往届班级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getPastClass/{graduationTime}/{gradeId}")
+    public ResponseModel<PageInfo<ClassModel>> getPastClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String graduationTime, @PathVariable String gradeId,
+                                                             @RequestParam int pageIndex, @RequestParam int pageSize){
+        try {
+            return ResponseModel.sucess("",schoolService.findPastClass(userInfo, gradeId, graduationTime, pageIndex, pageSize));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "冻结往届班级的全部学生", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/coldStudentInGraduation/{classId}/{schoolId}")
+    public ResponseModel coldStudentInGraduation(@ModelAttribute UserInfoForToken userInfo,@PathVariable String classId , @PathVariable String schoolId){
+        try {
+            schoolService.coldStudentInGraduation(userInfo, classId, schoolId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
 }

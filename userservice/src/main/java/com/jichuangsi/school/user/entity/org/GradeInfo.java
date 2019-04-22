@@ -13,7 +13,7 @@ public class GradeInfo {
     private String id;
     private String name;
     private List<String> classIds = new ArrayList<String>();
-    private long createTime;
+    private long createTime = new Date().getTime();
     private long updateTime = new Date().getTime();
     private String deleteFlag = "0";
     private String creatorId;

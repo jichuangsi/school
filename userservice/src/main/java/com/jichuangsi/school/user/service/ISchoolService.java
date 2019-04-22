@@ -1,7 +1,9 @@
 package com.jichuangsi.school.user.service;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
+import com.jichuangsi.school.user.model.org.ClassModel;
 import com.jichuangsi.school.user.model.school.GradeModel;
 import com.jichuangsi.school.user.model.school.PhraseModel;
 import com.jichuangsi.school.user.model.school.SchoolModel;
@@ -46,4 +48,10 @@ public interface ISchoolService {
     void updatePhrase(UserInfoForToken userInfo,PhraseModel model) throws SchoolServiceException;
 
     SchoolModel getSchoolById(UserInfoForToken userInfo,String schoolId) throws SchoolServiceException;
+
+    PageInfo<GradeModel> findPastGrades(UserInfoForToken userInfo, String pharseId, String graduationTime, int pageIndex, int pageSize) throws SchoolServiceException;
+
+    PageInfo<ClassModel> findPastClass(UserInfoForToken userInfo, String gradeId, String graduationTime, int pageIndex, int pageSize) throws SchoolServiceException;
+
+    void coldStudentInGraduation(UserInfoForToken userInfo,String classId,String schoolId) throws SchoolServiceException;
 }

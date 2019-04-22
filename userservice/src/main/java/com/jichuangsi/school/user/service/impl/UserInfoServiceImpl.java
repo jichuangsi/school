@@ -403,13 +403,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void saveTeacher(UserInfoForToken userInfo, TeacherModel model) throws UserServiceException {
-        if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
+        if (StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        //try {
-            if (userRepository.countByAccount(model.getAccount()) > 0) {
-                throw new UserServiceException(ResultCode.USER_IS_EXIST);
-            }
+        if (userRepository.countByAccount(model.getAccount()) > 0) {
+            throw new UserServiceException(ResultCode.ACCOUNT_ISEXIST_MSG);
+        }
+
             UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
             info.setStatus(Status.ACTIVATE.getName());
           /*  if (info.getRoleInfos().get(0) instanceof TeacherInfo){
@@ -454,10 +454,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        //try {
-            if (userRepository.countByAccount(model.getAccount()) > 0) {
-                throw new UserServiceException(ResultCode.USER_IS_EXIST);
-            }
+        if (userRepository.countByAccount(model.getAccount()) > 0){
+            throw new UserServiceException(ResultCode.ACCOUNT_ISEXIST_MSG);
+        }
+       /* try {*/
             UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
             info.setStatus(Status.ACTIVATE.getName());
             userRepository.save(info);
