@@ -5,8 +5,36 @@ public class TeacherInsertModel {
     private String primaryClassId;
     private String secondaryClassId;
 
+    private String phraseId;
+    private String phraseName;
+    private String phraseObjectId;
+
     private String subjectId;
     private String subjectName;
+
+    public String getPhraseId() {
+        return phraseId;
+    }
+
+    public void setPhraseId(String phraseId) {
+        this.phraseId = phraseId;
+    }
+
+    public String getPhraseName() {
+        return phraseName;
+    }
+
+    public void setPhraseName(String phraseName) {
+        this.phraseName = phraseName;
+    }
+
+    public String getPhraseObjectId() {
+        return phraseObjectId;
+    }
+
+    public void setPhraseObjectId(String phraseObjectId) {
+        this.phraseObjectId = phraseObjectId;
+    }
 
     public String getSubjectId() {
         return subjectId;

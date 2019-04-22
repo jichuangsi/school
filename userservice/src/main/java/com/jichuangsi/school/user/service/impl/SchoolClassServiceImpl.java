@@ -179,6 +179,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                     teacherInfo.getSecondaryClasses().remove(teacherInfo.getSecondaryClasses().get(i));
                 }
             }
+            teacherInfo.setPhrase("","","");
             List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
             roleInfos.add(teacherInfo);
             teacher.setRoleInfos(roleInfos);
@@ -201,7 +202,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     @Override
     public void classInsertTeacher(UserInfoForToken userInfo, TeacherInsertModel model, String teacherId) throws SchoolServiceException {
         if ((StringUtils.isEmpty(model.getPrimaryClassId()) && StringUtils.isEmpty(model.getSecondaryClassId())) || StringUtils.isEmpty(teacherId)
-                || StringUtils.isEmpty(model.getSubjectId()) || StringUtils.isEmpty(model.getSubjectName())) {
+                || StringUtils.isEmpty(model.getSubjectId()) || StringUtils.isEmpty(model.getSubjectName()) || StringUtils.isEmpty(model.getPhraseId())) {
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
         String classId = "";
@@ -277,6 +278,10 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                     }
                 }
                 teacherInfo.addSecondaryClasses(classInfo.getId(), classInfo.getName());
+                if (!StringUtils.isEmpty(teacherInfo.getPhrase().getPhraseId())){
+                    throw new SchoolServiceException(ResultCode.PHRASE_TEACH_EXIST);
+                }
+                teacherInfo.setPhrase(model.getPhraseId(),model.getPhraseName(),model.getPhraseObjectId());
             }
             List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
             roleInfos.add(teacherInfo);

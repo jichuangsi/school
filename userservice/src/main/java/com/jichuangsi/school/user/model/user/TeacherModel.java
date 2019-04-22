@@ -18,6 +18,7 @@ public class TeacherModel extends Teacher{
     private String status;
     private List<SchoolRoleModel> roleInfos = new ArrayList<SchoolRoleModel>();
 
+
     public List<SchoolRoleModel> getRoleInfos() {
         return roleInfos;
     }

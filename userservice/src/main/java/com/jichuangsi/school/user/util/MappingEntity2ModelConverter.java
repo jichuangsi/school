@@ -322,6 +322,7 @@ public final class MappingEntity2ModelConverter {
             model.setSecondarySubjects(subjects);
             model.setRoleIds(teacherInfo.getRoleIds());
             model.setSchool(new SchoolModel(teacherInfo.getSchool().getSchoolId(),teacherInfo.getSchool().getSchoolName()));
+            model.setPhrase(new Phrase(teacherInfo.getPhrase().getPhraseId(),teacherInfo.getPhrase().getPhraseName(),teacherInfo.getPhrase().getId()));
         }
         return model;
     }

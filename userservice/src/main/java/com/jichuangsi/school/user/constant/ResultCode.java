@@ -47,4 +47,6 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public static final String CLASS_TABLE_NULL_MSG = "该班没有课程表";
     public static final String CLASS_TABLE_EXIST_MSG = "该班已有课程表";
     public static final String PHARSE_NAME_ERR = "年段命名不规范";
+
+    public static final String PHRASE_TEACH_EXIST = "该老师已有执教年级";
 }
