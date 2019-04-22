@@ -282,12 +282,27 @@ public class SchoolServiceImpl implements ISchoolService {
         if (phraseInfoRepository.countByPhraseNameAndDeleteFlagAndIdIn(model.getPhraseName(), "0", schoolInfo.getPhraseIds()) > 0) {
             throw new SchoolServiceException(ResultCode.PHRASE_IS_EXIST);
         }
+        String phraseName = model.getPhraseName().substring(0,1);
+        switch (phraseName){
+            case "小":
+                phraseName = "1";
+                break;
+            case "初":
+                phraseName = "2";
+                break;
+            case "高":
+                phraseName = "3";
+                break;
+            default:
+                throw new SchoolServiceException(ResultCode.PHARSE_NAME_ERR);
+        }
         PhraseInfo info = new PhraseInfo();
         info.setCreatorId(userInfo.getUserId());
         info.setCreatorName(userInfo.getUserName());
         info.setPhraseName(model.getPhraseName());
         info.setUpdateId(userInfo.getUserId());
         info.setUpdateName(userInfo.getUserName());
+        info.setPhraseId(phraseName);
         info = phraseInfoRepository.save(info);
         schoolInfo.getPhraseIds().add(info.getId());
         schoolInfo.setUpdateTime(new Date().getTime());

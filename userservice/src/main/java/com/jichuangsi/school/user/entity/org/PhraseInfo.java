@@ -13,6 +13,7 @@ public class PhraseInfo {
     @Id
     private String id;
     private String phraseName;
+    private String phraseId;
     private List<String> gradeIds = new ArrayList<String>();
     private String creatorId;
     private String creatorName;
@@ -21,6 +22,14 @@ public class PhraseInfo {
     private String updateId;
     private String updateName;
     private String deleteFlag = "0";
+
+    public String getPhraseId() {
+        return phraseId;
+    }
+
+    public void setPhraseId(String phraseId) {
+        this.phraseId = phraseId;
+    }
 
     public String getDeleteFlag() {
         return deleteFlag;

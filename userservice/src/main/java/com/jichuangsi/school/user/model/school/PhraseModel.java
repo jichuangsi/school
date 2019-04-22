@@ -6,6 +6,15 @@ public class PhraseModel {
     private String phraseName;
     private String gradeId;
     private String schoolId;
+    private String pharseId;
+
+    public String getPharseId() {
+        return pharseId;
+    }
+
+    public void setPharseId(String pharseId) {
+        this.pharseId = pharseId;
+    }
 
     public String getSchoolId() {
         return schoolId;

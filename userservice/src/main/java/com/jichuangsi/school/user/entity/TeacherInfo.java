@@ -26,8 +26,8 @@ public class TeacherInfo extends RoleInfo {
         return phrase;
     }
 
-    public void setPhrase(String phraseId, String phraseName) {
-        this.phrase = new Phrase(phraseId, phraseName);
+    public void setPhrase(String phraseId, String phraseName,String id) {
+        this.phrase = new Phrase(phraseId, phraseName,id);
     }
 
     public Class getPrimaryClass() {
@@ -166,10 +166,20 @@ public class TeacherInfo extends RoleInfo {
     public class Phrase {
         private String phraseId;
         private String phraseName;
+        private String id;
 
-        public Phrase(String phraseId, String phraseName){
+        public Phrase(String phraseId, String phraseName,String id){
             this.phraseId = phraseId;
             this.phraseName = phraseName;
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
         }
 
         public String getPhraseId() {

@@ -276,7 +276,7 @@ public class SchoolController {
     })
     @GetMapping(value = "/getPastGrades/{graduationTime}/{pharseId}")
     public ResponseModel<PageInfo<GradeModel>> getPastGrades(@ModelAttribute UserInfoForToken userInfo, @PathVariable String graduationTime, @PathVariable String pharseId,
-                                                             @RequestParam int pageIndex,@RequestParam int pageSize){
+                                                             @RequestParam("pageIndex") int pageIndex,@RequestParam("pageSize") int pageSize){
         try {
             return ResponseModel.sucess("",schoolService.findPastGrades(userInfo, pharseId, graduationTime, pageIndex, pageSize));
         } catch (SchoolServiceException e) {
@@ -290,7 +290,7 @@ public class SchoolController {
     })
     @GetMapping(value = "/getPastClass/{graduationTime}/{gradeId}")
     public ResponseModel<PageInfo<ClassModel>> getPastClass(@ModelAttribute UserInfoForToken userInfo, @PathVariable String graduationTime, @PathVariable String gradeId,
-                                                             @RequestParam int pageIndex, @RequestParam int pageSize){
+                                                             @RequestParam("pageIndex") int pageIndex, @RequestParam("pageSize") int pageSize){
         try {
             return ResponseModel.sucess("",schoolService.findPastClass(userInfo, gradeId, graduationTime, pageIndex, pageSize));
         } catch (SchoolServiceException e) {

@@ -46,4 +46,5 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public static final String FILE_CHANGE_ERR = "文件转换失败";
     public static final String CLASS_TABLE_NULL_MSG = "该班没有课程表";
     public static final String CLASS_TABLE_EXIST_MSG = "该班已有课程表";
+    public static final String PHARSE_NAME_ERR = "年段命名不规范";
 }

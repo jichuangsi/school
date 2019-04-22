@@ -1,6 +1,7 @@
 package com.jichuangsi.school.user.util;
 
 import com.jichuangsi.school.user.commons.Md5Util;
+import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.*;
 import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.entity.org.ClassInfo;
@@ -55,7 +56,7 @@ public  final class MappingModel2EntityConverter {
                 if(teacher.getSchool()!=null)
                     teacherInfo.setSchool(teacher.getSchool().getSchoolId(), teacher.getSchool().getSchoolName());
                 if(teacher.getPhrase()!=null)
-                    teacherInfo.setPhrase(teacher.getPhrase().getPhraseId(), teacher.getPhrase().getPhraseName());
+                    teacherInfo.setPhrase(teacher.getPhrase().getPhraseId(), teacher.getPhrase().getPhraseName(),teacher.getPhrase().getId());
                 if(teacher.getPrimaryClass()!=null)
                     teacherInfo.setPrimaryClass(teacher.getPrimaryClass().getClassId(), teacher.getPrimaryClass().getClassName());
                 teacher.getSecondaryClass().forEach(c -> {
@@ -79,7 +80,7 @@ public  final class MappingModel2EntityConverter {
                 if(student.getSchool()!=null)
                     studentInfo.setSchool(student.getSchool().getSchoolId(), student.getSchool().getSchoolName());
                 if(student.getPhrase()!=null)
-                    studentInfo.setPhrase(student.getPhrase().getPhraseId(), student.getPhrase().getPhraseName());
+                    studentInfo.setPhrase(student.getPhrase().getPhraseId(), student.getPhrase().getPhraseName(),student.getPhrase().getId());
                 if(student.getPrimaryClass()!=null)
                     studentInfo.setPrimaryClass(student.getPrimaryClass().getClassId(),student.getPrimaryClass().getClassName());
                 if(student.getPrimaryGrade()!=null)
@@ -129,7 +130,7 @@ public  final class MappingModel2EntityConverter {
             userInfo.setPwd(Md5Util.encodeByMd5(model.getPwd()));
         }
         userInfo.setSex(model.getSex());
-        userInfo.setStatus(model.getStatus());
+        userInfo.setStatus(Status.ACTIVATE.getName());
         TeacherInfo teacher = new TeacherInfo();
         if (null != model.getPrimarySubject()) {
             teacher.setPrimarySubject(model.getPrimarySubject().getSubjectId(), model.getPrimarySubject().getSubjectName());
@@ -150,7 +151,7 @@ public  final class MappingModel2EntityConverter {
             });
         }
         if (null != model.getPhrase()) {
-            teacher.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName());
+            teacher.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName(),model.getPhrase().getId());
         }
      /*   if (null != model.getPrimaryClass()) {
             teacher.setPrimaryClass(model.getPrimaryClass().getClassId(), model.getPrimaryClass().getClassName());
@@ -183,10 +184,10 @@ public  final class MappingModel2EntityConverter {
         if (!StringUtils.isEmpty(model.getSex())) {
             userInfo.setSex(model.getSex());
         }
-        userInfo.setStatus(model.getStatus());
+        userInfo.setStatus(Status.ACTIVATE.getName());
         StudentInfo studentInfo = new StudentInfo();
         if (null != model.getPhrase()) {
-            studentInfo.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName());
+            studentInfo.setPhrase(model.getPhrase().getPhraseId(), model.getPhrase().getPhraseName(),model.getPhrase().getId());
         }
         if (null != model.getPrimaryClass()) {
             studentInfo.setPrimaryClass(model.getPrimaryClass().getClassId(), model.getPrimaryClass().getClassName());

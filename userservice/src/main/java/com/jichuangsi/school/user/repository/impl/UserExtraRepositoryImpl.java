@@ -58,7 +58,7 @@ public class UserExtraRepositoryImpl implements IUserExtraRepository {
     public List<UserInfo> findByCondition(String schoolId, String pharseId, String gradeId, String classId, String userName, String roleName,String subjectId,int pageIndex,int pageSize) {
         Criteria criteria = Criteria.where("school.schoolId").is(schoolId).and("roleName").is(roleName);
         if (!StringUtils.isEmpty(pharseId)){
-            criteria.and("phrase.phraseId").is(pharseId);
+            criteria.and("phrase.id").is(pharseId);
         }
         if ("Teacher".equals(roleName)){
             Criteria criteriaC = new Criteria();
@@ -102,7 +102,7 @@ public class UserExtraRepositoryImpl implements IUserExtraRepository {
     public int countByCondition(String schoolId, String pharseId, String gradeId, String classId, String userName, String roleName, String subjectId) {
         Criteria criteria = Criteria.where("school.schoolId").is(schoolId).and("roleName").is(roleName);
         if (!StringUtils.isEmpty(pharseId)){
-            criteria.and("phrase.phraseId").is(pharseId);
+            criteria.and("phrase.id").is(pharseId);
         }
         if ("Teacher".equals(roleName)){
             Criteria criteriaC = new Criteria();

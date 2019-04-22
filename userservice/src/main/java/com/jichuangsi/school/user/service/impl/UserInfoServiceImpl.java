@@ -566,7 +566,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (null == classInfo) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
-        studentInfo.setPhrase(phraseInfo.getId(), phraseInfo.getPhraseName());
+        studentInfo.setPhrase(phraseInfo.getPhraseId(), phraseInfo.getPhraseName(),phraseInfo.getId());
         studentInfo.setPrimaryClass(classInfo.getId(), classInfo.getName());
         studentInfo.setPrimaryGrade(gradeInfo.getId(), gradeInfo.getName());
         studentInfo.setSchool(schoolInfo.getId(), schoolInfo.getName());
