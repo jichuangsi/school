@@ -22,12 +22,20 @@ public class TeacherInfo extends RoleInfo {
         this.school = new School(schoolId, schoolName);
     }
 
+    public void resetPhrase() {
+        this.phrase = null;
+    }
+
     public Phrase getPhrase() {
         return phrase;
     }
 
     public void setPhrase(String phraseId, String phraseName,String id) {
         this.phrase = new Phrase(phraseId, phraseName,id);
+    }
+
+    public void resetPrimaryClass() {
+        this.primaryClass = null;
     }
 
     public Class getPrimaryClass() {

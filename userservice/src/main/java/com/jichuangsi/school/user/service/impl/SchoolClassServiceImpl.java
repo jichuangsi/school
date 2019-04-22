@@ -172,14 +172,14 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         if (teacher.getRoleInfos().get(0) instanceof TeacherInfo) {
             TeacherInfo teacherInfo = (TeacherInfo) teacher.getRoleInfos().get(0);
             if (null != teacherInfo.getPrimaryClass() && classId.equals(teacherInfo.getPrimaryClass().getClassId())) {
-                teacherInfo.setPrimaryClass("", "");
+                teacherInfo.resetPrimaryClass();
             }
             for (int i = teacherInfo.getSecondaryClasses().size() - 1; i >= 0; i--) {
                 if (classId.equals(teacherInfo.getSecondaryClasses().get(i).getClassId())) {
                     teacherInfo.getSecondaryClasses().remove(teacherInfo.getSecondaryClasses().get(i));
                 }
             }
-            teacherInfo.setPhrase("","","");
+            if(teacherInfo.getPrimaryClass()==null&&teacherInfo.getSecondaryClasses().size()==0) teacherInfo.resetPhrase();
             List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
             roleInfos.add(teacherInfo);
             teacher.setRoleInfos(roleInfos);
@@ -278,9 +278,12 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                     }
                 }
                 teacherInfo.addSecondaryClasses(classInfo.getId(), classInfo.getName());
-                if (!StringUtils.isEmpty(teacherInfo.getPhrase().getPhraseId())){
-                    throw new SchoolServiceException(ResultCode.PHRASE_TEACH_EXIST);
-                }
+            }
+            if (teacherInfo.getPhrase()!=null
+                    &&!StringUtils.isEmpty(teacherInfo.getPhrase().getPhraseId())
+                    &&!teacherInfo.getPhrase().getPhraseId().equalsIgnoreCase(model.getPhraseId())){
+                throw new SchoolServiceException(ResultCode.PHRASE_TEACH_EXIST);
+            }else if(teacherInfo.getPhrase()==null||(teacherInfo.getPhrase()!=null&&StringUtils.isEmpty(teacherInfo.getPhrase().getPhraseId()))){
                 teacherInfo.setPhrase(model.getPhraseId(),model.getPhraseName(),model.getPhraseObjectId());
             }
             List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
