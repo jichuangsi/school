@@ -59,7 +59,7 @@ public class ParentController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/leaveParentMessageBoard")
+    @PostMapping(value = "/leaveParentMessageBoard")
     public ResponseModel leaveParentMessageBoard(@ModelAttribute UserInfoForToken userInfo,@RequestBody MessageBoardModel model){
         try {
             parentService.insertMessageBoard(userInfo, model);
