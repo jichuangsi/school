@@ -101,20 +101,20 @@ public class StudentInfo extends RoleInfo {
     public class Phrase {
         private String phraseId;
         private String phraseName;
-        private String id;
+        private String pid;
 
-        public Phrase(String phraseId, String phraseName,String id){
+        public Phrase(String phraseId, String phraseName,String pid){
             this.phraseId = phraseId;
             this.phraseName = phraseName;
-            this.id = id;
+            this.pid = pid;
         }
 
-        public String getId() {
-            return id;
+        public String getPid() {
+            return pid;
         }
 
-        public void setId(String id) {
-            this.id = id;
+        public void setPid(String pid) {
+            this.pid = pid;
         }
 
         public String getPhraseId() {

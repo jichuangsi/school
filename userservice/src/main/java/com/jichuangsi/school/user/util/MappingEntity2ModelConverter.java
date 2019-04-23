@@ -61,7 +61,7 @@ public final class MappingEntity2ModelConverter {
                 if(teacherInfo.getSchool()!=null)
                     teacher.setSchool(new SchoolModel(teacherInfo.getSchool().getSchoolId(), teacherInfo.getSchool().getSchoolName()));
                 if(teacherInfo.getPhrase()!=null)
-                    teacher.setPhrase(new Phrase(teacherInfo.getPhrase().getPhraseId(), teacherInfo.getPhrase().getPhraseName(),teacherInfo.getPhrase().getId()));
+                    teacher.setPhrase(new Phrase(teacherInfo.getPhrase().getPhraseId(), teacherInfo.getPhrase().getPhraseName(),teacherInfo.getPhrase().getPid()));
                 if(teacherInfo.getPrimaryClass()!=null)
                     teacher.setPrimaryClass(new ClassModel(teacherInfo.getPrimaryClass().getClassId(), teacherInfo.getPrimaryClass().getClassName()));
                 List<ClassModel> classes = new ArrayList<ClassModel>();
@@ -91,7 +91,7 @@ public final class MappingEntity2ModelConverter {
                 if(studentInfo.getSchool()!=null)
                     student.setSchool(new SchoolModel(studentInfo.getSchool().getSchoolId(), studentInfo.getSchool().getSchoolName()));
                 if(studentInfo.getPhrase()!=null)
-                    student.setPhrase(new Phrase(studentInfo.getPhrase().getPhraseId(), studentInfo.getPhrase().getPhraseName(),studentInfo.getPhrase().getId()));
+                    student.setPhrase(new Phrase(studentInfo.getPhrase().getPhraseId(), studentInfo.getPhrase().getPhraseName(),studentInfo.getPhrase().getPid()));
                 if(studentInfo.getPrimaryClass()!=null)
                     student.setPrimaryClass(new ClassModel(studentInfo.getPrimaryClass().getClassId(), studentInfo.getPrimaryClass().getClassName()));
                 if(studentInfo.getPrimaryGrade()!=null)
@@ -323,7 +323,7 @@ public final class MappingEntity2ModelConverter {
             model.setRoleIds(teacherInfo.getRoleIds());
             model.setSchool(new SchoolModel(teacherInfo.getSchool().getSchoolId(),teacherInfo.getSchool().getSchoolName()));
             if(teacherInfo.getPhrase()!=null)
-                model.setPhrase(new Phrase(teacherInfo.getPhrase().getPhraseId(),teacherInfo.getPhrase().getPhraseName(),teacherInfo.getPhrase().getId()));
+                model.setPhrase(new Phrase(teacherInfo.getPhrase().getPhraseId(),teacherInfo.getPhrase().getPhraseName(),teacherInfo.getPhrase().getPid()));
         }
         return model;
     }
@@ -337,7 +337,7 @@ public final class MappingEntity2ModelConverter {
         model.setStatus(userInfo.getStatus());
         if (userInfo.getRoleInfos().get(0) instanceof StudentInfo) {
             StudentInfo studentInfo = (StudentInfo) userInfo.getRoleInfos().get(0);
-            model.setPhrase(new Phrase(studentInfo.getPhrase().getPhraseId(),studentInfo.getPhrase().getPhraseName(),studentInfo.getPhrase().getId()));
+            model.setPhrase(new Phrase(studentInfo.getPhrase().getPhraseId(),studentInfo.getPhrase().getPhraseName(),studentInfo.getPhrase().getPid()));
             model.setPrimaryClass(new ClassModel(studentInfo.getPrimaryClass().getClassId(),studentInfo.getPrimaryClass().getClassName()));
             model.setPrimaryGrade(new GradeModel(studentInfo.getPrimaryGrade().getGradeId(),studentInfo.getPrimaryGrade().getGradeName()));
             model.setSchool(new SchoolModel(studentInfo.getSchool().getSchoolId(),studentInfo.getSchool().getSchoolName()));
