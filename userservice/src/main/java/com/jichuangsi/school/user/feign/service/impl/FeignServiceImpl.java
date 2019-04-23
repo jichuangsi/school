@@ -66,11 +66,15 @@ public class FeignServiceImpl implements IFeignService {
         if ("Teacher".equals(teacherInfo.getRoleName())) {
             if (null != teacherInfo.getSecondaryClasses()) {
                 teacherInfo.getSecondaryClasses().forEach(classInfo -> {
-                    classIds.add(classInfo.getClassId());
+                    if (!StringUtils.isEmpty(classInfo.getClassId())) {
+                        classIds.add(classInfo.getClassId());
+                    }
                 });
             }
             if (null != teacherInfo.getPrimaryClass()) {
-                classIds.add(teacherInfo.getPrimaryClass().getClassId());
+                if (!StringUtils.isEmpty(teacherInfo.getPrimaryClass().getClassId())) {
+                    classIds.add(teacherInfo.getPrimaryClass().getClassId());
+                }
             }
         } else {
             throw new FeignControllerException(ResultCode.ROLE_NOT_RIGHT);
