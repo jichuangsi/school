@@ -30,7 +30,7 @@ public interface ISchoolClassService {
     List<SchoolModel> getBackSchools() throws SchoolServiceException;
 
     @Transactional(rollbackFor = Exception.class)
-    void classRemoveTeacher(UserInfoForToken userInfo , String classId ,String teacher) throws SchoolServiceException;
+    void classRemoveTeacher(UserInfoForToken userInfo , String classId ,String teacher, boolean removeClass) throws SchoolServiceException;
 
     @Transactional(rollbackFor = Exception.class)
     void classInsertTeacher(UserInfoForToken userInfo , TeacherInsertModel model,String teacherId) throws SchoolServiceException;

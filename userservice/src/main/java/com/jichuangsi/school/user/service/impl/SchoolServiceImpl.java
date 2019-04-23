@@ -20,6 +20,10 @@ import com.jichuangsi.school.user.service.ISchoolService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,6 +59,8 @@ public class SchoolServiceImpl implements ISchoolService {
     private IUserExtraRepository userExtraRepository;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -453,19 +459,19 @@ public class SchoolServiceImpl implements ISchoolService {
 
     private void untyingClass(UserInfoForToken userInfo, List<ClassInfo> classInfos) throws SchoolServiceException {
         for (ClassInfo classInfo : classInfos) {
-            classInfo.setDeleteFlag("1");
+            //classInfo.setDeleteFlag("1");
             try {
                 List<TransferTeacher> transferTeachers = userInfoService.getTeachersByClassId(classInfo.getId());
                 for (TransferTeacher transferTeacher : transferTeachers) {
                     if (!StringUtils.isEmpty(transferTeacher.getTeacherId())) {
-                        schoolClassService.classRemoveTeacher(userInfo, classInfo.getId(), transferTeacher.getTeacherId());
+                        schoolClassService.classRemoveTeacher(userInfo, classInfo.getId(), transferTeacher.getTeacherId(), true);
                     }
                 }
             } catch (UserServiceException e) {
                 throw new SchoolServiceException(e.getMessage());
             }
         }
-        classInfoRepository.saveAll(classInfos);
+        //classInfoRepository.saveAll(classInfos);
     }
 
     @Override

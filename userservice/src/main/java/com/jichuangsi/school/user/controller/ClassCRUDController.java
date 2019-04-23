@@ -91,7 +91,7 @@ public class ClassCRUDController {
     public ResponseModel classRemoveTeacher(@ModelAttribute UserInfoForToken userInfo,@PathVariable("classId") String classId,
                                             @PathVariable String teacherId){
         try {
-            schoolClassService.classRemoveTeacher(userInfo, classId, teacherId);
+            schoolClassService.classRemoveTeacher(userInfo, classId, teacherId, false);
         } catch (SchoolServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

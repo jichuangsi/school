@@ -22,6 +22,7 @@ import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -157,7 +158,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     }
 
     @Override
-    public void classRemoveTeacher(UserInfoForToken userInfo, String classId, String teacherId) throws SchoolServiceException {
+    public void classRemoveTeacher(UserInfoForToken userInfo, String classId, String teacherId, boolean removeClass) throws SchoolServiceException {
         if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(teacherId)) {
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
@@ -185,7 +186,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             teacher.setRoleInfos(roleInfos);
             teacher.setUpdateTime(new Date().getTime());
             userRepository.save(teacher);
-            for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()) {
+            /*for (SubjectTeacherInfo subjectTeacherInfo : classInfo.getTeacherInfos()) {
                 if (teacher.getId().equals(subjectTeacherInfo.getTeacherId())) {
                     subjectTeacherInfo.setTeacherId("");
                     subjectTeacherInfo.setTeacherName("");
@@ -195,7 +196,16 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                 classInfo.setHeadMasterId("");
                 classInfo.setHeadMasterName("");
             }
-            classInfoRepository.save(classInfo);
+            classInfoRepository.save(classInfo);*/
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(classId).and("teacherInfos.teacherId").is(teacherId));
+            List<ClassInfo> temp = mongoTemplate.find(query,ClassInfo.class);
+            Update update = new Update();
+            update.set("updateTime", new Date().getTime());
+            if(removeClass) update.set("deleteFlag", "1");
+            update.set("teacherInfos.$.teacherId", null);
+            update.set("teacherInfos.$.teacherName", null);
+            mongoTemplate.updateFirst(query, update, ClassInfo.class);
         }
     }
 
