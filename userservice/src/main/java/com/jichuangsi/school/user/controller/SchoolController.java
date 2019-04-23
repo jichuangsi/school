@@ -312,4 +312,17 @@ public class SchoolController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
+    @ApiOperation(value = "年级毕业", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/graduationGrade/{gradeId}")
+    public ResponseModel graduationGrade(@ModelAttribute UserInfoForToken userInfo,@PathVariable String gradeId){
+        try {
+            schoolService.graduationGrade(userInfo, gradeId);
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
 }

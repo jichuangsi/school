@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/parent")
@@ -229,4 +230,46 @@ public class ParentController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+    @ApiOperation(value = "家长取消绑定学生", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @DeleteMapping(value = "/deleteBindStudent/{studentId}")
+    public ResponseModel deleteBindStudent(@ModelAttribute UserInfoForToken userInfo,@PathVariable String studentId){
+        try {
+            parentService.deleteBindStudent(userInfo, studentId);
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "家长获取绑定信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getParentBindInfo")
+    public ResponseModel<Map<String,Boolean>> getParentBindInfo(@ModelAttribute UserInfoForToken userInfo){
+        try {
+            return ResponseModel.sucess("",parentService.getParentBindInfo(userInfo));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "家长绑定手机号，仅验证格式", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/bindParentPhone")
+    public ResponseModel bindParentPhone(@ModelAttribute UserInfoForToken userInfo,@Validated @RequestBody ParentModel model){
+        try {
+            parentService.bindParentPhone(userInfo, model);
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
 }

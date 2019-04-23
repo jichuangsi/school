@@ -20,10 +20,6 @@ import com.jichuangsi.school.user.service.ISchoolService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -59,8 +55,6 @@ public class SchoolServiceImpl implements ISchoolService {
     private IUserExtraRepository userExtraRepository;
     @Resource
     private UserRepository userRepository;
-    @Resource
-    private MongoTemplate mongoTemplate;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -223,7 +217,7 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setDeleteFlag("1");
         info.setUpdateId(userInfo.getUserId());
         info.setUpdateName(userInfo.getUserName());
-        /*SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContaining(gradeId);
+        SchoolInfo schoolInfo = schoolInfoRepository.findByGradeIdsContaining(gradeId);
         if (null != schoolInfo) {
             schoolInfo.getGradeIds().remove(gradeId);
             schoolInfo.setUpdateName(userInfo.getUserName());
@@ -238,7 +232,7 @@ public class SchoolServiceImpl implements ISchoolService {
             phraseInfo.setUpdateId(userInfo.getUserId());
             phraseInfo.setUpdatedTime(new Date().getTime());
             phraseInfoRepository.save(phraseInfo);
-        }*/
+        }
         gradeInfoRepository.save(info);
         List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlagOrderByCreateTime(info.getClassIds(), "0");
         untyingClass(userInfo, classInfos);
@@ -390,14 +384,14 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setUpdateName(userInfo.getUserName());
         info.setUpdateId(userInfo.getUserId());
         info.setUpdatedTime(new Date().getTime());
-        /*SchoolInfo schoolInfo = schoolInfoRepository.findFirstByPhraseIdsContaining(phrase);
+        SchoolInfo schoolInfo = schoolInfoRepository.findFirstByPhraseIdsContaining(phrase);
         if (null != schoolInfo){
             schoolInfo.getPhraseIds().remove(phrase);
             schoolInfo.setUpdateTime(new Date().getTime());
             schoolInfo.setUpdateId(userInfo.getUserId());
             schoolInfo.setUpdateName(userInfo.getUserName());
             schoolInfoRepository.save(schoolInfo);
-        }*/
+        }
         phraseInfoRepository.save(info);
         List<String> classIds = new ArrayList<String>();
         List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0", info.getGradeIds());
@@ -459,7 +453,7 @@ public class SchoolServiceImpl implements ISchoolService {
 
     private void untyingClass(UserInfoForToken userInfo, List<ClassInfo> classInfos) throws SchoolServiceException {
         for (ClassInfo classInfo : classInfos) {
-            //classInfo.setDeleteFlag("1");
+            /*classInfo.setDeleteFlag("2");*/
             try {
                 List<TransferTeacher> transferTeachers = userInfoService.getTeachersByClassId(classInfo.getId());
                 for (TransferTeacher transferTeacher : transferTeachers) {
@@ -471,7 +465,7 @@ public class SchoolServiceImpl implements ISchoolService {
                 throw new SchoolServiceException(e.getMessage());
             }
         }
-        //classInfoRepository.saveAll(classInfos);
+       /* classInfoRepository.saveAll(classInfos);*/
     }
 
     @Override
@@ -494,7 +488,7 @@ public class SchoolServiceImpl implements ISchoolService {
         calendar.set(Calendar.MONTH, 11);
         calendar.set(Calendar.DAY_OF_MONTH, 31);
         calendar.set(Calendar.HOUR_OF_DAY, 24);
-        List<GradeInfo> gradeInfos = gradeInfoExtraRepository.findByDeleteFlagAndIdInAndUpdateTimeGreaterThanAndUpdateTimeLessThanOrderByCreateTime("1", phraseInfo.getGradeIds(), graduationTime, calendar.getTimeInMillis(), pageIndex, pageSize);
+        List<GradeInfo> gradeInfos = gradeInfoExtraRepository.findByDeleteFlagAndIdInAndUpdateTimeGreaterThanAndUpdateTimeLessThanOrderByCreateTime("2", phraseInfo.getGradeIds(), graduationTime, calendar.getTimeInMillis(), pageIndex, pageSize);
         List<GradeModel> models = new ArrayList<GradeModel>();
         for (GradeInfo gradeInfo : gradeInfos) {
             models.add(MappingEntity2ModelConverter.CONVERTERFROMGRADEINFO(gradeInfo));
@@ -527,7 +521,7 @@ public class SchoolServiceImpl implements ISchoolService {
         calendar.set(Calendar.MONTH, 11);
         calendar.set(Calendar.DAY_OF_MONTH, 31);
         calendar.set(Calendar.HOUR_OF_DAY, 24);
-        List<ClassInfo> classInfos = classInfoExtraRepository.findByClassIdInAndDeleteFlagAndUpdateTimeGreaterThanAndUpdateTimeLessThanOrderByCreatedTime(gradeInfo.getClassIds(), "1", graduationTime, calendar.getTimeInMillis(), pageIndex, pageSize);
+        List<ClassInfo> classInfos = classInfoExtraRepository.findByClassIdInAndDeleteFlagAndUpdateTimeGreaterThanAndUpdateTimeLessThanOrderByCreatedTime(gradeInfo.getClassIds(), "2", graduationTime, calendar.getTimeInMillis(), pageIndex, pageSize);
         List<ClassModel> classModels = new ArrayList<ClassModel>();
         classInfos.forEach(classInfo -> {
             classModels.add(MappingEntity2ModelConverter.CONVERTERFRONCLASSINFO(classInfo));
@@ -552,5 +546,22 @@ public class SchoolServiceImpl implements ISchoolService {
             student.setStatus(Status.DELETE.getName());
         }
         userRepository.saveAll(students);
+    }
+
+    @Override
+    public void graduationGrade(UserInfoForToken userInfo, String gradeId) throws SchoolServiceException {
+        if (StringUtils.isEmpty(gradeId)){
+            throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        GradeInfo info = gradeInfoRepository.findFirstById(gradeId);
+        if (null == info) {
+            throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        info.setDeleteFlag("2");
+        info.setUpdateId(userInfo.getUserId());
+        info.setUpdateName(userInfo.getUserName());
+        gradeInfoRepository.save(info);
+        List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlagOrderByCreateTime(info.getClassIds(), "0");
+        untyingClass(userInfo, classInfos);
     }
 }

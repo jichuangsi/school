@@ -54,4 +54,6 @@ public interface ISchoolService {
     PageInfo<ClassModel> findPastClass(UserInfoForToken userInfo, String gradeId, String graduationTime, int pageIndex, int pageSize) throws SchoolServiceException;
 
     void coldStudentInGraduation(UserInfoForToken userInfo,String classId,String schoolId) throws SchoolServiceException;
+
+    void graduationGrade(UserInfoForToken userInfo,String gradeId) throws SchoolServiceException;
 }

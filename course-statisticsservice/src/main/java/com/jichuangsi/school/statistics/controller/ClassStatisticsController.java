@@ -30,9 +30,9 @@ public class ClassStatisticsController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping(value = "/teacher/getClassCourseByMonth")
-    public ResponseModel<List<ClassStatisticsModel>> getStatisticsByMonth(@ModelAttribute UserInfoForToken userInfo) {
+    public ResponseModel<List<ClassStatisticsModel>> getStatisticsByMonth(@ModelAttribute UserInfoForToken userInfo,@RequestParam("subject") String subject) {
         try {
-            return ResponseModel.sucess("", classStatisticsService.getTeachClassStatistics(userInfo));
+            return ResponseModel.sucess("", classStatisticsService.getTeachClassStatistics(userInfo,subject));
         } catch (QuestionResultException e) {
             return ResponseModel.fail("", e.getMessage());
         }

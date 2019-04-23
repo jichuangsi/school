@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface IClassStatisticsService {
 
-    List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo) throws QuestionResultException;
+    List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo,String subject) throws QuestionResultException;
 
     List<StudentKnowledgeModel> getClassStudentKnowledges(UserInfoForToken userInfo,SearchStudentKnowledgeModel model) throws QuestionResultException;
 

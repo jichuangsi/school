@@ -202,7 +202,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
             List<ClassInfo> temp = mongoTemplate.find(query,ClassInfo.class);
             Update update = new Update();
             update.set("updateTime", new Date().getTime());
-            if(removeClass) update.set("deleteFlag", "1");
+            if(removeClass) update.set("deleteFlag", "2");
             update.set("teacherInfos.$.teacherId", null);
             update.set("teacherInfos.$.teacherName", null);
             mongoTemplate.updateFirst(query, update, ClassInfo.class);

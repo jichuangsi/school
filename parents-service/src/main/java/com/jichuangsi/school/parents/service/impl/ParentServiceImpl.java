@@ -29,7 +29,9 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ParentServiceImpl implements IParentService {
@@ -307,5 +309,43 @@ public class ParentServiceImpl implements IParentService {
             throw new ParentsException(responseModel.getMsg());
         }
         return responseModel.getData();
+    }
+
+    @Override
+    public void deleteBindStudent(UserInfoForToken userInfo, String studentId) throws ParentsException {
+        if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(studentId)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
+        if (null == parentInfo){
+            throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
+        }
+        parentInfo.getStudentIds().remove(studentId);
+        parentInfoRepository.save(parentInfo);
+    }
+
+    @Override
+    public Map<String, Boolean> getParentBindInfo(UserInfoForToken userInfo) throws ParentsException {
+        if (StringUtils.isEmpty(userInfo.getUserId())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
+        if(null == parentInfo){
+            throw new ParentsException(ResultCode.PARENT_NOTFOUND_MSG);
+        }
+        Map<String,Boolean> map = new HashMap<String, Boolean>();
+        map.put("phone",!StringUtils.isEmpty(parentInfo.getPhone()));
+        map.put("account",!StringUtils.isEmpty(parentInfo.getAccount()));
+        return map;
+    }
+
+    @Override
+    public void bindParentPhone(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
+        if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(model.getPhone())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
+        parentInfo.setPhone(model.getPhone());
+        parentInfoRepository.save(parentInfo);
     }
 }

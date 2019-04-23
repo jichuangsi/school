@@ -186,7 +186,7 @@ public class FeignClientServiceImpl implements IFeignClientService {
             List<ResultKnowledgeModel> resultKnowledgeModels = new ArrayList<ResultKnowledgeModel>();
             ClassStatisticsModel model = new ClassStatisticsModel();
             Map<String, QuestionStatisticsRateModel> questionCalendar = new HashMap<String, QuestionStatisticsRateModel>();
-            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanOrderByCreateTime(classModel.getClassId(), Status.FINISH.getName(), calendar.getTimeInMillis());
+            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndTeacherIdAndSubjectNameLikeOrderByCreateTime(classModel.getClassId(), Status.FINISH.getName(), calendar.getTimeInMillis(),classModel.getTeacherId(),classModel.getSubject());
             model.setClassId(classModel.getClassId());
             model.setClassName(classModel.getClassName());
             List<String> questionMonth = new ArrayList<String>();

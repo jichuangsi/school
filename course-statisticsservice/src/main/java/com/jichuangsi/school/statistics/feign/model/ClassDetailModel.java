@@ -9,6 +9,24 @@ public class ClassDetailModel {
     private String gradeName;
     private String schoolId;
     private String schoolName;
+    private String subject;
+    private String teacherId;
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(String teacherId) {
+        this.teacherId = teacherId;
+    }
 
     public String getClassId() {
         return classId;

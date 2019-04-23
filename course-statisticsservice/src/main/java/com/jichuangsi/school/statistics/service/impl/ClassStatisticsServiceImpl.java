@@ -26,7 +26,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @CacheConfig(cacheNames = {"statisticsCache"})
@@ -43,8 +42,8 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
 	
     @Override
     @Cacheable(unless = "#result.empty",keyGenerator = "classStatisticsKeyGenerator")
-    public List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo) throws QuestionResultException {
-        if (StringUtils.isEmpty(userInfo.getUserId())) {
+    public List<ClassStatisticsModel> getTeachClassStatistics(UserInfoForToken userInfo,String subject) throws QuestionResultException {
+        if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(subject)) {
             throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
         }
         ResponseModel<List<String>> responseModel = userFeignService.getTeachClassIds(userInfo.getUserId());
@@ -54,6 +53,10 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         ResponseModel<List<ClassDetailModel>> response1 = userFeignService.getClassDetailByIds(responseModel.getData());
         if (!ResultCode.SUCESS.equals(response1.getCode())) {
             throw new QuestionResultException(response1.getMsg());
+        }
+        for (ClassDetailModel model : response1.getData()){
+            model.setSubject(subject);
+            model.setTeacherId(userInfo.getUserId());
         }
         ResponseModel<List<ClassStatisticsModel>> response = courseFeignService.getClassStatisticsByClassIdsOnMonth(response1.getData());
         if (!ResultCode.SUCESS.equals(response.getCode())) {

@@ -8,6 +8,7 @@ import com.jichuangsi.school.parents.model.http.HttpTokenModel;
 import com.jichuangsi.school.parents.model.http.WxUserInfoModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IParentService {
 
@@ -40,4 +41,10 @@ public interface IParentService {
     void getBindStudentInfo(UserInfoForToken userInfo) throws ParentsException;
 
     NoticeModel findNoticeDetails(UserInfoForToken userInfo,String noticeId) throws ParentsException;
+
+    void deleteBindStudent(UserInfoForToken userInfo , String studentId) throws ParentsException;
+
+    Map<String,Boolean> getParentBindInfo(UserInfoForToken userInfo) throws ParentsException;
+
+    void bindParentPhone(UserInfoForToken userInfo,ParentModel model) throws ParentsException;
 }
