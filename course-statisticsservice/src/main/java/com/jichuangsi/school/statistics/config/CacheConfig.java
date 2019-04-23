@@ -17,6 +17,7 @@ public class CacheConfig {
             StringBuilder stringBuilder = new StringBuilder();
             String split = "-";
             UserInfoForToken params = (UserInfoForToken) objects[0];
+            String subject = (String)objects[1];
             stringBuilder.append(method.getName());
             if (!StringUtils.isEmpty(params.getClassId())){
                 stringBuilder.append(split);
@@ -33,6 +34,10 @@ public class CacheConfig {
             if (!StringUtils.isEmpty(params.getSchoolId())){
                 stringBuilder.append(split);
                 stringBuilder.append(params.getSchoolId());
+            }
+            if (!StringUtils.isEmpty(subject)){
+                stringBuilder.append(split);
+                stringBuilder.append(subject);
             }
             return stringBuilder.toString();
         };
