@@ -158,7 +158,7 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
     }
 
     @Override
-    public void classRemoveTeacher(UserInfoForToken userInfo, String classId, String teacherId, boolean removeClass) throws SchoolServiceException {
+    public void classRemoveTeacher(UserInfoForToken userInfo, String classId, String teacherId) throws SchoolServiceException {
         if (StringUtils.isEmpty(classId) || StringUtils.isEmpty(teacherId)) {
             throw new SchoolServiceException(ResultCode.PARAM_MISS_MSG);
         }
@@ -197,15 +197,11 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
                 classInfo.setHeadMasterName("");
             }
             classInfoRepository.save(classInfo);*/
-            Query query = new Query();
-            query.addCriteria(Criteria.where("_id").is(classId).and("teacherInfos.teacherId").is(teacherId));
-            List<ClassInfo> temp = mongoTemplate.find(query,ClassInfo.class);
-            Update update = new Update();
-            update.set("updateTime", new Date().getTime());
-            if(removeClass) update.set("deleteFlag", "2");
-            update.set("teacherInfos.$.teacherId", null);
-            update.set("teacherInfos.$.teacherName", null);
-            mongoTemplate.updateFirst(query, update, ClassInfo.class);
+            mongoTemplate.updateFirst(
+                    new Query(Criteria.where("_id").is(classId).and("teacherInfos.teacherId").is(teacherId)),
+                    new Update().set("updateTime", new Date().getTime())
+                            .set("teacherInfos.$.teacherId", null)
+                            .set("teacherInfos.$.teacherName", null), ClassInfo.class);
         }
     }
 

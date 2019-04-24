@@ -2,6 +2,7 @@ package com.jichuangsi.school.user.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.user.constant.ClassAction;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.constant.Status;
 import com.jichuangsi.school.user.entity.UserInfo;
@@ -20,6 +21,10 @@ import com.jichuangsi.school.user.service.ISchoolService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,6 +60,8 @@ public class SchoolServiceImpl implements ISchoolService {
     private IUserExtraRepository userExtraRepository;
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -458,14 +465,43 @@ public class SchoolServiceImpl implements ISchoolService {
                 List<TransferTeacher> transferTeachers = userInfoService.getTeachersByClassId(classInfo.getId());
                 for (TransferTeacher transferTeacher : transferTeachers) {
                     if (!StringUtils.isEmpty(transferTeacher.getTeacherId())) {
-                        schoolClassService.classRemoveTeacher(userInfo, classInfo.getId(), transferTeacher.getTeacherId(), true);
+                        schoolClassService.classRemoveTeacher(userInfo, classInfo.getId(), transferTeacher.getTeacherId());
                     }
                 }
+                mongoTemplate.updateFirst(
+                        new Query(Criteria.where("_id").is(classInfo.getId())),
+                        new Update().set("updateTime", new Date().getTime()).set("deleteFlag", String.valueOf(ClassAction.DELETE.getIndex())),
+                        ClassInfo.class);
             } catch (UserServiceException e) {
                 throw new SchoolServiceException(e.getMessage());
             }
         }
        /* classInfoRepository.saveAll(classInfos);*/
+    }
+
+    private void graduateClass(UserInfoForToken userInfo, List<ClassInfo> classInfos) throws SchoolServiceException {
+        for (ClassInfo classInfo : classInfos) {
+            /*classInfo.setDeleteFlag("2");*/
+            try {
+                List<TransferTeacher> transferTeachers = userInfoService.getTeachersByClassId(classInfo.getId());
+                for (TransferTeacher transferTeacher : transferTeachers) {
+                    if (!StringUtils.isEmpty(transferTeacher.getTeacherId())) {
+                        schoolClassService.classRemoveTeacher(userInfo, classInfo.getId(), transferTeacher.getTeacherId());
+                    }
+                }
+                mongoTemplate.updateFirst(
+                        new Query(Criteria.where("_id").is(classInfo.getId())),
+                        new Update().set("updateTime", new Date().getTime()).set("deleteFlag", String.valueOf(ClassAction.GRADUATE.getIndex())),
+                        ClassInfo.class);
+                //冻结学生
+                mongoTemplate.updateMulti(
+                        new Query(Criteria.where("roleInfos").elemMatch(Criteria.where("roleName").is("Student").and("primaryClass.classId").is(classInfo.getId())).and("status").is(Status.ACTIVATE.getName())),
+                        new Update().set("updateTime", new Date().getTime()).set("status", Status.INACTIVATE.getName()), UserInfo.class);
+            } catch (UserServiceException e) {
+                throw new SchoolServiceException(e.getMessage());
+            }
+        }
+        /* classInfoRepository.saveAll(classInfos);*/
     }
 
     @Override
@@ -562,6 +598,6 @@ public class SchoolServiceImpl implements ISchoolService {
         info.setUpdateName(userInfo.getUserName());
         gradeInfoRepository.save(info);
         List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlagOrderByCreateTime(info.getClassIds(), "0");
-        untyingClass(userInfo, classInfos);
+        graduateClass(userInfo, classInfos);
     }
 }
