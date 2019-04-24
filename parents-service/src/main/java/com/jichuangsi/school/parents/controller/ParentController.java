@@ -129,9 +129,9 @@ public class ParentController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping(value = "/loginParentService")
-    public ResponseModel<String> registParentService(@ModelAttribute UserInfoForToken userInfo, @RequestBody ParentModel model){
+    public ResponseModel<String> registParentService(@RequestBody ParentModel model){
         try {
-            return ResponseModel.sucess("",parentService.registParentService(userInfo, model)) ;
+            return ResponseModel.sucess("",parentService.registParentService(model)) ;
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }
@@ -183,7 +183,7 @@ public class ParentController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping(value = "/getWxToken/{code}")
-    public ResponseModel<HttpTokenModel> getWxToken(@ModelAttribute UserInfoForToken userInfo, @PathVariable String code){
+    public ResponseModel<HttpTokenModel> getWxToken(@PathVariable String code){
         try {
             return ResponseModel.sucess("",parentService.findTokenByCode(code));
         } catch (ParentsException e) {
@@ -196,7 +196,7 @@ public class ParentController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping(value = "/getParentInfo/{access_token}/{openid}/{code}")
-    public ResponseModel<WxUserInfoModel> getParentInfo(@ModelAttribute UserInfoForToken userInfo, @PathVariable String access_token, @PathVariable String openid,@PathVariable String code){
+    public ResponseModel<WxUserInfoModel> getParentInfo(@PathVariable String access_token, @PathVariable String openid,@PathVariable String code){
         try {
             return ResponseModel.sucess("",parentService.findWxUserInfo(access_token, openid,code));
         } catch (ParentsException e) {

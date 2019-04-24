@@ -160,7 +160,7 @@ public class ParentServiceImpl implements IParentService {
     }
 
     @Override
-    public String registParentService(UserInfoForToken userInfo, ParentModel model) throws ParentsException {
+    public String registParentService(ParentModel model) throws ParentsException {
         if (StringUtils.isEmpty(model.getOpenId())){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
@@ -172,7 +172,7 @@ public class ParentServiceImpl implements IParentService {
             parentInfo.setWeChat(model.getOpenId());
             parentInfoRepository.save(parentInfo);
         }
-        userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
+        UserInfoForToken userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
         try {
             String userStr = JSONObject.toJSONString(userInfo);
             return tokenService.createdToken(userStr);
