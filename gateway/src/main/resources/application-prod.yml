@@ -79,7 +79,7 @@ app:
       initialCapacity: 500
       maximumSize: 100000
       expireAfterAccessWithMinutes: 30
-    ingoreTokenUrls: /api/auth/login, /api/auth/getToken, /websocket/course/, /QUESTIONSREPOSITORY/self/codeSendQuestionPic
+    ingoreTokenUrls: /api/auth/login, /api/auth/getToken, /websocket/course/, /QUESTIONSREPOSITORY/self/codeSendQuestionPic,/USERSERVICE/back/user/login,/USERSERVICE/back/user/registAccount,/USERSERVICE/back/user/getBackSchools,/PARENTSERVICE/parent/getWxToken/,/PARENTSERVICE/parent/getParentInfo/,/PARENTSERVICE/parent/loginParentService #忽略检查token的URL
     publicKey: EC86@34$123c
     userInfoKey: userInfo
 custom:
