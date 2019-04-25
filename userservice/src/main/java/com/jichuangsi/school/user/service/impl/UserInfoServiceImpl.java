@@ -207,10 +207,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         List<UserInfo> userInfos = userRepository.findByIdIn(Arrays.asList(ids));
        /* UpdateResult result = mongoTemplate.updateMulti(new Query(Criteria.where("id").in(ids)), new Update().set("status", Status.DELETE.getName()), UserInfo.class);
         return result.getModifiedCount();*/
-       for (UserInfo userInfo : userInfos){
-           userInfo.setStatus(Status.DELETE.getName());
-       }
-       userRepository.saveAll(userInfos);
+        for (UserInfo userInfo : userInfos) {
+            userInfo.setStatus(Status.DELETE.getName());
+        }
+        userRepository.saveAll(userInfos);
         /*List<String> fail = new ArrayList<String>();
         try {
             for (String id : ids) {
@@ -272,11 +272,11 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     @Override
     public void restoreUsers(String[] ids) throws UserServiceException {
-       List<UserInfo> userInfos = userRepository.findByIdIn(Arrays.asList(ids));
-       for (UserInfo userInfo : userInfos){
-           userInfo.setStatus(Status.ACTIVATE.getName());
-       }
-       userRepository.saveAll(userInfos);
+        List<UserInfo> userInfos = userRepository.findByIdIn(Arrays.asList(ids));
+        for (UserInfo userInfo : userInfos) {
+            userInfo.setStatus(Status.ACTIVATE.getName());
+        }
+        userRepository.saveAll(userInfos);
         /*List<String> fail = new ArrayList<String>();
         try {
             for (String id : ids) {
@@ -410,8 +410,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             throw new UserServiceException(ResultCode.ACCOUNT_ISEXIST_MSG);
         }
 
-            UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
-            info.setStatus(Status.ACTIVATE.getName());
+        UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
+        info.setStatus(Status.ACTIVATE.getName());
           /*  if (info.getRoleInfos().get(0) instanceof TeacherInfo){
                 TeacherInfo teacherInfo = (TeacherInfo) info.getRoleInfos().get(0);
                 if (null != teacherInfo.getSecondaryClasses()){
@@ -443,7 +443,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                     }
                 }
             }*/
-            userRepository.save(info);
+        userRepository.save(info);
         /*} catch (Exception e) {
             throw new UserServiceException(ResultCode.);
         }*/
@@ -451,16 +451,16 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void saveStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException {
-        if(StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())){
+        if (StringUtils.isEmpty(model.getAccount()) || StringUtils.isEmpty(model.getPwd())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        if (userRepository.countByAccount(model.getAccount()) > 0){
+        if (userRepository.countByAccount(model.getAccount()) > 0) {
             throw new UserServiceException(ResultCode.ACCOUNT_ISEXIST_MSG);
         }
-       /* try {*/
-            UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
-            info.setStatus(Status.ACTIVATE.getName());
-            userRepository.save(info);
+        /* try {*/
+        UserInfo info = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
+        info.setStatus(Status.ACTIVATE.getName());
+        userRepository.save(info);
         /*} catch (Exception e) {
             throw new UserServiceException(ResultCode.PARAM_ERR_MSG);
         }*/
@@ -544,7 +544,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                     break;
             }
         }
-        if (StringUtils.isEmpty(account) || StringUtils.isEmpty(pwd)){
+        if (StringUtils.isEmpty(account) || StringUtils.isEmpty(pwd)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         if (accounts.contains(account)) {
@@ -566,7 +566,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (null == classInfo) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
-        studentInfo.setPhrase(phraseInfo.getPhraseId(), phraseInfo.getPhraseName(),phraseInfo.getId());
+        studentInfo.setPhrase(phraseInfo.getPhraseId(), phraseInfo.getPhraseName(), phraseInfo.getId());
         studentInfo.setPrimaryClass(classInfo.getId(), classInfo.getName());
         studentInfo.setPrimaryGrade(gradeInfo.getId(), gradeInfo.getName());
         studentInfo.setSchool(schoolInfo.getId(), schoolInfo.getName());
@@ -600,11 +600,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<TransferTeacher> getTeachersByClassId(String classId) throws UserServiceException {
-        if (StringUtils.isEmpty(classId)){
+        if (StringUtils.isEmpty(classId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId,"0");
-        if (null == classInfo){
+        ClassInfo classInfo = classInfoRepository.findFirstByIdAndDeleteFlag(classId, "0");
+        if (null == classInfo) {
             throw new UserServiceException(ResultCode.CLASS_SELECT_NULL_MSG);
         }
         List<TransferTeacher> transferTeachers = new ArrayList<TransferTeacher>();
@@ -616,13 +616,13 @@ public class UserInfoServiceImpl implements UserInfoService {
             transferTeacher.setTeacherName(teacherInfo.getTeacherName());
             transferTeacher.setPrimaryClassName(classInfo.getName());
             transferTeacher.setPrimaryClassId(classInfo.getId());
-            if (StringUtils.isEmpty(teacherInfo.getTeacherId())){
+            if (StringUtils.isEmpty(teacherInfo.getTeacherId())) {
                 transferTeacher.setHeadMaster("0");
             }
             transferTeachers.add(transferTeacher);
         });
-        for (TransferTeacher teacher : transferTeachers){
-            if(!StringUtils.isEmpty(teacher.getTeacherId())) {
+        for (TransferTeacher teacher : transferTeachers) {
+            if (!StringUtils.isEmpty(teacher.getTeacherId())) {
                 if (teacher.getTeacherId().equals(classInfo.getHeadMasterId())) {
                     teacher.setHeadMaster("1");
                 }
@@ -633,11 +633,24 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void coldUserInfo(String userId) throws UserServiceException {
-        if (StringUtils.isEmpty(userId)){
+        if (StringUtils.isEmpty(userId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         UserInfo userInfo = userRepository.findFirstById(userId);
-        if(null == userInfo){
+        if (userInfo.getRoleInfos().get(0) instanceof TeacherInfo) {
+            TeacherInfo teacherInfo = (TeacherInfo) userInfo.getRoleInfos().get(0);
+            if (null != teacherInfo.getPrimaryClass() && !StringUtils.isEmpty(teacherInfo.getPrimaryClass().getClassId())) {
+                throw new UserServiceException(ResultCode.SUBJECT_TEACHER_EXIST);
+            }
+            if (null != teacherInfo.getSecondaryClasses() && teacherInfo.getSecondaryClasses().size() > 0) {
+                for (TeacherInfo.Class cla : teacherInfo.getSecondaryClasses()) {
+                    if (!StringUtils.isEmpty(cla.getClassId())) {
+                        throw new UserServiceException(ResultCode.SUBJECT_TEACHER_EXIST);
+                    }
+                }
+            }
+        }
+        if (null == userInfo) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
         userInfo.setStatus(Status.DELETE.getName());
@@ -645,37 +658,37 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public void updateTeacher(UserInfoForToken userInfo,TeacherModel model) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getId())){
+    public void updateTeacher(UserInfoForToken userInfo, TeacherModel model) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getId())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         UserInfo teacher = userRepository.findFirstById(model.getId());
         TeacherInfo info = new TeacherInfo();
-        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo){
+        if (teacher.getRoleInfos().get(0) instanceof TeacherInfo) {
             info = (TeacherInfo) teacher.getRoleInfos().get(0);
         }
-        if (null == teacher){
+        if (null == teacher) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
         UserInfo transferTeacher = MappingModel2EntityConverter.CONVERTEERFROMTEACHERMODEL(model);
-        if (transferTeacher.getRoleInfos().get(0) instanceof TeacherInfo){
+        if (transferTeacher.getRoleInfos().get(0) instanceof TeacherInfo) {
             TeacherInfo teacherInfo = (TeacherInfo) transferTeacher.getRoleInfos().get(0);
-            if (null != teacherInfo.getSecondaryGrades() ){
+            if (null != teacherInfo.getSecondaryGrades()) {
                 info.setSecondaryGrades(teacherInfo.getSecondaryGrades());
             }
-            if (null != teacherInfo.getSecondarySubjects()){
+            if (null != teacherInfo.getSecondarySubjects()) {
                 info.setSecondarySubjects(teacherInfo.getSecondarySubjects());
             }
-            if (null != teacherInfo.getPrimaryGrade()){
+            if (null != teacherInfo.getPrimaryGrade()) {
                 info.setPrimaryGrade(teacherInfo.getPrimaryGrade());
             }
-            if (null != teacherInfo.getPrimarySubject()){
+            if (null != teacherInfo.getPrimarySubject()) {
                 info.setPrimarySubject(teacherInfo.getPrimarySubject());
             }
-            if (null != teacherInfo.getPhrase()){
+            if (null != teacherInfo.getPhrase()) {
                 info.setPhrase(teacherInfo.getPhrase());
             }
-            if (null != teacherInfo.getRoleIds()){
+            if (null != teacherInfo.getRoleIds()) {
                 info.setRoleIds(teacherInfo.getRoleIds());
             }
           /*  if (null != teacherInfo.getSecondaryClasses()){
@@ -712,7 +725,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
         roleInfos.add(info);
         teacher.setRoleInfos(roleInfos);
-        if (!StringUtils.isEmpty(transferTeacher.getName())){
+        if (!StringUtils.isEmpty(transferTeacher.getName())) {
             teacher.setName(transferTeacher.getName());
         }
         teacher.setUpdateTime(new Date().getTime());
@@ -721,34 +734,34 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void updateStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getId())){
+        if (StringUtils.isEmpty(model.getId())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         UserInfo student = userRepository.findFirstById(model.getId());
         StudentInfo info = new StudentInfo();
-        if (student.getRoleInfos().get(0) instanceof StudentInfo){
+        if (student.getRoleInfos().get(0) instanceof StudentInfo) {
             info = (StudentInfo) student.getRoleInfos().get(0);
         }
-        if (null == student){
+        if (null == student) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
         UserInfo transferStudent = MappingModel2EntityConverter.CONVERTEERFROMSTUDENTMODEL(model);
-        if (transferStudent.getRoleInfos().get(0) instanceof StudentInfo){
+        if (transferStudent.getRoleInfos().get(0) instanceof StudentInfo) {
             StudentInfo studentInfo = (StudentInfo) transferStudent.getRoleInfos().get(0);
-            if (null != studentInfo.getPrimaryClass()){
+            if (null != studentInfo.getPrimaryClass()) {
                 info.setPrimaryClass(studentInfo.getPrimaryClass());
             }
-            if (null != studentInfo.getPrimaryGrade()){
+            if (null != studentInfo.getPrimaryGrade()) {
                 info.setPrimaryGrade(studentInfo.getPrimaryGrade());
             }
-            if (null != studentInfo.getPhrase()){
+            if (null != studentInfo.getPhrase()) {
                 info.setPhrase(studentInfo.getPhrase());
             }
         }
         List<RoleInfo> roleInfos = new ArrayList<RoleInfo>();
         roleInfos.add(info);
         student.setRoleInfos(roleInfos);
-        if (!StringUtils.isEmpty(transferStudent.getName())){
+        if (!StringUtils.isEmpty(transferStudent.getName())) {
             student.setName(transferStudent.getName());
         }
         student.setUpdateTime(new Date().getTime());
@@ -756,12 +769,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public void updateOtherPwd(UserInfoForToken userInfo, UpdatePwdModel model, String userId) throws  UserServiceException{
-        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(model.getNewPwd())){
+    public void updateOtherPwd(UserInfoForToken userInfo, UpdatePwdModel model, String userId) throws UserServiceException {
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(model.getNewPwd())) {
             throw new UserServiceException(com.jichuangsi.school.user.constant.ResultCode.PARAM_MISS_MSG);
         }
-        UserInfo otherUser = userRepository.findFirstByIdAndStatus(userId,Status.ACTIVATE.getName());
-        if(null == otherUser){
+        UserInfo otherUser = userRepository.findFirstByIdAndStatus(userId, Status.ACTIVATE.getName());
+        if (null == otherUser) {
             throw new UserServiceException(com.jichuangsi.school.user.constant.ResultCode.USER_ISNOT_EXIST);
         }
         otherUser.setPwd(Md5Util.encodeByMd5(model.getNewPwd()));
@@ -770,14 +783,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model,String schoolId) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getRoleName()) || StringUtils.isEmpty(schoolId)){
+    public void insertSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model, String schoolId) throws UserServiceException {
+        if (StringUtils.isEmpty(model.getRoleName()) || StringUtils.isEmpty(schoolId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        if (!(schoolInfoRepository.countByIdAndDeleteFlag(schoolId,"0") > 0)){
+        if (!(schoolInfoRepository.countByIdAndDeleteFlag(schoolId, "0") > 0)) {
             throw new UserServiceException(ResultCode.SCHOOL_SELECT_NULL_MSG);
         }
-        if (schoolRoleInfoRepository.countByRoleNameAndDeleteFlagAndSchoolId(model.getRoleName(),"0",schoolId) > 0){
+        if (schoolRoleInfoRepository.countByRoleNameAndDeleteFlagAndSchoolId(model.getRoleName(), "0", schoolId) > 0) {
             throw new UserServiceException(ResultCode.ROLE_EXIST_MSG);
         }
         SchoolRoleInfo roleInfo = MappingModel2EntityConverter.CONVERTERFROMSCHOOLROLEMODEL(model);
@@ -791,11 +804,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void updateSchoolRole(UserInfoForToken userInfo, SchoolRoleModel model) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getRoleName()) || StringUtils.isEmpty(model.getId())){
+        if (StringUtils.isEmpty(model.getRoleName()) || StringUtils.isEmpty(model.getId())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(model.getId(),"0");
-        if (null == roleInfo){
+        SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(model.getId(), "0");
+        if (null == roleInfo) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
         roleInfo.setRoleName(model.getRoleName());
@@ -806,11 +819,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo,String schoolId) throws UserServiceException {
-        if (StringUtils.isEmpty(schoolId)){
+    public List<SchoolRoleModel> getSchoolRoles(UserInfoForToken userInfo, String schoolId) throws UserServiceException {
+        if (StringUtils.isEmpty(schoolId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndSchoolId("0",schoolId);
+        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndSchoolId("0", schoolId);
         List<SchoolRoleModel> schoolRoleModels = new ArrayList<SchoolRoleModel>();
         schoolRoleInfos.forEach(schoolRoleInfo -> {
             schoolRoleModels.add(MappingEntity2ModelConverter.CONVERTERFROMSCHOOLROLEINFO(schoolRoleInfo));
@@ -820,11 +833,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void deleteSchoolRole(UserInfoForToken userInfo, String roleId) throws UserServiceException {
-        if (StringUtils.isEmpty(roleId)){
+        if (StringUtils.isEmpty(roleId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(roleId,"0");
-        if (null == roleInfo){
+        SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(roleId, "0");
+        if (null == roleInfo) {
             throw new UserServiceException(ResultCode.SELECT_NULL_MSG);
         }
         roleInfo.setDeleteFlag("1");
@@ -835,11 +848,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public PageInfo<TeacherModel> getTeachers(UserInfoForToken userInfo, String schoolId,int pageIndex,int pageSize) throws UserServiceException {
-        if (StringUtils.isEmpty(schoolId)){
+    public PageInfo<TeacherModel> getTeachers(UserInfoForToken userInfo, String schoolId, int pageIndex, int pageSize) throws UserServiceException {
+        if (StringUtils.isEmpty(schoolId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        List<UserInfo> userInfos = userExtraRepository.findBySchoolId(schoolId,pageIndex,pageSize);
+        List<UserInfo> userInfos = userExtraRepository.findBySchoolId(schoolId, pageIndex, pageSize);
         List<TeacherModel> teacherModels = new ArrayList<TeacherModel>();
         userInfos.forEach(userInfo1 -> {
             teacherModels.add(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1));
@@ -854,34 +867,34 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<ClassTeacherInfoModel> getStudentTeachers(String studentId) throws UserServiceException {
-        if (StringUtils.isEmpty(studentId)){
+        if (StringUtils.isEmpty(studentId)) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         UserInfo student = userRepository.findFirstById(studentId);
-        if (null == student){
+        if (null == student) {
             throw new UserServiceException(ResultCode.USER_SELECT_NULL_MSG);
         }
         String classId = "";
-        if (student.getRoleInfos().get(0) instanceof StudentInfo){
+        if (student.getRoleInfos().get(0) instanceof StudentInfo) {
             StudentInfo studentInfo = (StudentInfo) student.getRoleInfos().get(0);
             classId = studentInfo.getPrimaryClass().getClassId();
         }
         List<UserInfo> userInfos = userExtraRepository.findByRoleInfos(classId);
         List<ClassTeacherInfoModel> classTeacherInfoModels = new ArrayList<ClassTeacherInfoModel>();
-        for(UserInfo userInfo : userInfos){
+        for (UserInfo userInfo : userInfos) {
             ClassTeacherInfoModel model = new ClassTeacherInfoModel();
             model.setId(userInfo.getId());
             model.setName(userInfo.getName());
-            if (userInfo.getRoleInfos().get(0) instanceof TeacherInfo){
+            if (userInfo.getRoleInfos().get(0) instanceof TeacherInfo) {
                 TeacherInfo teacherInfo = (TeacherInfo) userInfo.getRoleInfos().get(0);
                 model.setSubject(teacherInfo.getPrimarySubject().getSubjectName());
-                if (null != teacherInfo.getPrimaryClass() && classId.equals(teacherInfo.getPrimaryClass().getClassId())){
+                if (null != teacherInfo.getPrimaryClass() && classId.equals(teacherInfo.getPrimaryClass().getClassId())) {
                     model.setHeadMaster("班主任");
                 }
                 List<String> roleNames = new ArrayList<String>();
-                for (String roleId : teacherInfo.getRoleIds()){
-                    SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(roleId,"0");
-                    if (null != roleInfo){
+                for (String roleId : teacherInfo.getRoleIds()) {
+                    SchoolRoleInfo roleInfo = schoolRoleInfoRepository.findFirstByIdAndDeleteFlag(roleId, "0");
+                    if (null != roleInfo) {
                         roleNames.add(roleInfo.getRoleName());
                     }
                 }
@@ -894,29 +907,29 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public PageInfo<TeacherModel> getTeachersByCondition(UserInfoForToken userInfo, UserConditionModel model) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getSchoolId())){
+        if (StringUtils.isEmpty(model.getSchoolId())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
         List<String> classIds = new ArrayList<String>();
-        if (!StringUtils.isEmpty(model.getClassId())){
+        if (!StringUtils.isEmpty(model.getClassId())) {
             classIds.add(model.getClassId());
-        }else if (!StringUtils.isEmpty(model.getGradeId())){
+        } else if (!StringUtils.isEmpty(model.getGradeId())) {
             GradeInfo gradeInfo = gradeInfoRepository.findFirstById(model.getGradeId());
-            if (null == gradeInfo){
+            if (null == gradeInfo) {
                 throw new UserServiceException(ResultCode.GRADE_SELECT_NULL_MSG);
             }
             classIds.addAll(gradeInfo.getClassIds());
-        }else if (!StringUtils.isEmpty(model.getPhraseId())){
+        } else if (!StringUtils.isEmpty(model.getPhraseId())) {
             PhraseInfo phraseInfo = phraseInfoRepository.findFirstById(model.getPhraseId());
-            if (null == phraseInfo){
+            if (null == phraseInfo) {
                 throw new UserServiceException(ResultCode.PHRASE_SELECT_NULL_MSG);
             }
-            List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0",phraseInfo.getGradeIds());
-            for (GradeInfo gradeInfo : gradeInfos){
+            List<GradeInfo> gradeInfos = gradeInfoRepository.findByDeleteFlagAndIdInOrderByCreateTime("0", phraseInfo.getGradeIds());
+            for (GradeInfo gradeInfo : gradeInfos) {
                 classIds.addAll(gradeInfo.getClassIds());
             }
         }
-        List<UserInfo> userInfos = userExtraRepository.findByConditions(model.getSchoolId(),classIds,model.getUserName(),"Teacher",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
+        List<UserInfo> userInfos = userExtraRepository.findByConditions(model.getSchoolId(), classIds, model.getUserName(), "Teacher", model.getSubjectId(), model.getPageIndex(), model.getPageSize());
         List<TeacherModel> models = new ArrayList<TeacherModel>();
         userInfos.forEach(userInfo1 -> {
             models.add(getTeacherRoles(MappingEntity2ModelConverter.CONVERTERFROMUSERINFO(userInfo1)));
@@ -925,32 +938,32 @@ public class UserInfoServiceImpl implements UserInfoService {
         pageInfo.setList(models);
         pageInfo.setPageNum(model.getPageIndex());
         pageInfo.setPageSize(model.getPageSize());
-        pageInfo.setTotal(userExtraRepository.countByConditions(model.getSchoolId(),classIds,model.getUserName(),"Teacher",model.getSubjectId()));
+        pageInfo.setTotal(userExtraRepository.countByConditions(model.getSchoolId(), classIds, model.getUserName(), "Teacher", model.getSubjectId()));
         return pageInfo;
     }
 
     @Override
     public PageInfo<StudentModel> getStudentByCondition(UserInfoForToken userInfo, UserConditionModel model) throws UserServiceException {
-        if (StringUtils.isEmpty(model.getSchoolId())){
+        if (StringUtils.isEmpty(model.getSchoolId())) {
             throw new UserServiceException(ResultCode.PARAM_MISS_MSG);
         }
-        List<UserInfo> userInfos = userExtraRepository.findByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Student",model.getSubjectId(),model.getPageIndex(),model.getPageSize());
+        List<UserInfo> userInfos = userExtraRepository.findByCondition(model.getSchoolId(), model.getPhraseId(), model.getGradeId(), model.getClassId(), model.getUserName(), "Student", model.getSubjectId(), model.getPageIndex(), model.getPageSize());
         List<StudentModel> studentModels = new ArrayList<StudentModel>();
         userInfos.forEach(userInfo1 -> {
             studentModels.add(MappingEntity2ModelConverter.CONVERTESTUDENTMODELRFROMUSERINFO(userInfo1));
         });
         PageInfo<StudentModel> pageInfo = new PageInfo<StudentModel>();
-        pageInfo.setTotal(userExtraRepository.countByCondition(model.getSchoolId(),model.getPhraseId(),model.getGradeId(),model.getClassId(),model.getUserName(),"Student",model.getSubjectId()));
+        pageInfo.setTotal(userExtraRepository.countByCondition(model.getSchoolId(), model.getPhraseId(), model.getGradeId(), model.getClassId(), model.getUserName(), "Student", model.getSubjectId()));
         pageInfo.setPageSize(model.getPageSize());
         pageInfo.setPageNum(model.getPageIndex());
         pageInfo.setList(studentModels);
         return pageInfo;
     }
 
-    private TeacherModel getTeacherRoles(TeacherModel model){
-        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndIdIn("0",model.getRoleIds());
-        for (SchoolRoleInfo schoolRoleInfo : schoolRoleInfos){
-            model.getRoleInfos().add(new SchoolRoleModel(schoolRoleInfo.getId(),schoolRoleInfo.getRoleName()));
+    private TeacherModel getTeacherRoles(TeacherModel model) {
+        List<SchoolRoleInfo> schoolRoleInfos = schoolRoleInfoRepository.findByDeleteFlagAndIdIn("0", model.getRoleIds());
+        for (SchoolRoleInfo schoolRoleInfo : schoolRoleInfos) {
+            model.getRoleInfos().add(new SchoolRoleModel(schoolRoleInfo.getId(), schoolRoleInfo.getRoleName()));
         }
         return model;
     }
