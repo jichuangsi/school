@@ -191,6 +191,19 @@ public class ParentController {
         }
     }
 
+    @ApiOperation(value = "家长端获取wx_token", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getWxToken2")
+    public ResponseModel<HttpTokenModel> getWxToken2(){
+        try {
+            return ResponseModel.sucess("",parentService.findTokenByCode2());
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
     @ApiOperation(value = "家长端获取家长端信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
@@ -203,6 +216,20 @@ public class ParentController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+    @ApiOperation(value = "家长端获取家长端信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getParentInfo2/{access_token}/{openid}")
+    public ResponseModel<WxUserInfoModel> getParentInfo2(@PathVariable String access_token, @PathVariable String openid){
+        try {
+            return ResponseModel.sucess("",parentService.findWxUserInfo2(access_token, openid));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
 
     @ApiOperation(value = "家长端绑定学生信息", notes = "")
     @ApiImplicitParams({

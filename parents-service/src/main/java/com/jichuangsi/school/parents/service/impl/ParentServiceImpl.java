@@ -261,6 +261,23 @@ public class ParentServiceImpl implements IParentService {
     }
 
     @Override
+    public HttpTokenModel findTokenByCode2() throws ParentsException{
+        String result = "";
+        try {
+            result = httpService.findWxTokenModel2();
+        } catch (ParentHttpException e) {
+            throw new ParentsException(e.getMessage());
+        }
+        HttpTokenModel tokenModel =  JSONObject.parseObject(result,HttpTokenModel.class);
+        if (StringUtils.isEmpty(tokenModel.getAccess_token())){
+            WxErrorModel model = new WxErrorModel();
+            model = JSONObject.parseObject(result,WxErrorModel.class);
+            throw new ParentsException(model.getErrmsg());
+        }
+        return tokenModel;
+    }
+
+    @Override
     public WxUserInfoModel findWxUserInfo(String access_token, String openid,String code) throws ParentsException{
         if (StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid)){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
@@ -268,6 +285,25 @@ public class ParentServiceImpl implements IParentService {
         String result = "";
         try {
             result = httpService.findWxUserInfo(access_token,openid,code);
+        } catch (ParentHttpException e) {
+            throw new ParentsException(e.getMessage());
+        }
+        WxUserInfoModel wx =  JSONObject.parseObject(result,WxUserInfoModel.class);
+        if (StringUtils.isEmpty(wx.getOpenid())){
+            WxErrorModel model = JSONObject.parseObject(result,WxErrorModel.class);
+            throw new ParentsException(model.getErrmsg());
+        }
+        return wx;
+    }
+
+    @Override
+    public WxUserInfoModel findWxUserInfo2(String access_token,String openid) throws ParentsException{
+        if (StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid)){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        String result = "";
+        try {
+            result = httpService.findWxUserInfo2(access_token,openid);
         } catch (ParentHttpException e) {
             throw new ParentsException(e.getMessage());
         }

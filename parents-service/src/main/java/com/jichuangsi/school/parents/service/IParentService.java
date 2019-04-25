@@ -36,7 +36,11 @@ public interface IParentService {
 
     HttpTokenModel findTokenByCode(String coed) throws ParentsException;
 
+    HttpTokenModel findTokenByCode2() throws ParentsException;
+
     WxUserInfoModel findWxUserInfo(String access_token,String openid,String code) throws ParentsException;
+
+    WxUserInfoModel findWxUserInfo2(String access_token,String openid) throws ParentsException;
 
     void getBindStudentInfo(UserInfoForToken userInfo) throws ParentsException;
 

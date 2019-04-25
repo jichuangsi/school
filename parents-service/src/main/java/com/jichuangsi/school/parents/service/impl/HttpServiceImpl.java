@@ -50,6 +50,23 @@ public class HttpServiceImpl implements IHttpService {
     }
 
     @Override
+    public String findWxTokenModel2() throws ParentHttpException {
+        Map<String,String> headers = httpHeaderConfig.getheaders();
+        Map<String,String> querys = new HashMap<String,String>();
+        querys.put("appid",appId);
+        querys.put("secret",appSecret);
+        querys.put("grant_type","client_credential");
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.doGet(getTokenHost,"/cgi-bin/token",getTokenMethod,headers,querys);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception e) {
+            throw new ParentHttpException(ResultCode.HTTP_IO_MSG);
+        }
+    }
+
+    @Override
     public String findWxUserInfo(String token, String openId,String code) throws ParentHttpException {
         Map<String,String> headers = httpHeaderConfig.getheaders();
         Map<String,String> querys = new HashMap<String,String>();
@@ -63,6 +80,24 @@ public class HttpServiceImpl implements IHttpService {
         HttpResponse response = null;
         try {
             response = HttpUtils.doGet(getTokenHost,getTokenPath,getTokenMethod,headers,querys);
+            String result = EntityUtils.toString(response.getEntity());
+            return result;
+        } catch (Exception e) {
+            throw new ParentHttpException(ResultCode.HTTP_IO_MSG);
+        }
+    }
+
+    @Override
+    public String findWxUserInfo2(String token,String openId) throws ParentHttpException{
+        //"https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN"
+        Map<String,String> headers = httpHeaderConfig.getheaders();
+        Map<String,String> querys = new HashMap<String,String>();
+        querys.put("access_token",token);
+        querys.put("openid",openId);
+        querys.put("lang","zh_CN");
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.doGet(getTokenHost,"/cgi-bin/user/info",getTokenMethod,headers,querys);
             String result = EntityUtils.toString(response.getEntity());
             return result;
         } catch (Exception e) {
