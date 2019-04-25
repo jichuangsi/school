@@ -17,6 +17,15 @@ public class ParentInfo {
     private String phone;
     private String weChat;
     private String deleteFlag = "0";
+    private String headimgurl;
+
+    public String getHeadimgurl() {
+        return headimgurl;
+    }
+
+    public void setHeadimgurl(String headimgurl) {
+        this.headimgurl = headimgurl;
+    }
 
     public String getDeleteFlag() {
         return deleteFlag;

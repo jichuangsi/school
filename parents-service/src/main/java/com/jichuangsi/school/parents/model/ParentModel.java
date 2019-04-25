@@ -1,9 +1,14 @@
 package com.jichuangsi.school.parents.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.Pattern;
 
+@ApiModel
 public class ParentModel {
 
+    @ApiModelProperty(value = "用户名")
     private String userName;
     private String openId;
     @Pattern(regexp = "^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\\d{8}$",message = "手机号码不正确")
@@ -12,6 +17,15 @@ public class ParentModel {
     private String account;
     @Pattern(regexp = "^((?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12})$",message = "密码必须为6-12位数字与字母混合")
     private String pwd;
+    private String headimgurl;
+
+    public String getHeadimgurl() {
+        return headimgurl;
+    }
+
+    public void setHeadimgurl(String headimgurl) {
+        this.headimgurl = headimgurl;
+    }
 
     public String getAccount() {
         return account;

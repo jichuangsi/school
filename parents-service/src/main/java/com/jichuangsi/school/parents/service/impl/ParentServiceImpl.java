@@ -170,6 +170,7 @@ public class ParentServiceImpl implements IParentService {
             parentInfo.setPhone(model.getPhone());
             parentInfo.setUserName(model.getUserName());
             parentInfo.setWeChat(model.getOpenId());
+            parentInfo.setHeadimgurl(model.getHeadimgurl());
             parentInfoRepository.save(parentInfo);
         }
         UserInfoForToken userInfo = MappingEntity2ModelConverter.CONVERTERFROMPARENTINFO(parentInfo);
@@ -260,7 +261,7 @@ public class ParentServiceImpl implements IParentService {
         return tokenModel;
     }
 
-    @Override
+/*    @Override
     public HttpTokenModel findTokenByCode2() throws ParentsException{
         String result = "";
         try {
@@ -275,16 +276,16 @@ public class ParentServiceImpl implements IParentService {
             throw new ParentsException(model.getErrmsg());
         }
         return tokenModel;
-    }
+    }*/
 
     @Override
-    public WxUserInfoModel findWxUserInfo(String access_token, String openid,String code) throws ParentsException{
+    public WxUserInfoModel findWxUserInfo(String access_token, String openid/*,String code*/) throws ParentsException{
         if (StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid)){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
         String result = "";
         try {
-            result = httpService.findWxUserInfo(access_token,openid,code);
+            result = httpService.findWxUserInfo(access_token,openid/*,code*/);
         } catch (ParentHttpException e) {
             throw new ParentsException(e.getMessage());
         }
@@ -296,7 +297,7 @@ public class ParentServiceImpl implements IParentService {
         return wx;
     }
 
-    @Override
+  /*  @Override
     public WxUserInfoModel findWxUserInfo2(String access_token,String openid) throws ParentsException{
         if (StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid)){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
@@ -313,7 +314,7 @@ public class ParentServiceImpl implements IParentService {
             throw new ParentsException(model.getErrmsg());
         }
         return wx;
-    }
+    }*/
 
     @Override
     public void getBindStudentInfo(UserInfoForToken userInfo) throws ParentsException {

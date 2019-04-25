@@ -44,4 +44,7 @@ com:
         getToken:
           path: "/sns/oauth2/access_token"
           method: "GET"
+        getUserInfo:
+          path: "/sns/userinfo"
+          method: "GET"
 

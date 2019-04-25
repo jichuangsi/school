@@ -6,9 +6,17 @@ public interface IHttpService {
 
     String findWxTokenModel(String code) throws ParentHttpException;
 
+/*
+<<<<<<< Updated upstream
     String findWxTokenModel2() throws ParentHttpException;
+*/
 
+/*
     String findWxUserInfo(String token,String openId,String code) throws ParentHttpException;
+*/
 
-    String findWxUserInfo2(String token,String openId) throws ParentHttpException;
+/*    String findWxUserInfo2(String token,String openId) throws ParentHttpException;
+=======*/
+    String findWxUserInfo(String token,String openId/*,String code*/) throws ParentHttpException;
+
 }
