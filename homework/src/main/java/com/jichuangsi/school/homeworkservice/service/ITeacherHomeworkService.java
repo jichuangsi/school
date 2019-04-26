@@ -20,6 +20,9 @@ public interface ITeacherHomeworkService {
     HomeworkModelForTeacher getParticularHomework(UserInfoForToken userInfo, String homeworkId) throws TeacherHomeworkServiceException;
 
     @Transactional
+    HomeworkModelForStudent getParticularStudentHomework(UserInfoForToken userInfo, String homeworkId, String studentId) throws TeacherHomeworkServiceException;
+
+    @Transactional
     QuestionModelForTeacher getParticularQuestion(UserInfoForToken userInfo, String questionId) throws TeacherHomeworkServiceException;
 
     @Transactional

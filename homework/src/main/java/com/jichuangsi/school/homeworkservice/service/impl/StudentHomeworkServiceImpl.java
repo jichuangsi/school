@@ -81,7 +81,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
 
     @Override
     public HomeworkModelForStudent getParticularHomework(UserInfoForToken userInfo, String homeworkId) throws StudentHomeworkServiceException {
-        if (StringUtils.isEmpty(homeworkId)) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        if (StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(homeworkId)) throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         Homework homework = homeworkRepository.findFirstByIdOrderByUpdateTimeDesc(homeworkId);
         if (homework == null) throw new StudentHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
         List<Question> questions = questionRepository.findQuestionsByHomeworkId(homeworkId);

@@ -1,6 +1,7 @@
 package com.jichuangsi.school.homeworkservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.homeworkservice.constant.QuestionType;
 import com.jichuangsi.school.homeworkservice.constant.Result;
 import com.jichuangsi.school.homeworkservice.constant.ResultCode;
 import com.jichuangsi.school.homeworkservice.constant.Status;
@@ -120,6 +121,30 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
     }
 
     @Override
+    public HomeworkModelForStudent getParticularStudentHomework(UserInfoForToken userInfo, String homeworkId, String studentId) throws TeacherHomeworkServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(homeworkId)  || StringUtils.isEmpty(studentId)) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        Homework homework = homeworkRepository.findFirstByIdOrderByUpdateTimeDesc(homeworkId);
+        if (homework == null) throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
+        List<Question> questions = questionRepository.findQuestionsByHomeworkId(homeworkId);
+        HomeworkModelForStudent homeworkModelForStudent = MappingEntity2ModelConverter.ConvertStudentHomework(homework);
+        homeworkModelForStudent.getQuestions().addAll(convertStudentQuestionList(questions));
+        homeworkModelForStudent.getQuestions().forEach(question -> {
+            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), studentId));
+            if (result.isPresent()) {
+                question.setAnswerModelForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
+                if (QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(question.getQuestionType())) {
+                    if (Result.PASS.getName().equalsIgnoreCase(result.get().getResult())) {
+                        question.setAnswerModelForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
+                                teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), question.getQuestionId(), result.get().getId())
+                        ));
+                    }
+                }
+            }
+        });
+        return homeworkModelForStudent;
+    }
+
+    @Override
     public QuestionModelForTeacher getParticularQuestion(UserInfoForToken userInfo, String questionId) throws TeacherHomeworkServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         Optional<Question> result = questionRepository.findById(questionId);
@@ -203,12 +228,20 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
         return homeworkModelForTeachers;
     }
 
-    private List<QuestionModelForTeacher> convertQuestionList(List<Question> questions){
+    private List<QuestionModelForTeacher> convertTeacherQuestionList(List<Question> questions){
         List<QuestionModelForTeacher> questionModelForTeachers = new ArrayList<QuestionModelForTeacher>();
         questions.forEach(question -> {
             questionModelForTeachers.add(MappingEntity2ModelConverter.ConvertTeacherQuestion(question));
         });
         return questionModelForTeachers;
+    }
+
+    private List<QuestionModelForStudent> convertStudentQuestionList(List<Question> questions) {
+        List<QuestionModelForStudent> questionForStudents = new ArrayList<QuestionModelForStudent>();
+        questions.forEach(question -> {
+            questionForStudents.add(MappingEntity2ModelConverter.ConvertStudentQuestion(question));
+        });
+        return questionForStudents;
     }
 
     private List<AnswerModelForStudent> convertStudentAnswerList(List<StudentAnswer> answers){
