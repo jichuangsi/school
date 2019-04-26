@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @Service
 @Transactional
@@ -88,8 +89,6 @@ public class LoginServiceImpl implements LoginService {
         }else{
             userJson = JSON.toJSONString(new  UserInfoForToken(userInfo.getId(),null,userInfo.getName(),null,timeStamp));
         }
-
-
-        return StringUtils.isEmpty(userJson)?null:JWT.create().withClaim(userClaim, userJson).sign(algorithm);
+        return StringUtils.isEmpty(userJson)?null:JWT.create().withClaim(userClaim, userJson).withExpiresAt(new Date(System.currentTimeMillis() + 999)).sign(algorithm);
     }
 }

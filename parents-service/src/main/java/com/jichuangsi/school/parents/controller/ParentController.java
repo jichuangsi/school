@@ -47,7 +47,7 @@ public class ParentController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @GetMapping(value = "/getParentMessage/{techerId}/{pageIndex}/{pageSize}")
+    @GetMapping(value = "/getParentMessage/{teacherId}/{pageIndex}/{pageSize}")
     public ResponseModel<PageInfo<ParentMessageModel>> getParentMessage(@ModelAttribute UserInfoForToken userInfo,@PathVariable String teacherId,@PathVariable int pageIndex,@PathVariable int pageSize){
         try {
             return ResponseModel.sucess("",parentService.getParentMessage(userInfo, teacherId, pageIndex, pageSize));

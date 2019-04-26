@@ -12,7 +12,6 @@ import com.jichuangsi.school.parents.model.statistics.ParentStatisticsModel;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IStudentService {
 
@@ -26,7 +25,7 @@ public interface IStudentService {
 
     List<GrowthModel> getGrowths(UserInfoForToken userInfo,String studentId) throws ParentsException;
 
-    Map<String,List<HomeWorkParentModel>> getStudentHomeWork(UserInfoForToken userInfo, String studentId) throws ParentsException;
+    List<HomeWorkParentModel> getStudentHomeWork(UserInfoForToken userInfo, String studentId) throws ParentsException;
 
     List<ClassTeacherInfoModel> getStudentTeachers(UserInfoForToken userInfo,String studentId) throws ParentsException;
 

@@ -81,6 +81,8 @@ com:
         ai-push:
           number: 3
           size: 100
+      log:
+        path: E:/logback/${spring.application.name}/${spring.profiles.active}
 custom:
   login:
     content: http://school.jichuangsi.com/imgupload/imgupload.html?a=123&c=

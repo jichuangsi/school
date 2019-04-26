@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 @Service
 public class TokenService {
@@ -19,7 +20,7 @@ public class TokenService {
     private String userClaim;
 
     public String createdToken(String user) throws IllegalArgumentException, UnsupportedEncodingException {
-        return StringUtils.isEmpty(user)?null:JWT.create().withClaim(userClaim, user).sign(algorithm);
+        return StringUtils.isEmpty(user)?null:JWT.create().withClaim(userClaim, user).withExpiresAt(new Date(System.currentTimeMillis() + 3000)).sign(algorithm);
     }
 
     public boolean checkToken(String token) {

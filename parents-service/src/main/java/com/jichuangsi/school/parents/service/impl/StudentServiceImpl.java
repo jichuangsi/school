@@ -139,7 +139,7 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Override
-    public Map<String,List<HomeWorkParentModel>> getStudentHomeWork(UserInfoForToken userInfo, String studentId) throws ParentsException {
+    public List<HomeWorkParentModel> getStudentHomeWork(UserInfoForToken userInfo, String studentId) throws ParentsException {
         if (StringUtils.isEmpty(studentId)){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
         }
@@ -152,7 +152,7 @@ public class StudentServiceImpl implements IStudentService {
             throw new ParentsException(response.getMsg());
         }
         List<HomeWorkParentModel> homeWorkParentModels = response.getData();
-        Map<String,List<HomeWorkParentModel>> map = new HashMap<String, List<HomeWorkParentModel>>();
+        /*Map<String,List<HomeWorkParentModel>> map = new HashMap<String, List<HomeWorkParentModel>>();
         for (HomeWorkParentModel model : homeWorkParentModels){
             String subject = model.getSubjectName();
             List<HomeWorkParentModel> homeworks = new ArrayList<HomeWorkParentModel>();
@@ -161,8 +161,8 @@ public class StudentServiceImpl implements IStudentService {
             }
             homeworks.add(model);
             map.put(subject,homeworks);
-        }
-        return map;
+        }*/
+        return homeWorkParentModels;
     }
 
     @Override

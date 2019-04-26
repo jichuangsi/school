@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/studentInfo")
@@ -104,7 +103,7 @@ public class StudentInfoController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @GetMapping(value = "/getStudentHomeWork/{studentId}")
-    public ResponseModel<Map<String,List<HomeWorkParentModel>>> getStudentHomeWork(@ModelAttribute UserInfoForToken userInfo, @PathVariable String studentId){
+    public ResponseModel<List<HomeWorkParentModel>> getStudentHomeWork(@ModelAttribute UserInfoForToken userInfo, @PathVariable String studentId){
         try {
             return ResponseModel.sucess("",studentService.getStudentHomeWork(userInfo, studentId));
         } catch (ParentsException e) {

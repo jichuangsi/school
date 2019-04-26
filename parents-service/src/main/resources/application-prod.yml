@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: parentservice
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/school
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+  servlet:
+    multipart:
+      max-request-size: 5MB
+      max-file-size: 5MB
+server:
+  port: 7979
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+  #instance:
+    #ip-address: 114.115.207.28
+    #prefer-ip-address: true
+
+com:
+  jichuangsi:
+    school:
+      token:
+          jwt:
+            secret: EC86@34$123c
+            userClaim : userInfo
+      swagger:
+        enable: false
+      wx:
+        host: "https://api.weixin.qq.com"
+        source: "source"
+        formatStr: "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+        timeZone: "GMT"
+        secretKey: "K5oMIj9A5z8JqRvcrq1IHruy9LQiQN5XgxupUc9o"
+        secretId: "AKIDl044BUeuP5wN9eTwU0j3U4t5xV9C1TvlBNlm"
+        appid: "wx124c0ab234287c8c"
+        appSecret: "833fcfda44d153686bbdd0a10450bf08"
+        getToken:
+          path: "/sns/oauth2/access_token"
+          method: "GET"
+        getUserInfo:
+          path: "/sns/userinfo"
+          method: "GET"
+      log:
+        path: E:/logback/${spring.application.name}/${spring.profiles.active}
