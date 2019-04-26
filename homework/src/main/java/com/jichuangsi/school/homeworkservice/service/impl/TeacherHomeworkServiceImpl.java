@@ -141,6 +141,8 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
                 }
             }
         });
+
+        checkHomeworkCompleted(studentId, homeworkModelForStudent);
         return homeworkModelForStudent;
     }
 
@@ -250,5 +252,12 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
             AnswerForStudents.add(MappingEntity2ModelConverter.ConvertStudentAnswer(answer));
         });
         return AnswerForStudents;
+    }
+
+    private void checkHomeworkCompleted(String studentId, HomeworkModelForStudent homeworkModelForStudent) {
+        homeworkModelForStudent.setCompleted(mongoTemplate.exists(
+                    new Query(Criteria.where("studentId").is(studentId)
+                            .and("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkModelForStudent.getHomeworkId()).and("completedTime").ne(0))),
+                    StudentHomeworkCollection.class));
     }
 }
