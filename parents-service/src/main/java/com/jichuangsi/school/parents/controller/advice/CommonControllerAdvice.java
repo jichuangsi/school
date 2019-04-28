@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 @RestControllerAdvice
 public class CommonControllerAdvice {
 
-	@Value("${com.jichuangsi.school.token.userClaim}")
+	@Value("${com.jichuangsi.school.token.jwt.userClaim}")
 	private String userClaim;
 
 	@ModelAttribute

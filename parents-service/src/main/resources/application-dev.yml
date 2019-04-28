@@ -42,6 +42,7 @@ com:
           jwt:
             secret: EC86@34$123c
             userClaim : userInfo
+            survivalTime: 7200000
       swagger:
         enable: true
       wx:
@@ -51,8 +52,8 @@ com:
         timeZone: "GMT"
         secretKey: "K5oMIj9A5z8JqRvcrq1IHruy9LQiQN5XgxupUc9o"
         secretId: "AKIDl044BUeuP5wN9eTwU0j3U4t5xV9C1TvlBNlm"
-        appid: "wx124c0ab234287c8c"
-        appSecret: "833fcfda44d153686bbdd0a10450bf08"
+        appid: "wx6242cfcc7e43e927"
+        appSecret: "be8cfbba1effe57abb0b08ce6d3e0834"
         getToken:
           path: "/sns/oauth2/access_token"
           method: "GET"

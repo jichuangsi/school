@@ -16,11 +16,13 @@ import java.util.Date;
 public class TokenService {
     @Resource
     private Algorithm algorithm;
-    @Value("${com.jichuangsi.school.token.userClaim}")
+    @Value("${com.jichuangsi.school.token.jwt.userClaim}")
     private String userClaim;
+    @Value("${com.jichuangsi.school.token.jwt.survivalTime}")
+    private long survivalTime;
 
     public String createdToken(String user) throws IllegalArgumentException, UnsupportedEncodingException {
-        return StringUtils.isEmpty(user)?null:JWT.create().withClaim(userClaim, user).withExpiresAt(new Date(System.currentTimeMillis() + 3000)).sign(algorithm);
+        return StringUtils.isEmpty(user)?null:JWT.create().withClaim(userClaim, user).withExpiresAt(new Date(System.currentTimeMillis() + survivalTime)).sign(algorithm);
     }
 
     public boolean checkToken(String token) {

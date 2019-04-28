@@ -25,6 +25,7 @@ com:
       token:
           jwt:
             secret: EC86@34$123c
+            survivalTime: 7200000
           userClaim : userInfo
       swagger:
         enable: true
