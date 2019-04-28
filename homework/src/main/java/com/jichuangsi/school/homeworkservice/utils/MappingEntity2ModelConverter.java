@@ -139,6 +139,7 @@ public final class MappingEntity2ModelConverter {
         answerForTeacher.setCreateTime(teacherAnswer.getCreateTime());
         answerForTeacher.setUpdateTime(teacherAnswer.getUpdateTime());
         answerForTeacher.setShareTime(teacherAnswer.getShareTime());
+        answerForTeacher.setScore(teacherAnswer.getSubjectiveScore());
         return answerForTeacher;
     }
 }
