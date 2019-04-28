@@ -61,7 +61,7 @@ public class TeacherTestController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
             @ApiImplicitParam(paramType = "path", name = "homeworkId", value = "课堂ID", required = true, dataType = "String"),
             @ApiImplicitParam(paramType = "path", name = "studentId", value = "学生ID", required = true, dataType = "String")})
-    @GetMapping("/getStudentHomework/{homeworkId}/{studentId}")
+    @GetMapping("/getStudentTest/{homeworkId}/{studentId}")
     public ResponseModel<TestModelForStudent> getStudentTest(@ModelAttribute UserInfoForToken userInfo, @PathVariable String testId, @PathVariable String studentId) throws TeacherTestServiceException{
 
         return ResponseModel.sucess("",  teacherTestService.getParticularStudentTest(userInfo, testId, studentId));
