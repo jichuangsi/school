@@ -13,6 +13,6 @@ import java.util.List;
 @FeignClient(value = "courseservice",fallbackFactory = CourseFallBackFeignServiceImpl.class)
 public interface ICourseFeignService {
 
-    @RequestMapping("/getParentStatistics")
+    @RequestMapping("/feign/getParentStatistics")
     ResponseModel<List<KnowledgeStatisticsModel>> getParentStatistics(@RequestBody ParentStatisticsModel model);
 }

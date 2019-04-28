@@ -20,6 +20,7 @@ import com.jichuangsi.school.courseservice.model.result.QuestionStatisticsRateMo
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.transfer.TransferKnowledge;
 import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
+import com.jichuangsi.school.courseservice.repository.CourseConsoleRepository;
 import com.jichuangsi.school.courseservice.repository.CourseRepository;
 import com.jichuangsi.school.courseservice.repository.QuestionRepository;
 import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
@@ -44,6 +45,8 @@ public class FeignClientServiceImpl implements IFeignClientService {
     private StudentAnswerRepository studentAnswerRepository;
     @Resource
     private CourseRepository courseRepository;
+    @Resource
+    private CourseConsoleRepository courseConsoleRepository;
 
     @Override
     public TransferKnowledge getKnowledgeOfParticularQuestion(String questionId) throws StudentCourseServiceException {
@@ -347,7 +350,7 @@ public class FeignClientServiceImpl implements IFeignClientService {
                 calendar.set(Calendar.HOUR_OF_DAY, 23);
                 calendar.set(Calendar.MINUTE, 59);
                 calendar.set(Calendar.SECOND, 59);
-                courses.addAll(courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.FINISH.getName(), beignTime, calendar.getTimeInMillis(), model.getSubjectName()));
+                courses.addAll(courseConsoleRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.FINISH.getName(), beignTime, calendar.getTimeInMillis(), model.getSubjectName()));
             }
         }
         List<String> questionIds = new ArrayList<String>();
@@ -385,7 +388,7 @@ public class FeignClientServiceImpl implements IFeignClientService {
                     if (questionMap.containsKey(knowledge.getKnowledge())) {
                         qIds.addAll(questionMap.get(knowledge.getKnowledge()));
                     }
-                    questionIds.add(knowledgeModel.getQuestionId());
+                    qIds.add(knowledgeModel.getQuestionId());
                     questionMap.put(knowledge.getKnowledge(), qIds);
                 }
             }
@@ -402,12 +405,14 @@ public class FeignClientServiceImpl implements IFeignClientService {
                     classNum = classNum + classTrue.get(questionId);
                 }
                 KnowledgeStatisticsModel statisticsModel = new KnowledgeStatisticsModel();
-                statisticsModel.setClassRightAvgRate(classNum / (model.getStudentNum() * questionMap.get(key).size()));
+
+                statisticsModel.setClassRightAvgRate((double) classNum / (model.getStudentNum() * questionMap.get(key).size()));
                 statisticsModel.setKnowledgeName(key);
                 if (0 != questionNum) {
-                    statisticsModel.setKnowledgeRate(questionMap.get(key).size() / questionNum);
+                    double rate = (double)questionMap.get(key).size() /questionNum;
+                    statisticsModel.setKnowledgeRate(rate);
                 }
-                statisticsModel.setStudentRightRate(trueNum / questionMap.get(key).size());
+                statisticsModel.setStudentRightRate((double) trueNum / questionMap.get(key).size());
                 models.add(statisticsModel);
             }
             return models;

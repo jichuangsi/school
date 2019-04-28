@@ -7,14 +7,19 @@ import com.jichuangsi.school.homeworkservice.repository.StudentHomeworkExtraRepo
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
+@Repository
 public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraRepository {
 
     @Resource
@@ -141,4 +146,6 @@ public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraR
         return mongoTemplate.aggregate(agg, StudentHomeworkCollection.class, Homework.class).getMappedResults();
 
     }
+
+
 }

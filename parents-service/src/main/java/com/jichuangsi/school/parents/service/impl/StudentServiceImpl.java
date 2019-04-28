@@ -23,14 +23,20 @@ import com.jichuangsi.school.parents.repository.IParentInfoRepository;
 import com.jichuangsi.school.parents.service.IFileStoreService;
 import com.jichuangsi.school.parents.service.IStudentService;
 import com.jichuangsi.school.parents.util.MappingEntity2ModelConverter;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
+@CacheConfig(cacheNames = {"parentCache"})
 public class StudentServiceImpl implements IStudentService {
 
     @Resource
@@ -188,6 +194,7 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Override
+    @Cacheable(unless = "#result.empty",keyGenerator = "getParentCourseStatisticsKeyGenerator")
     public List<KnowledgeStatisticsModel> getParentCourseStatistics(UserInfoForToken userInfo, ParentStatisticsModel model) throws ParentsException {
         if (StringUtils.isEmpty(model.getStudentId())){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);
@@ -206,6 +213,7 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Override
+    @Cacheable(unless = "#result.empty", keyGenerator = "getParentHomeworkStatisticsKeyGenerator")
     public List<KnowledgeStatisticsModel> getParentHomeworkStatistics(UserInfoForToken userInfo, ParentStatisticsModel model) throws ParentsException {
         if (StringUtils.isEmpty(model.getStudentId())){
             throw new ParentsException(ResultCode.PARAM_MISS_MSG);

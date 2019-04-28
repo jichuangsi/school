@@ -15,10 +15,7 @@ import com.jichuangsi.school.homeworkservice.model.HomeworkModelForStudent;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
 import com.jichuangsi.school.homeworkservice.model.ResultKnowledgeModel;
 import com.jichuangsi.school.homeworkservice.model.transfer.TransferKnowledge;
-import com.jichuangsi.school.homeworkservice.repository.HomeworkRepository;
-import com.jichuangsi.school.homeworkservice.repository.IStudentHomeworkCollectionRepository;
-import com.jichuangsi.school.homeworkservice.repository.QuestionRepository;
-import com.jichuangsi.school.homeworkservice.repository.StudentAnswerRepository;
+import com.jichuangsi.school.homeworkservice.repository.*;
 import com.jichuangsi.school.homeworkservice.service.IStudentHomeworkService;
 import com.jichuangsi.school.homeworkservice.utils.MappingEntity2ModelConverter;
 import org.springframework.data.domain.Sort;
@@ -46,6 +43,8 @@ public class FeignServiceImpl implements IFeignService {
     private QuestionRepository questionRepository;
     @Resource
     private IStudentHomeworkCollectionRepository studentHomeworkCollectionRepository;
+    @Resource
+    private IHomeworkExtraRepository homeworkExtraRepository;
 
     @Override
     public double getStudentQuestionRate(QuestionRateModel model) throws FeignControllerException {
@@ -225,7 +224,7 @@ public class FeignServiceImpl implements IFeignService {
     @Override
     public List<KnowledgeStatisticsModel> getParentStudentStistics(ParentStatisticsModel model) throws FeignControllerException {
         if (StringUtils.isEmpty(model.getClassId()) || StringUtils.isEmpty(model.getStudentId())
-                || StringUtils.isEmpty(model.getSubjectName())) {
+                /*|| StringUtils.isEmpty(model.getSubjectName())*/) {
             throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
         }
         List<Homework> homeworks = new ArrayList<Homework>();
@@ -244,7 +243,7 @@ public class FeignServiceImpl implements IFeignService {
                 calendar.set(Calendar.HOUR_OF_DAY, 23);
                 calendar.set(Calendar.MINUTE, 59);
                 calendar.set(Calendar.SECOND, 59);
-                homeworks.addAll(homeworkRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(model.getClassId(), Status.FINISH.getName(), beginTime, calendar.getTimeInMillis()));
+                homeworks.addAll(homeworkExtraRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.FINISH.getName(), beginTime, calendar.getTimeInMillis(),model.getSubjectName()));
             }
         }
         List<String> questionIds = new ArrayList<String>();
@@ -281,7 +280,7 @@ public class FeignServiceImpl implements IFeignService {
                 if (questionMap.containsKey(knowledge.getKnowledge())) {
                     qIds.addAll(questionMap.get(knowledge.getKnowledge()));
                 }
-                questionIds.add(knowledgeModel.getQuestionId());
+                qIds.add(knowledgeModel.getQuestionId());
                 questionMap.put(knowledge.getKnowledge(), qIds);
             }
         }
@@ -298,12 +297,12 @@ public class FeignServiceImpl implements IFeignService {
                 classNum = classNum + classTrue.get(questionId);
             }
             KnowledgeStatisticsModel statisticsModel = new KnowledgeStatisticsModel();
-            statisticsModel.setClassRightAvgRate(classNum / (model.getStudentNum() * questionMap.get(key).size()));
+            statisticsModel.setClassRightAvgRate((double) classNum / (model.getStudentNum() * questionMap.get(key).size()));
             statisticsModel.setKnowledgeName(key);
             if (0 != questionNum) {
-                statisticsModel.setKnowledgeRate(questionMap.get(key).size() / questionNum);
+                statisticsModel.setKnowledgeRate((double) questionMap.get(key).size() / questionNum);
             }
-            statisticsModel.setStudentRightRate(trueNum / questionMap.get(key).size());
+            statisticsModel.setStudentRightRate((double) trueNum / questionMap.get(key).size());
             models.add(statisticsModel);
         }
         return models;

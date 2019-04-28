@@ -13,4 +13,6 @@ public interface StudentHomeworkExtraRepository {
     List<Homework> findFinishedHomeworkByStudentId(String studentId, int pageNum, int pageSize);
 
     List<Homework> findFinishedHomeWorkByStudentIdAndEndTime(String studentId,long endTime,String subject);
+
+
 }

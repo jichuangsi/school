@@ -1,7 +1,6 @@
 package com.jichuangsi.school.courseservice.repository;
 
 import com.jichuangsi.school.courseservice.entity.Course;
-import com.jichuangsi.school.courseservice.model.CourseForTeacher;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import org.springframework.stereotype.Repository;
 
@@ -27,5 +26,7 @@ public interface CourseConsoleRepository<T> {
 
     //修改课堂部分信息
     void updateCourseById(Course updatedCourse);
+
+    List<Course> findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(String classId,String status,long beignTime,long endTime,String subjectName);
 
 }

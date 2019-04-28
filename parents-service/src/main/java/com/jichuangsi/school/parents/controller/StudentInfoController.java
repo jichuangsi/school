@@ -128,7 +128,7 @@ public class StudentInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/getStudentCourseScore}")
+    @PostMapping(value = "/getStudentCourseScore")
     public ResponseModel<List<KnowledgeStatisticsModel>> getStudentCourseScore(@ModelAttribute UserInfoForToken userInfo, @RequestBody ParentStatisticsModel model){
         try {
             return ResponseModel.sucess("",studentService.getParentCourseStatistics(userInfo, model));
@@ -141,7 +141,7 @@ public class StudentInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
-    @PostMapping(value = "/getStudentHomeworkScore}")
+    @PostMapping(value = "/getStudentHomeworkScore")
     public ResponseModel<List<KnowledgeStatisticsModel>> getStudentHomeworkScore(@ModelAttribute UserInfoForToken userInfo,@RequestBody ParentStatisticsModel model){
         try {
             return ResponseModel.sucess("",studentService.getParentHomeworkStatistics(userInfo, model));
