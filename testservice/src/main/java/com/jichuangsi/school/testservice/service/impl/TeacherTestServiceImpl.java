@@ -1,6 +1,7 @@
 package com.jichuangsi.school.testservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.testservice.constant.QuestionType;
 import com.jichuangsi.school.testservice.constant.Result;
 import com.jichuangsi.school.testservice.constant.ResultCode;
 import com.jichuangsi.school.testservice.constant.Status;
@@ -120,6 +121,32 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
     }
 
     @Override
+    public TestModelForStudent getParticularStudentTest(UserInfoForToken userInfo, String testId, String studentId) throws TeacherTestServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(testId)  || StringUtils.isEmpty(studentId)) throw new TeacherTestServiceException(ResultCode.PARAM_MISS_MSG);
+        Test test = testRepository.findFirstByIdOrderByUpdateTimeDesc(testId);
+        if (test == null) throw new TeacherTestServiceException(ResultCode.TEST_NOT_EXISTED);
+        List<Question> questions = questionRepository.findQuestionsByTestId(testId);
+        TestModelForStudent testModelForStudent = MappingEntity2ModelConverter.ConvertStudentTest(test);
+        testModelForStudent.getQuestions().addAll(convertStudentQuestionList(questions));
+        testModelForStudent.getQuestions().forEach(question -> {
+            Optional<StudentAnswer> result = Optional.ofNullable(studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(question.getQuestionId(), studentId));
+            if (result.isPresent()) {
+                question.setAnswerModelForStudent(MappingEntity2ModelConverter.ConvertStudentAnswer(result.get()));
+                if (QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(question.getQuestionType())) {
+                    if (Result.PASS.getName().equalsIgnoreCase(result.get().getResult())) {
+                        question.setAnswerModelForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(
+                                teacherAnswerRepository.findFirstByTeacherIdAndQuestionIdAndStudentAnswerIdOrderByUpdateTimeDesc(userInfo.getUserId(), question.getQuestionId(), result.get().getId())
+                        ));
+                    }
+                }
+            }
+        });
+
+        checkTestCompleted(studentId, testModelForStudent);
+        return testModelForStudent;
+    }
+
+    @Override
     public QuestionModelForTeacher getParticularQuestion(UserInfoForToken userInfo, String questionId) throws TeacherTestServiceException {
         if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(questionId)) throw new TeacherTestServiceException(ResultCode.PARAM_MISS_MSG);
         Optional<Question> result = questionRepository.findById(questionId);
@@ -203,12 +230,20 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
         return testModelForTeachers;
     }
 
-    private List<QuestionModelForTeacher> convertQuestionList(List<Question> questions){
+    private List<QuestionModelForTeacher> convertTeacherQuestionList(List<Question> questions){
         List<QuestionModelForTeacher> questionModelForTeachers = new ArrayList<QuestionModelForTeacher>();
         questions.forEach(question -> {
             questionModelForTeachers.add(MappingEntity2ModelConverter.ConvertTeacherQuestion(question));
         });
         return questionModelForTeachers;
+    }
+
+    private List<QuestionModelForStudent> convertStudentQuestionList(List<Question> questions) {
+        List<QuestionModelForStudent> questionForStudents = new ArrayList<QuestionModelForStudent>();
+        questions.forEach(question -> {
+            questionForStudents.add(MappingEntity2ModelConverter.ConvertStudentQuestion(question));
+        });
+        return questionForStudents;
     }
 
     private List<AnswerModelForStudent> convertStudentAnswerList(List<StudentAnswer> answers){
@@ -217,5 +252,12 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
             AnswerForStudents.add(MappingEntity2ModelConverter.ConvertStudentAnswer(answer));
         });
         return AnswerForStudents;
+    }
+
+    private void checkTestCompleted(String studentId, TestModelForStudent testModelForStudent) {
+        testModelForStudent.setCompleted(mongoTemplate.exists(
+                new Query(Criteria.where("studentId").is(studentId)
+                        .and("tests").elemMatch(Criteria.where("testId").is(testModelForStudent.getTestId()).and("completedTime").ne(0))),
+                StudentTestCollection.class));
     }
 }

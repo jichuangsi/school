@@ -79,7 +79,8 @@ public class StudentTestServiceImpl implements IStudentTestService {
 
     @Override
     public TestModelForStudent getParticularTest(UserInfoForToken userInfo, String testId) throws StudentTestServiceException{
-        if(StringUtils.isEmpty(testId)) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
+        if(StringUtils.isEmpty(userInfo.getUserId())
+                || StringUtils.isEmpty(testId)) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
         Test test = testRepository.findFirstByIdOrderByUpdateTimeDesc(testId);
         if(test==null) throw new StudentTestServiceException(ResultCode.TEST_NOT_EXISTED);
         List<Question> questions = questionRepository.findQuestionsByTestId(testId);

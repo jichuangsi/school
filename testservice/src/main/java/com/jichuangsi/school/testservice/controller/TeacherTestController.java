@@ -23,8 +23,8 @@ public class TeacherTestController {
     @Resource
     private ITeacherTestService teacherTestService;
 
-    //获取老师课堂列表
-    @ApiOperation(value = "根据老师id获取习题列表信息", notes = "")
+    //获取老师试卷列表
+    @ApiOperation(value = "根据老师id获取试卷列表信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @GetMapping("/getList")
@@ -33,8 +33,8 @@ public class TeacherTestController {
         return ResponseModel.sucess("",  teacherTestService.getTestsList(userInfo));
     }
 
-    //获取老师历史课堂列表
-    @ApiOperation(value = "根据用户id获取老师历史习题列表信息", notes = "")
+    //获取老师历史试卷列表
+    @ApiOperation(value = "根据用户id获取老师历史试卷列表信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     @PostMapping("/getHistory")
@@ -44,18 +44,30 @@ public class TeacherTestController {
         return ResponseModel.sucess("",  teacherTestService.getHistoryTestsList(userInfo, searchTestModel));
     }
 
-    //获取指定课堂
-    @ApiOperation(value = "根据习题id查询习题信息", notes = "")
+    //获取指定试卷
+    @ApiOperation(value = "根据习题id查询试卷信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
             @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String") })
     @GetMapping("/getTest/{testId}")
-    public ResponseModel<TestModelForTeacher> getCourse(@ModelAttribute UserInfoForToken userInfo, @PathVariable String testId) throws TeacherTestServiceException{
+    public ResponseModel<TestModelForTeacher> getTest(@ModelAttribute UserInfoForToken userInfo, @PathVariable String testId) throws TeacherTestServiceException{
 
         return ResponseModel.sucess("",  teacherTestService.getParticularTest(userInfo, testId));
     }
 
-    //获取指定课堂题目
+    //获取指定学生作业
+    @ApiOperation(value = "根据习题id查询习题信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "homeworkId", value = "课堂ID", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "studentId", value = "学生ID", required = true, dataType = "String")})
+    @GetMapping("/getStudentHomework/{homeworkId}/{studentId}")
+    public ResponseModel<TestModelForStudent> getStudentTest(@ModelAttribute UserInfoForToken userInfo, @PathVariable String testId, @PathVariable String studentId) throws TeacherTestServiceException{
+
+        return ResponseModel.sucess("",  teacherTestService.getParticularStudentTest(userInfo, testId, studentId));
+    }
+
+    //获取指定试卷题目
     @ApiOperation(value = "根据问题id查询问题信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),

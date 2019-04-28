@@ -20,6 +20,9 @@ public interface ITeacherTestService {
     TestModelForTeacher getParticularTest(UserInfoForToken userInfo, String testId) throws TeacherTestServiceException;
 
     @Transactional
+    TestModelForStudent getParticularStudentTest(UserInfoForToken userInfo, String testId, String studentId) throws TeacherTestServiceException;
+
+    @Transactional
     QuestionModelForTeacher getParticularQuestion(UserInfoForToken userInfo, String questionId) throws TeacherTestServiceException;
 
     @Transactional
