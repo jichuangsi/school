@@ -31,3 +31,8 @@ com:
         enable: true
       mq:
         send_parent_notice: parent.notice.share.classinteraction
+      message:
+        image:
+          domain: http://download.jichuangsi.com/m/i/
+          path: d:/code/jichuangsi/download/m/i
+          dateFormat: yyyyMMdd

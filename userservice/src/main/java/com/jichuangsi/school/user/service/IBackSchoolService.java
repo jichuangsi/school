@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.BackUserException;
@@ -30,4 +31,6 @@ public interface IBackSchoolService {
     PageInfo<SchoolNoticeModel> getSchoolNotices(UserInfoForToken userInfo, String schoolId, int pageIndex, int pageSize) throws BackUserException;
 
     void deleteSchoolNotice(UserInfoForToken userInfo,String schoolId,String noticeId) throws BackUserException;
+
+    JSONObject saveMessageImage(UserInfoForToken userInfo, MultipartFile file) throws BackUserException;
 }

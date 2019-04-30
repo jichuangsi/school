@@ -24,3 +24,8 @@ com:
           userClaim : userInfo
       swagger:
         enable: true
+      message:
+        image:
+          domain: http://download.jichuangsi.com/m/i/
+          path: d:/code/jichuangsi/download/m/i
+          dateFormat: yyyyMMdd

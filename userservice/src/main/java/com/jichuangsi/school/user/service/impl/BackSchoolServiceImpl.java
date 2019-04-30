@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.ResultCode;
@@ -32,9 +33,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class BackSchoolServiceImpl implements IBackSchoolService {
@@ -66,6 +67,15 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
     @Value("${com.jichuangsi.school.mq.send_parent_notice}")
     private String sendNotice;
+
+    @Value("${com.jichuangsi.school.message.image.domain}")
+    private String imageDomain;
+
+    @Value("${com.jichuangsi.school.message.image.path}")
+    private String imagePath;
+
+    @Value("${com.jichuangsi.school.message.image.dateFormat}")
+    private String imageDateFormat;
 
     @Override
     public TimeTableModel findByClassId(String classId) throws BackUserException {
@@ -314,5 +324,64 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         schoolNoticeInfo.setUpdatedId(userInfo.getUserId());
         schoolNoticeInfo.setUpdatedTime(new Date().getTime());
         schoolNoticeInfoRepository.save(schoolNoticeInfo);
+    }
+
+    @Override
+    public JSONObject saveMessageImage(UserInfoForToken userInfo, MultipartFile file) throws BackUserException {
+        if(StringUtils.isEmpty(userInfo.getUserId()) || file == null) {
+            throw new BackUserException(ResultCode.PARAM_MISS_MSG);
+        }
+        String title = file.getOriginalFilename();
+        String src = "";
+        String[] fileNames = title.split("\\.");
+        if(fileNames.length < 2){
+            throw new BackUserException(ResultCode.PARAM_ERR_MSG);
+        }
+
+        FileOutputStream fos = null;
+
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat(imageDateFormat);
+            File rootDir = new File(imagePath+"/"+userInfo.getUserId()+"/"+sdf.format(new Date())+"/");
+            if(!rootDir.exists()) rootDir.mkdirs();
+
+            InputStream in = new ByteArrayInputStream(file.getBytes());            ;
+            File image = new File(rootDir.getPath() + "/" + UUID.randomUUID().toString() + "." + fileNames[fileNames.length-1]);
+
+            fos = new FileOutputStream(image);
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+            src = imageDomain + image.getName();
+            fos.flush();
+        }catch (IOException ioe){
+            throw new BackUserException(ioe.getMessage());
+        } finally {
+            if (null != fos) {
+                try {
+                    fos.close();
+                } catch (IOException ioe) {
+                    throw new BackUserException(ioe.getMessage());
+                }
+            }
+        }
+
+        Map<String, Object> res = new WeakHashMap<String, Object>();
+        if(StringUtils.isEmpty(src)){
+            res.put("code", "-1");
+            res.put("msg", ResultCode.FILE_SAVE_ERROR);
+        }else{
+            res.put("code", "0");
+            res.put("msg", "");
+            Map<String, Object> data = new WeakHashMap<String, Object>();
+            data.put("src", src);
+            data.put("title", title);
+            res.put("data", data);
+        }
+        JSONObject r = new JSONObject();
+        r.putAll(res);
+        return r;
     }
 }

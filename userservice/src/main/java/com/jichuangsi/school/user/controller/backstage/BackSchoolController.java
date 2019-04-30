@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.controller.backstage;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
@@ -136,5 +137,25 @@ public class BackSchoolController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
+    @ApiOperation(value = "上传校园信息图片", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/sendMessageImage")
+    public JSONObject sendMessageImage(MultipartFile file, @ModelAttribute UserInfoForToken userInfo) throws BackUserException{
+        /*
+        {
+          "code": 0 //0表示成功，其它失败
+          ,"msg": "" //提示信息 //一般上传失败后返回
+          ,"data": {
+            "src": "图片路径"
+            ,"title": "图片名称" //可选
+          }
+        }
 
+         */
+
+        return backSchoolService.saveMessageImage(userInfo, file);
+
+    }
 }
