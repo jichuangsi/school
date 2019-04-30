@@ -21,4 +21,6 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
     public static final String ACCOUNT_REGIST_ERR = "账号尚未注册或已注销";
 
     public static final String HTTP_IO_MSG = "http请求失败";
+
+    public static final String PHP_CORRECT_CODE = "1";
 }

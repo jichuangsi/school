@@ -60,4 +60,12 @@ com:
         getUserInfo:
           path: "/sns/userinfo"
           method: "GET"
-
+      portal:
+        schema: http
+        host: 127.0.0.1
+        port: 80
+        news:
+          path: "/parentjournalism"
+          listApi: "/getlist.php"
+          detailApi: "/getinfo.php"
+          lookupApi: "/getlookup.php"

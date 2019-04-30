@@ -49,3 +49,12 @@ com:
           method: "GET"
       #log:
         #path: E:/logback/${spring.application.name}/${spring.profiles.active}
+      portal:
+        schema: http
+        host: 127.0.0.1
+        port: 80
+        news:
+          path: "/parentjournalism"
+          listApi: "/getlist.php"
+          detailApi: "/getinfo.php"
+          lookupApi: "/getlookup.php"
