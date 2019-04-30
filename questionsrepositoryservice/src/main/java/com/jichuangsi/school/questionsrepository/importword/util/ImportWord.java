@@ -84,10 +84,10 @@ public class ImportWord {
 //                    if (imageName.split("\\.")[1].equalsIgnoreCase("wmf")){
 //                            byte[] data = pictureData.getData();
 ////                        byte[] bytes = PngUtils.convert2(data);
-////                        Bety2wenjian.getFile(bytes,"D:\\test",(n++)+".jpg");
-//                            Bety2wenjian.getFile(data,"D:\\test",(n++)+".wmf");
+////                        Byte2File.getFile(bytes,"D:\\test",(n++)+".jpg");
+//                            Byte2File.getFile(data,"D:\\test",(n++)+".wmf");
 //                    }else {
-//                        Bety2wenjian.getFile(pictureData.getData(),"D:\\test",(n++)+".png");
+//                        Byte2File.getFile(pictureData.getData(),"D:\\test",(n++)+".png");
 //                    }
 //                    for (byte b:pictureData.getData()
 //                    ) {

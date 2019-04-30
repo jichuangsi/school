@@ -40,6 +40,11 @@
 		</dependency>
 		<!--		此依赖必须放最前面不然会报错-->
 		<dependency>
+			<groupId>net.sf.jacob-project</groupId>
+			<artifactId>jacob</artifactId>
+			<version>1.14.3</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.14</version>
