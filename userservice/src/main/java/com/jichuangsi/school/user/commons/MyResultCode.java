@@ -14,4 +14,5 @@ public class MyResultCode extends ResultCode {
     public static final String DELETE_FAILED_FLAG = "删除失败,请确定Flag是否正确";
     public static final String ID_REQUIED = "需要主键Id";
     public static final String ID_Mistake = "不忽略大小写,主键错误";
+    public static final String FILE_SAVE_ERROR = "文件保存失败";
 }

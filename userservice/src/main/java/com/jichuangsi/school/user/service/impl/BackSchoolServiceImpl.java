@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.user.commons.MyResultCode;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.backstage.SchoolAttachment;
@@ -371,7 +372,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         Map<String, Object> res = new WeakHashMap<String, Object>();
         if(StringUtils.isEmpty(src)){
             res.put("code", "-1");
-            res.put("msg", ResultCode.FILE_SAVE_ERROR);
+            res.put("msg", MyResultCode.FILE_SAVE_ERROR);
         }else{
             res.put("code", "0");
             res.put("msg", "");
