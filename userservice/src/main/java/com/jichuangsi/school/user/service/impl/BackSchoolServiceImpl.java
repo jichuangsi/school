@@ -343,7 +343,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
 
         try{
             SimpleDateFormat sdf = new SimpleDateFormat(imageDateFormat);
-            File rootDir = new File(imagePath+"/"+userInfo.getUserId()+"/"+sdf.format(new Date())+"/");
+            File rootDir = new File(imagePath+userInfo.getUserId()+"/"+sdf.format(new Date())+"/");
             if(!rootDir.exists()) rootDir.mkdirs();
 
             InputStream in = new ByteArrayInputStream(file.getBytes());            ;
@@ -355,7 +355,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
             while ((len = in.read(buf)) != -1) {
                 fos.write(buf, 0, len);
             }
-            src = imageDomain + image.getName();
+            src = imageDomain + image.getAbsolutePath().replace("\\","/").replace(imagePath, "");
             fos.flush();
         }catch (IOException ioe){
             throw new BackUserException(ioe.getMessage());
