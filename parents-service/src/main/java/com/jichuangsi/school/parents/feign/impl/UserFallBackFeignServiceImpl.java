@@ -5,9 +5,10 @@ import com.jichuangsi.school.parents.feign.IUserFeignService;
 import com.jichuangsi.school.parents.feign.model.ClassDetailModel;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.parents.feign.model.TimeTableModel;
-import com.jichuangsi.school.parents.feign.model.TransferStudent;
+//import com.jichuangsi.school.parents.feign.model.TransferStudent;
 import com.jichuangsi.school.parents.model.NoticeModel;
 import com.jichuangsi.school.parents.model.ParentStudentModel;
+import com.jichuangsi.school.parents.model.transfer.TransferStudent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

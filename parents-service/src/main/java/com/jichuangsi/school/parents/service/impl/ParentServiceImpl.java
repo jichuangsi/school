@@ -13,11 +13,14 @@ import com.jichuangsi.school.parents.entity.ParentNotice;
 import com.jichuangsi.school.parents.exception.ParentHttpException;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.IUserFeignService;
-import com.jichuangsi.school.parents.feign.model.TransferStudent;
+//import com.jichuangsi.school.parents.feign.model.TransferStudent;
 import com.jichuangsi.school.parents.model.*;
 import com.jichuangsi.school.parents.model.http.HttpTokenModel;
 import com.jichuangsi.school.parents.model.http.WxErrorModel;
 import com.jichuangsi.school.parents.model.http.WxUserInfoModel;
+import com.jichuangsi.school.parents.model.transfer.CourseSignModel;
+import com.jichuangsi.school.parents.model.transfer.TransferNoticeToParent;
+import com.jichuangsi.school.parents.model.transfer.TransferStudent;
 import com.jichuangsi.school.parents.repository.*;
 import com.jichuangsi.school.parents.service.IHttpService;
 import com.jichuangsi.school.parents.service.IParentService;
@@ -384,5 +387,72 @@ public class ParentServiceImpl implements IParentService {
         ParentInfo parentInfo = parentInfoRepository.findFirstByIdAndDeleteFlag(userInfo.getUserId(),"0");
         parentInfo.setPhone(model.getPhone());
         parentInfoRepository.save(parentInfo);
+    }
+
+    @Override
+    public boolean addNoticeToParents(TransferNoticeToParent transferNoticeToParent)  throws ParentsException{
+
+        List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
+        for (String studentId : transferNoticeToParent.getStudentIds()) {
+            List<ParentInfo> parentInfos = parentInfoRepository.findByStudentIdsContaining(studentId);
+            for (ParentInfo parentInfo : parentInfos) {
+                ParentNotice notice = new ParentNotice();
+                notice.setMessageId(transferNoticeToParent.getMessageId());
+                notice.setNoticeType(transferNoticeToParent.getMessageType());
+                notice.setParentId(parentInfo.getId());
+                notice.setParentName(StringUtils.isEmpty(parentInfo.getUserName()) ? "" : parentInfo.getUserName());
+                notice.setTitle(transferNoticeToParent.getMessageTitle());
+                parentNotices.add(notice);
+                //parentNoticeRepository.save(notice);
+            }
+        }
+        parentNoticeRepository.saveAll(parentNotices);
+
+        return true;
+    }
+
+    @Override
+    public boolean removeNoticeToParents(String messageId) throws ParentsException{
+        List<ParentNotice> notices = parentNoticeRepository.findByMessageId(messageId);
+        if (null != notices && notices.size() > 0){
+            notices.stream().forEach(n->{
+                parentNoticeRepository.deleteById(n.getId());
+            });
+        }
+        return true;
+    }
+
+    @Override
+    public boolean sendParentStudentMsg(CourseSignModel model) throws ParentsException {
+        if (StringUtils.isEmpty(model.getCourseId()) || StringUtils.isEmpty(model.getCourseName())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
+        for (TransferStudent student : model.getStudents()) {
+            try {
+                ParentInfo parentInfo = parentInfoRepository.findFirstByStudentIdsContainingAndDeleteFlag(student.getStudentId(),"0");
+                ParentNotice notice = new ParentNotice();
+                notice.setTitle(model.getSubjectName() + "课堂：" + model.getCourseName());
+                //notice.setCourse(model.getCourseId(), model.getCourseName(), model.getTeacherName(), model.getTeacherId(), model.getSubjectName(),model.getSubjectId());
+                notice.setNoticeType(ParentNotice.SYSTEM_NOTICE);
+                if ("0".equals(student.getSignFlag())){
+                    notice.setContent(student.getStudentName()+"未签到课堂");
+                }else{
+                    notice.setContent(student.getStudentName()+"已完成课堂");
+                }
+                if(student.getCommendFlag()>0){
+                    String commendTemp = "受到老师"+student.getCommendFlag()+"次表扬";
+                    notice.setContent(StringUtils.isEmpty(notice.getContent())?student.getStudentName()+commendTemp:"，" + commendTemp);
+                }
+                notice.setParentName(StringUtils.isEmpty(parentInfo.getUserName())?"":parentInfo.getUserName());
+                notice.setParentId(parentInfo.getId());
+                parentNotices.add(notice);
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        parentNoticeRepository.saveAll(parentNotices);
+
+        return true;
     }
 }

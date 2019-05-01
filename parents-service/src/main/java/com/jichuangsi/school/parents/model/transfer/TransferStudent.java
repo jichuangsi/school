@@ -1,4 +1,4 @@
-package com.jichuangsi.school.courseservice.model.transfer;
+package com.jichuangsi.school.parents.model.transfer;
 
 public class TransferStudent {
 

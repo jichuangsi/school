@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.commons.MyResultCode;
+import com.jichuangsi.school.user.constant.NoticeType;
 import com.jichuangsi.school.user.constant.ResultCode;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.backstage.SchoolAttachment;
@@ -13,19 +14,21 @@ import com.jichuangsi.school.user.entity.org.ClassInfo;
 import com.jichuangsi.school.user.entity.org.GradeInfo;
 import com.jichuangsi.school.user.entity.org.PhraseInfo;
 import com.jichuangsi.school.user.entity.org.SchoolInfo;
-import com.jichuangsi.school.user.entity.parent.ParentInfo;
-import com.jichuangsi.school.user.entity.parent.ParentNotice;
+//import com.jichuangsi.school.user.entity.parent.ParentInfo;
+//import com.jichuangsi.school.user.entity.parent.ParentNotice;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.model.SchoolMessageModel;
 import com.jichuangsi.school.user.model.backstage.SchoolNoticeModel;
 import com.jichuangsi.school.user.model.backstage.TimeTableModel;
 import com.jichuangsi.school.user.model.file.UserFile;
+import com.jichuangsi.school.user.model.transfer.TransferNoticeToParent;
 import com.jichuangsi.school.user.repository.*;
 import com.jichuangsi.school.user.repository.backstage.ISchoolAttachmentRepository;
-import com.jichuangsi.school.user.repository.parent.IParentInfoRepository;
-import com.jichuangsi.school.user.repository.parent.IParentNoticeRepository;
+//import com.jichuangsi.school.user.repository.parent.IParentInfoRepository;
+//import com.jichuangsi.school.user.repository.parent.IParentNoticeRepository;
 import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.IFileStoreService;
+import com.jichuangsi.school.user.service.IParentFeignService;
 import com.jichuangsi.school.user.util.ExcelReadUtils;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,12 +62,15 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
     private ISchoolNoticeInfoRepository schoolNoticeInfoRepository;
     @Resource
     private IUserExtraRepository userExtraRepository;
-    @Resource
+    /*@Resource
     private IParentInfoRepository parentInfoRepository;
     @Resource
-    private IParentNoticeRepository parentNoticeRepository;
+    private IParentNoticeRepository parentNoticeRepository;*/
     @Resource
     private ISchoolNoticeInfoExtraRepository schoolNoticeInfoExtraRepository;
+
+    @Resource
+    private IParentFeignService parentFeignService;
 
     @Value("${com.jichuangsi.school.mq.send_parent_notice}")
     private String sendNotice;
@@ -252,7 +258,7 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         for (UserInfo student : userInfos) {
             studentIds.add(student.getId());
         }
-        List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
+        /*List<ParentNotice> parentNotices = new ArrayList<ParentNotice>();
         for (String studentId : studentIds) {
             List<ParentInfo> parentInfos = parentInfoRepository.findByStudentIdsContaining(studentId);
             for (ParentInfo parentInfo : parentInfos) {
@@ -265,8 +271,13 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
                 parentNotices.add(notice);
             }
         }
-        parentNoticeRepository.saveAll(parentNotices);
-
+        parentNoticeRepository.saveAll(parentNotices);*/
+        TransferNoticeToParent transferNoticeToParent = new TransferNoticeToParent();
+        transferNoticeToParent.setStudentIds(studentIds);
+        transferNoticeToParent.setMessageId(noticeInfo.getId());
+        transferNoticeToParent.setMessageTitle(noticeInfo.getTitle());
+        transferNoticeToParent.setMessageType(NoticeType.COLLEGE.getName());
+        parentFeignService.sendParentsNotice(transferNoticeToParent);
     }
 
     private List<String> getClassIdsByGradeIds(List<String> gradeIds) {
@@ -325,6 +336,8 @@ public class BackSchoolServiceImpl implements IBackSchoolService {
         schoolNoticeInfo.setUpdatedId(userInfo.getUserId());
         schoolNoticeInfo.setUpdatedTime(new Date().getTime());
         schoolNoticeInfoRepository.save(schoolNoticeInfo);
+
+        parentFeignService.recallParentNotice(noticeId);
     }
 
     @Override

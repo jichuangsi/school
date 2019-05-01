@@ -142,7 +142,7 @@ public class FeignController {
         }
     }
 
-    @ApiOperation(value = "发送学生的签到信息", notes = "")
+    /*@ApiOperation(value = "发送学生的签到信息", notes = "")
     @PostMapping("/sendParentStudentMsg")
     public ResponseModel sendParentStudentMsg(@RequestBody CourseSignModel model){
         try {
@@ -151,6 +151,6 @@ public class FeignController {
             return ResponseModel.fail("",e.getMessage());
         }
         return ResponseModel.sucessWithEmptyData("");
-    }
+    }*/
 
 }

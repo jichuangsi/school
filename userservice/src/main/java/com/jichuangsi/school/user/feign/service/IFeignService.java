@@ -34,5 +34,5 @@ public interface IFeignService {
 
     NoticeModel getNoticeDetailByNoticeId(String noticeId) throws FeignControllerException;
 
-    void sendParentStudentMsg(CourseSignModel model) throws FeignControllerException;
+    /*void sendParentStudentMsg(CourseSignModel model) throws FeignControllerException;*/
 }

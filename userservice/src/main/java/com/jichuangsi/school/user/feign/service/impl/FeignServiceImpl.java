@@ -6,8 +6,8 @@ import com.jichuangsi.school.user.entity.StudentInfo;
 import com.jichuangsi.school.user.entity.TeacherInfo;
 import com.jichuangsi.school.user.entity.UserInfo;
 import com.jichuangsi.school.user.entity.backstage.SchoolNoticeInfo;
-import com.jichuangsi.school.user.entity.parent.ParentInfo;
-import com.jichuangsi.school.user.entity.parent.ParentNotice;
+//import com.jichuangsi.school.user.entity.parent.ParentInfo;
+//import com.jichuangsi.school.user.entity.parent.ParentNotice;
 import com.jichuangsi.school.user.exception.*;
 import com.jichuangsi.school.user.feign.model.*;
 import com.jichuangsi.school.user.feign.service.IFeignService;
@@ -16,8 +16,8 @@ import com.jichuangsi.school.user.model.school.SchoolModel;
 import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.repository.ISchoolNoticeInfoRepository;
 import com.jichuangsi.school.user.repository.UserRepository;
-import com.jichuangsi.school.user.repository.parent.IParentInfoRepository;
-import com.jichuangsi.school.user.repository.parent.IParentNoticeRepository;
+//import com.jichuangsi.school.user.repository.parent.IParentInfoRepository;
+//import com.jichuangsi.school.user.repository.parent.IParentNoticeRepository;
 import com.jichuangsi.school.user.service.IBackSchoolService;
 import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
@@ -41,10 +41,10 @@ public class FeignServiceImpl implements IFeignService {
     private IBackSchoolService backSchoolService;
     @Resource
     private ISchoolNoticeInfoRepository schoolNoticeInfoRepository;
-    @Resource
+    /*@Resource
     private IParentNoticeRepository parentNoticeRepository;
     @Resource
-    private IParentInfoRepository parentInfoRepository;
+    private IParentInfoRepository parentInfoRepository;*/
 
     @Override
     public ClassDetailModel findClassDetailByClassId(String classId) throws FeignControllerException {
@@ -212,7 +212,7 @@ public class FeignServiceImpl implements IFeignService {
         return MappingEntity2ModelConverter.CONVERTERFROMSCHOOLNOTICEINFO(noticeInfo);
     }
 
-    @Override
+    /*@Override
     public void sendParentStudentMsg(CourseSignModel model) throws FeignControllerException {
         if (StringUtils.isEmpty(model.getCourseId()) || StringUtils.isEmpty(model.getCourseName())){
             throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
@@ -236,5 +236,5 @@ public class FeignServiceImpl implements IFeignService {
             }
         }
         parentNoticeRepository.saveAll(parentNotices);
-    }
+    }*/
 }

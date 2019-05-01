@@ -6,6 +6,8 @@ import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.model.*;
 import com.jichuangsi.school.parents.model.http.HttpTokenModel;
 import com.jichuangsi.school.parents.model.http.WxUserInfoModel;
+import com.jichuangsi.school.parents.model.transfer.CourseSignModel;
+import com.jichuangsi.school.parents.model.transfer.TransferNoticeToParent;
 
 import java.util.List;
 import java.util.Map;
@@ -54,4 +56,10 @@ public interface IParentService {
     Map<String,Boolean> getParentBindInfo(UserInfoForToken userInfo) throws ParentsException;
 
     void bindParentPhone(UserInfoForToken userInfo,ParentModel model) throws ParentsException;
+
+    boolean addNoticeToParents(TransferNoticeToParent transferNoticeToParent) throws ParentsException;
+
+    boolean removeNoticeToParents(String messageId) throws ParentsException;
+
+    boolean sendParentStudentMsg(CourseSignModel model) throws ParentsException;
 }

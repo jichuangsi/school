@@ -12,4 +12,6 @@ public interface IParentNoticeRepository extends MongoRepository<ParentNotice,St
     ParentNotice findFirstByIdAndDeleteFlag(String id,String delete);
 
     ParentNotice findFirstByIdAndParentId(String id,String parentId);
+
+    List<ParentNotice> findByMessageId(String messageId);
 }

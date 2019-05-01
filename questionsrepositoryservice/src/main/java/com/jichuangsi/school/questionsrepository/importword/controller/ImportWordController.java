@@ -7,7 +7,7 @@ import com.jichuangsi.school.questionsrepository.importword.exception.IImportWor
 import com.jichuangsi.school.questionsrepository.importword.service.IImportWordService;
 import com.jichuangsi.school.questionsrepository.importword.util.Byte2File;
 import com.jichuangsi.school.questionsrepository.importword.util.HtmlRegex;
-import com.jichuangsi.school.questionsrepository.importword.util.ImportWord;
+//import com.jichuangsi.school.questionsrepository.importword.util.ImportWord;
 import com.jichuangsi.school.questionsrepository.importword.util.Office2HtmlUtil;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import io.swagger.annotations.Api;
@@ -50,8 +50,8 @@ public class ImportWordController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
     public ResponseModel analyzeWord(@ModelAttribute UserInfoForToken userInfo, @RequestParam MultipartFile file) throws IImportWordServiceException, IOException, TranscoderException {
         String uuid=UUID.randomUUID().toString();
-        String folderLocalPath = wordLocalPath +"/"+ userInfo.getUserId()+"/"+uuid +"/";
-        String folderWebPath = wordWebPath +"/"+ userInfo.getUserId()+"/"+ uuid+"/";
+        String folderLocalPath = wordLocalPath + userInfo.getUserId()+"/"+uuid +"/";
+        String folderWebPath = wordWebPath + userInfo.getUserId()+"/"+ uuid+"/";
 
         Byte2File.getFile(file.getBytes(),folderLocalPath,file.getName());
         Office2HtmlUtil.wordToHtml(folderLocalPath+file.getName(),folderLocalPath+file.getName().split("\\.")[0]+".html");

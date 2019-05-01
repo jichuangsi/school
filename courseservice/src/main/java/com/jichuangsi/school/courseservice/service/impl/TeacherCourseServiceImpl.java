@@ -12,7 +12,7 @@ import com.jichuangsi.school.courseservice.entity.StudentAnswer;
 import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.feign.model.CourseSignModel;
 import com.jichuangsi.school.courseservice.feign.service.IStatisticsFeignService;
-import com.jichuangsi.school.courseservice.feign.service.IUserFeignService;
+import com.jichuangsi.school.courseservice.feign.service.IParentFeignService;
 import com.jichuangsi.school.courseservice.model.*;
 import com.jichuangsi.school.courseservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.courseservice.model.common.CommendModel;
@@ -75,7 +75,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     private IStatisticsFeignService statisticsFeignService;
 
     @Resource
-    private IUserFeignService userFeignService;
+    private IParentFeignService parentFeignService;
 
     @Override
     public List<CourseForTeacher> getCoursesList(UserInfoForToken userInfo) throws TeacherCourseServiceException {
@@ -560,7 +560,7 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
             model.setSubjectName(subjectName);
             model.setTeacherId(teacherId);
             model.setTeacherName(teacherName);
-            ResponseModel response = userFeignService.sendParentStudentMsg(model);
+            ResponseModel response = parentFeignService.sendParentStudentMsg(model);
             if (!ResultCode.SUCESS.equals(response.getCode())){
                 throw new TeacherCourseServiceException(response.getMsg());
             }

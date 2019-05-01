@@ -23,9 +23,7 @@ public class ParentNotice {
     private String deleteFlag = "0";
     private String noticeType;
     private String read = "0";
-    private Course course;
-
-
+    /*private Course course;
 
     public class Course{
         private String courseId;
@@ -100,7 +98,7 @@ public class ParentNotice {
 
     public void setCourse(String courseId, String courseName, String teacherName, String teacherId, String subjectName,String subjectId) {
         this.course = new Course(courseId, courseName, teacherName, teacherId, subjectName,subjectId);
-    }
+    }*/
 
     public String getRead() {
         return read;
