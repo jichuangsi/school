@@ -53,7 +53,7 @@ com:
           userClaim : userInfo
       tiku:
         schema: http
-        host: 127.0.0.1
+        host: tiku.jichuangsi.com
         port: 80
         accessKey: 9229eb41327ec6385c28baf45469f988
         subjectEditionApi: subjectEditionApi

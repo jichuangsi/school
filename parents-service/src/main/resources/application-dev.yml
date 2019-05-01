@@ -62,10 +62,10 @@ com:
           method: "GET"
       portal:
         schema: http
-        host: 127.0.0.1
+        host: www.jichuangsi.com
         port: 80
         news:
-          path: "/parentjournalism"
-          listApi: "/getlist.php"
-          detailApi: "/getinfo.php"
-          lookupApi: "/getlookup.php"
+          path: /parentjournalism
+          listApi: /getlist.php
+          detailApi: /getinfo.php
+          lookupApi: /getlookup.php
