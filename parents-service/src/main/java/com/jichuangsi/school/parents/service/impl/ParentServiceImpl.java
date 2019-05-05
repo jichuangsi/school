@@ -435,15 +435,16 @@ public class ParentServiceImpl implements IParentService {
                 notice.setTitle(model.getSubjectName() + "课堂：" + model.getCourseName());
                 //notice.setCourse(model.getCourseId(), model.getCourseName(), model.getTeacherName(), model.getTeacherId(), model.getSubjectName(),model.getSubjectId());
                 notice.setNoticeType(ParentNotice.SYSTEM_NOTICE);
+                StringBuffer t = new StringBuffer();
                 if ("0".equals(student.getSignFlag())){
-                    notice.setContent(student.getStudentName()+"未签到课堂");
+                    t.append(student.getStudentName()+"未签到课堂");
                 }else{
-                    notice.setContent(student.getStudentName()+"已完成课堂");
+                    t.append(student.getStudentName()+"已完成课堂");
                 }
                 if(student.getCommendFlag()>0){
-                    String commendTemp = "受到老师"+student.getCommendFlag()+"次表扬";
-                    notice.setContent(StringUtils.isEmpty(notice.getContent())?student.getStudentName()+commendTemp:"，" + commendTemp);
+                    t.append("，受到老师"+student.getCommendFlag()+"次表扬");
                 }
+                notice.setContent(t.toString());
                 notice.setParentName(StringUtils.isEmpty(parentInfo.getUserName())?"":parentInfo.getUserName());
                 notice.setParentId(parentInfo.getId());
                 parentNotices.add(notice);
