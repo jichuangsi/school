@@ -43,6 +43,8 @@ public class ImportWordController {
     private String wordLocalPath;
     @Value("${com.jichuangsi.school.wordWebPath}")
     private String wordWebPath;
+    @Value("${com.jichuangsi.school.tiku.otherBasicApi}")
+    private String otherBasicApi;
 
     @ApiOperation(value = "进行word转html再拆分题目再返回model,上传单份", notes = "")
     @RequestMapping("/open")
@@ -53,9 +55,9 @@ public class ImportWordController {
         String folderLocalPath = wordLocalPath + userInfo.getUserId()+"/"+uuid +"/";
         String folderWebPath = wordWebPath + userInfo.getUserId()+"/"+ uuid+"/";
 
-        Byte2File.getFile(file.getBytes(),folderLocalPath,file.getName());
-        Office2HtmlUtil.wordToHtml(folderLocalPath+file.getName(),folderLocalPath+file.getName().split("\\.")[0]+".html");
-        List<SelfQuestion> selfQuestionsList = HtmlRegex.regexKillHtml(folderLocalPath+file.getName().split("\\.")[0]+".html",folderWebPath);
+        Byte2File.getFile(file.getBytes(),folderLocalPath,file.getOriginalFilename());
+        Office2HtmlUtil.wordToHtml(folderLocalPath+file.getOriginalFilename(),folderLocalPath+file.getOriginalFilename().split("\\.")[0]+".html");
+        List<SelfQuestion> selfQuestionsList = HtmlRegex.regexKillHtml(folderLocalPath+file.getOriginalFilename().split("\\.")[0]+".html",folderWebPath);
         return ResponseModel.sucess("", selfQuestionsList);
     }
 

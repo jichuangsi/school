@@ -22,7 +22,7 @@ public class HtmlRegex {
         BufferedReader reader = new BufferedReader(read);
         String line;
         while ((line = reader.readLine()) != null) {
-            fileContent += (line);
+            fileContent += (line+" ");
         }
         read.close();
 
