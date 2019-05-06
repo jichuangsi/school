@@ -45,7 +45,7 @@ hystrix:
 com:
   jichuangsi:
     school:
-      wordLocalPath: d:/code/jichuangsi/download/
+      wordLocalPath: d:/code/jichuangsi/download/wordImg/
       wordWebPath: http://download.jichuangsi.com/wordImg/
       result:
         page-size: 10
