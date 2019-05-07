@@ -64,6 +64,13 @@ public class UserInfoController {
         return  userInfoService.getStudentsByClassId(classId);
     }
 
+
+    @ApiOperation(value = "获取指定班级的学生信息", notes = "")
+    @GetMapping("/getStudentsForClassInPage")
+    public ResponseModel<PageInfo<TransferStudent>> getStudentsForClassInPage(@ModelAttribute UserInfoForToken userInfo , @RequestParam(value = "classId") String classId, @RequestParam("pageIndex") int pageIndex, @RequestParam("pageSize") int pageSize) throws UserServiceException{
+        return ResponseModel.sucess("", userInfoService.getStudentsByClassIdInPage(classId, pageIndex, pageSize));
+    }
+
     @ApiOperation(value = "根据班级id获取老师信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")

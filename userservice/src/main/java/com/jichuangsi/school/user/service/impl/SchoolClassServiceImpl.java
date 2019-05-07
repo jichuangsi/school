@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.MyResultCode;
 import com.jichuangsi.school.user.constant.ResultCode;
@@ -19,6 +20,7 @@ import com.jichuangsi.school.user.service.ISchoolClassService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -132,7 +134,36 @@ public class SchoolClassServiceImpl implements ISchoolClassService {
         classInfos.forEach(classInfo -> {
             classModels.add(MappingEntity2ModelConverter.TransferClass(classInfo));
         });
+
         return classModels;
+    }
+
+    @Override
+    public PageInfo<ClassModel> getClassesByGradeIdInPage(String gradeId, int pageIndex, int pageSize) throws SchoolServiceException {
+        GradeInfo gradeInfo = gradeInfoRepository.findFirstById(gradeId);
+        if (null == gradeInfo) {
+            throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        List<String> classIds = gradeInfo.getClassIds();
+
+        Criteria criteria = Criteria.where("id").in(classIds).and("deleteFlag").is("0");
+        Query query = new Query(criteria);
+        if (pageIndex > 0) {
+            query.skip((pageIndex - 1) * pageSize).limit(pageSize).with(new Sort(Sort.Direction.ASC, "createTime"));
+        }
+        List<ClassInfo> classInfos =  mongoTemplate.find(query, ClassInfo.class);
+        //List<ClassInfo> classInfos = classInfoRepository.findByIdInAndDeleteFlagOrderByCreateTime(classIds, "0");
+        List<ClassModel> classModels = new ArrayList<ClassModel>();
+        classInfos.forEach(classInfo -> {
+            classModels.add(MappingEntity2ModelConverter.TransferClass(classInfo));
+        });
+
+        PageInfo<ClassModel> pageInfo = new PageInfo<ClassModel>();
+        pageInfo.setList(classModels);
+        pageInfo.setPageNum(pageIndex);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal(mongoTemplate.count(query, ClassInfo.class));
+        return pageInfo;
     }
 
     @Override

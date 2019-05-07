@@ -139,6 +139,9 @@ public interface UserInfoService {
     @Transactional
     List<TransferStudent> getStudentsByClassId(String classId);
 
+    @Transactional
+    PageInfo<TransferStudent> getStudentsByClassIdInPage(String classId, int pageIndex,int pageSize) throws UserServiceException;
+
     void saveTeacher(UserInfoForToken userInfo , TeacherModel model) throws UserServiceException;
 
     void saveStudent(UserInfoForToken userInfo, StudentModel model) throws UserServiceException;

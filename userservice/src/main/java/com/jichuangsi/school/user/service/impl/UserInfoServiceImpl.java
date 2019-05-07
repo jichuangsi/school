@@ -38,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -379,10 +380,27 @@ public class UserInfoServiceImpl implements UserInfoService {
         userRepository.deleteAll(userInfos);
     }
 
+    @Override
     public List<TransferStudent> getStudentsByClassId(String classId) {
         Criteria criteria = Criteria.where("roleInfos").elemMatch(Criteria.where("roleName").is("Student").and("primaryClass.classId").is(classId)).and("status").is(Status.ACTIVATE.getName());
         Query query = new Query(criteria);
         return convertStudentsList(mongoTemplate.find(query, UserInfo.class));
+    }
+
+    @Override
+    public PageInfo<TransferStudent> getStudentsByClassIdInPage(String classId, int pageIndex,int pageSize) {
+        Criteria criteria = Criteria.where("roleInfos").elemMatch(Criteria.where("roleName").is("Student").and("primaryClass.classId").is(classId)).and("status").is(Status.ACTIVATE.getName());
+        Query query = new Query(criteria);
+        if (pageIndex > 0) {
+            query.skip((pageIndex - 1) * pageSize).limit(pageSize).with(new Sort(Sort.Direction.ASC, "createTime"));
+        }
+        List<TransferStudent> studentList =  convertStudentsList(mongoTemplate.find(query, UserInfo.class));
+        PageInfo<TransferStudent> pageInfo = new PageInfo<TransferStudent>();
+        pageInfo.setList(studentList);
+        pageInfo.setPageNum(pageIndex);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal(mongoTemplate.count(query, UserInfo.class));
+        return pageInfo;
     }
 
     private List<User> convertQuestionList(List<UserInfo> userInfos) {

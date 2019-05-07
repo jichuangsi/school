@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.constant.MyResultCode;
@@ -77,7 +78,20 @@ public class ClassCRUDController {
     @GetMapping(value = "/findClasses/{gradeId}")
     public ResponseModel<List<ClassModel>> findClasses(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId){
         try {
-           return ResponseModel.sucess("",schoolClassService.getClassesByGradeId(gradeId)) ;
+            return ResponseModel.sucess("",schoolClassService.getClassesByGradeId(gradeId)) ;
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "查询年级内所有班级", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/findClassesInPage/{gradeId}")
+    public ResponseModel<PageInfo<ClassModel>> findClassesInPage(@ModelAttribute UserInfoForToken userInfo, @PathVariable String gradeId, @RequestParam("pageIndex") int pageIndex, @RequestParam("pageSize") int pageSize){
+        try {
+           return ResponseModel.sucess("",schoolClassService.getClassesByGradeIdInPage(gradeId, pageIndex, pageSize)) ;
         } catch (SchoolServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

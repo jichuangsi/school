@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service;
 
+import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.ClassServiceException;
 import com.jichuangsi.school.user.exception.SchoolServiceException;
@@ -24,6 +25,8 @@ public interface ISchoolClassService {
     ClassDetailModel getClassDetail(String classId) throws ClassServiceException;
 
     List<ClassModel> getClassesByGradeId(String gradeId) throws SchoolServiceException;
+
+    PageInfo<ClassModel> getClassesByGradeIdInPage(String gradeId, int pageIndex, int pageSize) throws SchoolServiceException;
 
     SchoolModel getSchoolBySchoolId(String schoolId) throws SchoolServiceException;
 

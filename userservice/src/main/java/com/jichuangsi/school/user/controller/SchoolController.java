@@ -97,6 +97,19 @@ public class SchoolController {
         }
     }
 
+    @ApiOperation(value = "获取系统内所有非删除的学校", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/getSchoolsInPage")
+    public ResponseModel<PageInfo<SchoolModel>> getSchoolsInPage(@ModelAttribute UserInfoForToken userInfo, @RequestParam("pageIndex") int pageIndex, @RequestParam("pageSize") int pageSize){
+        try {
+            return ResponseModel.sucess("",schoolService.getSchoolsInPage(pageIndex, pageSize));
+        } catch (SchoolServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
     @ApiOperation(value = "获取学校内所有非删除的年级", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")

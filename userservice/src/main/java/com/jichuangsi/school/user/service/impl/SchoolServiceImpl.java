@@ -21,6 +21,7 @@ import com.jichuangsi.school.user.service.ISchoolService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -157,7 +158,34 @@ public class SchoolServiceImpl implements ISchoolService {
             SchoolModel model = MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo);
             models.add(model);
         });
+
         return models;
+    }
+
+    @Override
+    public PageInfo<SchoolModel> getSchoolsInPage(int pageIndex, int pageSize) throws SchoolServiceException {
+        //List<SchoolInfo> schools = schoolInfoRepository.findByDeleteFlagOrderByCreateTime("0");
+        Criteria criteria = Criteria.where("deleteFlag").is("0");
+        Query query = new Query(criteria);
+        if (pageIndex > 0) {
+            query.skip((pageIndex - 1) * pageSize).limit(pageSize).with(new Sort(Sort.Direction.ASC, "createTime"));
+        }
+        List<SchoolInfo> schools =  mongoTemplate.find(query, SchoolInfo.class);
+        if (!(schools.size() > 0)) {
+            throw new SchoolServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        List<SchoolModel> models = new ArrayList<SchoolModel>();
+        schools.forEach(schoolInfo -> {
+            SchoolModel model = MappingEntity2ModelConverter.CONVERTEFROMSCHOOLINFO(schoolInfo);
+            models.add(model);
+        });
+
+        PageInfo<SchoolModel> pageInfo = new PageInfo<SchoolModel>();
+        pageInfo.setList(models);
+        pageInfo.setPageNum(pageIndex);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal(mongoTemplate.count(query, SchoolInfo.class));
+        return pageInfo;
     }
 
     @Override

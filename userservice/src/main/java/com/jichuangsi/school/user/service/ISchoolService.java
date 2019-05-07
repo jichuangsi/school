@@ -23,6 +23,8 @@ public interface ISchoolService {
 
     List<SchoolModel> getSchools() throws SchoolServiceException;
 
+    PageInfo<SchoolModel> getSchoolsInPage(int pageIndex, int pageSize) throws SchoolServiceException;
+
     List<GradeModel> getGrades(String schoolId) throws SchoolServiceException;
 
     void deleteSchool(UserInfoForToken userInfo, String schoolId) throws SchoolServiceException;
