@@ -43,8 +43,6 @@ public class ImportWordController {
     private String wordLocalPath;
     @Value("${com.jichuangsi.school.wordWebPath}")
     private String wordWebPath;
-    @Value("${com.jichuangsi.school.tiku.otherBasicApi}")
-    private String otherBasicApi;
 
     @ApiOperation(value = "进行word转html再拆分题目再返回model,上传单份", notes = "")
     @RequestMapping("/open")
