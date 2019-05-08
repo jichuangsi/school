@@ -40,11 +40,11 @@ public class HtmlRegex {
         int n=0;
         for (MatcherIndex m:allIndex
                 ) {
-            stringBuilder.insert(m.getEnd()+n,folderWebPath);
+            stringBuilder.insert(m.getEnd() + n, folderWebPath);
             n+=folderWebPath.length();
         }
         //切答案
-        String[] split = fileContent.split("、、、、、、、、、");
+        String[] split = stringBuilder.toString().split("、、、、、、、、、");
         //切一切真快乐
         String[] question=split[0].toString().split("[1-9]\\d*\\.{1}\\s|\\s[1-9]\\d*\\.\\s|[1-9]\\d*\\．{1}\\s|\\s[1-9]\\d*\\．\\s");
         //切选项装对象
