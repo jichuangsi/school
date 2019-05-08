@@ -27,6 +27,8 @@ public class HtmlRegex {
         read.close();
 
         fileContent=fileContent.replaceAll("</span>","");
+        fileContent=fileContent.replaceAll("</body>","");
+        fileContent=fileContent.replaceAll("</html>","");
         fileContent=fileContent.replaceAll("</p>","");
         fileContent=fileContent.replaceAll("</a>","");
         fileContent=fileContent.replaceAll("(<span|<p|<a).*?>","");
@@ -41,8 +43,10 @@ public class HtmlRegex {
             stringBuilder.insert(m.getEnd()+n,folderWebPath);
             n+=folderWebPath.length();
         }
+        //切答案
+        String[] split = fileContent.split("、、、、、、、、、");
         //切一切真快乐
-        String[] question=stringBuilder.toString().split("[1-9]\\d*\\.{1}\\s|\\s[1-9]\\d*\\.\\s|[1-9]\\d*\\．{1}\\s|\\s[1-9]\\d*\\．\\s");
+        String[] question=split[0].toString().split("[1-9]\\d*\\.{1}\\s|\\s[1-9]\\d*\\.\\s|[1-9]\\d*\\．{1}\\s|\\s[1-9]\\d*\\．\\s");
         //切选项装对象
         List<SelfQuestion> selfQuestionsList =new ArrayList<>();
         for (String qt:question
@@ -63,6 +67,35 @@ public class HtmlRegex {
                 questions.setOptions(options);
             }
             selfQuestionsList.add(questions);
+        }
+
+//        切答案
+        if (split.length>1){
+            String[] answer=split[1].split("[1-9]\\d*\\.{1}\\s|\\s[1-9]\\d*\\.\\s|[1-9]\\d*\\．{1}\\s|\\s[1-9]\\d*\\．\\s");
+            for (int i = 1; i <answer.length ; i++) {
+                int a=i;
+                String[] answerSplit = answer[i].split("!!!!!|！！！！！");
+
+                    SelfQuestion selfQuestioni = selfQuestionsList.get(a);
+                    selfQuestioni.setAnswer(answerSplit[0]);
+                    selfQuestionsList.set(a,selfQuestioni);
+
+                if (answerSplit.length>1){
+
+                        SelfQuestion selfQuestionii = selfQuestionsList.get(a);
+                        selfQuestionii.setParse(answerSplit[1]);
+                        selfQuestionsList.set(a,selfQuestionii);
+
+                }
+                if (answerSplit.length>2){
+
+                    SelfQuestion selfQuestioniii = selfQuestionsList.get(a);
+                    selfQuestioniii.setQuesetionType(answerSplit[2].replace(" ",""));
+                    selfQuestionsList.set(a,selfQuestioniii);
+
+                }
+
+            }
         }
         return selfQuestionsList;
     }
