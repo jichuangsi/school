@@ -88,6 +88,21 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
     }
 
     @Override
+    public PageHolder<CourseForStudent> getHistoryCoursesListFeign(String classId, CourseForStudent pageInform) throws StudentCourseServiceException {
+        if (StringUtils.isEmpty(classId)) {
+            throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        PageHolder<CourseForStudent> pageHolder = new PageHolder<CourseForStudent>();
+        pageHolder.setTotal(courseRepository.findByClassIdAndStatus(classId, Status.FINISH.getName()).size());
+        pageHolder.setPageNum(pageInform.getPageNum());
+        pageHolder.setPageSize(StringUtils.isEmpty(pageInform.getPageSize()) || pageInform.getPageSize() == 0 ? defaultPageSize : pageInform.getPageSize());
+        List<Course> courses = courseRepository.findHistoryCourseByClassIdAndStatus(classId, pageInform.getPageNum(),
+                StringUtils.isEmpty(pageInform.getPageSize()) || pageInform.getPageSize() == 0 ? defaultPageSize : pageInform.getPageSize());
+        pageHolder.setContent(convertCourseList(courses));
+        return pageHolder;
+    }
+
+    @Override
     public PageHolder<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException {
         if (StringUtils.isEmpty(userInfo.getClassId()))
             throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);

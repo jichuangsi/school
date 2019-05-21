@@ -6,6 +6,7 @@ import com.jichuangsi.school.testservice.model.AnswerModelForStudent;
 import com.jichuangsi.school.testservice.model.TestModelForStudent;
 import com.jichuangsi.school.testservice.model.SearchTestModel;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
+import com.jichuangsi.school.testservice.model.feign.SearchTestModelId;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public interface IStudentTestService {
 
     @Transactional
     PageHolder<TestModelForStudent> getHistoryTestsList(UserInfoForToken userInfo, SearchTestModel searchTestModel) throws StudentTestServiceException;
+
+    @Transactional
+    PageHolder<TestModelForStudent> getHistoryTestsListFeign(String studentId, SearchTestModelId searchTestModel) throws StudentTestServiceException;
 
     @Transactional
     TestModelForStudent getParticularTest(UserInfoForToken userInfo, String testId) throws StudentTestServiceException;

@@ -93,7 +93,15 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         return getSignStudents(courseId, classId);
     }
 
-	@Override
+    @Override
+    public List<TransferStudent> getCourseSignFeign(String courseId, String classId) throws QuestionResultException {
+        if (StringUtils.isEmpty(courseId) || StringUtils.isEmpty(classId)) {
+            throw new QuestionResultException(ResultCode.PARAM_MISS_MSG);
+        }
+        return getSignStudents(courseId, classId);
+    }
+
+    @Override
     /*@Cacheable(unless = "#result.empty",key = "T(String).valueOf(#courseId).concat('-').concat(#classId)")*/
     public List<TransferStudent> getSignStudents(String courseId,String classId) throws QuestionResultException{
         List<StudentAddCourseEntity> studentAddCourseEntitys = studentAddCourseRepository
@@ -112,6 +120,8 @@ public class ClassStatisticsServiceImpl implements IClassStatisticsService {
         }
         return responseModel.getData();
     }
+
+
 	
 	private int getCommendInCourse(String courseId, String studentId){
         Query query = new Query();

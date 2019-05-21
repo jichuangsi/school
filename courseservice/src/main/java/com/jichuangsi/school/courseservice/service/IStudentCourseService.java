@@ -14,6 +14,9 @@ public interface IStudentCourseService {
     List<CourseForStudent> getCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 
     @Transactional
+    PageHolder<CourseForStudent> getHistoryCoursesListFeign(String studentId, CourseForStudent pageInform) throws StudentCourseServiceException;
+
+    @Transactional
     PageHolder<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException;
 
     @Transactional

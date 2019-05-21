@@ -47,7 +47,7 @@ public class StudentTestExtraRepositoryImpl implements StudentTestExtraRepositor
                 match(Criteria.where("studentId").is(studentId)),
                 unwind("$tests", false),
                 //match(Criteria.where("tests.completedTime").is(0)),
-                lookup("school_test","tests.testId","_id","test"),
+                lookup("school_test","tests.t，oestId","_id","test"),
                 unwind("$test", false),
                 match(Criteria.where("test.status").is(Status.PROGRESS.getName())),
                 sort(DESC, "test.publishTime"),

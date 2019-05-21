@@ -59,7 +59,9 @@ public class CourseExtraRepositoryImpl implements CourseExtraRepository {
         Query query = new Query(criteria);
         query.with(new Sort(Sort.Direction.DESC, "endTime"));
         query.skip((pageNum - 1) * pageSize).limit(pageSize);
-        return mongoTemplate.find(query, Course.class);
+        List<Course> courses = mongoTemplate.find(query, Course.class);
+        return courses;
+
     }
 
     @Override

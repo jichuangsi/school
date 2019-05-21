@@ -12,6 +12,7 @@ import com.jichuangsi.school.testservice.model.TestModelForStudent;
 import com.jichuangsi.school.testservice.model.QuestionModelForStudent;
 import com.jichuangsi.school.testservice.model.SearchTestModel;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
+import com.jichuangsi.school.testservice.model.feign.SearchTestModelId;
 import com.jichuangsi.school.testservice.repository.TestRepository;
 import com.jichuangsi.school.testservice.repository.QuestionRepository;
 import com.jichuangsi.school.testservice.repository.StudentAnswerRepository;
@@ -73,6 +74,19 @@ public class StudentTestServiceImpl implements IStudentTestService {
         pageHolder.setPageSize(searchTestModel.getPageSize());
         List<TestModelForStudent> tests = convertTestList(testRepository.findFinishedTestByStudentId(userInfo.getUserId(), searchTestModel.getPageIndex(), searchTestModel.getPageSize()));
         checkTestCompleted(userInfo, tests);
+        pageHolder.setContent(tests);
+        return pageHolder;
+    }
+    @Override
+    public PageHolder<TestModelForStudent> getHistoryTestsListFeign(String studentId, SearchTestModelId searchTestModel) throws StudentTestServiceException{
+        if(StringUtils.isEmpty(studentId)) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
+        if(searchTestModel.getPageSize() == 0) searchTestModel.setPageSize(defaultPageSize);
+        PageHolder<TestModelForStudent> pageHolder = new PageHolder<TestModelForStudent>();
+        pageHolder.setTotal(testRepository.countFinishedTestByStudentId(studentId));
+        pageHolder.setPageNum(searchTestModel.getPageIndex());
+        pageHolder.setPageSize(searchTestModel.getPageSize());
+        List<TestModelForStudent> tests = convertTestList(testRepository.findFinishedTestByStudentId(studentId, searchTestModel.getPageIndex(), searchTestModel.getPageSize()));
+        checkTestCompleted(studentId, tests);
         pageHolder.setContent(tests);
         return pageHolder;
     }
@@ -165,6 +179,14 @@ public class StudentTestServiceImpl implements IStudentTestService {
         tests.forEach(h -> {
             h.setCompleted(mongoTemplate.exists(
                     new Query(Criteria.where("studentId").is(userInfo.getUserId())
+                            .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()).and("completedTime").ne(0))),
+                    StudentTestCollection.class));
+        });
+    }
+    private void checkTestCompleted(String studentId, List<TestModelForStudent> tests){
+        tests.forEach(h -> {
+            h.setCompleted(mongoTemplate.exists(
+                    new Query(Criteria.where("studentId").is(studentId)
                             .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()).and("completedTime").ne(0))),
                     StudentTestCollection.class));
         });

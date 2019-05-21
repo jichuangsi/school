@@ -64,4 +64,17 @@ public class ClassStatisticsController {
             return ResponseModel.fail("", e.getMessage());
         }
     }
+    @ApiOperation(value = "Feign拿点赞", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "classId", value = "班级ID", required = true, dataType = "String")})
+    @RequestMapping(value = "/getCourseSignFeign",method = RequestMethod.POST)
+    public ResponseModel<List<TransferStudent>> getCourseSignFeign(@RequestParam("courseId") String courseId, @RequestParam("classId") String classId) {
+        try {
+            return ResponseModel.sucess("", classStatisticsService.getCourseSignFeign(courseId, classId));
+        } catch (QuestionResultException e) {
+            return ResponseModel.fail("", e.getMessage());
+        }
+    }
 }

@@ -44,6 +44,7 @@ public class CommonControllerAdvice {
 	@ExceptionHandler
 	public ResponseModel<Object> handler(Exception e) {
 		logger.error(e.getCause() + ":" + e.getMessage());
+		e.printStackTrace();
 		return ResponseModel.fail("", e.getMessage());
 
 	}
