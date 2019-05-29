@@ -1,10 +1,6 @@
 package com.jichuangsi.school.parents.feign.model;
 
-import com.sun.xml.internal.ws.api.message.Attachment;
-
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestModelForStudent {
     private String testId;
@@ -21,7 +17,6 @@ public class TestModelForStudent {
     private long updateTime;
     private String subjectName;
     private String subjectId;
-    private List<Attachment> attachments = new ArrayList<Attachment>();
 
     public String getTestId() {
         return testId;
@@ -125,13 +120,5 @@ public class TestModelForStudent {
 
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
     }
 }
