@@ -3,8 +3,6 @@ package com.jichuangsi.school.statistics.model.capability;
 public class Synthesize {
     private String name;
     private Double value;
-
-
     public void setValue(Double value) {
         this.value = value;
     }

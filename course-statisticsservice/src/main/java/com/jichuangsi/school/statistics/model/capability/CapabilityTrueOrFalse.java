@@ -15,15 +15,7 @@ public class CapabilityTrueOrFalse {
     public void setOthers(Other[] others) {
         this.others = others;
     }
-//private String cName;
 
-   /* public String getcName() {
-        return cName;
-    }
-
-    public void setcName(String cName) {
-        this.cName = cName;
-    }*/
     public void setSynthesize(Synthesize[] synthesize) {
         this.synthesize = synthesize;
     }

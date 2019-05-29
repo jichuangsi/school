@@ -4,7 +4,6 @@ public class Memory {
     private String name;
     private Double value;
 
-
     public void setValue(Double value) {
         this.value = value;
     }
@@ -26,6 +25,7 @@ public class Memory {
         this.name=name;
         this.value=value;
     }
+
 
     @Override
     public String toString() {

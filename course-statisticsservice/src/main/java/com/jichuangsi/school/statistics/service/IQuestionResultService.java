@@ -30,4 +30,5 @@ public interface IQuestionResultService {
     //获取习题的认知能力占比
     CapabilityStudentModel getClassStudentCapability(SearchStudentCapabilityModel model)throws  QuestionResultException;
     //TestStudentModel getClassStudentCapability(String classId,String subject)throws  QuestionResultException;
+
 }

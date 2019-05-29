@@ -10,7 +10,6 @@ public class CapabilityStudentModel {
 
     Capability[] knowledges=new Capability[5];//总认知占比
 
-
     CapabilityTrueOrFalse[] capabilityTrueOrFalses=null;//每个认知对错占比
 
 

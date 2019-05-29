@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 //用来查询认知能力以及题目的正确错误
 public class SearchCapabilityModel {
-   /* private List<String> questionIds = new ArrayList<String>();
-    private String subjectId;*/
   private String questionId;
     private String id;
    private String status;

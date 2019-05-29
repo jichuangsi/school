@@ -4,7 +4,6 @@ public class Comprehend {
     private String name;
     private Double value;
 
-
     public void setValue(Double value) {
         this.value = value;
     }

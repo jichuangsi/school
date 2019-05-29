@@ -22,4 +22,5 @@ public class SearchStudentCapabilityModel {
     public void setClassId(String classId) {
         this.classId = classId;
     }
+
 }

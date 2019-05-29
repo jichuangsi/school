@@ -8,7 +8,6 @@ public class StudentQuestionIdsModel {
     private String studentId;
     private String studentName;
     private String result;
-    //private List<String> questionIds=new ArrayList<String>();
     private String questionId;
 
     public String getStudentName() {

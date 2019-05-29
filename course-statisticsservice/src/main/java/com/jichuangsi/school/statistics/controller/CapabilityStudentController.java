@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 @CrossOrigin
 public class CapabilityStudentController {
 
+
     @Resource
     //private IClassStatisticsService classStatisticsService;
     private IQuestionResultService questionResultService;

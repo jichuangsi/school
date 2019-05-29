@@ -35,6 +35,7 @@ import java.util.*;
 @CacheConfig(cacheNames = {"statisticsCache"})
 public class QuestionResultServiceImpl implements IQuestionResultService {
 
+
     @Resource
     private ICourseFeignService courseFeignService;
     @Resource

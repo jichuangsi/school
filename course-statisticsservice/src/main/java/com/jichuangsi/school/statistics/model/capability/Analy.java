@@ -30,5 +30,4 @@ public class Analy {
         return "Analy:[value="+value+",name="+name+"]";
     }
 
-
 }

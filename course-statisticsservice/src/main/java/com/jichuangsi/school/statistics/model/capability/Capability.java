@@ -30,4 +30,5 @@ public class Capability {
     public String toString() {
         return "Capability [value=" + value + ", name=" + name + "]";
     }
+
 }

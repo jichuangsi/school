@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StudentKnowledgeModel {
-
     private String studentId;
     private String studentName;
     private List<KnowledgeResultModel> knowledgeResultModels = new ArrayList<KnowledgeResultModel>();
