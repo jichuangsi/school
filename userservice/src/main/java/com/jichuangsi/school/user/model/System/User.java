@@ -13,6 +13,7 @@ public class User {
     private Status userStatus;
     private String userName;
     private Sex userSex;
+    private String portrait;
     private List<Role> roles = new ArrayList<Role>();
     private long createTime;
     private long updateTime;
@@ -87,5 +88,13 @@ public class User {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
     }
 }

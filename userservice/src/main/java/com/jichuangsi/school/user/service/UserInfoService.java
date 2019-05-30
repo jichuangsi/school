@@ -7,6 +7,7 @@ import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
+import com.jichuangsi.school.user.model.file.UserFile;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 import com.jichuangsi.school.user.model.school.UserConditionModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
@@ -173,4 +174,6 @@ public interface UserInfoService {
     PageInfo<TeacherModel> getTeachersByCondition(UserInfoForToken userInfo, UserConditionModel model) throws UserServiceException;
 
     PageInfo<StudentModel> getStudentByCondition(UserInfoForToken userInfo,UserConditionModel model) throws UserServiceException;
+
+    Boolean uploadPortrait(UserInfoForToken userInfo, UserFile file) throws UserServiceException;
 }
