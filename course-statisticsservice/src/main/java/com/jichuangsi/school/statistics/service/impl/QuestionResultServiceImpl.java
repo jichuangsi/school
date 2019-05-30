@@ -396,7 +396,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         return model;
     }
 
-
+//统计认知能力
     @Override
     public CapabilityStudentModel getClassStudentCapability(SearchStudentCapabilityModel model)throws QuestionResultException {
         //判断classID和QuestionId是否为空
