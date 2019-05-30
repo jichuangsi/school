@@ -437,8 +437,11 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
                     for (int k = 0; k < model1.getKnowledges().size(); k++) {
                         sum++;
-
-                        if (model1.getKnowledges().get(k).getCapabilityId().equals("1")) {
+                        System.out.println(model1.getKnowledges().get(k).getCapabilityId());
+                        if (model1.getKnowledges().get(k).getCapabilityId()==null || model1.getKnowledges().get(k).getCapabilityId()==""){
+                            other++;
+                            capability.put("其他",other);
+                        }else if (model1.getKnowledges().get(k).getCapabilityId().equals("1")) {
                             mem++;
                             capability.put("记忆", mem);
                         } else if (model1.getKnowledges().get(k).getCapabilityId().equals("2")) {
@@ -454,9 +457,6 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
                             synthe++;
                             capability.put("综合", synthe);
                             System.out.println(synthe);
-                        }else {
-                            other++;
-                            capability.put("其他",other);
                         }
                     }
                 }
