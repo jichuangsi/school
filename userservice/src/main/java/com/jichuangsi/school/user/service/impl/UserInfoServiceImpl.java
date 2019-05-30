@@ -20,6 +20,7 @@ import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.feign.model.ClassTeacherInfoModel;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
+import com.jichuangsi.school.user.model.file.UserFile;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 import com.jichuangsi.school.user.model.school.UserConditionModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
@@ -29,6 +30,7 @@ import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import com.jichuangsi.school.user.model.user.StudentModel;
 import com.jichuangsi.school.user.model.user.TeacherModel;
 import com.jichuangsi.school.user.repository.*;
+import com.jichuangsi.school.user.service.IFileStoreService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import com.jichuangsi.school.user.util.MappingModel2EntityConverter;
@@ -73,6 +75,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     private IUserExtraRepository userExtraRepository;
     @Resource
     private ISchoolRoleInfoRepository schoolRoleInfoRepository;
+    @Resource
+    private IFileStoreService fileStoreService;
 //    @Resource
 //    private UserInfoMapper  userInfoMapper;
 
@@ -976,6 +980,23 @@ public class UserInfoServiceImpl implements UserInfoService {
         pageInfo.setPageNum(model.getPageIndex());
         pageInfo.setList(studentModels);
         return pageInfo;
+    }
+
+    @Override
+    public Boolean uploadPortrait(UserInfoForToken userInfo, UserFile file) throws UserServiceException{
+        try{
+        fileStoreService.uploadFile(file);
+        }catch (Exception ex){
+            throw new UserServiceException(ex.getMessage());
+        }
+
+        long res = mongoTemplate.updateFirst(new Query(Criteria.where("id").is(userInfo.getUserId())),
+                new Update().set("portrait", file.getSubName()).set("updateTime",new Date().getTime()), UserInfo.class).getModifiedCount();
+
+        if(res>0){
+            return true;
+        }
+        throw new UserServiceException(MyResultCode.UPDATE_PORTRAIT_ERROR);
     }
 
     private TeacherModel getTeacherRoles(TeacherModel model) {

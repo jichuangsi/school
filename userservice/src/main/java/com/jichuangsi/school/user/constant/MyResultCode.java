@@ -23,5 +23,6 @@ public class MyResultCode extends ResultCode {
     public final static String GRADE_CLASS_NOT_MATCH = "年级与班不匹配";
     public final static String GRADE_CLASS_NOT_SYNC = "年级与班同步失败";
     public final static String CLASS_FAIL2REMOVE = "班移除失败";
+    public final static String UPDATE_PORTRAIT_ERROR = "更新用户头像失败";
 
 }
