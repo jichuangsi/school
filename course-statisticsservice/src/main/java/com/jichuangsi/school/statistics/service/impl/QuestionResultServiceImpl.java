@@ -434,10 +434,8 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         if (searchCapabilityEntity != null) {//查询全部认知能力的占比
             for (SearchCapabilityModel model1 : searchCapabilityEntity.getData()) {
                 if (model1.getKnowledges() != null) {
-
                     for (int k = 0; k < model1.getKnowledges().size(); k++) {
                         sum++;
-                        System.out.println(model1.getKnowledges().get(k).getCapabilityId());
                         if (model1.getKnowledges().get(k).getCapabilityId()==null || model1.getKnowledges().get(k).getCapabilityId()==""){
                             other++;
                             capability.put("其他",other);
