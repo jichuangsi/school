@@ -77,6 +77,7 @@ public class CourseExtraRepositoryImpl implements CourseExtraRepository {
         query.with(new Sort(Sort.Direction.DESC, "endTime"));
         return mongoTemplate.find(query, Course.class);
     }
+
     @Override
     public List<Course> findHistoryCourseByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(String classId, int pageNum, int pageSize, long beignTime, long endTime) {
 

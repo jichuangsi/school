@@ -60,7 +60,7 @@ public class FeignClientController {
    @PostMapping("/getHistoryTime")
    public ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(@RequestBody CourseForStudentIdTime pageInform) throws StudentCourseServiceException {
        ResponseModel<String> studentClass = userFeignService.findStudentClass(pageInform.getStudentId().toString());
-      // PageHolder<CourseForStudent> historyCoursesListFeign = studentCourseService.getHistoryCoursesListFeign(studentClass.getData().toString(),endTime,pageInform);
+
        PageHolder<CourseForStudent> historyCoursesListFeign = studentCourseService.getHistoryCoursesListFeignTime(studentClass.getData().toString(),pageInform.getStatisticsTimes(), pageInform);
        return ResponseModel.sucess("",historyCoursesListFeign);
    }

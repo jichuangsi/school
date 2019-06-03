@@ -24,4 +24,5 @@ public class CourseForStudentIdTime extends CourseForStudent {
         this.studentId = studentId;
     }
 
+
 }

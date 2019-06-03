@@ -28,6 +28,7 @@ public class CourseFallBackFeignServiceImpl implements ICourseFeignService {
         return ResponseModel.fail("",ERR_MSG);
     }
 
+
     @Override
     public ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(CourseForStudentIdTime pageInform) {
         return ResponseModel.fail("",ERR_MSG);

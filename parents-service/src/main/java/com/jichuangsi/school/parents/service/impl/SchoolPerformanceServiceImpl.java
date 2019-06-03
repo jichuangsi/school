@@ -118,7 +118,7 @@ public class SchoolPerformanceServiceImpl implements ISchoolPerformanceService{
             ResponseModel<List<TransferStudent>> courseSignFeign = courseStatisticsFeignService.getCourseSignFeign(xxx.getCourseId(), classId);
 
             for (TransferStudent student:courseSignFeign.getData()) {
-               
+
                 if (student.getStudentId()!=null && student.getStudentId().equals(studentId) && student.getCommendFlag()==1){
                     coursesCommend.add(xxx);
                 }

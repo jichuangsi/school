@@ -59,7 +59,7 @@ public class SchoolPerformanceController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
-    //    获取历史被点赞课堂
+    //    获取历史被点赞课堂（时间）
     @ApiOperation(value = "根据学生id获取历史学生课堂点赞", notes = "")
     @ApiImplicitParams({})
     @PostMapping("/getCourseCommendTime")

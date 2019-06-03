@@ -20,7 +20,5 @@ public interface CourseExtraRepository{
 
     List<Course> findOneWeekCourseByClassIdAndStatusAndEndTime(String classId,long endTime);
 
-
-
     List<Course> findHistoryCourseByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(String classId, int pageNum, int pageSize,long beginTime,long endTime);
 }

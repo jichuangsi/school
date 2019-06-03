@@ -57,6 +57,7 @@ public interface IStudentCourseService {
     @Transactional
     CourseFile downloadStudentAttachment(UserInfoForToken userInfo, String fileName) throws StudentCourseServiceException;
 
+
     @Transactional
     PageHolder<CourseForStudent> getHistoryCoursesListFeignTime(String studentId,List<Long> endTime, CourseForStudent pageInform) throws StudentCourseServiceException;
 

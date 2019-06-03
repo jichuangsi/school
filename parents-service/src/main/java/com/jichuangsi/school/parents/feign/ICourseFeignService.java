@@ -26,6 +26,7 @@ public interface ICourseFeignService {
     @RequestMapping("/feign/getHistory")
     ResponseModel<PageHolder<CourseForStudent>> getHistory(@RequestBody CourseForStudentId pageInform);
 
+
     @RequestMapping("/feign/getHistoryTime")
     ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(@RequestBody CourseForStudentIdTime pageInform);
 }

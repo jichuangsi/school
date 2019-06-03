@@ -102,6 +102,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
 
         return pageHolder;
     }
+
     @Override
     public PageHolder<CourseForStudent> getHistoryCoursesListFeignTime(String classId,List<Long> endTime,CourseForStudent pageInform) throws StudentCourseServiceException {
         if (StringUtils.isEmpty(classId)) {

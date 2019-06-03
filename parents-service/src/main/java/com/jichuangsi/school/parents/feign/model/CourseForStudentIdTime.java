@@ -21,4 +21,5 @@ public class CourseForStudentIdTime extends CourseForStudent {
     public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
+
 }

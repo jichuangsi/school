@@ -16,7 +16,7 @@ public interface ISchoolPerformanceService {
     ResponseModel<List<CourseForStudent>> getCourseCommend(String studentId,String pageSize,String pageNum) throws ParentsException;
 
 
-    ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(  CourseForStudentIdTime pageInform) throws ParentsException;
+   ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(CourseForStudentIdTime pageInform) throws ParentsException;
    ResponseModel<List<CourseForStudent>> getCourseCommendTime(String studentId,List<Long> statisticsTimes) throws ParentsException;
 
 }
