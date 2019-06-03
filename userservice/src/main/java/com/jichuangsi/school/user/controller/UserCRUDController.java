@@ -53,6 +53,12 @@ public class UserCRUDController {
         return ResponseModel.sucess("", userInfoService.findUserInfo(id));
     }
 
+    @ApiOperation(value = "根据账号id获取指定用户", notes = "")
+    @GetMapping("/findUser")
+    public ResponseModel<User> findUser(String id) throws UserServiceException {
+        return ResponseModel.sucess("", userInfoService.findUserInfo(id));
+    }
+
     //根据Id查询被删的指定用户
     @ApiOperation(value = "根据Id查询被删的指定用户", notes = "")
     @ApiImplicitParams({

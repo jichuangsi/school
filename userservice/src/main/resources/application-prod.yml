@@ -4,6 +4,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/school
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    uri: jdbc:mysql://127.0.0.1:3306/school
+    username: root
+    password: root
 server:
   port: 8083
 
