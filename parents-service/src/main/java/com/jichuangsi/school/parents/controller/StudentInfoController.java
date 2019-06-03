@@ -165,7 +165,6 @@ public class StudentInfoController {
 
 
     @ApiOperation(value = "查看学生的各科考试成绩", notes = "")
-    //@ApiImplicitParams({})
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })

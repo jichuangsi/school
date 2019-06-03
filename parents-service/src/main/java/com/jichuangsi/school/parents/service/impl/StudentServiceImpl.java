@@ -8,6 +8,7 @@ import com.jichuangsi.school.parents.entity.ParentInfo;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.ICourseFeignService;
 import com.jichuangsi.school.parents.feign.IHomeWorkFeignService;
+import com.jichuangsi.school.parents.feign.ITestFeignService;
 import com.jichuangsi.school.parents.feign.IUserFeignService;
 import com.jichuangsi.school.parents.feign.model.ClassDetailModel;
 import com.jichuangsi.school.parents.feign.model.ClassTeacherInfoModel;
@@ -51,6 +52,8 @@ public class StudentServiceImpl implements IStudentService {
     private IHomeWorkFeignService homeWorkFeignService;
     @Resource
     private ICourseFeignService courseFeignService;
+    @Resource
+    private ITestFeignService testFeignService;
 
     @Override
     public List<ParentStudentModel> getStudentByStudentId(UserInfoForToken userInfo) throws ParentsException {
@@ -241,5 +244,28 @@ public class StudentServiceImpl implements IStudentService {
             throw new ParentsException(responseModel.getMsg());
         }
         return responseModel.getData();
+    }
+
+
+//考试统计
+    @Override
+    @Cacheable(unless = "#result.empty", keyGenerator = "getParentTestStatisticsKeyGenerator")
+    public List<KnowledgeStatisticsModel> getParentTestStatistics(UserInfoForToken userInfo, ParentStatisticsModel model) throws  ParentsException{
+        if (StringUtils.isEmpty(model.getStudentId())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ResponseModel<ClassDetailModel> responseModel = userFeignService.getStudentClassDetail(model.getStudentId());
+
+        if (!ResultCode.SUCESS.equals(responseModel.getCode())){
+            throw new ParentsException(responseModel.getMsg());
+        }
+        model.setClassId(responseModel.getData().getClassId());
+        model.setStudentNum(responseModel.getData().getStudentNum());
+        ResponseModel<List<KnowledgeStatisticsModel>> response = testFeignService.getParentTestStatistics(model);
+        System.out.println(response.getData().size());
+        if (!ResultCode.SUCESS.equals(response.getCode())){
+            throw new ParentsException(response.getMsg());
+        }
+        return response.getData();
     }
 }

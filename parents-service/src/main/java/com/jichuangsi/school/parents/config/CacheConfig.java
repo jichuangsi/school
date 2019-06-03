@@ -72,4 +72,34 @@ public class CacheConfig {
             return stringBuilder.toString();
         };
     }
+
+    @Bean("getParentTestStatisticsKeyGenerator")
+    public KeyGenerator getParenTestStatisticsKeyGenerator() {
+        return (o, method, objects) -> {
+            StringBuilder stringBuilder = new StringBuilder();
+            String split = "-";
+            UserInfoForToken userInfo = (UserInfoForToken) objects[0];
+            ParentStatisticsModel model = (ParentStatisticsModel) objects[1];
+            stringBuilder.append(method.getName());
+            if (!StringUtils.isEmpty(userInfo.getUserId())) {
+                stringBuilder.append(split);
+                stringBuilder.append(userInfo.getUserId());
+            }
+            if (!StringUtils.isEmpty(model.getStudentId())) {
+                stringBuilder.append(split);
+                stringBuilder.append(model.getStudentId());
+            }
+            if (!StringUtils.isEmpty(model.getSubjectName())) {
+                stringBuilder.append(split);
+                stringBuilder.append(model.getSubjectName());
+            }
+            for (Long time : model.getStatisticsTimes()){
+                if (null != time){
+                    stringBuilder.append(split);
+                    stringBuilder.append(time);
+                }
+            }
+            return stringBuilder.toString();
+        };
+    }
 }
