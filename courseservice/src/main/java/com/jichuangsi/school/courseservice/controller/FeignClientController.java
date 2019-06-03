@@ -8,6 +8,7 @@ import com.jichuangsi.school.courseservice.feign.service.IUserFeignService;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import com.jichuangsi.school.courseservice.model.feign.CourseForStudentId;
+import com.jichuangsi.school.courseservice.model.feign.CourseForStudentIdTime;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
@@ -52,7 +53,17 @@ public class FeignClientController {
         PageHolder<CourseForStudent> historyCoursesListFeign = studentCourseService.getHistoryCoursesListFeign(studentClass.getData().toString(), pageInform);
         return ResponseModel.sucess("",historyCoursesListFeign);
     }
-
+   //获取学生历史课程列表
+   @ApiOperation(value = "根据学生id获取历史学生课堂列表信息", notes = "")
+   @ApiImplicitParams({
+   })
+   @PostMapping("/getHistoryTime")
+   public ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(@RequestBody CourseForStudentIdTime pageInform) throws StudentCourseServiceException {
+       ResponseModel<String> studentClass = userFeignService.findStudentClass(pageInform.getStudentId().toString());
+      // PageHolder<CourseForStudent> historyCoursesListFeign = studentCourseService.getHistoryCoursesListFeign(studentClass.getData().toString(),endTime,pageInform);
+       PageHolder<CourseForStudent> historyCoursesListFeign = studentCourseService.getHistoryCoursesListFeignTime(studentClass.getData().toString(),pageInform.getStatisticsTimes(), pageInform);
+       return ResponseModel.sucess("",historyCoursesListFeign);
+   }
     //获取指定课堂题目知识点
     @ApiOperation(value = "根据问题id查询问题知识点", notes = "")
     @ApiImplicitParams({

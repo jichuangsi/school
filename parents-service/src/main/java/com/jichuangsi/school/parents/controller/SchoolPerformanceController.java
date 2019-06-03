@@ -31,7 +31,7 @@ public class SchoolPerformanceController {
     public ResponseModel<PageHolder<TestModelForStudent>> getHistory(@RequestBody SearchTestModelId searchTestModel){
         try {
             ResponseModel<PageHolder<TestModelForStudent>> history = schoolPerformanceService.getHistory(searchTestModel);
-            System.out.println(111);
+
             return history;
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
@@ -48,13 +48,26 @@ public class SchoolPerformanceController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
-//    获取历史被点赞课堂
+    //    获取历史被点赞课堂
     @ApiOperation(value = "根据学生id获取历史学生课堂点赞", notes = "")
     @ApiImplicitParams({})
     @PostMapping("/getCourseCommend")
     public ResponseModel<List<CourseForStudent>> getCourseCommend(@RequestParam("studentId") String studentId,@RequestParam("pageSize")String pageSize,@RequestParam("pageNum")String pageNum){
         try {
             return schoolPerformanceService.getCourseCommend(studentId,pageSize,pageNum);
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+    //    获取历史被点赞课堂
+    @ApiOperation(value = "根据学生id获取历史学生课堂点赞", notes = "")
+    @ApiImplicitParams({})
+    @PostMapping("/getCourseCommendTime")
+    public ResponseModel<List<CourseForStudent>> getCourseCommendTime(@RequestParam("studentId") String studentId,@RequestParam("statisticsTimes")List<Long> statisticsTimes){
+        try {
+            ResponseModel<List<CourseForStudent>> list=schoolPerformanceService.getCourseCommendTime(studentId,statisticsTimes);
+          System.out.println(list.getData().size());
+            return schoolPerformanceService.getCourseCommendTime(studentId,statisticsTimes);
         } catch (ParentsException e) {
             return ResponseModel.fail("",e.getMessage());
         }

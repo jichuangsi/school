@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Repository
 public class CourseExtraRepositoryImpl implements CourseExtraRepository {
@@ -75,5 +76,14 @@ public class CourseExtraRepositoryImpl implements CourseExtraRepository {
         Query query = new Query(criteria);
         query.with(new Sort(Sort.Direction.DESC, "endTime"));
         return mongoTemplate.find(query, Course.class);
+    }
+    @Override
+    public List<Course> findHistoryCourseByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(String classId, int pageNum, int pageSize, long beignTime, long endTime) {
+
+        Criteria criteria = Criteria.where("classId").is(classId).and("status").is(Status.PROGRESS.getName());
+
+        criteria.andOperator(Criteria.where("endTime").lte(endTime), Criteria.where("endTime").gte(beignTime));
+
+        return mongoTemplate.find(new Query(criteria), Course.class);
     }
 }

@@ -1,7 +1,6 @@
 package com.jichuangsi.school.parents.service.impl;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
-import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.commons.ResultCode;
 import com.jichuangsi.school.parents.exception.ParentsException;
 import com.jichuangsi.school.parents.feign.ICourseFeignService;
@@ -39,7 +38,17 @@ public class SchoolPerformanceServiceImpl implements ISchoolPerformanceService{
         }
         return responseModel;
     }
-
+    @Override
+    public ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(CourseForStudentIdTime pageInform) throws ParentsException {
+        if (StringUtils.isEmpty(pageInform.getStudentId())){
+            throw new ParentsException(ResultCode.PARAM_MISS_MSG);
+        }
+        ResponseModel<PageHolder<CourseForStudent>> responseModel = courseFeignService.getHistoryTime(pageInform);
+        if (!ResultCode.SUCESS.equals(responseModel.getCode())){
+            throw new ParentsException(responseModel.getMsg());
+        }
+        return responseModel;
+    }
     @Override
     public ResponseModel<PageHolder<TestModelForStudent>> getHistory(SearchTestModelId searchTestModel) throws ParentsException {
         if (StringUtils.isEmpty(searchTestModel.getStudentId())){
@@ -91,4 +100,35 @@ public class SchoolPerformanceServiceImpl implements ISchoolPerformanceService{
         model.setData(commend);
         return model;
     }
+
+    @Override
+    public ResponseModel<List<CourseForStudent>> getCourseCommendTime(String studentId, List<Long> statisticsTimes) throws ParentsException {
+        ResponseModel<String> studentClass = userFeignService.findStudentClass(studentId);
+        String classId = studentClass.getData();
+
+        CourseForStudentIdTime courseForStudentId = new CourseForStudentIdTime();
+        courseForStudentId.setStudentId(studentId);
+        courseForStudentId.setStatisticsTimes(statisticsTimes);//时间
+        ResponseModel<PageHolder<CourseForStudent>> pageHolderResponseModel = getHistoryTime(courseForStudentId);
+        List<CourseForStudent> courseForStudents = pageHolderResponseModel.getData().getContent();
+
+        List<CourseForStudent> coursesCommend = new ArrayList<>();
+        for (CourseForStudent xxx:courseForStudents
+                ) {
+            ResponseModel<List<TransferStudent>> courseSignFeign = courseStatisticsFeignService.getCourseSignFeign(xxx.getCourseId(), classId);
+
+            for (TransferStudent student:courseSignFeign.getData()) {
+               
+                if (student.getStudentId()!=null && student.getStudentId().equals(studentId) && student.getCommendFlag()==1){
+                    coursesCommend.add(xxx);
+                }
+
+            }
+        }
+
+        ResponseModel<List<CourseForStudent>> model = new ResponseModel<>();
+        model.setData(coursesCommend);
+        return model;
+    }
+
 }

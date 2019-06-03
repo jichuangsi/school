@@ -86,9 +86,8 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
         List<Course> courses = courseRepository.findCourseByClassIdAndStatus(userInfo.getClassId());
         return convertCourseList(courses);
     }
-
     @Override
-    public PageHolder<CourseForStudent> getHistoryCoursesListFeign(String classId, CourseForStudent pageInform) throws StudentCourseServiceException {
+    public PageHolder<CourseForStudent> getHistoryCoursesListFeign(String classId,CourseForStudent pageInform) throws StudentCourseServiceException {
         if (StringUtils.isEmpty(classId)) {
             throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
         }
@@ -98,10 +97,39 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
         pageHolder.setPageSize(StringUtils.isEmpty(pageInform.getPageSize()) || pageInform.getPageSize() == 0 ? defaultPageSize : pageInform.getPageSize());
         List<Course> courses = courseRepository.findHistoryCourseByClassIdAndStatus(classId, pageInform.getPageNum(),
                 StringUtils.isEmpty(pageInform.getPageSize()) || pageInform.getPageSize() == 0 ? defaultPageSize : pageInform.getPageSize());
+
         pageHolder.setContent(convertCourseList(courses));
+
         return pageHolder;
     }
+    @Override
+    public PageHolder<CourseForStudent> getHistoryCoursesListFeignTime(String classId,List<Long> endTime,CourseForStudent pageInform) throws StudentCourseServiceException {
+        if (StringUtils.isEmpty(classId)) {
+            throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        PageHolder<CourseForStudent> pageHolder = new PageHolder<CourseForStudent>();
+        pageHolder.setTotal(courseRepository.findByClassIdAndStatus(classId, Status.FINISH.getName()).size());
+        pageHolder.setPageNum(pageInform.getPageNum());
+        pageHolder.setPageSize(StringUtils.isEmpty(pageInform.getPageSize()) || pageInform.getPageSize() == 0 ? defaultPageSize : pageInform.getPageSize());
 
+        List<Course> courses=new ArrayList<Course>();
+        for (Long beignTime : endTime) {
+            if (null == beignTime) {
+                continue;
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date(beignTime));
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            courses.addAll(courseRepository.findHistoryCourseByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(
+                    classId, pageInform.getPageNum(),
+                    StringUtils.isEmpty(pageInform.getPageSize()) || pageInform.getPageSize() == 0 ? defaultPageSize : pageInform.getPageSize(),beignTime,calendar.getTimeInMillis()));
+        }
+        pageHolder.setContent(convertCourseList(courses));
+
+        return pageHolder;
+    }
     @Override
     public PageHolder<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException {
         if (StringUtils.isEmpty(userInfo.getClassId()))

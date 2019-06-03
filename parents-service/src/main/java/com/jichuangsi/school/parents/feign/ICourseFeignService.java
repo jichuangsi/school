@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.parents.feign.impl.CourseFallBackFeignServiceImpl;
 import com.jichuangsi.school.parents.feign.model.CourseForStudent;
 import com.jichuangsi.school.parents.feign.model.CourseForStudentId;
+import com.jichuangsi.school.parents.feign.model.CourseForStudentIdTime;
 import com.jichuangsi.school.parents.model.common.PageHolder;
 import com.jichuangsi.school.parents.model.statistics.KnowledgeStatisticsModel;
 import com.jichuangsi.school.parents.model.statistics.ParentStatisticsModel;
@@ -24,4 +25,7 @@ public interface ICourseFeignService {
 
     @RequestMapping("/feign/getHistory")
     ResponseModel<PageHolder<CourseForStudent>> getHistory(@RequestBody CourseForStudentId pageInform);
+
+    @RequestMapping("/feign/getHistoryTime")
+    ResponseModel<PageHolder<CourseForStudent>> getHistoryTime(@RequestBody CourseForStudentIdTime pageInform);
 }
