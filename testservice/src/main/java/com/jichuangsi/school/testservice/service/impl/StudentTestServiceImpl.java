@@ -263,7 +263,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
                 calendar.set(Calendar.HOUR_OF_DAY, 23);
                 calendar.set(Calendar.MINUTE, 59);
                 calendar.set(Calendar.SECOND, 59);
-                test.addAll(testTestStatisticsRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.NOTSTART.getName(), beignTime, calendar.getTimeInMillis(), model.getSubjectName()));
+                test.addAll(testTestStatisticsRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.FINISH.getName(), beignTime, calendar.getTimeInMillis(), model.getSubjectName()));
             }
 
         }

@@ -81,7 +81,7 @@ public class CourseExtraRepositoryImpl implements CourseExtraRepository {
     @Override
     public List<Course> findHistoryCourseByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThan(String classId, int pageNum, int pageSize, long beignTime, long endTime) {
 
-        Criteria criteria = Criteria.where("classId").is(classId).and("status").is(Status.PROGRESS.getName());
+        Criteria criteria = Criteria.where("classId").is(classId).and("status").is(Status.FINISH.getName());
 
         criteria.andOperator(Criteria.where("endTime").lte(endTime), Criteria.where("endTime").gte(beignTime));
 
