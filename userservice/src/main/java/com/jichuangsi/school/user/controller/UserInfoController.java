@@ -12,7 +12,6 @@ import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import com.jichuangsi.school.user.model.user.StudentModel;
 import com.jichuangsi.school.user.model.user.TeacherModel;
-import com.jichuangsi.school.user.service.IUserPositionService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -30,8 +29,6 @@ public class UserInfoController {
 
     @Resource
     private UserInfoService userInfoService;
-    @Resource
-    private IUserPositionService userPositionService;
 
     @ApiOperation(value = "获取指定老师信息", notes = "")
     @GetMapping("/getUserInfoForTeacher")
@@ -109,7 +106,6 @@ public class UserInfoController {
     public ResponseModel updateTeacher(@ModelAttribute UserInfoForToken userInfo, @RequestBody TeacherModel model){
         try {
             userInfoService.updateTeacher(userInfo,model);
-            userPositionService.insertUserPosition(userInfo,model);
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

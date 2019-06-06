@@ -60,7 +60,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         if (StringUtils.isEmpty(userInfo.getUserId()))
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findProgressHomeworkByStudentId(userInfo.getUserId()));
-        checkHomeworkCompleted(userInfo, homeworks);
+        this.getHomeworkStuff(userInfo, homeworks);
         return homeworks;
     }
 
@@ -74,7 +74,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         pageHolder.setPageNum(searchHomeworkModel.getPageIndex());
         pageHolder.setPageSize(searchHomeworkModel.getPageSize());
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentId(userInfo.getUserId(), searchHomeworkModel.getPageIndex(), searchHomeworkModel.getPageSize()));
-        checkHomeworkCompleted(userInfo, homeworks);
+        this.getHomeworkStuff(userInfo, homeworks);
         pageHolder.setContent(homeworks);
         return pageHolder;
     }
@@ -105,7 +105,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
                 if(shareAnswer !=null) question.setAnswerModelForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(shareAnswer));
             }*/
         });
-        checkHomeworkCompleted(userInfo, Arrays.asList(homeworkModelForStudent));
+        this.getHomeworkStuff(userInfo, Arrays.asList(homeworkModelForStudent));
         return homeworkModelForStudent;
     }
 
@@ -166,12 +166,21 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         }
     }
 
-    private void checkHomeworkCompleted(UserInfoForToken userInfo, List<HomeworkModelForStudent> homeworks) {
+    private void getHomeworkStuff(UserInfoForToken userInfo, List<HomeworkModelForStudent> homeworks) {
         homeworks.forEach(h -> {
+            //检查是否完成
             h.setCompleted(mongoTemplate.exists(
                     new Query(Criteria.where("studentId").is(userInfo.getUserId())
                             .and("homeworks").elemMatch(Criteria.where("homeworkId").is(h.getHomeworkId()).and("completedTime").ne(0))),
                     StudentHomeworkCollection.class));
+            //获取总分
+            StudentHomeworkCollection s = mongoTemplate.findOne(
+                    new Query(
+                            Criteria.where("studentId").is(userInfo.getUserId())
+                                    .and("homeworks").elemMatch(Criteria.where("homeworkId").is(h.getHomeworkId()))
+                    ), StudentHomeworkCollection.class);
+            if(s!=null) h.setTotalScore(s.getHomeworks().stream().filter(
+                    t->t.getHomeworkId().equalsIgnoreCase(h.getHomeworkId())).findFirst().get().getTotalScore());
         });
     }
 

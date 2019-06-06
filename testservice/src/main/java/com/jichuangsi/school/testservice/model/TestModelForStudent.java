@@ -7,6 +7,7 @@ public class TestModelForStudent extends com.jichuangsi.school.testservice.model
 
     private List<QuestionModelForStudent> questions = new ArrayList<QuestionModelForStudent>();
     private boolean completed;
+    private double totalScore;
 
     public List<QuestionModelForStudent> getQuestions() {
         return questions;
@@ -22,5 +23,13 @@ public class TestModelForStudent extends com.jichuangsi.school.testservice.model
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public double getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(double totalScore) {
+        this.totalScore = totalScore;
     }
 }

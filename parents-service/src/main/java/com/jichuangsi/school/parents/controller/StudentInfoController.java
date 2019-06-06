@@ -162,4 +162,18 @@ public class StudentInfoController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
+
+    @ApiOperation(value = "查看学生的各科考试成绩", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping(value = "/getStudentTestScore")//@ModelAttribute UserInfoForToken userInfo,
+    public ResponseModel<List<KnowledgeStatisticsModel>> getStudentTestScore(@ModelAttribute UserInfoForToken userInfo,@RequestBody ParentStatisticsModel model){
+        try {
+            return ResponseModel.sucess("",studentService.getParentTestStatistics(userInfo, model));
+        } catch (ParentsException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 }

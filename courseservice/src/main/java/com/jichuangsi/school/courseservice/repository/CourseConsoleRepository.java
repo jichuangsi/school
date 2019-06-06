@@ -21,6 +21,9 @@ public interface CourseConsoleRepository<T> {
     //保存并返回insert
     T save(T entity) ;
 
+    //保存并返回insert
+    T save(T entity, List<String> points) ;
+
     //查询当前用户最新5条未开课
     List<Course> findNewCourse(String teacherId);
 

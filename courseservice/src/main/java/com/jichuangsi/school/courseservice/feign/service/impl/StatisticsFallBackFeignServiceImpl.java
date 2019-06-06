@@ -12,6 +12,7 @@ public class StatisticsFallBackFeignServiceImpl implements IStatisticsFeignServi
 
     private final String ERR_MSG = "调用微服务失败";
 
+
     @Override
     public ResponseModel<List<TransferStudent>> getSignStudents(String courseId, String classId) {
         return ResponseModel.fail("",ERR_MSG);

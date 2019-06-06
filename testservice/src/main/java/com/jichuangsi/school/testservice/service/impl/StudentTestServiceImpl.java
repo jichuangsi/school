@@ -12,10 +12,12 @@ import com.jichuangsi.school.testservice.model.TestModelForStudent;
 import com.jichuangsi.school.testservice.model.QuestionModelForStudent;
 import com.jichuangsi.school.testservice.model.SearchTestModel;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
-import com.jichuangsi.school.testservice.repository.TestRepository;
-import com.jichuangsi.school.testservice.repository.QuestionRepository;
-import com.jichuangsi.school.testservice.repository.StudentAnswerRepository;
-import com.jichuangsi.school.testservice.repository.TeacherAnswerRepository;
+import com.jichuangsi.school.testservice.model.feign.SearchTestModelId;
+import com.jichuangsi.school.testservice.model.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.testservice.model.statistics.ParentStatisticsModel;
+import com.jichuangsi.school.testservice.model.statistics.ResultKnowledgeModel;
+import com.jichuangsi.school.testservice.model.transfer.TransferKnowledge;
+import com.jichuangsi.school.testservice.repository.*;
 import com.jichuangsi.school.testservice.service.IAutoVerifyAnswerService;
 import com.jichuangsi.school.testservice.service.IStudentTestService;
 import com.jichuangsi.school.testservice.utils.MappingEntity2ModelConverter;
@@ -48,7 +50,8 @@ public class StudentTestServiceImpl implements IStudentTestService {
 
     @Resource
     private TeacherAnswerRepository teacherAnswerRepository;
-
+    @Resource
+    private TestTestStatisticsRepository testTestStatisticsRepository;
     @Resource
     private MongoTemplate mongoTemplate;
 
@@ -59,7 +62,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
     public List<TestModelForStudent> getTestsList(UserInfoForToken userInfo) throws StudentTestServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
         List<TestModelForStudent> tests = convertTestList(testRepository.findProgressTestByStudentId(userInfo.getUserId()));
-        checkTestCompleted(userInfo, tests);
+        this.getTestStuff(userInfo, tests);
         return tests;
     }
 
@@ -72,7 +75,20 @@ public class StudentTestServiceImpl implements IStudentTestService {
         pageHolder.setPageNum(searchTestModel.getPageIndex());
         pageHolder.setPageSize(searchTestModel.getPageSize());
         List<TestModelForStudent> tests = convertTestList(testRepository.findFinishedTestByStudentId(userInfo.getUserId(), searchTestModel.getPageIndex(), searchTestModel.getPageSize()));
-        checkTestCompleted(userInfo, tests);
+        this.getTestStuff(userInfo, tests);
+        pageHolder.setContent(tests);
+        return pageHolder;
+    }
+    @Override
+    public PageHolder<TestModelForStudent> getHistoryTestsListFeign(String studentId, SearchTestModelId searchTestModel) throws StudentTestServiceException{
+        if(StringUtils.isEmpty(studentId)) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
+        if(searchTestModel.getPageSize() == 0) searchTestModel.setPageSize(defaultPageSize);
+        PageHolder<TestModelForStudent> pageHolder = new PageHolder<TestModelForStudent>();
+        pageHolder.setTotal(testRepository.countFinishedTestByStudentId(studentId));
+        pageHolder.setPageNum(searchTestModel.getPageIndex());
+        pageHolder.setPageSize(searchTestModel.getPageSize());
+        List<TestModelForStudent> tests = convertTestList(testRepository.findFinishedTestByStudentId(studentId, searchTestModel.getPageIndex(), searchTestModel.getPageSize()));
+        this.getTestStuff(studentId, tests);
         pageHolder.setContent(tests);
         return pageHolder;
     }
@@ -104,7 +120,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
                 if(shareAnswer !=null) question.setAnswerModelForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(shareAnswer));
             }*/
         });
-        checkTestCompleted(userInfo, Arrays.asList(testModelForStudent));
+        this.getTestStuff(userInfo, Arrays.asList(testModelForStudent));
         return testModelForStudent;
     }
 
@@ -161,12 +177,39 @@ public class StudentTestServiceImpl implements IStudentTestService {
         }
     }
 
-    private void checkTestCompleted(UserInfoForToken userInfo, List<TestModelForStudent> tests){
+    private void getTestStuff(UserInfoForToken userInfo, List<TestModelForStudent> tests){
         tests.forEach(h -> {
+            //检查是否完成
             h.setCompleted(mongoTemplate.exists(
                     new Query(Criteria.where("studentId").is(userInfo.getUserId())
                             .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()).and("completedTime").ne(0))),
                     StudentTestCollection.class));
+            //获取总分
+            StudentTestCollection s = mongoTemplate.findOne(
+                    new Query(
+                            Criteria.where("studentId").is(userInfo.getUserId())
+                                    .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()))
+                    ), StudentTestCollection.class);
+            if(s!=null) h.setTotalScore(s.getTests().stream().filter(
+                    t->t.getTestId().equalsIgnoreCase(h.getTestId())).findFirst().get().getTotalScore());
+        });
+    }
+
+    private void getTestStuff(String studentId, List<TestModelForStudent> tests){
+        //检查是否完成
+        tests.forEach(h -> {
+            h.setCompleted(mongoTemplate.exists(
+                    new Query(Criteria.where("studentId").is(studentId)
+                            .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()).and("completedTime").ne(0))),
+                    StudentTestCollection.class));
+            //获取总分
+            StudentTestCollection s = mongoTemplate.findOne(
+                    new Query(
+                            Criteria.where("studentId").is(studentId)
+                                    .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()))
+                    ), StudentTestCollection.class);
+            if(s!=null) h.setTotalScore(s.getTests().stream().filter(
+                    t->t.getTestId().equalsIgnoreCase(h.getTestId())).findFirst().get().getTotalScore());
         });
     }
 
@@ -184,5 +227,131 @@ public class StudentTestServiceImpl implements IStudentTestService {
             questionForStudents.add(MappingEntity2ModelConverter.ConvertStudentQuestion(question));
         });
         return questionForStudents;
+    }
+
+    @Override
+    public TransferKnowledge getKnowledgeOfParticularQuestion(String questionId) throws StudentTestServiceException {
+        if (StringUtils.isEmpty(questionId)) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
+        Optional<Question> result = questionRepository.findById(questionId);
+        if (result.isPresent()) {
+            TransferKnowledge transferKnowledge = new TransferKnowledge();
+            result.get().getKnowledges().forEach(knowledge -> {
+                transferKnowledge.getKnowledges().add(
+                        new Knowledge(knowledge.getKnowledgeId(), knowledge.getKnowledge(),
+                                knowledge.getCapabilityId(), knowledge.getCapability()));
+            });
+            return transferKnowledge;
+        }
+        throw new StudentTestServiceException(ResultCode.QUESTION_NOT_EXISTED);
+    }
+    @Override
+    public List<ResultKnowledgeModel> getQuestionKnowledges(List<String> questionIds) throws StudentTestServiceException {
+        if (null == questionIds) {
+            throw new StudentTestServiceException(ResultCode.SELECT_NULL_MSG);
+        }
+        List<ResultKnowledgeModel> resultKnowledgeModels = new ArrayList<ResultKnowledgeModel>();
+        for (String questionId : questionIds) {
+            ResultKnowledgeModel resultKnowledgeModel = new ResultKnowledgeModel();
+            resultKnowledgeModel.setQuestionId(questionId);
+            resultKnowledgeModel.setTransferKnowledge(getKnowledgeOfParticularQuestion(questionId));
+            resultKnowledgeModels.add(resultKnowledgeModel);
+        }
+        return resultKnowledgeModels;
+    }
+    @Override
+    public List<KnowledgeStatisticsModel> getParentStatistics(ParentStatisticsModel model) throws StudentTestServiceException{
+        if (StringUtils.isEmpty(model.getStudentId())|| StringUtils.isEmpty(model.getSubjectName()) || 0 == model.getStudentNum()){
+            throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
+        }
+        List<Test> test =new ArrayList<Test>();
+        if (model.getBeignTime()>0){
+           test.addAll(testRepository.findByClassIdAndStatusAndEndTimeIsGreaterThanAndSubjectNameLikeOrderByCreateTime(model.getClassId(),Status.FINISH.getName(),model.getBeignTime(),model.getSubjectName()));
+
+        }else {
+            if (!(model.getStatisticsTimes().size() > 0)) {
+                throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
+            }
+
+
+                for (Long beignTime : model.getStatisticsTimes()) {
+                if (null == beignTime) {
+                    continue;
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date(beignTime));
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                test.addAll(testTestStatisticsRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndEndTimeLessThanAndSubjectNameLike(model.getClassId(), Status.FINISH.getName(), beignTime, calendar.getTimeInMillis(), model.getSubjectName()));
+            }
+
+        }
+        System.out.println(test.size());
+        List<String> questionIds = new ArrayList<String>();
+        for (Test test1 : test) {
+            questionIds.addAll(test1.getQuestionIds());
+        }
+        Map<String,Integer> selfTrue = new HashMap<String, Integer>();
+        Map<String,Integer> classTrue = new HashMap<String, Integer>();
+        for (String qid : questionIds){
+            int trueNum = 0;
+            int selfNum = 0;
+            List<StudentAnswer> answers = studentAnswerRepository.findAllByQuestionId(qid);
+            for (StudentAnswer answer : answers){
+                if (Result.CORRECT.getName().equals(answer.getResult())){
+                    trueNum ++;
+                }else if (Result.PASS.getName().equals(answer.getResult())){
+                    //todo 主观题统计
+                }
+                if (model.getStudentId().equals(answer.getStudentId())){
+                    selfNum = 1;
+                }
+            }
+            selfTrue.put(qid,selfNum);
+            classTrue.put(qid,trueNum);
+        }
+        try {
+            List<ResultKnowledgeModel> resultKnowledgeModels = getQuestionKnowledges(questionIds);
+            Map<String, List<String>> questionMap = new HashMap<String, List<String>>();
+            for (ResultKnowledgeModel knowledgeModel : resultKnowledgeModels) {
+                for (Knowledge knowledge : knowledgeModel.getTransferKnowledge().getKnowledges()) {
+                    if (StringUtils.isEmpty(knowledge.getKnowledge())) {
+                        knowledge.setKnowledge("综合分类");
+                    }
+                    List<String> qIds = new ArrayList<String>();
+                    if (questionMap.containsKey(knowledge.getKnowledge())) {
+                        qIds.addAll(questionMap.get(knowledge.getKnowledge()));
+                    }
+                    qIds.add(knowledgeModel.getQuestionId());
+                    questionMap.put(knowledge.getKnowledge(), qIds);
+                }
+            }
+            int questionNum = 0;
+            for (String key : questionMap.keySet()){
+                questionNum = questionNum + questionMap.get(key).size();
+            }
+            List<KnowledgeStatisticsModel> models = new ArrayList<KnowledgeStatisticsModel>();
+            for (String key : questionMap.keySet()){
+                int trueNum = 0;
+                int classNum = 0;
+                for (String questionId: questionMap.get(key)){
+                    trueNum = trueNum + selfTrue.get(questionId);
+                    classNum = classNum + classTrue.get(questionId);
+                }
+                KnowledgeStatisticsModel statisticsModel = new KnowledgeStatisticsModel();
+
+                statisticsModel.setClassRightAvgRate((double) classNum / (model.getStudentNum() * questionMap.get(key).size()));
+                statisticsModel.setKnowledgeName(key);
+                if (0 != questionNum) {
+                    double rate = (double)questionMap.get(key).size() /questionNum;
+                    statisticsModel.setKnowledgeRate(rate);
+                }
+                statisticsModel.setStudentRightRate((double) trueNum / questionMap.get(key).size());
+                models.add(statisticsModel);
+            }
+            return models;
+        } catch (StudentTestServiceException e) {
+            throw new StudentTestServiceException(e.getMessage());
+        }
     }
 }

@@ -14,6 +14,9 @@ public interface IStudentCourseService {
     List<CourseForStudent> getCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException;
 
     @Transactional
+    PageHolder<CourseForStudent> getHistoryCoursesListFeign(String studentId, CourseForStudent pageInform) throws StudentCourseServiceException;
+
+    @Transactional
     PageHolder<CourseForStudent> getHistoryCoursesList(UserInfoForToken userInfo, CourseForStudent pageInform) throws StudentCourseServiceException;
 
     @Transactional
@@ -53,4 +56,9 @@ public interface IStudentCourseService {
 
     @Transactional
     CourseFile downloadStudentAttachment(UserInfoForToken userInfo, String fileName) throws StudentCourseServiceException;
+
+
+    @Transactional
+    PageHolder<CourseForStudent> getHistoryCoursesListFeignTime(String studentId,List<Long> endTime, CourseForStudent pageInform) throws StudentCourseServiceException;
+
 }

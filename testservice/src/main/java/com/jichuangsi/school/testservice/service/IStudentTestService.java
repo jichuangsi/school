@@ -6,6 +6,11 @@ import com.jichuangsi.school.testservice.model.AnswerModelForStudent;
 import com.jichuangsi.school.testservice.model.TestModelForStudent;
 import com.jichuangsi.school.testservice.model.SearchTestModel;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
+import com.jichuangsi.school.testservice.model.feign.SearchTestModelId;
+import com.jichuangsi.school.testservice.model.statistics.KnowledgeStatisticsModel;
+import com.jichuangsi.school.testservice.model.statistics.ParentStatisticsModel;
+import com.jichuangsi.school.testservice.model.statistics.ResultKnowledgeModel;
+import com.jichuangsi.school.testservice.model.transfer.TransferKnowledge;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,6 +24,9 @@ public interface IStudentTestService {
     PageHolder<TestModelForStudent> getHistoryTestsList(UserInfoForToken userInfo, SearchTestModel searchTestModel) throws StudentTestServiceException;
 
     @Transactional
+    PageHolder<TestModelForStudent> getHistoryTestsListFeign(String studentId, SearchTestModelId searchTestModel) throws StudentTestServiceException;
+
+    @Transactional
     TestModelForStudent getParticularTest(UserInfoForToken userInfo, String testId) throws StudentTestServiceException;
 
     @Transactional
@@ -26,4 +34,10 @@ public interface IStudentTestService {
 
     @Transactional
     void submitParticularTest(UserInfoForToken userInfo, String testId) throws StudentTestServiceException;
+
+
+    TransferKnowledge getKnowledgeOfParticularQuestion(String questionId)throws  StudentTestServiceException;
+    List<ResultKnowledgeModel> getQuestionKnowledges(List<String> questionIds) throws StudentTestServiceException;
+    List<KnowledgeStatisticsModel> getParentStatistics(ParentStatisticsModel model) throws StudentTestServiceException;
+
 }

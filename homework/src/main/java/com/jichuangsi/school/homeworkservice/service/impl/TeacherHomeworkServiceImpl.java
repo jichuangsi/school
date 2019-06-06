@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -105,14 +106,15 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
             questionModelForTeachers.add(convertAndFetchAnswerForQuestion(userInfo.getUserId(), q));
         });
         homeworkModelForTeacher.getQuestions().addAll(questionModelForTeachers);
-        List<StudentHomeworkCollection> studentHomwokrs = mongoTemplate.find(new Query(
+        List<StudentHomeworkCollection> studentHomeworks = mongoTemplate.find(new Query(
                 Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId")
                         .is(homeworkModelForTeacher.getHomeworkId())))
                 , StudentHomeworkCollection.class);
         List<TransferStudent> students = new ArrayList<TransferStudent>();
-        studentHomwokrs.forEach(s -> {
+        studentHomeworks.forEach(s -> {
             Optional<HomeworkSummary> homeworkSummary = s.getHomeworks().stream().filter(h->h.getHomeworkId().equalsIgnoreCase(homeworkId)).findFirst();
             TransferStudent ts = new TransferStudent(s.getStudentId(), s.getStudentAccount(), s.getStudentName());
+            ts.setTotalScore(homeworkSummary.isPresent()?homeworkSummary.get().getTotalScore():0d);
             ts.setCompletedTime(homeworkSummary.isPresent()?homeworkSummary.get().getCompletedTime():0);
             students.add(ts);
         });
@@ -142,7 +144,8 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
             }
         });
 
-        checkHomeworkCompleted(studentId, homeworkModelForStudent);
+        this.checkHomeworkCompleted(studentId, homeworkModelForStudent);
+        this.getHomeworkTotalScore(studentId, homeworkModelForStudent);
         return homeworkModelForStudent;
     }
 
@@ -211,6 +214,57 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
         });
     }
 
+    @Override
+    public List<TransferStudent> settleParticularHomework(UserInfoForToken userInfo, String homeworkId) throws TeacherHomeworkServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(homeworkId)) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        Homework homework = homeworkRepository.findFirstByIdOrderByUpdateTimeDesc(homeworkId);
+        if(homework == null) throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_NOT_EXISTED);
+        if (Status.NOTSTART.getName().equalsIgnoreCase(homework.getStatus()))
+            throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_NOTSTART);
+        if (Status.PROGRESS.getName().equalsIgnoreCase(homework.getStatus()))
+            throw new TeacherHomeworkServiceException(ResultCode.SETTLE_HOMEWORK_WITH_PROGRESS);
+        List<Question> questions = questionRepository.findQuestionsByHomeworkId(homeworkId);
+        List<StudentHomeworkCollection> studentHomeworks = mongoTemplate.find(
+                new Query(Criteria.where("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkId))), StudentHomeworkCollection.class);
+        List<TransferStudent> students = new ArrayList<TransferStudent>();
+
+        studentHomeworks.forEach(s -> {
+            Optional<HomeworkSummary> homeworkSummary = s.getHomeworks().stream().filter(h->h.getHomeworkId().equalsIgnoreCase(homeworkId)).findFirst();
+            TransferStudent ts = new TransferStudent(s.getStudentId(), s.getStudentAccount(), s.getStudentName());
+            double totalScore = this.settleHomework4ParticularStudent(s.getStudentId(), questions);
+            mongoTemplate.updateFirst(new Query(Criteria.where("studentId").is(s.getStudentId()).and("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkId)))
+                    , new Update().set("homeworks.$.totalScore",totalScore),StudentHomeworkCollection.class);
+            ts.setTotalScore(totalScore);
+            ts.setCompletedTime(homeworkSummary.isPresent()?homeworkSummary.get().getCompletedTime():0);
+            students.add(ts);
+        });
+
+        students.stream().sorted(Comparator.comparing(TransferStudent::getCompletedTime).reversed()).collect(Collectors.toList());
+        return students;
+
+    }
+
+    private double settleHomework4ParticularStudent(String studentId, List<Question> questions){
+        double totalScore = 0d;
+        for ( Question q : questions ){
+            StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(q.getId(), studentId);
+            if(studentAnswer!=null){
+                if (QuestionType.OBJECTIVE.getName().equalsIgnoreCase(q.getType())){//累加客观题
+                    if(Result.CORRECT.getName().equalsIgnoreCase(studentAnswer.getResult()) && !StringUtils.isEmpty(q.getPoint())){//学生回答正确并且有题目设置分数
+                        totalScore += Double.valueOf(q.getPoint());
+                    }
+                }else if(QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(q.getType())){
+                    if(Result.PASS.getName().equalsIgnoreCase(studentAnswer.getResult())
+                            && !StringUtils.isEmpty(studentAnswer.getSubjectiveScore())
+                            && !StringUtils.isEmpty(q.getPoint())){//老师批改并且有登记分数，和题目设置分数
+                        totalScore += studentAnswer.getSubjectiveScore();
+                    }
+                }
+            }
+        }
+        return totalScore;
+    }
+
     private QuestionModelForTeacher convertAndFetchAnswerForQuestion(String teacherId, Question question){
         List<StudentAnswer> answers = studentAnswerRepository.findAllByQuestionId(question.getId());
         QuestionModelForTeacher questionForTeacher =  MappingEntity2ModelConverter.ConvertTeacherQuestion(question);
@@ -259,5 +313,15 @@ public class TeacherHomeworkServiceImpl implements ITeacherHomeworkService {
                     new Query(Criteria.where("studentId").is(studentId)
                             .and("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkModelForStudent.getHomeworkId()).and("completedTime").ne(0))),
                     StudentHomeworkCollection.class));
+    }
+
+    private void getHomeworkTotalScore(String studentId, HomeworkModelForStudent homeworkModelForStudent){
+        StudentHomeworkCollection s = mongoTemplate.findOne(
+                new Query(
+                        Criteria.where("studentId").is(studentId)
+                                .and("homeworks").elemMatch(Criteria.where("homeworkId").is(homeworkModelForStudent.getHomeworkId()))
+                        ), StudentHomeworkCollection.class);
+        if(s!=null) homeworkModelForStudent.setTotalScore(s.getHomeworks().stream().filter(
+                h->h.getHomeworkId().equalsIgnoreCase(homeworkModelForStudent.getHomeworkId())).findFirst().get().getTotalScore());
     }
 }

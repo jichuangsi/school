@@ -34,4 +34,7 @@ public interface IStudentService {
     List<KnowledgeStatisticsModel> getParentHomeworkStatistics(UserInfoForToken userInfo, ParentStatisticsModel model) throws ParentsException;
 
     TimeTableModel getStudentTimeTable(UserInfoForToken userInfo,String studentId) throws ParentsException;
+
+
+    List<KnowledgeStatisticsModel> getParentTestStatistics(UserInfoForToken userInfo,ParentStatisticsModel model) throws ParentsException;
 }

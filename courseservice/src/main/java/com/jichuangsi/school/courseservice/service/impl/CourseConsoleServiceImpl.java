@@ -101,7 +101,7 @@ public class CourseConsoleServiceImpl implements ICourseConsoleService {
                 questionForTeacher.setGradeId(transferTeacher.getGradeId());
                 questionForTeacher.setSubjectId(transferTeacher.getSubjectId());
                 Question question = MappingModel2EntityConverter.ConvertTeacherQuestion(questionForTeacher);
-                question = (Question) courseConsoleRepository.save(question);
+                question = (Question) courseConsoleRepository.save(question, courseForTeacher.getPoints());
                 /*if (question == null) {
                     throw new TeacherCourseServiceException(ResultCode.QUESTION_FAIL_SAVE);
                 }*/

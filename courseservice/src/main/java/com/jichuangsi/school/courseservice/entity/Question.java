@@ -25,6 +25,7 @@ public class Question {
     private String idMD52;
     private String status;
     private String pic;
+    private String point;
     private long createTime;
     private long updateTime;
 
@@ -162,5 +163,13 @@ public class Question {
 
     public void setKnowledges(List<Knowledge> knowledges) {
         this.knowledges = knowledges;
+    }
+
+    public String getPoint() {
+        return point;
+    }
+
+    public void setPoint(String point) {
+        this.point = point;
     }
 }

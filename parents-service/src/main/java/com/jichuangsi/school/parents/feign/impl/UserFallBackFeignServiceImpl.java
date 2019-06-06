@@ -47,4 +47,8 @@ public class UserFallBackFeignServiceImpl implements IUserFeignService {
     public ResponseModel<NoticeModel> getNoticeDetails(String noticeId) {
         return ResponseModel.fail("",ERR_MSG);
     }
+    @Override
+    public ResponseModel<String> findStudentClass(String studentId) {
+        return ResponseModel.fail("",ERR_MSG);
+    }
 }

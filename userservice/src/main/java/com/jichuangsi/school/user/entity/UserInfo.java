@@ -16,6 +16,7 @@ public class UserInfo {
 	private String name;
 	private String pwd;
 	private String sex = "M";
+	private String portrait;
 	private List<RoleInfo> roleInfos=new ArrayList<RoleInfo>();
 	private String status = "I";
 	private long createTime = new Date().getTime();
@@ -91,5 +92,13 @@ public class UserInfo {
 
 	public void setUpdateTime(long updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getPortrait() {
+		return portrait;
+	}
+
+	public void setPortrait(String portrait) {
+		this.portrait = portrait;
 	}
 }

@@ -47,4 +47,5 @@ public class Knowledge {
     public void setCapability(String capability) {
         this.capability = capability;
     }
+
 }

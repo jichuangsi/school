@@ -2,6 +2,8 @@ package com.jichuangsi.school.statistics.service;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.statistics.exception.QuestionResultException;
+import com.jichuangsi.school.statistics.model.SearchStudentCapabilityModel;
+import com.jichuangsi.school.statistics.model.classType.CapabilityStudentModel;
 import com.jichuangsi.school.statistics.model.homework.HomeworkModelForTeacher;
 import com.jichuangsi.school.statistics.model.result.StudentResultModel;
 import com.jichuangsi.school.statistics.model.result.TeacherHomeResultModel;
@@ -25,4 +27,8 @@ public interface IQuestionResultService {
 
     //获取该次习题测验的统计结果
     TeacherHomeResultModel getSubjectQuestionRate(UserInfoForToken userInfoForToken, String homeId,String classId) throws QuestionResultException;
+    //获取习题的认知能力占比
+    CapabilityStudentModel getClassStudentCapability(SearchStudentCapabilityModel model)throws  QuestionResultException;
+    //TestStudentModel getClassStudentCapability(String classId,String subject)throws  QuestionResultException;
+
 }

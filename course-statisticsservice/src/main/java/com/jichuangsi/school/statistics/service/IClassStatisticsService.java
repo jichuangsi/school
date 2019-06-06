@@ -17,5 +17,7 @@ public interface IClassStatisticsService {
 
     List<TransferStudent> getCourseSign(UserInfoForToken userInfo, String courseId,String classId) throws QuestionResultException;
 
+    public List<TransferStudent> getCourseSignFeign(String courseId,String classId) throws QuestionResultException ;
+
     List<TransferStudent> getSignStudents(String courseId,String classId) throws QuestionResultException;
 }

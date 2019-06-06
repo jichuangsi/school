@@ -23,6 +23,7 @@ public class Question {
     private String questionIdMD52;
     private Status questionStatus;
     private String questionPic;
+    private String questionPoint;
     private long createTime;
     private long updateTime;
 
@@ -160,5 +161,13 @@ public class Question {
 
     public void setKnowledges(CustomArrayList<Knowledge> knowledges) {
         this.knowledges = knowledges;
+    }
+
+    public String getQuestionPoint() {
+        return questionPoint;
+    }
+
+    public void setQuestionPoint(String questionPoint) {
+        this.questionPoint = questionPoint;
     }
 }

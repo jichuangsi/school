@@ -7,4 +7,6 @@ import java.util.List;
 public interface QuestionExtraRepository {
 
     List<Question> findQuestionsByTestId(String testId);
+
+    Question save(Question entity, List<String> points) ;
 }

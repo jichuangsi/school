@@ -62,7 +62,15 @@ public class QuestionExtraRepositoryImpl implements QuestionExtraRepository {
                         .and("question.idMD52").as("idMD52")
                         .and("question.status").as("status")
                         .and("question.pic").as("pic")
+                        .and("question.point").as("point")
         );
         return mongoTemplate.aggregate(agg, Test.class,Question.class).getMappedResults();
     }
+
+    @Override
+    public Question save(Question entity, List<String> points) {
+        mongoTemplate.insert(entity);
+        return entity;
+    }
+
 }

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -189,7 +190,9 @@ public class FeignClientServiceImpl implements IFeignClientService {
             List<ResultKnowledgeModel> resultKnowledgeModels = new ArrayList<ResultKnowledgeModel>();
             ClassStatisticsModel model = new ClassStatisticsModel();
             Map<String, QuestionStatisticsRateModel> questionCalendar = new HashMap<String, QuestionStatisticsRateModel>();
-            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndTeacherIdAndSubjectNameLikeOrderByCreateTime(classModel.getClassId(), Status.FINISH.getName(), calendar.getTimeInMillis(),classModel.getTeacherId(),classModel.getSubject());
+            List<Course> courses = courseRepository.findByClassIdAndStatusAndEndTimeGreaterThanAndTeacherIdAndSubjectNameLikeOrderByCreateTime
+                    (classModel.getClassId(), Status.FINISH.getName(), calendar.getTimeInMillis(),classModel.getTeacherId(),classModel.getSubject());
+          System.out.println(courses.size());
             model.setClassId(classModel.getClassId());
             model.setClassName(classModel.getClassName());
             List<String> questionMonth = new ArrayList<String>();
@@ -272,6 +275,7 @@ public class FeignClientServiceImpl implements IFeignClientService {
             throw new FeignControllerException(ResultCode.PARAM_MISS_MSG);
         }
         Map<String, List<String>> questionMap = new HashMap<String, List<String>>();
+        Map<String, String> capabilityMap =new HashMap<String,  String>();//记录认知能力及问题ID
         try {
             List<ResultKnowledgeModel> resultKnowledgeModels = getQuestionKnowledges(model.getQuestionIds());
             for (ResultKnowledgeModel knowledgeModel : resultKnowledgeModels) {
@@ -285,13 +289,20 @@ public class FeignClientServiceImpl implements IFeignClientService {
                     }
                     questionIds.add(knowledgeModel.getQuestionId());
                     questionMap.put(knowledge.getKnowledge(), questionIds);
+                    capabilityMap.put(knowledgeModel.getQuestionId(),knowledge.getCapabilityId());//记录认知能力
                 }
             }
         } catch (StudentCourseServiceException e) {
             throw new FeignControllerException(e.getMessage());
         }
+        //保留两位数字
+        BigDecimal bg = null;
+        double f1 = 0.0;
+
+        //记录认知总数及正确数
+        int memory=0,comprehend=0,analy=0,apply=0,syhthesize=0,mt=0,ct=0,ant=0,apt=0,st=0,other=0,ot=0;
         List<StudentKnowledgeModel> studentKnowledgeModels = new ArrayList<StudentKnowledgeModel>();
-        for (TransferStudent student : model.getTransferStudents()) {
+        for (TransferStudent student : model.getTransferStudents()) {//循环取单个学生对应数据
             StudentKnowledgeModel knowledgeModel = new StudentKnowledgeModel();
             knowledgeModel.setStudentId(student.getStudentId());
             knowledgeModel.setStudentName(student.getStudentName());
@@ -299,6 +310,8 @@ public class FeignClientServiceImpl implements IFeignClientService {
             for (String questionId : model.getQuestionIds()) {
                 StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentId(questionId, student.getStudentId());
                 String result = "";
+                System.out.println(questionId);
+              //  System.out.println(studentAnswer.getResult());
                 if (null == studentAnswer || Result.WRONG.getName().equals(studentAnswer.getResult())) {
                     result = Result.WRONG.getName();
                 } else {
@@ -307,25 +320,154 @@ public class FeignClientServiceImpl implements IFeignClientService {
                 questionResult.put(questionId, result);
             }
             List<KnowledgeResultModel> resultModels = new ArrayList<KnowledgeResultModel>();
-            for (String key : questionMap.keySet()) {
-                KnowledgeResultModel resultModel = new KnowledgeResultModel();
-                resultModel.setKnowledgeName(key);
-                List<String> questionIds = questionMap.get(key);
-                for (String questionId : questionIds) {
-                    String result = questionResult.get(questionId);
-                    if (Result.CORRECT.getName().equals(result)) {
-                        resultModel.setTrueNum(resultModel.getTrueNum() + 1);
-                    } else if (Result.PASS.getName().equals(result)) {
+            Map<String,Double> capability1=new HashMap<String, Double>();
 
-                    } else if (Result.WRONG.getName().equals(result)) {
-                        resultModel.setWrongNum(resultModel.getWrongNum() + 1);
-                    }
-                }
-                resultModels.add(resultModel);
+
+                for (String key : questionMap.keySet()) {
+                    KnowledgeResultModel resultModel = new KnowledgeResultModel();
+                    resultModel.setKnowledgeName(key);
+                    List<String> questionIds = questionMap.get(key);
+                    //for (String questionId1 : questionIds1) {//循环认知
+
+                        for (String questionId : questionIds) {//循环知识点问题Id
+                            String result = questionResult.get(questionId);
+                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                            } else if (Result.PASS.getName().equals(result)) {
+                            } else if (Result.WRONG.getName().equals(result)) {
+                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                            }
+                            if (result != null) {
+                                for (String key1 : capabilityMap.keySet()) {//循环读取认知能力
+                                    String capability = capabilityMap.get(key1);//
+                                    System.out.println(key1);
+                                    String questionIds1 = key1;
+                                    System.out.println(questionId);
+                                    if (questionIds1.equals(questionId)) {//如果ID相同
+                                        if (capability.equals("1")) {//记忆
+                                            memory++;
+                                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                                mt++;
+                                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                                            } else if (Result.PASS.getName().equals(result)) {
+                                            } else if (Result.WRONG.getName().equals(result)) {
+                                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                                            }
+                                        }
+                                        if (capability.equals("2")) {//记忆
+                                            comprehend++;
+                                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                                ct++;
+                                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                                            } else if (Result.PASS.getName().equals(result)) {
+                                            } else if (Result.WRONG.getName().equals(result)) {
+                                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                                            }
+                                        }
+                                        if (capability.equals("3")) {//记忆
+                                            analy++;
+                                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                                ant++;
+                                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                                            } else if (Result.PASS.getName().equals(result)) {
+                                            } else if (Result.WRONG.getName().equals(result)) {
+                                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                                            }
+                                        }
+                                        if (capability.equals("4")) {//记忆
+                                            apply++;
+                                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                                apt++;
+                                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                                            } else if (Result.PASS.getName().equals(result)) {
+                                            } else if (Result.WRONG.getName().equals(result)) {
+                                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                                            }
+                                        }
+                                        if (capability.equals("5")) {//记忆
+                                            syhthesize++;
+                                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                                st++;
+                                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                                            } else if (Result.PASS.getName().equals(result)) {
+                                            } else if (Result.WRONG.getName().equals(result)) {
+                                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                                            }
+                                        }
+                                        if (capability == "" || capability == null) {//记忆
+                                            other++;
+                                            if (Result.CORRECT.getName().equals(result)) {//正确
+                                                ot++;
+                                                resultModel.setTrueNum(resultModel.getTrueNum() + 1);
+                                            } else if (Result.PASS.getName().equals(result)) {
+                                            } else if (Result.WRONG.getName().equals(result)) {
+                                                resultModel.setWrongNum(resultModel.getWrongNum() + 1);
+                                            }
+                                        }
+                                    }
+                                    // }
+                                }
+                                resultModels.add(resultModel);
+                                double m = 0, c = 0, an = 0, ap = 0, s = 0, o = 0;
+                                //double m =resultModel.getTrueNum()/memory;
+                                if (mt != 0 && memory != 0) {
+                                    f1 = (double) mt / memory;
+                                    bg = new BigDecimal(f1);
+                                    m = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                } else if (mt == 0 && memory != 0) {
+                                    m = 0;
+                                }
+                                if (ct != 0 && comprehend != 0) {
+                                    f1 = (double) ct / comprehend;
+                                    bg = new BigDecimal(f1);
+                                    c = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                } else if (ct == 0 && comprehend != 0) {
+                                    c = 0;
+                                }
+                                if (ant != 0 && analy != 0) {
+                                    f1 = (double) ant / analy;
+                                    bg = new BigDecimal(f1);
+                                    an = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                } else if (ant == 0 && analy != 0) {
+                                    an = 0;
+                                }
+                                if (apt != 0 && apply != 0) {
+                                    f1 = (double) apt / apply;
+                                    bg = new BigDecimal(f1);
+                                    ap = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                } else if (apt == 0 && apply != 0) {
+                                    ap = 0;
+                                }
+                                if (st != 0 && syhthesize != 0) {
+                                    f1= (double) st / syhthesize;
+                                    bg = new BigDecimal(f1);
+                                    s = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                } else if (st == 0 && syhthesize != 0) {
+                                    s = 0;
+                                }
+                               /* if (ot != 0 && other != 0) {
+                                    f1 = (double) ot / other;
+                                    bg = new BigDecimal(f1);
+                                    o = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                } else if (ot == 0 && other != 0) {
+                                    o = 0;
+                                }*/
+
+                                capability1.put("记忆", m);
+                                capability1.put("理解", c);
+                                capability1.put("分析", an);
+                                capability1.put("应用", ap);
+                                capability1.put("综合", s);
+                               // capability1.put("其他", o);
+                            }
+                        }
             }
+            knowledgeModel.setCapability(capability1);
             knowledgeModel.setKnowledgeResultModels(resultModels);
             studentKnowledgeModels.add(knowledgeModel);
-        }
+
+
+        }//单个循环完
         return studentKnowledgeModels;
     }
 
