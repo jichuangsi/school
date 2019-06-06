@@ -3,9 +3,8 @@ package com.jichuangsi.school.user.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.entity.Roleurl;
-import com.jichuangsi.school.user.entity.SchoolRole;
+import com.jichuangsi.school.user.model.UrlModel;
 import com.jichuangsi.school.user.entity.UrlRelation;
-import com.jichuangsi.school.user.entity.backstage.BackRoleInfo;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.model.UrlMapping;
@@ -27,6 +26,7 @@ import java.util.List;
 @Api("后台权限控制相关的api")
 @CrossOrigin
 public class SchoolRoleController {
+
     @Resource
     private ISchoolRoleService schoolRoleService;
     @Resource
@@ -62,7 +62,7 @@ public class SchoolRoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/addUrl")
-    public ResponseModel addUrl(@ModelAttribute UserInfoForToken userInfoForToken, @RequestBody Roleurl roleurl) throws UserServiceException {
+    public ResponseModel addUrl(@ModelAttribute UserInfoForToken userInfoForToken, @RequestBody List<Roleurl> roleurl) throws UserServiceException {
        try {
            backRoleUrlService.insertRoleUrl(userInfoForToken,roleurl);
        }catch (Exception e){
@@ -136,6 +136,20 @@ public class SchoolRoleController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+    @ApiOperation(value = "批量添加角色可以访问的url", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/batchAddRoleUrl")
+    public ResponseModel batchAddUrlRelation(@ModelAttribute UserInfoForToken userInfoForToken,@RequestBody UrlModel urlModel) throws UserServiceException {
+        try {
+            //List<UrlRelation> relations=urlModel.getUrlRelations();
+            backRoleUrlService.batchInsertUrlRelation(userInfoForToken,urlModel.getUrlRelations());
+        }catch (Exception e){
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
 
     @ApiOperation(value = "根据id删除角色相关url",notes = "")
     @ApiImplicitParams({
@@ -145,6 +159,20 @@ public class SchoolRoleController {
     public ResponseModel deleteRoleUrl(@ModelAttribute UserInfoForToken userInfoForToken,@PathVariable String roleId){
         try {
             backRoleUrlService.deleteRoleUrl(userInfoForToken,roleId);
+        }catch (Exception e){
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "根据id批量删除角色相关url",notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/batchDeleteRoleUrl")
+    public ResponseModel batchDeleteRoleUrl(@ModelAttribute UserInfoForToken userInfoForToken,@RequestBody UrlModel urlModel){
+        try {
+            backRoleUrlService.batchDeleteRoleUrl(userInfoForToken,urlModel.getUrlRelations());
         }catch (Exception e){
             return ResponseModel.fail("",e.getMessage());
         }

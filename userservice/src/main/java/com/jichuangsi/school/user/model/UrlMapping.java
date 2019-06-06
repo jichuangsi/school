@@ -3,6 +3,7 @@ package com.jichuangsi.school.user.model;
 import java.util.List;
 
 public class UrlMapping {
+
     private String roleName;
     private String url;
     private List<String> urlList;

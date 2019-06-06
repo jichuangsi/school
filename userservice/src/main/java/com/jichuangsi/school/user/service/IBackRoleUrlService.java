@@ -23,8 +23,8 @@ public class IBackRoleUrlService {
     private ISchoolRoleRepository iSchoolRoleRepository;
     //新增url
     @Transactional(rollbackFor = Exception.class)
-    public void insertRoleUrl(UserInfoForToken userInfoForToken, Roleurl roleurl){
-        iRoleUrlRepository.save(roleurl);
+    public void insertRoleUrl(UserInfoForToken userInfoForToken, List<Roleurl> roleurl){
+        iRoleUrlRepository.saveAll(roleurl);
     }
     //新增和修改url
     @Transactional(rollbackFor = Exception.class)
@@ -45,15 +45,27 @@ public class IBackRoleUrlService {
     public List<Roleurl> getAllRoleUrl(UserInfoForToken userInfoForToken){
         return iRoleUrlRepository.findAll();
     }
+
     //添加角色对应的url
     @Transactional(rollbackFor = Exception.class)
     public void insertUrlRelation(UserInfoForToken userInfoForToken,UrlRelation urlRelation){
         iUrlRelationRepository.save(urlRelation);
     }
+    //批量添加角色对应的url
+    public void batchInsertUrlRelation(UserInfoForToken userInfoForToken,List<UrlRelation> urlRelation){
+        iUrlRelationRepository.saveAll(urlRelation);
+
+    }
     //根据id删除用户相关url
     @Transactional(rollbackFor = Exception.class)
     public void deleteRoleUrl(UserInfoForToken userInfoForToken, String urlRelationId){
         iUrlRelationRepository.deleteById(urlRelationId);
+    }
+
+    //根据id批量删除用户相关url
+    @Transactional(rollbackFor = Exception.class)
+    public void batchDeleteRoleUrl(UserInfoForToken userInfoForToken,List<UrlRelation>  urlRelationId){
+        iUrlRelationRepository.deleteInBatch(urlRelationId);
     }
     //查询角色信息
     public List<SchoolRole> getAllRole(){

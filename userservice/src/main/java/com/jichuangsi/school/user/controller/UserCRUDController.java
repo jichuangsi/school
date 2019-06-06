@@ -7,6 +7,7 @@ import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.backstage.UpdatePwdModel;
 import com.jichuangsi.school.user.model.user.StudentModel;
 import com.jichuangsi.school.user.model.user.TeacherModel;
+import com.jichuangsi.school.user.service.IUserPositionService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -34,6 +35,8 @@ public class UserCRUDController {
 
     @Resource
     private UserInfoService userInfoService;
+    @Resource
+    private IUserPositionService userPositionService;
 
     //获取所有用户
     @ApiOperation(value = "获取所有用户", notes = "")
@@ -163,6 +166,8 @@ public class UserCRUDController {
     public ResponseModel saveTeacher(@ModelAttribute UserInfoForToken userInfo, @RequestBody TeacherModel model){
         try {
             userInfoService.saveTeacher(userInfo,model);
+            //添加老师基本信息
+            userPositionService.insertUserPosition(userInfo,model);
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

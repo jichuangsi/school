@@ -32,11 +32,9 @@ custom:
       student: 
         classInfoPre: /topic/group/student/ #订阅某个班级的信息前缀
         courseIntercationPre: /topic/course/student/ #订阅某个课程的信息前缀
-        coursePublishFile:  /topic/publish/student/ #订阅某个课程的附件发布信息前缀
       teacher:
-        csChangePre: /queue/course/teacher/course/ #/queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
-        qcChangePre: /queue/course/teacher/course/ #/queue/course/teacher/qs/ #订阅某堂课题目统计数据更新的消息前缀
-        questionAnswerPre: /queue/course/teacher/course/ #/queue/course/teacher/question/ #订阅某堂课题目学生作答的消息前缀
+        csChangePre: /queue/course/teacher/cs/ #订阅某堂课统计并数据更新的消息前缀
+        qcChangePre: /queue/course/teacher/qs/ #订阅某堂课题目统计数据更新的消息前缀
   mq: 
     consumer: 
       queue-name:
@@ -45,9 +43,6 @@ custom:
         question-pubilish: course.question.pub.classinteraction
         question-statistics: course.question.statistics.classinteraction
         question-termin: course.question.termin.classinteraction
-        question-answer: course.question.answer.classinteraction
-        answer-share: course.question.answer.share.classinteraction
-        file-publish: course.file.publish.classinteraction
     producer: 
       queue-name:
         course-studentAdd: course.student.add.coursestatistics

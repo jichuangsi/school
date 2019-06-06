@@ -3,16 +3,18 @@
  */
 package com.jichuangsi.school.classinteraction.websocket.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.jichuangsi.microservice.common.model.ResponseModel;
-import com.jichuangsi.school.classinteraction.model.TeacherPublishFile;
-import com.jichuangsi.school.classinteraction.websocket.model.*;
-import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentService;
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import com.alibaba.fastjson.JSONObject;
+import com.jichuangsi.microservice.common.model.ResponseModel;
+import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
+import com.jichuangsi.school.classinteraction.websocket.service.ISendToStudentService;
 
 /**
  * @author huangjiajun
@@ -27,8 +29,6 @@ public class SendToStudentServiceDefImpl implements ISendToStudentService {
 	private String classInfoPre;
 	@Value("${custom.ws.sub.student.courseIntercationPre}")
 	private String courseIntercationPre;
-	@Value("${custom.ws.sub.student.coursePublishFile}")
-	private String coursePublishPre;
 
 	@Override
 	public void sendClassInfo(ClassInfoForStudent classInfoForStudent) {
@@ -48,23 +48,4 @@ public class SendToStudentServiceDefImpl implements ISendToStudentService {
 				JSONObject.toJSONString(ResponseModel.sucess("", questionClose)));
 	}
 
-	@Override
-	public void sendQuestionAnswerShareInfo(QuestionAnswerShare answerShare) {
-		messagingTemplate.convertAndSend(courseIntercationPre + answerShare.getCourseId(),
-				JSONObject.toJSONString(ResponseModel.sucess("", answerShare)));
-		
-	}
-
-	@Override
-	public void sendPublishFileInfo(TeacherPublishFile publishFile) {
-		messagingTemplate.convertAndSend(coursePublishPre + publishFile.getCourseId(),
-				JSONObject.toJSONString(ResponseModel.sucess("",publishFile.getFileId())));
-	}
-
-	@Override
-	public void sendRaceQuestionInfo(RaceQuestion raceQuestion) {
-		messagingTemplate.convertAndSend(courseIntercationPre + raceQuestion.getCourseId(),
-				JSONObject.toJSONString(ResponseModel.sucess("", raceQuestion)));
-
-	}
 }

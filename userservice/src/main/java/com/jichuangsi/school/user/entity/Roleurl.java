@@ -11,6 +11,7 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class Roleurl {
+
     @Id
     /*@GeneratedValue(strategy = GenerationType.IDENTITY)*/
     @GeneratedValue(generator = "jpa-uuid")

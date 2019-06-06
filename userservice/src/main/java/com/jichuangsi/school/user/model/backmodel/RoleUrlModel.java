@@ -1,6 +1,7 @@
 package com.jichuangsi.school.user.model.backmodel;
 
 public class RoleUrlModel {
+
     private String id;
     private String roleId;
     private String urlId;

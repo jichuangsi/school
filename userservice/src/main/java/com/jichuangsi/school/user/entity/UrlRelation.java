@@ -40,4 +40,9 @@ public class UrlRelation {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
+    public UrlRelation(String rid, String uid) {
+        this.rid = rid;
+        this.uid = uid;
+    }
 }
