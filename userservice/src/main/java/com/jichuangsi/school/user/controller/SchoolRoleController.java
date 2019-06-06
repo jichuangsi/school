@@ -39,6 +39,7 @@ public class SchoolRoleController {
     public ResponseModel<List<UrlMapping>> getUrl() throws UserServiceException {
         return ResponseModel.sucess("",schoolRoleService.getAllRole());
     }
+
     @ApiOperation(value = "查询角色相关权限信息", notes = "")
     @GetMapping("/getAllRole")
     public ResponseModel<List<UrlMapping>> getAllRole() throws UserServiceException {
