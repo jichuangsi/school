@@ -139,6 +139,7 @@ public class SchoolRoleController {
         }
         return ResponseModel.sucessWithEmptyData("");
     }
+
     @ApiOperation(value = "批量添加角色可以访问的url", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
