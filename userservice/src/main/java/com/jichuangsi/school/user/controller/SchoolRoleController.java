@@ -59,6 +59,7 @@ public class SchoolRoleController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+
     @ApiOperation(value = "添加url", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
