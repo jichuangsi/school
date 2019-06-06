@@ -33,6 +33,7 @@ public class SchoolRoleController {
     private IBackRoleUrlService backRoleUrlService;
     @Resource
     private IBackRoleService iBackRoleService;
+
     @ApiOperation(value = "查询权限信息", notes = "")
     @GetMapping("/urlRole")
     public ResponseModel<List<UrlMapping>> getUrl() throws UserServiceException {
