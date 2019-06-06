@@ -82,7 +82,7 @@ public class TestConsoleServiceImpl implements ITestConsoleService {
                 questionModelForTeacher.setGradeId(transferTeacher.getGradeId());
                 questionModelForTeacher.setSubjectId(transferTeacher.getSubjectId());
                 Question question = MappingModel2EntityConverter.ConvertTeacherQuestion(questionModelForTeacher);
-                question = questionRepository.save(question);
+                question = questionRepository.save(question, testModelForTeacher.getPoints());
                 /*if (question == null) {
                     throw new TeacherCourseServiceException(ResultCode.QUESTION_FAIL_SAVE);
                 }*/

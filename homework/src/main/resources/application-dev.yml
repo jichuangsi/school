@@ -69,6 +69,8 @@ com:
         ai-push:
           number: 3
           size: 100
+        answer:
+          split: "|"
 custom:
   login:
     content: http://school.jichuangsi.com:82/imgupload/imgupload.html?a=123&c=

@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.testservice.exception.TeacherTestServiceException;
 import com.jichuangsi.school.testservice.model.*;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
+import com.jichuangsi.school.testservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.testservice.service.ITeacherTestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -59,7 +60,7 @@ public class TeacherTestController {
     @ApiOperation(value = "根据习题id查询习题信息", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "path", name = "homeworkId", value = "课堂ID", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "testId", value = "试卷ID", required = true, dataType = "String"),
             @ApiImplicitParam(paramType = "path", name = "studentId", value = "学生ID", required = true, dataType = "String")})
     @GetMapping("/getStudentTest/{testId}/{studentId}")
     public ResponseModel<TestModelForStudent> getStudentTest(@ModelAttribute UserInfoForToken userInfo, @PathVariable String testId, @PathVariable String studentId) throws TeacherTestServiceException{
@@ -113,5 +114,16 @@ public class TeacherTestController {
     public ResponseModel updateTestStatus(@ModelAttribute UserInfoForToken userInfo, @RequestBody TestModelForTeacher testModelForTeacher) throws TeacherTestServiceException{
         teacherTestService.updateParticularTestStatus(userInfo, testModelForTeacher);
         return ResponseModel.sucessWithEmptyData("");
+    }
+
+    //获取指定作业
+    @ApiOperation(value = "根据习题id结算习题分数", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "testId", value = "试卷ID", required = true, dataType = "String") })
+    @PutMapping("/settleTest/{testId}")
+    public ResponseModel<List<TransferStudent>> settleTest(@ModelAttribute UserInfoForToken userInfo, @PathVariable String testId) throws TeacherTestServiceException{
+
+        return ResponseModel.sucess("",  teacherTestService.settleParticularTest(userInfo, testId));
     }
 }

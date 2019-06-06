@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -105,14 +106,15 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
             questionModelForTeachers.add(convertAndFetchAnswerForQuestion(userInfo.getUserId(), q));
         });
         testModelForTeacher.getQuestions().addAll(questionModelForTeachers);
-        List<StudentTestCollection> studentHomwokrs = mongoTemplate.find(new Query(
+        List<StudentTestCollection> studentTests = mongoTemplate.find(new Query(
                 Criteria.where("tests").elemMatch(Criteria.where("testId")
                         .is(testModelForTeacher.getTestId())))
                 , StudentTestCollection.class);
         List<TransferStudent> students = new ArrayList<TransferStudent>();
-        studentHomwokrs.forEach(s -> {
+        studentTests.forEach(s -> {
             Optional<TestSummary> testSummary = s.getTests().stream().filter(h->h.getTestId().equalsIgnoreCase(testId)).findFirst();
             TransferStudent ts = new TransferStudent(s.getStudentId(), s.getStudentAccount(), s.getStudentName());
+            ts.setTotalScore(testSummary.isPresent()?testSummary.get().getTotalScore():0d);
             ts.setCompletedTime(testSummary.isPresent()?testSummary.get().getCompletedTime():0);
             students.add(ts);
         });
@@ -142,7 +144,8 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
             }
         });
 
-        checkTestCompleted(studentId, testModelForStudent);
+        this.checkTestCompleted(studentId, testModelForStudent);
+        this.getTestTotalScore(studentId, testModelForStudent);
         return testModelForStudent;
     }
 
@@ -211,6 +214,57 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
         });
     }
 
+    @Override
+    public List<TransferStudent> settleParticularTest(UserInfoForToken userInfo, String testId) throws TeacherTestServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || StringUtils.isEmpty(testId)) throw new TeacherTestServiceException(ResultCode.PARAM_MISS_MSG);
+        Test test = testRepository.findFirstByIdOrderByUpdateTimeDesc(testId);
+        if(test == null) throw new TeacherTestServiceException(ResultCode.TEST_NOT_EXISTED);
+        if (Status.NOTSTART.getName().equalsIgnoreCase(test.getStatus()))
+            throw new TeacherTestServiceException(ResultCode.TEST_NOTSTART);
+        if (Status.PROGRESS.getName().equalsIgnoreCase(test.getStatus()))
+            throw new TeacherTestServiceException(ResultCode.SETTLE_TEST_WITH_PROGRESS);
+        List<Question> questions = questionRepository.findQuestionsByTestId(testId);
+        List<StudentTestCollection> studentTests = mongoTemplate.find(
+                new Query(Criteria.where("tests").elemMatch(Criteria.where("testId").is(testId))), StudentTestCollection.class);
+        List<TransferStudent> students = new ArrayList<TransferStudent>();
+
+        studentTests.forEach(s -> {
+            Optional<TestSummary> testSummary = s.getTests().stream().filter(h->h.getTestId().equalsIgnoreCase(testId)).findFirst();
+            TransferStudent ts = new TransferStudent(s.getStudentId(), s.getStudentAccount(), s.getStudentName());
+            double totalScore = this.settleTest4ParticularStudent(s.getStudentId(), questions);
+            mongoTemplate.updateFirst(new Query(Criteria.where("studentId").is(s.getStudentId()).and("tests").elemMatch(Criteria.where("testId").is(testId)))
+                    , new Update().set("tests.$.totalScore",totalScore),StudentTestCollection.class);
+            ts.setTotalScore(totalScore);
+            ts.setCompletedTime(testSummary.isPresent()?testSummary.get().getCompletedTime():0);
+            students.add(ts);
+        });
+
+        students.stream().sorted(Comparator.comparing(TransferStudent::getCompletedTime).reversed()).collect(Collectors.toList());
+        return students;
+
+    }
+
+    private double settleTest4ParticularStudent(String studentId, List<Question> questions){
+        double totalScore = 0d;
+        for ( Question q : questions ){
+            StudentAnswer studentAnswer = studentAnswerRepository.findFirstByQuestionIdAndStudentIdOrderByUpdateTimeDesc(q.getId(), studentId);
+            if(studentAnswer!=null){
+                if (QuestionType.OBJECTIVE.getName().equalsIgnoreCase(q.getType())){//累加客观题
+                    if(Result.CORRECT.getName().equalsIgnoreCase(studentAnswer.getResult()) && !StringUtils.isEmpty(q.getPoint())){//学生回答正确并且有题目设置分数
+                        totalScore += Double.valueOf(q.getPoint());
+                    }
+                }else if(QuestionType.SUBJECTIVE.getName().equalsIgnoreCase(q.getType())){
+                    if(Result.PASS.getName().equalsIgnoreCase(studentAnswer.getResult())
+                            && !StringUtils.isEmpty(studentAnswer.getSubjectiveScore())
+                            && !StringUtils.isEmpty(q.getPoint())){//老师批改并且有登记分数，和题目设置分数
+                        totalScore += studentAnswer.getSubjectiveScore();
+                    }
+                }
+            }
+        }
+        return totalScore;
+    }
+
     private QuestionModelForTeacher convertAndFetchAnswerForQuestion(String teacherId, Question question){
         List<StudentAnswer> answers = studentAnswerRepository.findAllByQuestionId(question.getId());
         QuestionModelForTeacher questionForTeacher =  MappingEntity2ModelConverter.ConvertTeacherQuestion(question);
@@ -259,5 +313,16 @@ public class TeacherTestServiceImpl implements ITeacherTestService {
                 new Query(Criteria.where("studentId").is(studentId)
                         .and("tests").elemMatch(Criteria.where("testId").is(testModelForStudent.getTestId()).and("completedTime").ne(0))),
                 StudentTestCollection.class));
+    }
+
+    private void getTestTotalScore(String studentId, TestModelForStudent testModelForStudent){
+        StudentTestCollection s = mongoTemplate.findOne(
+                new Query(
+                        Criteria.where("studentId").is(studentId)
+                                .and("tests").elemMatch(Criteria.where("testId").is(testModelForStudent.getTestId()))
+                ), StudentTestCollection.class);
+        if(s!=null) testModelForStudent.setTotalScore(
+                s.getTests().stream().filter(
+                        h->h.getTestId().equalsIgnoreCase(testModelForStudent.getTestId())).findFirst().get().getTotalScore());
     }
 }

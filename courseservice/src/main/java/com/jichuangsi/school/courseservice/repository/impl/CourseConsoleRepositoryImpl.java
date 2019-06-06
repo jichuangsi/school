@@ -68,6 +68,12 @@ public class CourseConsoleRepositoryImpl<T> implements CourseConsoleRepository<T
     }
 
     @Override
+    public T save(T entity, List<String> points) {
+        mongoTemplate.insert(entity);
+        return entity;
+    }
+
+    @Override
     public List<Course> findNewCourse(String teacherId) {
         Criteria criteria = Criteria.where("status").is(Status.NOTSTART.getName())
                 .and("teacherId").is(teacherId);

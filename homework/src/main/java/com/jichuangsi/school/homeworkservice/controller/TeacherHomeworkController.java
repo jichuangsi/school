@@ -5,6 +5,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.*;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
+import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.homeworkservice.service.ITeacherHomeworkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -114,5 +115,16 @@ public class TeacherHomeworkController {
     public ResponseModel updateHomeworkStatus(@ModelAttribute UserInfoForToken userInfo, @RequestBody HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException{
         teacherHomeworkService.updateParticularHomeworkStatus(userInfo, homeworkModelForTeacher);
         return ResponseModel.sucessWithEmptyData("");
+    }
+
+    //获取指定作业
+    @ApiOperation(value = "根据习题id结算习题分数", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "homeworkId", value = "作业ID", required = true, dataType = "String") })
+    @PutMapping("/settleHomework/{homeworkId}")
+    public ResponseModel<List<TransferStudent>> settleHomework(@ModelAttribute UserInfoForToken userInfo, @PathVariable String homeworkId) throws TeacherHomeworkServiceException{
+
+        return ResponseModel.sucess("",  teacherHomeworkService.settleParticularHomework(userInfo, homeworkId));
     }
 }

@@ -62,7 +62,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
     public List<TestModelForStudent> getTestsList(UserInfoForToken userInfo) throws StudentTestServiceException{
         if(StringUtils.isEmpty(userInfo.getUserId())) throw new StudentTestServiceException(ResultCode.PARAM_MISS_MSG);
         List<TestModelForStudent> tests = convertTestList(testRepository.findProgressTestByStudentId(userInfo.getUserId()));
-        checkTestCompleted(userInfo, tests);
+        this.getTestStuff(userInfo, tests);
         return tests;
     }
 
@@ -75,7 +75,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
         pageHolder.setPageNum(searchTestModel.getPageIndex());
         pageHolder.setPageSize(searchTestModel.getPageSize());
         List<TestModelForStudent> tests = convertTestList(testRepository.findFinishedTestByStudentId(userInfo.getUserId(), searchTestModel.getPageIndex(), searchTestModel.getPageSize()));
-        checkTestCompleted(userInfo, tests);
+        this.getTestStuff(userInfo, tests);
         pageHolder.setContent(tests);
         return pageHolder;
     }
@@ -88,7 +88,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
         pageHolder.setPageNum(searchTestModel.getPageIndex());
         pageHolder.setPageSize(searchTestModel.getPageSize());
         List<TestModelForStudent> tests = convertTestList(testRepository.findFinishedTestByStudentId(studentId, searchTestModel.getPageIndex(), searchTestModel.getPageSize()));
-        checkTestCompleted(studentId, tests);
+        this.getTestStuff(studentId, tests);
         pageHolder.setContent(tests);
         return pageHolder;
     }
@@ -120,7 +120,7 @@ public class StudentTestServiceImpl implements IStudentTestService {
                 if(shareAnswer !=null) question.setAnswerModelForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(shareAnswer));
             }*/
         });
-        checkTestCompleted(userInfo, Arrays.asList(testModelForStudent));
+        this.getTestStuff(userInfo, Arrays.asList(testModelForStudent));
         return testModelForStudent;
     }
 
@@ -177,20 +177,39 @@ public class StudentTestServiceImpl implements IStudentTestService {
         }
     }
 
-    private void checkTestCompleted(UserInfoForToken userInfo, List<TestModelForStudent> tests){
+    private void getTestStuff(UserInfoForToken userInfo, List<TestModelForStudent> tests){
         tests.forEach(h -> {
+            //检查是否完成
             h.setCompleted(mongoTemplate.exists(
                     new Query(Criteria.where("studentId").is(userInfo.getUserId())
                             .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()).and("completedTime").ne(0))),
                     StudentTestCollection.class));
+            //获取总分
+            StudentTestCollection s = mongoTemplate.findOne(
+                    new Query(
+                            Criteria.where("studentId").is(userInfo.getUserId())
+                                    .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()))
+                    ), StudentTestCollection.class);
+            if(s!=null) h.setTotalScore(s.getTests().stream().filter(
+                    t->t.getTestId().equalsIgnoreCase(h.getTestId())).findFirst().get().getTotalScore());
         });
     }
-    private void checkTestCompleted(String studentId, List<TestModelForStudent> tests){
+
+    private void getTestStuff(String studentId, List<TestModelForStudent> tests){
+        //检查是否完成
         tests.forEach(h -> {
             h.setCompleted(mongoTemplate.exists(
                     new Query(Criteria.where("studentId").is(studentId)
                             .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()).and("completedTime").ne(0))),
                     StudentTestCollection.class));
+            //获取总分
+            StudentTestCollection s = mongoTemplate.findOne(
+                    new Query(
+                            Criteria.where("studentId").is(studentId)
+                                    .and("tests").elemMatch(Criteria.where("testId").is(h.getTestId()))
+                    ), StudentTestCollection.class);
+            if(s!=null) h.setTotalScore(s.getTests().stream().filter(
+                    t->t.getTestId().equalsIgnoreCase(h.getTestId())).findFirst().get().getTotalScore());
         });
     }
 

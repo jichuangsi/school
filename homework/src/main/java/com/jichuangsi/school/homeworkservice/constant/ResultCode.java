@@ -28,4 +28,5 @@ public class ResultCode extends com.jichuangsi.microservice.common.constant.Resu
 	public static final String STUDENT_ADD_FAVOR_QUESTION_FAIL = "学生收藏题目失败";
 	public static final String STUDENT_REMOVE_FAVOR_QUESTION_FAIL = "学生移除收藏题目失败";
 	public static final String AI_PUSH_QUESTION_FAIL = "没有关联题目";
+	public static final String SETTLE_HOMEWORK_WITH_PROGRESS = "习题正在作答，请中止作答后再结算！";
 }

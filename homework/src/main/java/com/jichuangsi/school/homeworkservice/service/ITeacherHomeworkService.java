@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.*;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
+import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -33,4 +34,7 @@ public interface ITeacherHomeworkService {
 
     @Transactional
     void updateParticularHomeworkStatus(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException;
+
+    @Transactional
+    List<TransferStudent> settleParticularHomework(UserInfoForToken userInfo, String homeworkId) throws TeacherHomeworkServiceException;
 }

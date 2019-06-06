@@ -5,6 +5,7 @@ public class TestSummary {
     private String testName;
     private long updateTime;
     private long completedTime;
+    private double totalScore;
 
     public TestSummary() {}
 
@@ -43,5 +44,14 @@ public class TestSummary {
 
     public void setCompletedTime(long completedTime) {
         this.completedTime = completedTime;
+    }
+
+
+    public double getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(double totalScore) {
+        this.totalScore = totalScore;
     }
 }

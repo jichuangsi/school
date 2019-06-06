@@ -4,6 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.testservice.exception.TeacherTestServiceException;
 import com.jichuangsi.school.testservice.model.*;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
+import com.jichuangsi.school.testservice.model.transfer.TransferStudent;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -33,4 +34,7 @@ public interface ITeacherTestService {
 
     @Transactional
     void updateParticularTestStatus(UserInfoForToken userInfo, TestModelForTeacher testModelForTeacher) throws TeacherTestServiceException;
+
+    @Transactional
+    List<TransferStudent> settleParticularTest(UserInfoForToken userInfo, String testId) throws TeacherTestServiceException;
 }
