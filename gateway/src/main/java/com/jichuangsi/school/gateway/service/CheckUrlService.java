@@ -40,4 +40,21 @@ public class CheckUrlService {
         }
         return false;
     }
+
+    Map<String,String> freeUrlList=null;
+    public boolean checkIsFreeUrl(String url){
+        if (freeUrlList==null ){
+            freeUrlList=new WeakHashMap<String, String>();
+            List<UrlModel> freeUrl=feignService.getAllFreeUrl().getData();
+            for (UrlModel free:freeUrl) {
+                freeUrlList.put(free.getName(),free.getUrl());
+            }
+        }
+        for (Map.Entry<String,String> entry:freeUrlList.entrySet()) {
+            if (entry.getValue().equals(url)){
+                return  true;
+            }
+        }
+        return  false;
+    }
 }

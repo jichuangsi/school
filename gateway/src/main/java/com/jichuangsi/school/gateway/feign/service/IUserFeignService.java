@@ -16,4 +16,7 @@ public interface IUserFeignService {
 
     @GetMapping("/getAllRole")
     ResponseModel<List<UrlMapping>> getAllRole();
+
+    @GetMapping("/getAllFreeUrl")
+    ResponseModel<List<UrlModel>> getAllFreeUrl();
 }

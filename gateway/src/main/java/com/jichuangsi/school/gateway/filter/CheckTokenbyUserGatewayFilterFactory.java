@@ -69,8 +69,11 @@ public class CheckTokenbyUserGatewayFilterFactory extends AbstractGatewayFilterF
                     DecodedJWT jwt= JWT.decode(accessToken);
                     String userId=jwt.getClaim(userClaim).asString();
                     UserInfoForToken userInfo = JSONObject.parseObject(userId, UserInfoForToken.class);
-                    if(!checkUrlService.checkUserRole(userInfo,url)){
-                        return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
+                    //检查是否免检查url
+                    if (!checkUrlService.checkIsFreeUrl(url)) {
+                        if (!checkUrlService.checkUserRole(userInfo, url)) {
+                            return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
+                        }
                     }
                     return chain.filter(exchange);
                 } else {

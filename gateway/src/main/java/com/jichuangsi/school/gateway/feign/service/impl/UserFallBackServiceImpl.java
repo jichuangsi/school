@@ -24,4 +24,9 @@ public class UserFallBackServiceImpl implements IUserFeignService {
     public ResponseModel<List<UrlMapping>> getAllRole() {
         return ResponseModel.fail("",ERR_MSG);
     }
+
+    @Override
+    public ResponseModel<List<UrlModel>> getAllFreeUrl() {
+        return ResponseModel.fail("",ERR_MSG);
+    }
 }
