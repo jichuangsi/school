@@ -17,6 +17,7 @@ spring:
             #- POST
       default-filters: #--里面可以定义一些共同的filter，对所有路由都起作用
         - TokenCheck # TokenCheck+GatewayFilterFactory的类，即TokenCheckGatewayFilterFactory
+        - CheckTokenbyUser
         - name : Hystrix
           args: 
             name: authHystrixCommand
@@ -80,7 +81,9 @@ hystrix:
         isolation: 
           thread:
             timeoutInMilliseconds: 5000 #设置熔断路由的超时时间
-
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 management:
   endpoints:
     web:

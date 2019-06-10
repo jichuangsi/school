@@ -4,12 +4,21 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/school
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/school
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
   rabbitmq:
     host: 127.0.0.1
     port: 5672
 server:
   port: 8083
-
 
 eureka: 
   client:    

@@ -120,6 +120,19 @@ public class BackRoleServiceImpl implements IBackRoleService {
     }
 
     @Override
+    public List<BackRoleModel> getRoles() throws BackUserException {
+        List<BackRoleInfo> backRoleInfos = backRoleInfoRepository.findByDeleteFlagOrderByCreatedTime("0");
+        List<BackRoleModel> backRoleModels = new ArrayList<BackRoleModel>();
+        if (!(backRoleInfos.size() > 0)){
+            throw new BackUserException(ResultCode.SELECT_NULL_MSG);
+        }
+        backRoleInfos.forEach(backRoleInfo -> {
+            backRoleModels.add(MappingEntity2ModelConverter.CONVERTERFROMBACKROLEINFO(backRoleInfo));
+        });
+        return backRoleModels;
+    }
+
+    @Override
     public void bindPromised(UserInfoForToken userInfo, String roleId, List<PromisedModel> models) throws BackUserException {
         if (null == models || StringUtils.isEmpty(roleId) || !(models.size() > 0)){
             throw new BackUserException(ResultCode.PARAM_MISS_MSG);

@@ -12,8 +12,12 @@ import com.jichuangsi.school.classinteraction.websocket.model.AbstractNotifyInfo
 public class StudentAnswerModel extends AbstractNotifyInfoForTeacher {
 
 	public static final String QUTYPE_OBJECTIVE = "objective";
-	public static final String QUTYPE_SUBJECTIVE = "subjective";
+	public static final String QUTYPE_SUBJECTIVE = "subjective";/*
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> a16781a631ec752b0ebb71e288ded947b01cb98c*/
 	public static final String QUTYPE_RACE = "race";
 
 	private String courseId;

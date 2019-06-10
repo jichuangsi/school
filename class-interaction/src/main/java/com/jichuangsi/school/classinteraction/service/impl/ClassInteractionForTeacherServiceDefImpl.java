@@ -1,7 +1,16 @@
+/*<<<<<<< HEAD
+=======*/
+/**
+ * 
+ */
+/*>>>>>>> a16781a631ec752b0ebb71e288ded947b01cb98c*/
 package com.jichuangsi.school.classinteraction.service.impl;
 
 import javax.annotation.Resource;
-
+/**
+ * @author huangjiajun
+ *
+ */
 import com.jichuangsi.school.classinteraction.mq.producer.service.ISendService;
 import com.jichuangsi.school.classinteraction.service.IClassInteractionForTeacherService;
 import com.jichuangsi.school.classinteraction.websocket.model.RaceQuestion;

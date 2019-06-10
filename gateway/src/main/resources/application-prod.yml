@@ -16,6 +16,7 @@ spring:
             maxAge: 1800
       default-filters:
       - TokenCheck
+      - CheckTokenbyUser
       - name: Hystrix
         args:
           name: authHystrixCommand
@@ -66,6 +67,9 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 5000
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 management:
   endpoints:
     web:

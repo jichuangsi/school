@@ -172,7 +172,22 @@ public  final class MappingModel2EntityConverter {
         userInfo.setRoleInfos(roles);
         return userInfo;
     }
-
+    public static UserPosition CONVERTEERFROMTEACHERMODELTOUSERPOSITION(TeacherModel model){
+        UserPosition userPosition=new UserPosition();
+        userPosition.setUserid(model.getId());
+        userPosition.setStatus("1");
+        if (null != model.getSecondarySubjects()) {
+            model.getSecondarySubjects().forEach(subject -> {
+                userPosition.setSubjectid(subject.getSubjectId());
+                userPosition.setSubjectname(subject.getSubjectName());
+            });
+        }
+        if (null != model.getPrimaryGrade()) {
+            userPosition.setGradeid(model.getPrimaryGrade().getGradeId());
+            userPosition.setGradename(model.getPrimaryGrade().getGradeName());
+        }
+        return userPosition;
+    }
     public static UserInfo CONVERTEERFROMSTUDENTMODEL(StudentModel model){
         UserInfo userInfo = new UserInfo();
         userInfo.setId(model.getId());
