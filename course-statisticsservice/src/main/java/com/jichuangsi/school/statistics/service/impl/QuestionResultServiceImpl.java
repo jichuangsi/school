@@ -821,6 +821,4 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         testStudentModel.setCapabilityTrueOrFalses(capabilityTrueOrFalses);
         return testStudentModel;
     }
-
-
 }
