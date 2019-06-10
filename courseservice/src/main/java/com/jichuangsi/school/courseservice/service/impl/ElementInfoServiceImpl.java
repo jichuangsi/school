@@ -9,16 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ElementInfoServiceImpl implements IElementInfoService {
 
-    private final Map<String, Integer> QUESTION_TYPE = new HashMap<String, Integer>();
+    private final Map<String, Integer> QUESTION_TYPE = Collections.synchronizedMap(new HashMap<String, Integer>());
 
-    private final Map<String, QuestionMappingElement> QUESTION_MAPPING = new HashMap<String, QuestionMappingElement>();
+    private final Map<String, QuestionMappingElement> QUESTION_MAPPING = Collections.synchronizedMap(new WeakHashMap<String, QuestionMappingElement>());
 
     @Resource
     private MongoTemplate mongoTemplate;
@@ -28,7 +26,30 @@ public class ElementInfoServiceImpl implements IElementInfoService {
         List<QuestionTypeElement> questionTypeElementList = mongoTemplate.findAll(QuestionTypeElement.class);
         questionTypeElementList.forEach(q -> {
             QUESTION_TYPE.put(q.getType(),q.getIndex());
-        });
+        });/*
+
+        Runnable runnable=new Runnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                while (true){
+                    for(int i = 1; i <= 60; i++) {
+                        System.out.println("=====I am "+QUESTION_TYPE.size());
+                        if(QUESTION_TYPE.size()==0){
+                            System.out.println("=====I am ====");
+                        }
+                        Set temp = QUESTION_TYPE.entrySet();
+                        try {
+                            sleep(1000); //暂停，每一秒输出一次
+                        }catch (InterruptedException e) {
+                            return;
+                        }
+                    }
+                }
+            }
+        };
+        Thread thread=new Thread(runnable);
+        thread.start();*/
     }
 
     @Override

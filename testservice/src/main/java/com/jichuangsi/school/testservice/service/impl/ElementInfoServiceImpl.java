@@ -9,16 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ElementInfoServiceImpl implements IElementInfoService {
 
-    private final Map<String, Integer> QUESTION_TYPE = new HashMap<String, Integer>();
+    private final Map<String, Integer> QUESTION_TYPE = Collections.synchronizedMap(new WeakHashMap<String, Integer>());
 
-    private final Map<String, QuestionMappingElement> QUESTION_MAPPING = new HashMap<String, QuestionMappingElement>();
+    private final Map<String, QuestionMappingElement> QUESTION_MAPPING = Collections.synchronizedMap(new WeakHashMap<String, QuestionMappingElement>());
 
     @Resource
     private MongoTemplate mongoTemplate;
