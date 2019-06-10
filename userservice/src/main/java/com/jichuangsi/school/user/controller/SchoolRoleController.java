@@ -8,6 +8,7 @@ import com.jichuangsi.school.user.entity.UrlRelation;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.model.UrlMapping;
+import com.jichuangsi.school.user.entity.FreeUrl;
 import com.jichuangsi.school.user.model.backstage.BackRoleModel;
 import com.jichuangsi.school.user.service.IBackRoleService;
 import com.jichuangsi.school.user.service.IBackRoleUrlService;

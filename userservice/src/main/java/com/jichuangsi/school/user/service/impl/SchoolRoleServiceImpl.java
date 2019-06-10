@@ -7,6 +7,8 @@ import com.jichuangsi.school.user.model.UrlMapping;
 import com.jichuangsi.school.user.model.backmodel.RoleUrlModel;
 import com.jichuangsi.school.user.repository.IUrlRelationRepository;
 import com.jichuangsi.school.user.service.ISchoolRoleService;
+import com.jichuangsi.school.user.repository.IFreeUrlRespository;
+import com.jichuangsi.school.user.entity.FreeUrl;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 

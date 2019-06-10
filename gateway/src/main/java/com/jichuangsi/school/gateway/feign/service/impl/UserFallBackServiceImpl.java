@@ -2,6 +2,7 @@ package com.jichuangsi.school.gateway.feign.service.impl;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.gateway.feign.model.UrlModel;
 import com.jichuangsi.school.gateway.feign.model.UrlMapping;
 import com.jichuangsi.school.gateway.feign.model.User;
 import com.jichuangsi.school.gateway.feign.service.IUserFeignService;

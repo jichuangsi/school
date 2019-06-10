@@ -5,7 +5,9 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.gateway.feign.model.UrlMapping;
 import com.jichuangsi.school.gateway.feign.model.User;
 import com.jichuangsi.school.gateway.feign.service.IUserFeignService;
+import com.jichuangsi.school.gateway.feign.model.UrlModel;
 import org.springframework.stereotype.Service;
+
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.WeakHashMap;
 
 @Service
 public class CheckUrlService {
+
     @Resource
     private IUserFeignService feignService;
     Map<String,List<String>> urlList=null;
