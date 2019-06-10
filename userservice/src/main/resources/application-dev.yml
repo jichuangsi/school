@@ -20,7 +20,6 @@ spring:
 server:
   port: 8083
 
-
 eureka: 
   client:    
     serviceUrl:

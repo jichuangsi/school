@@ -56,6 +56,7 @@ public class UserCRUDController {
         return ResponseModel.sucess("", userInfoService.findUserInfo(id));
     }
 
+
     @ApiOperation(value = "根据账号id获取指定用户", notes = "")
     @GetMapping("/findUser")
     public ResponseModel<User> findUser(String id) throws UserServiceException {

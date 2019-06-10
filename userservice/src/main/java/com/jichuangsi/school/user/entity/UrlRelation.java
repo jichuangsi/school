@@ -11,6 +11,7 @@ import javax.persistence.Table;
 @Table(name = "urlrelation")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class UrlRelation {
+
     @Id
     @GeneratedValue(generator = "jpa-uuid")
     private String id;

@@ -20,6 +20,7 @@ eureka:
     #ip-address: 114.115.207.28
     #prefer-ip-address: true
 
+
 com:
   jichuangsi:
     school:

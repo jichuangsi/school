@@ -26,4 +26,5 @@ public interface IBackRoleService {
     List<PromisedModel> getPromised(UserInfoForToken userInfo) throws BackUserException;
 
     void  deletePromised(UserInfoForToken userInfo , String promisedId) throws BackUserException;
+
 }
