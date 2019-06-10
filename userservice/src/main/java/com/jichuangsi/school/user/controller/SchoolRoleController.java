@@ -27,6 +27,7 @@ import java.util.List;
 @CrossOrigin
 public class SchoolRoleController {
 
+
     @Resource
     private ISchoolRoleService schoolRoleService;
     @Resource

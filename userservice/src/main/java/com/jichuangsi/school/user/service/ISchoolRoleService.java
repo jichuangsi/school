@@ -8,6 +8,7 @@ import java.util.List;
 
 
 public interface ISchoolRoleService {
+
         List<UrlMapping> getAllRole();
         List<RoleUrlModel> getUrlByRoleId(String roleId);
         List<String> getUrlByBackRoleId(String roleId);

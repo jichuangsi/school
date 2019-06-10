@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface IUrlRelationMapper {
-
     //根据用户id查询权限
     @Select("<script>select s.rname as roleName,r.url as urlList from urlrelation u inner join schoolrole s  on u.rid=s.id INNER JOIN roleurl r on u.uid=r.id </script>")
     List<UrlMapping> selectAllRole();

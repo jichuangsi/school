@@ -5,6 +5,7 @@ import com.jichuangsi.school.user.entity.UrlRelation;
 import java.util.List;
 
 public class UrlModel {
+
     private List<UrlRelation> urlRelations;
 
     public List<UrlRelation> getUrlRelations() {
