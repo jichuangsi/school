@@ -32,7 +32,7 @@ public class CheckUrlService {
        for (Map.Entry<String,List<String>> entry: urlList.entrySet()) {
             if (entry.getKey().equals(user.getData().getRoles().get(0).getRoleName())){
                 for (String roleUrl:entry.getValue()) {
-                    if(roleUrl.equals(url) || url.startsWith(entry.getValue())){
+                    if(roleUrl.equals(url) || url.startsWith(roleUrl)){
                         return true;
                     }
                 }
