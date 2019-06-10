@@ -53,12 +53,8 @@ public class CheckTokenbyUserGatewayFilterFactory extends AbstractGatewayFilterF
             try {
                 final ServerHttpRequest request = exchange.getRequest();
                 final String url = request.getURI().getPath();
-                if (null != ingoreTokenUrls && ingoreTokenUrls.length > 0) {
-                    for (String ingoreUrl : ingoreTokenUrls) {
-                        if (ingoreUrl.equals(url) || url.startsWith(ingoreUrl)) {// 对免检查token的url放行
-                            return chain.filter(exchange);
-                        }
-                    }
+                if (checkUrlService.checkIsFreeUrl(url)){
+                    return chain.filter(exchange);
                 }
                 final String accessToken = request.getHeaders().getFirst(headerName);
                 if (!StringUtils.isEmpty(accessToken)) {
@@ -69,11 +65,8 @@ public class CheckTokenbyUserGatewayFilterFactory extends AbstractGatewayFilterF
                     DecodedJWT jwt= JWT.decode(accessToken);
                     String userId=jwt.getClaim(userClaim).asString();
                     UserInfoForToken userInfo = JSONObject.parseObject(userId, UserInfoForToken.class);
-                    //检查是否免检查url
-                    if (!checkUrlService.checkIsFreeUrl(url)) {
-                        if (!checkUrlService.checkUserRole(userInfo, url)) {
-                            return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
-                        }
+                    if (!checkUrlService.checkUserRole(userInfo, url)) {
+                        return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
                     }
                     return chain.filter(exchange);
                 } else {
