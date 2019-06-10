@@ -499,7 +499,6 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
                     capabi = (double) ca / sum;
                     capa.put(entry.getKey(), capabi);
                 }
-
             }
             //判断map里是否存在某值
             if (capa.containsKey("其他")==false){
