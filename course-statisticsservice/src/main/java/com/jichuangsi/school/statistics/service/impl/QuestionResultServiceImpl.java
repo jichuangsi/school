@@ -398,6 +398,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
 //统计认知能力
     @Override
+  @Cacheable(unless = "#result.empty",keyGenerator = "getClassStudentCapabilityKeyGenerator")
     public CapabilityStudentModel getClassStudentCapability(SearchStudentCapabilityModel model)throws QuestionResultException {
         //判断classID和QuestionId是否为空
 
@@ -410,55 +411,63 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
      }
       //  System.out.println(responseModel1.getData().size());
         List<String> questionId = new ArrayList<String>();
-        for (int r = 0; r < responseModel1.getData().size(); r++) {
+         for (int r = 0; r < responseModel1.getData().size(); r++) {
             questionId.add(responseModel1.getData().get(r).getId());
         }
         //总
         Map<String, Double> capa = new HashMap<String, Double>();
-       /* Knowledge know=null;
-        Knowledge[] knowledges1=new Knowledge[5];*/
-        ResponseModel<List<SearchCapabilityModel>> searchCapabilityEntity = null;
-        ResponseModel<List<StudentQuestionIdsModel>> sq = null;
-        Query query = new Query();
-        Criteria criteria = null;
-        if (responseModel1.getData() != null) {
-            searchCapabilityEntity = homeWorkStaticsService.getQuestion(questionId);
 
+        ResponseModel<List<StudentQuestionIdsModel>> sq = null;
+       List<SearchCapabilityModel> searchCapabilityEntity=new ArrayList<SearchCapabilityModel>();
+
+        List<String> id1=new ArrayList<String>();
+        if (responseModel1.getData() != null) {
             sq = homeWorkStaticsService.getQuestionResult(questionId);
+
+            for (StudentQuestionIdsModel id:sq.getData()){
+               // ss=homeWorkStaticsService.getQuestion(id.getQuestionId());
+                searchCapabilityEntity.add(homeWorkStaticsService.getQuestion(id.getQuestionId()));
+
+            }
         }
+
+
         Map<String, Integer> capability = new HashMap<String, Integer>();
         //Knowledge capability=new Knowledge();
         int sum = 0;
         int mem = 0;
         int compreh = 0, synthe = 0, anal = 0, appl = 0,other=0;
         if (searchCapabilityEntity != null) {//查询全部认知能力的占比
-            for (SearchCapabilityModel model1 : searchCapabilityEntity.getData()) {
-                if (model1.getKnowledges() != null) {
-                    for (int k = 0; k < model1.getKnowledges().size(); k++) {
-                        sum++;
-                        if (model1.getKnowledges().get(k).getCapabilityId()==null || model1.getKnowledges().get(k).getCapabilityId()==""){
-                            other++;
-                            capability.put("其他",other);
-                        }else if (model1.getKnowledges().get(k).getCapabilityId().equals("1")) {
-                            mem++;
-                            capability.put("记忆", mem);
-                        } else if (model1.getKnowledges().get(k).getCapabilityId().equals("2")) {
-                            compreh++;
-                            capability.put("理解", compreh);
-                        } else if (model1.getKnowledges().get(k).getCapabilityId().equals("3")) {
-                            anal++;
-                            capability.put("分析", anal);
-                        } else if (model1.getKnowledges().get(k).getCapabilityId().equals("4")) {
-                            appl++;
-                            capability.put("应用", appl);
-                        } else if (model1.getKnowledges().get(k).getCapabilityId().equals("5")) {
-                            synthe++;
-                            capability.put("综合", synthe);
-                            System.out.println(synthe);
+            for (SearchCapabilityModel model1:searchCapabilityEntity){
+              //  for (SearchCapabilityModel model1:models){
+                    if (model1.getKnowledges()!=null){
+                        for (int k = 0; k < model1.getKnowledges().size(); k++) {
+                            sum++;
+                            if (model1.getKnowledges().get(k).getCapabilityId()==null || model1.getKnowledges().get(k).getCapabilityId()==""){
+                                other++;
+                                capability.put("其他",other);
+                            }else if (model1.getKnowledges().get(k).getCapabilityId().equals("1")) {
+                                mem++;
+                                capability.put("记忆", mem);
+                            } else if (model1.getKnowledges().get(k).getCapabilityId().equals("2")) {
+                                compreh++;
+                                capability.put("理解", compreh);
+                            } else if (model1.getKnowledges().get(k).getCapabilityId().equals("3")) {
+                                anal++;
+                                capability.put("分析", anal);
+                            } else if (model1.getKnowledges().get(k).getCapabilityId().equals("4")) {
+                                appl++;
+                                capability.put("应用", appl);
+                            } else if (model1.getKnowledges().get(k).getCapabilityId().equals("5")) {
+                                synthe++;
+                                capability.put("综合", synthe);
+
+                            }
                         }
-                    }
                 }
             }
+
+
 
             Set<Map.Entry<String, Integer>> entrySet = capability.entrySet();
             for (Map.Entry<String, Integer> entry : entrySet) {
@@ -492,6 +501,24 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
                 }
 
             }
+            if (capa.containsKey("其他")==false){
+                capa.put("其他", 0.0);
+            }
+            if (capa.containsKey("记忆")==false){
+                capa.put("记忆", 0.0);
+            }
+            if (capa.containsKey("理解")==false){
+                capa.put("理解", 0.0);
+            }
+            if (capa.containsKey("分析")==false){
+                capa.put("分析", 0.0);
+            }
+            if (capa.containsKey("综合")==false){
+                capa.put("综合", 0.0);
+            }
+            if (capa.containsKey("应用")==false){
+                capa.put("应用", 0.0);
+            }
         }
         //记录正确问题ID
         List<String> momor = new ArrayList<String>();
@@ -505,71 +532,78 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         //记录个认知能力及问题id
         Map<String, List<String>> question = new HashMap<String, List<String>>();
 
-        int momoryTrue = 0;
-        int comprehendTrue = 0, synthesizeTure = 0, analyzeTure = 0, applyTure = 0,otherTure=0;
+        int momoryTrue = 0,mt=0;int sum1 =0;
+        int comprehendTrue = 0,ct=0, synthesizeTure = 0,st=0, analyzeTure = 0,at=0, applyTure = 0,apt=0,otherTure=0,ot=0;
         if (searchCapabilityEntity != null && sq != null) {//查询各认知能力各自对错的占比
-            for (SearchCapabilityModel model1 : searchCapabilityEntity.getData()) {//根据ID查认知
-                if (model1.getKnowledges() != null) {
-                    for (Knowledge knowledge : model1.getKnowledges()) {
-                        for (int i = 0; i < sq.getData().size(); i++) {//（根据ID查询答案）
 
-                            if (model1.getId().equals(sq.getData().get(i).getQuestionId())) {
-                                if (knowledge.getCapabilityId().equals("1")) {
-                                    if (sq.getData().get(i).getResult() != null) {
-                                        if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
-                                            momoryTrue++;
-                                            momor.add(sq.getData().get(i).getQuestionId());
-                                        }
-                                    }
-                                }
-                                if (knowledge.getCapabilityId().equals("2")) {
-                                    if (sq.getData().get(i).getResult() != null) {
-                                        if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
-                                            comprehendTrue++;
-                                            comp.add(sq.getData().get(i).getQuestionId());
-                                        }
-                                    }
-                                }
-                                if (knowledge.getCapabilityId().equals("3")) {
-                                    if (sq.getData().get(i).getResult() != null) {
-                                        if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
-                                            analyzeTure++;
-                                            ana.add(sq.getData().get(i).getQuestionId());
-                                        }
-                                    }
-                                }
-                                if (knowledge.getCapabilityId().equals("4")) {
-                                    if (sq.getData().get(i).getResult() != null) {
-                                        if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
-                                            applyTure++;
-                                            app.add(sq.getData().get(i).getQuestionId());
-                                        }
-                                    }
-                                }
-                                if (knowledge.getCapabilityId().equals("5")) {
-                                    if (sq.getData().get(i).getResult() != null) {
+            for (SearchCapabilityModel model2:searchCapabilityEntity){
+                //for (SearchCapabilityModel model2:models1) {
+                    if (model2.getKnowledges() != null) {
+                        for (Knowledge knowledge : model2.getKnowledges()) {
+                            for (int i = 0; i < sq.getData().size(); i++) {//（根据ID查询答案）
 
-                                        if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
-                                            synthesizeTure++;
-                                            synt.add(sq.getData().get(i).getQuestionId());
+                                if (model2.getId().equals(sq.getData().get(i).getQuestionId())) {
+                                    if (knowledge.getCapabilityId().equals("1")) {
+                                        mt++;
+                                        if (sq.getData().get(i).getResult() != null) {
+                                            if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
+                                                momoryTrue++;
+                                                momor.add(sq.getData().get(i).getQuestionId());
+                                            }
                                         }
                                     }
-                                }
-                                if (knowledge.getCapabilityId()=="" ||knowledge.getCapabilityId()==null) {
-                                    if (sq.getData().get(i).getResult() != null) {
-                                        if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
-                                            otherTure++;
-                                            synt.add(sq.getData().get(i).getQuestionId());
+                                    if (knowledge.getCapabilityId().equals("2")) {
+                                       ct++;
+                                        if (sq.getData().get(i).getResult() != null) {
+                                            if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
+                                                comprehendTrue++;
+                                                comp.add(sq.getData().get(i).getQuestionId());
+                                            }
+                                        }
+                                    }
+                                    if (knowledge.getCapabilityId().equals("3")) {
+                                      at++;
+                                        if (sq.getData().get(i).getResult() != null) {
+                                            if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
+                                                analyzeTure++;
+                                                ana.add(sq.getData().get(i).getQuestionId());
+                                            }
+                                        }
+                                    }
+                                    if (knowledge.getCapabilityId().equals("4")) {
+                                        apt++;
+                                        if (sq.getData().get(i).getResult() != null) {
+                                            if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
+                                                applyTure++;
+                                                app.add(sq.getData().get(i).getQuestionId());
+                                            }
+                                        }
+                                    }
+                                    if (knowledge.getCapabilityId().equals("5")) {
+                                       st++;
+                                        if (sq.getData().get(i).getResult() != null) {
+                                            if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
+                                                synthesizeTure++;
+                                                synt.add(sq.getData().get(i).getQuestionId());
+                                            }
+                                        }
+                                    }
+                                    if (knowledge.getCapabilityId() == "" || knowledge.getCapabilityId() == null) {
+                                       ot++;
+                                        if (sq.getData().get(i).getResult() != null) {
+                                            if (sq.getData().get(i).getResult().equals(Result.CORRECT.getName())) {//正确
+                                                otherTure++;
+                                                synt.add(sq.getData().get(i).getQuestionId());
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
+                        //}
                     }
                 }
             }
         }
-
 
         //保留两位数字
         BigDecimal bg = null;
@@ -582,68 +616,91 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         Other[] others=new Other[2];
         CapabilityTrueOrFalse[] capabilityTrueOrFalses = new CapabilityTrueOrFalse[1];
 
-        if (mem != 0 && momoryTrue != 0) {
-            double d = (double) momoryTrue / mem;
+        if (mt != 0 && momoryTrue != 0) {
+            double d = (double) momoryTrue / mt;
             bg = new BigDecimal(d);
             f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             Memory m = new Memory(f1, "记忆");
             Memory m1 = new Memory(1 - f1, "错误");
             memory[0] = m;
             memory[1] = m1;
-        } else if (mem != 0 && momoryTrue == 0) {
+        } else if (mt != 0 && momoryTrue == 0) {
 
             Memory m = new Memory(0.0, "记忆");
             Memory m1 = new Memory(1.0, "错误");
             memory[0] = m;
             memory[1] = m1;
+        }else if (mt == 0 && momoryTrue == 0){
+            Memory m = new Memory(0.0, "记忆");
+            Memory m1 = new Memory(0.0, "错误");
+            memory[0] = m;
+            memory[1] = m1;
         }
-        if (compreh != 0 && comprehendTrue != 0) {
-            double d = (double) comprehendTrue / compreh;
+        if (ct != 0 && comprehendTrue != 0) {
+            double d = (double) comprehendTrue / ct;
             bg = new BigDecimal(d);
             f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             Comprehend c1 = new Comprehend(f1, "理解");
             Comprehend c2 = new Comprehend(1 - f1, "错误");
             comprehend[0] = c1;
             comprehend[1] = c2;
-        } else if (compreh != 0 && comprehendTrue == 0) {
+        } else if (ct != 0 && comprehendTrue == 0) {
 
             Comprehend c1 = new Comprehend(0.0, "理解");
             Comprehend c2 = new Comprehend(1.0, "错误");
             comprehend[0] = c1;
             comprehend[1] = c2;
+        } else if (ct == 0 && comprehendTrue == 0) {
+
+            Comprehend c1 = new Comprehend(0.0, "理解");
+            Comprehend c2 = new Comprehend(0.0, "错误");
+            comprehend[0] = c1;
+            comprehend[1] = c2;
         }
-        if (anal != 0 && analyzeTure != 0) {
-            double d = (double) analyzeTure / anal;
+        if (at != 0 && analyzeTure != 0) {
+            double d = (double) analyzeTure / at;
             bg = new BigDecimal(d);
             f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             Analy an1 = new Analy(f1, "分析");
             Analy an2 = new Analy(1 - f1, "错误");
             analy[0] = an1;
             analy[1] = an2;
-        } else if (anal != 0 && analyzeTure == 0) {
+        } else if (at != 0 && analyzeTure == 0) {
 
             Analy an1 = new Analy(0.0, "分析");
             Analy an2 = new Analy(1.0, "错误");
             analy[0] = an1;
             analy[1] = an2;
+        }else if (at == 0 && analyzeTure == 0) {
+
+            Analy an1 = new Analy(0.0, "分析");
+            Analy an2 = new Analy(0.0, "错误");
+            analy[0] = an1;
+            analy[1] = an2;
         }
-        if (appl != 0 && applyTure != 0) {
-            double d = (double) applyTure / appl;
+        if (apt != 0 && applyTure != 0) {
+            double d = (double) applyTure / apt;
             bg = new BigDecimal(d);
             f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             Apply ap1 = new Apply(f1, "应用");
             Apply ap2 = new Apply(1 - f1, "错误");
             apply[0] = ap1;
             apply[1] = ap2;
-        } else if (appl != 0 && applyTure == 0) {
+        } else if (apt != 0 && applyTure == 0) {
 
             Apply ap1 = new Apply(0.0, "应用");
             Apply ap2 = new Apply(1.0, "错误");
             apply[0] = ap1;
             apply[1] = ap2;
+        }else if (apt == 0 && applyTure == 0) {
+
+            Apply ap1 = new Apply(0.0, "应用");
+            Apply ap2 = new Apply(0.0, "错误");
+            apply[0] = ap1;
+            apply[1] = ap2;
         }
-        if (synthe != 0 && synthesizeTure != 0) {
-            double d = (double) synthesizeTure / synthe;
+        if (st != 0 && synthesizeTure != 0) {
+            double d = (double) synthesizeTure / st;
             bg = new BigDecimal(d);
             f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             Synthesize sy1 = new Synthesize(f1, "综合");
@@ -651,15 +708,21 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
             synthesize[0] = sy1;
             synthesize[1] = sy2;
 
-        } else if (synthe != 0 && synthesizeTure == 0) {
+        } else if (st != 0 && synthesizeTure == 0) {
 
             Synthesize sy1 = new Synthesize(0.0, "综合");
             Synthesize sy2 = new Synthesize(1.0, "错误");
             synthesize[0] = sy1;
             synthesize[1] = sy2;
+        }else if (st == 0 && synthesizeTure == 0) {
+
+            Synthesize sy1 = new Synthesize(0.0, "综合");
+            Synthesize sy2 = new Synthesize(0.0, "错误");
+            synthesize[0] = sy1;
+            synthesize[1] = sy2;
         }
-        if (other != 0 && otherTure != 0) {
-            double d = (double) otherTure / other;
+        if (ot != 0 && otherTure != 0) {
+            double d = (double) otherTure / ot;
             bg = new BigDecimal(d);
             f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
            Other sy1 = new Other(f1, "其他");
@@ -667,10 +730,14 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
             others[0] = sy1;
             others[1] = sy2;
 
-        } else if (other != 0 && otherTure == 0) {
-
+        } else if (ot != 0 && otherTure == 0) {
             Other sy1 = new Other(0.0, "其他");
             Other sy2 = new Other(1.0, "错误");
+            others[0] = sy1;
+            others[1] = sy2;
+        }else if (ot == 0 && otherTure == 0) {
+            Other sy1 = new Other(0.0, "其他");
+            Other sy2 = new Other(0.0, "错误");
             others[0] = sy1;
             others[1] = sy2;
         }
@@ -678,46 +745,80 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
         capabilityTrueOrFalses[0] = capabilitytf;
 
         Capability know = null;
-        Capability[] knowledges1 = new Capability[5];
+        Capability[] knowledges1 = new Capability[6];
         //将数据加入对象(总占比)
         for (int c = 0; c < capa.size(); c++) {
 
             Set<String> set = capa.keySet();
             for (String s : set) {
                 if (s.equals("分析")) {
-                    bg = new BigDecimal(capa.get("分析"));
-                    f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    know = new Capability(f1 * 100, "分析");
-                    knowledges1[0] = know;
+                    if (capa.get("分析")!=0) {
+                        bg = new BigDecimal(capa.get("分析"));
+                        f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        know = new Capability(f1 * 100, "分析");
+                        knowledges1[0] = know;
+                    }else {
+                        know = new Capability(0.0, "分析");
+                        knowledges1[0] = know;
+                    }
                 } else if (s.equals("综合")) {
-                    bg = new BigDecimal(capa.get("综合"));
-                    f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    know = new Capability(f1 * 100, "综合");
-                    System.out.println(f1);
-                    knowledges1[1] = know;
+                    if (capa.get("综合")!=0) {
+                        bg = new BigDecimal(capa.get("综合"));
+                        f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        know = new Capability(f1 * 100, "综合");
+                        System.out.println(f1);
+                        knowledges1[1] = know;
+                    }else {
+                        know = new Capability(0.0, "综合");
+                        knowledges1[1] = know;
+                    }
                 } else if (s.equals("理解")) {
-                    bg = new BigDecimal(capa.get("理解"));
-                    f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    know = new Capability(f1 * 100, "理解");
-                    knowledges1[2] = know;
+                    if (capa.get("理解")!=0) {
+                        bg = new BigDecimal(capa.get("理解"));
+                        f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        know = new Capability(f1 * 100, "理解");
+                        knowledges1[2] = know;
+                    }else {
+                        know = new Capability(0.0, "理解");
+                        knowledges1[2] = know;
+                    }
                 } else if (s.equals("记忆")) {
-                    bg = new BigDecimal(capa.get("记忆"));
-                    f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    know = new Capability(f1 * 100, "记忆");
-                    knowledges1[3] = know;
+                    if (capa.get("记忆")!=0) {
+                        bg = new BigDecimal(capa.get("记忆"));
+                        f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        know = new Capability(f1 * 100, "记忆");
+                        knowledges1[3] = know;
+                     }else {
+                        know = new Capability(0.0, "记忆");
+                        knowledges1[3] = know;
+                     }
                 } else if (s.equals("应用")) {
-                    bg = new BigDecimal(capa.get("应用"));
-                    f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    know = new Capability(f1 * 100, "应用");
-                    knowledges1[4] = know;
+                        if (capa.get("应用")!=0) {
+                            bg = new BigDecimal(capa.get("应用"));
+                            f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                            know = new Capability(f1 * 100, "应用");
+                            knowledges1[4] = know;
+                        }else {
+                            know = new Capability(0.0, "应用");
+                            knowledges1[4] = know;
+                        }
+                }else if(s.equals("其他")){
+                    if (capa.get("其他")!=0) {
+                            bg = new BigDecimal(capa.get("其他"));
+                            f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                            know = new Capability(f1 * 100, "其他");
+                            knowledges1[5] = know;
+                    }else {
+                             know = new Capability(0.0, "其他");
+                             knowledges1[5] = know;
+                    }
                 }
             }
         }
+
         CapabilityStudentModel testStudentModel =new CapabilityStudentModel();
         testStudentModel.setKnowledges(knowledges1);
         testStudentModel.setCapabilityTrueOrFalses(capabilityTrueOrFalses);
-        //testStudentModel.setStudentKnowledges(studentCapability);
-      // testStudentModel.setStudentCapability(capabilityByStudentId);
         return testStudentModel;
     }
 
