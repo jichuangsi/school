@@ -17,6 +17,8 @@ import java.util.List;
 public class SchoolRoleServiceImpl implements ISchoolRoleService {
     @Resource
     private IUrlRelationMapper urlRelationMapper;
+    @Resource
+    private IFreeUrlRespository freeUrlRespository;
 
     @Override
     public List<UrlMapping> getAllRole() {
@@ -31,5 +33,10 @@ public class SchoolRoleServiceImpl implements ISchoolRoleService {
     @Override
     public List<String> getUrlByBackRoleId(String roleId) {
         return urlRelationMapper.selectUelByRoleId(roleId);
+    }
+
+    @Override
+    public List<FreeUrl> getFreeUrl() {
+        return freeUrlRespository.findAll();
     }
 }

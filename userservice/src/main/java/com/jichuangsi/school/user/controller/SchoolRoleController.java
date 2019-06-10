@@ -61,6 +61,15 @@ public class SchoolRoleController {
         }
     }
 
+    @ApiOperation(value = "查询免检查url",notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+
+    @GetMapping("/getAllFreeUrl")
+    public ResponseModel<List<FreeUrl>> getAllFreeUrl()throws UserServiceException{
+        return ResponseModel.sucess("",schoolRoleService.getFreeUrl());
+    }
     @ApiOperation(value = "添加url", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
