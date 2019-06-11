@@ -16,7 +16,7 @@ public class ElementInfoServiceImpl implements IElementInfoService {
 
     private final Map<String, Integer> QUESTION_TYPE = Collections.synchronizedMap(new HashMap<String, Integer>());
 
-    private final Map<String, QuestionMappingElement> QUESTION_MAPPING = Collections.synchronizedMap(new WeakHashMap<String, QuestionMappingElement>());
+    private final Map<String, QuestionMappingElement> QUESTION_MAPPING = Collections.synchronizedMap(new HashMap<String, QuestionMappingElement>());
 
     @Resource
     private MongoTemplate mongoTemplate;
