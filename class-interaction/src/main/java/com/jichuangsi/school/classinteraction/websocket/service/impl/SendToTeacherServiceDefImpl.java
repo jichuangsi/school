@@ -5,6 +5,8 @@ package com.jichuangsi.school.classinteraction.websocket.service.impl;
 
 import javax.annotation.Resource;
 
+import com.jichuangsi.school.classinteraction.model.StudentAnswerModel;
+import com.jichuangsi.school.classinteraction.websocket.model.AbstractNotifyInfoForTeacher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -28,9 +30,12 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 	private String csChangePre;
 	@Value("${custom.ws.sub.teacher.qcChangePre}")
 	private String qcChangePre;
+	@Value("${custom.ws.sub.teacher.questionAnswerPre}")
+	private String questionAnswerPre;
 
 	@Override
 	public void sendCourseStatisticsInfo(CourseStatistics courseStatistics) {
+		courseStatistics.setNotifyType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_CS);
 		messagingTemplate.convertAndSend(csChangePre + courseStatistics.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", courseStatistics)));
 
@@ -38,9 +43,25 @@ public class SendToTeacherServiceDefImpl implements ISendToTeacherService {
 
 	@Override
 	public void sendQuestionStatisticsInfo(QuestionStatistics questionStatistics) {
+		questionStatistics.setNotifyType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_QS);
 		messagingTemplate.convertAndSend(qcChangePre + questionStatistics.getCourseId(),
 				JSONObject.toJSONString(ResponseModel.sucess("", questionStatistics)));
 
 	}
 
+	@Override
+	public void sendQuestionAnswerInfo(StudentAnswerModel studentAnswerModel) {
+		studentAnswerModel.setNotifyType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_SA);
+		messagingTemplate.convertAndSend(questionAnswerPre + studentAnswerModel.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", studentAnswerModel)));
+
+	}
+
+	@Override
+	public void sendRaceAnswerInfo(StudentAnswerModel studentAnswerModel) {
+		studentAnswerModel.setQuType(AbstractNotifyInfoForTeacher.NOTIFY_TYPE_SA);
+		messagingTemplate.convertAndSend(questionAnswerPre + studentAnswerModel.getCourseId(),
+				JSONObject.toJSONString(ResponseModel.sucess("", studentAnswerModel)));
+
+	}
 }

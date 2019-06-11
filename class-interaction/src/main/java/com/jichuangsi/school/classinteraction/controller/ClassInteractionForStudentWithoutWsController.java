@@ -14,7 +14,7 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.classinteraction.model.AddToCourseModel;
 import com.jichuangsi.school.classinteraction.service.IClassInteractionForStudentService;
-
+import com.jichuangsi.school.classinteraction.service.IClassInteractionForTeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,6 +31,8 @@ public class ClassInteractionForStudentWithoutWsController {
 
 	@Resource
 	private IClassInteractionForStudentService classInteractionForStudentService;
+	@Resource
+	private IClassInteractionForTeacherService classInteractionForTeacherService;
 
 	@ApiOperation(value = "学生加入课堂", notes = "")
 	@ApiImplicitParams({
@@ -45,6 +47,19 @@ public class ClassInteractionForStudentWithoutWsController {
 		addToCourseModel.setUserName(userInfo.getUserName());
 		
 		classInteractionForStudentService.addToCourse(addToCourseModel);
+		return ResponseModel.sucessWithEmptyData("");
+	}
+
+	@ApiOperation(value = "学生抢答", notes = "")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "courseId", value = "课堂ID", required = true, dataType = "String"),
+			@ApiImplicitParam(paramType = "path", name = "raceId", value = "课堂ID", required = true, dataType = "String") })
+	@PostMapping("/raceAnswer/{courseId}/{raceId}")
+	public ResponseModel<Object> raceAnswer(@PathVariable String courseId,@PathVariable String raceId,
+											@ModelAttribute @ApiIgnore UserInfoForToken userInfo) {
+
+		classInteractionForStudentService.raceAnswer(courseId, raceId,userInfo.getUserId());
 		return ResponseModel.sucessWithEmptyData("");
 	}
 }

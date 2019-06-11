@@ -1,9 +1,3 @@
-/*<<<<<<< HEAD
-=======*/
-/**
- * 
- */
-/*>>>>>>> a16781a631ec752b0ebb71e288ded947b01cb98c*/
 package com.jichuangsi.school.classinteraction.service.impl;
 
 import javax.annotation.Resource;

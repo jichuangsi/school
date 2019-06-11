@@ -3,9 +3,12 @@
  */
 package com.jichuangsi.school.classinteraction.websocket.service;
 
+import com.jichuangsi.school.classinteraction.model.TeacherPublishFile;
 import com.jichuangsi.school.classinteraction.websocket.model.ClassInfoForStudent;
+import com.jichuangsi.school.classinteraction.websocket.model.QuestionAnswerShare;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionClose;
 import com.jichuangsi.school.classinteraction.websocket.model.QuestionForPublish;
+import com.jichuangsi.school.classinteraction.websocket.model.RaceQuestion;
 
 /**
  * @author huangjiajun
@@ -27,5 +30,19 @@ public interface ISendToStudentService {
 	 * 推送题目终止作答信息
 	 */
 	void sendQuestionCloseInfo(QuestionClose questionClose);
-	
+
+	/**
+	 * 推送题目答案共享信息
+	 */
+	void sendQuestionAnswerShareInfo(QuestionAnswerShare answerShare);
+
+
+	//发送发布附件信息
+	void sendPublishFileInfo(TeacherPublishFile publishFile);
+
+	/**
+	 * 推送开始抢答信息
+	 */
+	void sendRaceQuestionInfo(RaceQuestion raceQuestion);
+
 }

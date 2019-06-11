@@ -1,9 +1,12 @@
 package com.jichuangsi.school.user.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.user.exception.UserServiceException;
+import com.jichuangsi.school.user.model.file.Base64TransferFile;
+import com.jichuangsi.school.user.model.file.UserFile;
 import com.jichuangsi.school.user.model.school.SchoolRoleModel;
 import com.jichuangsi.school.user.model.school.UserConditionModel;
 import com.jichuangsi.school.user.model.transfer.TransferClass;
@@ -12,6 +15,8 @@ import com.jichuangsi.school.user.model.transfer.TransferStudent;
 import com.jichuangsi.school.user.model.transfer.TransferTeacher;
 import com.jichuangsi.school.user.model.user.StudentModel;
 import com.jichuangsi.school.user.model.user.TeacherModel;
+import com.jichuangsi.school.user.service.IFileStoreService;
+import com.jichuangsi.school.user.service.IUserPositionService;
 import com.jichuangsi.school.user.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,6 +34,10 @@ public class UserInfoController {
 
     @Resource
     private UserInfoService userInfoService;
+    @Resource
+    private IUserPositionService userPositionService;
+    @Resource
+    private IFileStoreService fileStoreService;
 
     @ApiOperation(value = "获取指定老师信息", notes = "")
     @GetMapping("/getUserInfoForTeacher")
@@ -106,6 +115,7 @@ public class UserInfoController {
     public ResponseModel updateTeacher(@ModelAttribute UserInfoForToken userInfo, @RequestBody TeacherModel model){
         try {
             userInfoService.updateTeacher(userInfo,model);
+            userPositionService.insertUserPosition(userInfo,model);
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
@@ -217,6 +227,32 @@ public class UserInfoController {
             return ResponseModel.sucess("",userInfoService.getStudentByCondition(userInfo, model));
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "上传头像文件，内容为字符串", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PostMapping("/portrait/sendByString")
+    public ResponseModel<Boolean> sendByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody Base64TransferFile file) throws UserServiceException {
+
+        return ResponseModel.sucess("", userInfoService.uploadPortrait(userInfo, new UserFile(file.getContentType(), file.getName(), file.getContent().getBytes())));
+    }
+
+    @ApiOperation(value = "根据存根获取头像文件，内容为字符串", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @PostMapping("/portrait/getByString")
+    public ResponseModel<Base64TransferFile> getByString(@ModelAttribute UserInfoForToken userInfo, @RequestBody String sub) throws UserServiceException {
+        try {
+            Base64TransferFile base64TransferFile = new Base64TransferFile();
+            UserFile userFile = fileStoreService.downFile(JSON.parseObject(sub).getString("sub"));
+            base64TransferFile.setName(userFile.getName());
+            base64TransferFile.setContentType(userFile.getContentType());
+            base64TransferFile.setContent(new String(userFile.getContent()));
+            return ResponseModel.sucess("", base64TransferFile);
+        }catch (Exception ex){
+            throw new UserServiceException(ex.getMessage());
         }
     }
 }
