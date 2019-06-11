@@ -21,10 +21,11 @@ public class FeignStaticsController {
         return ResponseModel.sucess("",feignStaticsService.getQuestionBySubjectId(subjectId));
     }
     @PostMapping(value="/getQuestion")
-    public ResponseModel<List<Question>> getQuestion(@RequestBody List<String> questionIds){
+    public Question getQuestion(@RequestBody String questionIds){
 
-        return ResponseModel.sucess("",feignStaticsService.getQuestion(questionIds));
+        return feignStaticsService.getQuestion(questionIds);
     }
+
 
     @PostMapping(value="/getQuestionResult")
     public ResponseModel<List<StudentAnswer>> getQuestionResult(@RequestBody List<String> questionIds){

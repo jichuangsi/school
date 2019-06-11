@@ -20,8 +20,8 @@ public class HomeWorkStaticsServiceImpl implements IHomeWorkStaticsService {
     }
 
     @Override
-    public ResponseModel<List<SearchCapabilityModel>> getQuestion(List<String> questionId) {
-        return ResponseModel.fail("");
+    public SearchCapabilityModel getQuestion(String questionId) {
+        return null;
     }
 
     @Override

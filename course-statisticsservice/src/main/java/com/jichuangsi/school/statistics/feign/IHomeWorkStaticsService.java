@@ -15,8 +15,7 @@ public interface IHomeWorkStaticsService {
     @PostMapping("/feign/getQuestionBySubjectId")
     ResponseModel<List<SearchCapabilityModel>> getQuestionBySubjectId(@RequestBody String subjectId);
     @PostMapping("/feign/getQuestion")
-    ResponseModel<List<SearchCapabilityModel>> getQuestion(@RequestBody List<String> questionId);
-
+    SearchCapabilityModel getQuestion(@RequestBody String questionId);
     @PostMapping("/feign/getQuestionResult")
     ResponseModel<List<StudentQuestionIdsModel>> getQuestionResult(@RequestBody List<String> questionId);
 

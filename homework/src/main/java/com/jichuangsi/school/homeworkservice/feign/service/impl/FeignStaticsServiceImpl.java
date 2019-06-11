@@ -1,5 +1,6 @@
 package com.jichuangsi.school.homeworkservice.feign.service.impl;
 
+import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.homeworkservice.entity.Question;
 import com.jichuangsi.school.homeworkservice.entity.StudentAnswer;
 import com.jichuangsi.school.homeworkservice.feign.service.FeignStaticsService;
@@ -25,17 +26,18 @@ public class FeignStaticsServiceImpl implements FeignStaticsService {
     public List<Question> getQuestionBySubjectId(String subjectId) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.MONTH,-1);
+        calendar.add(Calendar.MONTH,-8);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
+        List<Question> list = questionRepository.findBySubjectIdAndCreateTimeGreaterThan
+                (subjectId,calendar.getTimeInMillis());
+        System.out.println(list.size());
         return questionRepository.findBySubjectIdAndCreateTimeGreaterThan
                 (subjectId,calendar.getTimeInMillis());
     }
-
     @Override
-    public List<Question> getQuestion(List<String> questionId) {
-
-        return mongoTemplate.find(new Query(Criteria.where("id").in(questionId)),Question.class);
+    public Question getQuestion(String questionId) {
+        return mongoTemplate.findOne(new Query(Criteria.where("id").is(questionId)),Question.class);
     }
 
     @Override
