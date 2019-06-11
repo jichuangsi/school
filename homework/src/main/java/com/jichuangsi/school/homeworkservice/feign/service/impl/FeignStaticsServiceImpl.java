@@ -26,7 +26,7 @@ public class FeignStaticsServiceImpl implements FeignStaticsService {
     public List<Question> getQuestionBySubjectId(String subjectId) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.MONTH,-8);
+        calendar.add(Calendar.MONTH,-1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         List<Question> list = questionRepository.findBySubjectIdAndCreateTimeGreaterThan
