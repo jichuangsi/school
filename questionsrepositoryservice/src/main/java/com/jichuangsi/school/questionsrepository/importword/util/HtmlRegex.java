@@ -1,4 +1,4 @@
-package com.jichuangsi.school.questionsrepository.importword.util;
+﻿package com.jichuangsi.school.questionsrepository.importword.util;
 
 import com.jichuangsi.school.questionsrepository.importword.model.MatcherIndex;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
@@ -29,6 +29,7 @@ public class HtmlRegex {
         fileContent=fileContent.replaceAll("</span>","");
         fileContent=fileContent.replaceAll("</body>","");
         fileContent=fileContent.replaceAll("</html>","");
+        fileContent=fileContent.replaceAll("</div>","");
         fileContent=fileContent.replaceAll("</p>","");
         fileContent=fileContent.replaceAll("</a>","");
         fileContent=fileContent.replaceAll("(<span|<p|<a).*?>","");
