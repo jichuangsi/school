@@ -2,6 +2,7 @@ package com.jichuangsi.school.gateway.feign.service.impl;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.gateway.feign.model.BackUserModel;
 import com.jichuangsi.school.gateway.feign.model.UrlModel;
 import com.jichuangsi.school.gateway.feign.model.UrlMapping;
 import com.jichuangsi.school.gateway.feign.model.User;
@@ -28,6 +29,17 @@ public class UserFallBackServiceImpl implements IUserFeignService {
 
     @Override
     public ResponseModel<List<UrlModel>> getAllFreeUrl() {
+        return ResponseModel.fail("",ERR_MSG);
+    }
+
+
+    @Override
+    public ResponseModel<List<UrlModel>> getBanUrlBySuperAdmin() {
+        return ResponseModel.fail("",ERR_MSG);
+    }
+
+    @Override
+    public ResponseModel<BackUserModel> getBackUserById(String id) {
         return ResponseModel.fail("",ERR_MSG);
     }
 }

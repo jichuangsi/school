@@ -8,11 +8,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "roleurl")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class Roleurl {
     @Id
-    /*@GeneratedValue(strategy = GenerationType.IDENTITY)*/
     @GeneratedValue(generator = "jpa-uuid")
     private String id;
     private String name;

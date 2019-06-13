@@ -8,15 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "urlrelation")
+@Table(name = "sadminbanurl")
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-public class UrlRelation {
-
+public class AdminBanUrl {
     @Id
     @GeneratedValue(generator = "jpa-uuid")
     private String id;
-    private  String rid;//角色ID
-    private String uid;//urlID
+    private String name;
+    private String url;
 
     public String getId() {
         return id;
@@ -26,21 +25,19 @@ public class UrlRelation {
         this.id = id;
     }
 
-    public String getRid() {
-        return rid;
+    public String getName() {
+        return name;
     }
 
-    public void setRid(String rid) {
-        this.rid = rid;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getUid() {
-        return uid;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setUrl(String url) {
+        this.url = url;
     }
-
-
 }

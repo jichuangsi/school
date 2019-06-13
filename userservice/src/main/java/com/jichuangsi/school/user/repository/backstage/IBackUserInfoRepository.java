@@ -22,4 +22,6 @@ public interface IBackUserInfoRepository extends MongoRepository<BackUserInfo,St
     List<BackUserInfo> findByStatusNot(String status);
 
     BackUserInfo findFirstByIdAndStatusNot(String id, String status);
+
+    BackUserInfo findBackUserInfoById(String id);
 }

@@ -1,5 +1,6 @@
 package com.jichuangsi.school.user.service;
 
+import com.jichuangsi.school.user.entity.AdminBanUrl;
 import com.jichuangsi.school.user.entity.SchoolRole;
 import com.jichuangsi.school.user.model.UrlMapping;
 import com.jichuangsi.school.user.model.backmodel.RoleUrlModel;
@@ -14,4 +15,5 @@ public interface ISchoolRoleService {
         List<RoleUrlModel> getUrlByRoleId(String roleId);
         List<String> getUrlByBackRoleId(String roleId);
         List<FreeUrl> getFreeUrl();
+        List<AdminBanUrl> getAdminBanUrl();
 }

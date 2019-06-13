@@ -1,10 +1,12 @@
 package com.jichuangsi.school.user.service.impl;
 
 import com.jichuangsi.school.user.dao.mapper.IUrlRelationMapper;
+import com.jichuangsi.school.user.entity.AdminBanUrl;
 import com.jichuangsi.school.user.entity.Roleurl;
 import com.jichuangsi.school.user.entity.SchoolRole;
 import com.jichuangsi.school.user.model.UrlMapping;
 import com.jichuangsi.school.user.model.backmodel.RoleUrlModel;
+import com.jichuangsi.school.user.repository.IAdminBanUrlRespository;
 import com.jichuangsi.school.user.repository.IUrlRelationRepository;
 import com.jichuangsi.school.user.service.ISchoolRoleService;
 import com.jichuangsi.school.user.repository.IFreeUrlRespository;
@@ -21,6 +23,8 @@ public class SchoolRoleServiceImpl implements ISchoolRoleService {
     private IUrlRelationMapper urlRelationMapper;
     @Resource
     private IFreeUrlRespository freeUrlRespository;
+    @Resource
+    private IAdminBanUrlRespository adminBanUrlRespository;
 
     @Override
     public List<UrlMapping> getAllRole() {
@@ -40,5 +44,10 @@ public class SchoolRoleServiceImpl implements ISchoolRoleService {
     @Override
     public List<FreeUrl> getFreeUrl() {
         return freeUrlRespository.findAll();
+    }
+
+    @Override
+    public List<AdminBanUrl> getAdminBanUrl() {
+        return adminBanUrlRespository.findAll();
     }
 }

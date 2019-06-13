@@ -49,6 +49,17 @@ public class BackUserController {
         }
     }
 
+    @ApiOperation(value = "根据id获得后台角色", notes = "")
+    @ApiImplicitParams({})
+    @GetMapping(value = "/getBackUserById")
+    public ResponseModel<BackUserModel> getBackUserById(@RequestParam("id") String id){
+        try {
+            return ResponseModel.sucess("",backUserService.getBackUserById(id));
+        } catch (BackUserException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
     @ApiOperation(value = "后台注销账户", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")

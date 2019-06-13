@@ -7,6 +7,8 @@ import com.jichuangsi.school.user.entity.UrlRelation;
 import com.jichuangsi.school.user.repository.IRoleUrlRepository;
 import com.jichuangsi.school.user.repository.ISchoolRoleRepository;
 import com.jichuangsi.school.user.repository.IUrlRelationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +26,8 @@ public class IBackRoleUrlService {
     private ISchoolRoleRepository iSchoolRoleRepository;
     //新增url
     @Transactional(rollbackFor = Exception.class)
-    public void insertRoleUrl(UserInfoForToken userInfoForToken, List<Roleurl> roleurl){
-        iRoleUrlRepository.saveAll(roleurl);
+    public void insertRoleUrl(UserInfoForToken userInfoForToken, Roleurl roleurl){
+        iRoleUrlRepository.save(roleurl);
     }
     //新增和修改url
     @Transactional(rollbackFor = Exception.class)
@@ -45,6 +47,15 @@ public class IBackRoleUrlService {
     //查询全部权限
     public List<Roleurl> getAllRoleUrl(UserInfoForToken userInfoForToken){
         return iRoleUrlRepository.findAll();
+    }
+
+    //分页查询全部权限
+    public Page<Roleurl> getAllRoleUrlByPage(UserInfoForToken userInfoForToken, int pageNum, int pageSize){
+        pageNum=pageNum-1;
+        PageRequest pageRequest=new PageRequest(pageNum,pageSize);
+        Page<Roleurl> page=iRoleUrlRepository.findAll(pageRequest);
+        //List<Roleurl> roleurls=page.getContent();
+        return page;
     }
 
     //添加角色对应的url

@@ -2,6 +2,7 @@ package com.jichuangsi.school.user.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.user.entity.AdminBanUrl;
 import com.jichuangsi.school.user.entity.Roleurl;
 import com.jichuangsi.school.user.model.UrlModel;
 import com.jichuangsi.school.user.entity.UrlRelation;
@@ -71,12 +72,21 @@ public class SchoolRoleController {
     public ResponseModel<List<FreeUrl>> getAllFreeUrl()throws UserServiceException{
         return ResponseModel.sucess("",schoolRoleService.getFreeUrl());
     }
+
+    @ApiOperation(value = "查询超级管理员不可访问url",notes = "")
+    @ApiImplicitParams({
+    })
+    @GetMapping("/getBanUrlBySuperAdmin")
+    public ResponseModel<List<AdminBanUrl>> getBanUrlBySuperAdmin()throws UserServiceException{
+        return ResponseModel.sucess("",schoolRoleService.getAdminBanUrl());
+    }
+
     @ApiOperation(value = "添加url", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/addUrl")
-    public ResponseModel addUrl(@ModelAttribute UserInfoForToken userInfoForToken, @RequestBody List<Roleurl> roleurl) throws UserServiceException {
+    public ResponseModel addUrl(@ModelAttribute UserInfoForToken userInfoForToken, @RequestBody Roleurl roleurl) throws UserServiceException {
        try {
            backRoleUrlService.insertRoleUrl(userInfoForToken,roleurl);
        }catch (Exception e){
@@ -126,6 +136,12 @@ public class SchoolRoleController {
     @PostMapping("/selectAllUrl")
     public ResponseModel select(@ModelAttribute UserInfoForToken userInfoForToken){
         return ResponseModel.sucess("",backRoleUrlService.getAllRoleUrl(userInfoForToken));
+    }
+
+    @ApiOperation(value = "分页查询url",notes = "")
+    @PostMapping("/selectUrlByPage")
+    public ResponseModel selectUrlByPage(@ModelAttribute UserInfoForToken userInfoForToken,@RequestParam int pageNum,@RequestParam int pageSize){
+        return ResponseModel.sucess("",  backRoleUrlService.getAllRoleUrlByPage(userInfoForToken,pageNum,pageSize));
     }
 
     @ApiOperation(value = "根据角色id查询url",notes = "")

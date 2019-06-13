@@ -222,4 +222,11 @@ public class BackUserServiceImpl implements IBackUserService {
         backUserInfo.setUpdatedTime(new Date().getTime());
         backUserInfoRepository.save(backUserInfo);
     }
+
+    @Override
+    public BackUserModel getBackUserById(String id)throws BackUserException {
+        BackUserInfo backUserInfo =backUserInfoRepository.findBackUserInfoById(id);
+        BackUserModel model = MappingEntity2ModelConverter.CONVERTERFROMBACKUSERINFOTOMODEL(backUserInfo);
+        return model;
+    }
 }

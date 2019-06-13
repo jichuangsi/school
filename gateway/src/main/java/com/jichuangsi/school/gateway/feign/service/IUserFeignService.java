@@ -2,6 +2,7 @@ package com.jichuangsi.school.gateway.feign.service;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 
+import com.jichuangsi.school.gateway.feign.model.BackUserModel;
 import com.jichuangsi.school.gateway.feign.model.UrlModel;
 import com.jichuangsi.school.gateway.feign.model.UrlMapping;
 import com.jichuangsi.school.gateway.feign.model.User;
@@ -21,4 +22,10 @@ public interface IUserFeignService {
 
     @GetMapping("/getAllFreeUrl")
     ResponseModel<List<UrlModel>> getAllFreeUrl();
+
+    @GetMapping("/getBanUrlBySuperAdmin")
+    ResponseModel<List<UrlModel>> getBanUrlBySuperAdmin();
+
+    @GetMapping("/back/user/getBackUserById")
+    ResponseModel<BackUserModel> getBackUserById(@RequestParam("id") String id);
 }

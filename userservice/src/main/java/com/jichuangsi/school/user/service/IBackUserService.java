@@ -27,6 +27,8 @@ public interface IBackUserService {
     void insertSuperMan() throws BackUserException;
 
     void updateOtherPwd(UserInfoForToken userInfo,UpdatePwdModel model,String userId) throws BackUserException;
+
+    BackUserModel getBackUserById(String id)throws BackUserException;
 }
 
 
