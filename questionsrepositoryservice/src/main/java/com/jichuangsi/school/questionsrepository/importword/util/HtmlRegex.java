@@ -1,4 +1,4 @@
-﻿package com.jichuangsi.school.questionsrepository.importword.util;
+package com.jichuangsi.school.questionsrepository.importword.util;
 
 import com.jichuangsi.school.questionsrepository.importword.model.MatcherIndex;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
