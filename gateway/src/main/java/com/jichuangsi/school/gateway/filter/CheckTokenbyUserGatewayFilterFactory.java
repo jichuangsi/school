@@ -66,7 +66,7 @@ public class CheckTokenbyUserGatewayFilterFactory extends AbstractGatewayFilterF
                     String userId=jwt.getClaim(userClaim).asString();
                     UserInfoForToken userInfo = JSONObject.parseObject(userId, UserInfoForToken.class);
                     if (!checkUrlService.checkUserRole(userInfo, url)) {
-                        return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.TOKEN_CHECK_ERR_MSG);
+                        return buildResponse(exchange, ResultCode.TOKEN_CHECK_ERR, ResultCode.NO_ACCESS);
                     }
                     return chain.filter(exchange);
                 } else {
