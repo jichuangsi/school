@@ -14,9 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-/*@EntityScan("com.jichuangsi.school.user.entity")*/
-/*@EnableJpaRepositories("com.jichuangsi.school.user.repository")*/
-@MapperScan("com.jichuangsi.school.user.dao.mapper")//扫描mybatism
+//@MapperScan("com.jichuangsi.school.user.dao.mapper")//扫描mybatism
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableEurekaClient

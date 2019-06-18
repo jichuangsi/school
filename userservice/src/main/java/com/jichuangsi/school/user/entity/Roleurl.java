@@ -15,6 +15,9 @@ public class Roleurl {
     private String id;
     private String name;
     private String url;
+    @ManyToOne
+    @JoinColumn(name = "usewayid")
+    private UseWay useWay;
 
     public String getId() {
         return id;
@@ -38,5 +41,13 @@ public class Roleurl {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public UseWay getUseWay() {
+        return useWay;
+    }
+
+    public void setUseWay(UseWay useWay) {
+        this.useWay = useWay;
     }
 }

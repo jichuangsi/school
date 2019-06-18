@@ -8,6 +8,7 @@ import com.jichuangsi.school.user.entity.app.AppInfoEntity;
 import com.jichuangsi.school.user.entity.backstage.*;
 import com.jichuangsi.school.user.entity.org.*;
 import com.jichuangsi.school.user.feign.model.NoticeModel;
+import com.jichuangsi.school.user.model.RoleUrlUseWayModel;
 import com.jichuangsi.school.user.model.System.Role;
 import com.jichuangsi.school.user.model.System.User;
 import com.jichuangsi.school.user.model.app.AppInfoModule;
@@ -401,5 +402,30 @@ public final class MappingEntity2ModelConverter {
         model.setPharseName(schoolNoticeInfo.getPharseName());
         model.setTitle(schoolNoticeInfo.getTitle());
         return model;
+    }
+
+    public static final List<RoleUrlUseWayModel> CONVERTERFROMROLEURLTOROLEURLMODEL(List<Roleurl> roleurls){
+        List<RoleUrlUseWayModel> roleUrlModels=new ArrayList<>();
+        for (Roleurl roleurl: roleurls) {
+            RoleUrlUseWayModel model=new RoleUrlUseWayModel();
+            model.setId(roleurl.getId());
+            model.setName(roleurl.getName());
+            model.setUrl(roleurl.getUrl());
+            model.setUsewayid(roleurl.getUseWay().getId());
+            model.setUsewayname(roleurl.getUseWay().getName());
+            roleUrlModels.add(model);
+        }
+        return roleUrlModels;
+    }
+    public static final Roleurl CONVERTERFROMROLEURLMODELTOROLEURL(RoleUrlUseWayModel model){
+        Roleurl roleurl=new Roleurl();
+        roleurl.setId(model.getId());
+        roleurl.setName(model.getName());
+        roleurl.setUrl(model.getUrl());
+        UseWay useWay=new UseWay();
+        useWay.setId(model.getUsewayid());
+        useWay.setName(model.getName());
+        roleurl.setUseWay(useWay);
+        return roleurl;
     }
 }

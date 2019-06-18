@@ -167,8 +167,6 @@ public class UserCRUDController {
     public ResponseModel saveTeacher(@ModelAttribute UserInfoForToken userInfo, @RequestBody TeacherModel model){
         try {
             userInfoService.saveTeacher(userInfo,model);
-            //添加老师基本信息
-            userPositionService.insertUserPosition(userInfo,model);
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }

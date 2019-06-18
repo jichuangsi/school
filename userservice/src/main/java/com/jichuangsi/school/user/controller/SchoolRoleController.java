@@ -2,22 +2,22 @@ package com.jichuangsi.school.user.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
-import com.jichuangsi.school.user.entity.AdminBanUrl;
-import com.jichuangsi.school.user.entity.Roleurl;
+import com.jichuangsi.school.user.entity.*;
+import com.jichuangsi.school.user.model.RoleUrlUseWayModel;
 import com.jichuangsi.school.user.model.UrlModel;
-import com.jichuangsi.school.user.entity.UrlRelation;
 import com.jichuangsi.school.user.exception.BackUserException;
 import com.jichuangsi.school.user.exception.UserServiceException;
 import com.jichuangsi.school.user.model.UrlMapping;
-import com.jichuangsi.school.user.entity.FreeUrl;
 import com.jichuangsi.school.user.model.backstage.BackRoleModel;
 import com.jichuangsi.school.user.service.IBackRoleService;
 import com.jichuangsi.school.user.service.IBackRoleUrlService;
 import com.jichuangsi.school.user.service.ISchoolRoleService;
+import com.jichuangsi.school.user.util.MappingEntity2ModelConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,6 +36,12 @@ public class SchoolRoleController {
     private IBackRoleUrlService backRoleUrlService;
     @Resource
     private IBackRoleService iBackRoleService;
+
+    @ApiOperation(value = "查询url分类", notes = "")
+    @GetMapping("/getAllUseWay")
+    public ResponseModel<List<UseWay>> getAllUseWay() throws UserServiceException {
+        return ResponseModel.sucess("",backRoleUrlService.getAllUseWay());
+    }
 
     @ApiOperation(value = "查询权限信息", notes = "")
     @GetMapping("/urlRole")
@@ -86,7 +92,7 @@ public class SchoolRoleController {
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/addUrl")
-    public ResponseModel addUrl(@ModelAttribute UserInfoForToken userInfoForToken, @RequestBody Roleurl roleurl) throws UserServiceException {
+    public ResponseModel addUrl(@ModelAttribute UserInfoForToken userInfoForToken, @RequestBody RoleUrlUseWayModel roleurl) throws UserServiceException {
        try {
            backRoleUrlService.insertRoleUrl(userInfoForToken,roleurl);
        }catch (Exception e){
@@ -95,12 +101,12 @@ public class SchoolRoleController {
        return ResponseModel.sucessWithEmptyData("");
     }
 
-    @ApiOperation(value = "添加修改权限url",notes = "")
+    @ApiOperation(value = "修改权限url",notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
     })
     @PostMapping("/updateUrl")
-    public ResponseModel updateUrl(@ModelAttribute UserInfoForToken userInfoForToken,@RequestBody Roleurl roleurl) throws UserServiceException{
+    public ResponseModel updateUrl(@ModelAttribute UserInfoForToken userInfoForToken,@RequestBody RoleUrlUseWayModel roleurl) throws UserServiceException{
         try{
             backRoleUrlService.updateRoleUr(userInfoForToken,roleurl);
         }catch (Exception e){
@@ -135,13 +141,20 @@ public class SchoolRoleController {
     @ApiOperation(value = "查询全部url",notes = "")
     @PostMapping("/selectAllUrl")
     public ResponseModel select(@ModelAttribute UserInfoForToken userInfoForToken){
-        return ResponseModel.sucess("",backRoleUrlService.getAllRoleUrl(userInfoForToken));
+        return ResponseModel.sucess("", MappingEntity2ModelConverter.CONVERTERFROMROLEURLTOROLEURLMODEL(backRoleUrlService.getAllRoleUrl(userInfoForToken)));
     }
 
     @ApiOperation(value = "分页查询url",notes = "")
     @PostMapping("/selectUrlByPage")
     public ResponseModel selectUrlByPage(@ModelAttribute UserInfoForToken userInfoForToken,@RequestParam int pageNum,@RequestParam int pageSize){
         return ResponseModel.sucess("",  backRoleUrlService.getAllRoleUrlByPage(userInfoForToken,pageNum,pageSize));
+    }
+
+    @ApiOperation(value = "分页多条件查询url",notes = "")
+    @PostMapping("/selectUrlByPageAndType")
+    public ResponseModel selectUrlByPageAndType(@ModelAttribute UserInfoForToken userInfoForToken,@RequestParam int pageNum,@RequestParam int pageSize,@RequestParam(required = false) String type,@RequestParam(required = false) String name){
+        Page<Roleurl> page= backRoleUrlService.getAllRoleUrlByPageAndType(userInfoForToken,pageNum,pageSize,type,name);
+        return ResponseModel.sucess("",  page);
     }
 
     @ApiOperation(value = "根据角色id查询url",notes = "")
@@ -204,6 +217,33 @@ public class SchoolRoleController {
     public ResponseModel batchDeleteRoleUrl(@ModelAttribute UserInfoForToken userInfoForToken,@RequestBody UrlModel urlModel){
         try {
             backRoleUrlService.batchDeleteRoleUrl(userInfoForToken,urlModel.getUrlRelations());
+        }catch (Exception e){
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+    @ApiOperation(value = "添加修改父级分类",notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/operateUseWay")
+    public ResponseModel addUseWay(@ModelAttribute UserInfoForToken userInfoForToken,@RequestBody UseWay useWay){
+        try {
+            backRoleUrlService.insertUseWay(useWay);
+        }catch (Exception e){
+            return ResponseModel.fail("",e.getMessage());
+        }
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+    @ApiOperation(value = "根据id删除父级分类",notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/deleteUseWay/{useWayId}")
+    public ResponseModel deleteUseWay(@ModelAttribute UserInfoForToken userInfoForToken,@PathVariable String useWayId){
+        try {
+            backRoleUrlService.deleteUseaWay(useWayId);
         }catch (Exception e){
             return ResponseModel.fail("",e.getMessage());
         }

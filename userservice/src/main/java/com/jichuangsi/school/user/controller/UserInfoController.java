@@ -115,7 +115,6 @@ public class UserInfoController {
     public ResponseModel updateTeacher(@ModelAttribute UserInfoForToken userInfo, @RequestBody TeacherModel model){
         try {
             userInfoService.updateTeacher(userInfo,model);
-            userPositionService.insertUserPosition(userInfo,model);
         } catch (UserServiceException e) {
             return ResponseModel.fail("",e.getMessage());
         }
