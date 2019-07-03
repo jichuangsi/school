@@ -27,7 +27,7 @@ public class WebSocketAutoConfig implements WebSocketMessageBrokerConfigurer {
 				.setAllowedOrigins("*") // 允许跨域访问
 				// .addInterceptors(new
 				// HttpSessionHandshakeInterceptor())//如需拦截seesion，例如判断是否有登录，可自定义实现HandshakeInterceptor接口或继承HttpSessionHandshakeInterceptor
-				.withSockJS().setHeartbeatTime(123456l); // 使用sockJS
+				.withSockJS(); // 使用sockJS
 	}
 
 	@Override
