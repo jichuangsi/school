@@ -1,19 +1,22 @@
 package com.jichuangsi.school.courseservice.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
-import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.FeignControllerException;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
+import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.feign.service.IUserFeignService;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.PageHolder;
 import com.jichuangsi.school.courseservice.model.feign.CourseForStudentId;
 import com.jichuangsi.school.courseservice.model.feign.CourseForStudentIdTime;
+import com.jichuangsi.school.courseservice.model.feign.report.HomeworkKnoledge;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassDetailModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.ClassStatisticsModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.StudentKnowledgeModel;
+import com.jichuangsi.school.courseservice.model.feign.report.IdAndNameModel;
+import com.jichuangsi.school.courseservice.model.feign.report.TestScoreModel;
 import com.jichuangsi.school.courseservice.model.feign.statistics.KnowledgeStatisticsModel;
 import com.jichuangsi.school.courseservice.model.feign.statistics.ParentStatisticsModel;
 import com.jichuangsi.school.courseservice.model.result.ResultKnowledgeModel;
@@ -150,4 +153,18 @@ public class FeignClientController {
             return ResponseModel.fail("",e.getMessage());
         }
     }
+    @ApiOperation(value = "每堂课知识点统计", notes = "")
+    @ApiImplicitParams({})
+    @PostMapping("/getCourseByCourseId")
+    public ResponseModel<HomeworkKnoledge> getCourseByCourseId(@RequestParam("courseId") String courseId){
+        try {
+            return ResponseModel.sucess("",iFeignClientService.getCourseByCourseId(courseId));
+        } catch (FeignControllerException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
+
+
+
+
 }

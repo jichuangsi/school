@@ -1,18 +1,14 @@
 package com.jichuangsi.school.testservice.controller;
 
 import com.jichuangsi.microservice.common.model.ResponseModel;
-import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.testservice.entity.Test;
 import com.jichuangsi.school.testservice.exception.StudentTestServiceException;
-import com.jichuangsi.school.testservice.model.KnowledgeModel;
-import com.jichuangsi.school.testservice.model.SearchTestModel;
 import com.jichuangsi.school.testservice.model.TestModelForStudent;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
 import com.jichuangsi.school.testservice.model.feign.SearchTestModelId;
-import com.jichuangsi.school.testservice.model.statistics.KnowledgeStatisticsModel;
-import com.jichuangsi.school.testservice.model.statistics.ParentStatisticsModel;
+import com.jichuangsi.school.testservice.model.statistics.*;
 import com.jichuangsi.school.testservice.service.IStudentTestService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +44,34 @@ public ResponseModel<List<KnowledgeStatisticsModel>> getParentTestStatistics(@Re
         return ResponseModel.fail("",e.getMessage());
     }
 }
+    @ApiOperation(value = "校长查询班级考试统计", notes = "")
+    @ApiImplicitParams({})
+    @PostMapping("/getTestBySubjectNameAndTestId")
+public ResponseModel<List<Test>> getTestBySubjectNameAndTestName(@RequestParam("classId") List<String> classId,@RequestParam("subjectId")String subjectId,@RequestParam("time")long time){
+    try {
+        return ResponseModel.sucess("",studentTestService.getTestBySubjectNameAndTestName(classId,subjectId,time));
+    } catch (StudentTestServiceException e) {
+        return ResponseModel.fail("",e.getMessage());
+    }
+}
+    @ApiOperation(value = "根据考试id查询考试详情", notes = "")
+    @ApiImplicitParams({})
+    @PostMapping("/getTestByTestId")
+    public  ResponseModel<TestScoreModel> getTestByTestId(@RequestParam("testId") String testId)throws StudentTestServiceException{
+        try {
+            return ResponseModel.sucess("",studentTestService.getTestByTestId(testId));
+        } catch (StudentTestServiceException e) {
+            return ResponseModel.fail("",e.getMessage());
+        }
+    }
 
+    //根据习题id
+    @PostMapping(value="/getTestById")
+    public ResponseModel<HomeworkKnoledge> getTestById(@RequestParam("testId") String testId) {
+        try {
+            return ResponseModel.sucess("", studentTestService.getTestById(testId));
+        } catch (StudentTestServiceException e) {
+            return ResponseModel.fail("", e.getMessage());
+        }
+    }
 }

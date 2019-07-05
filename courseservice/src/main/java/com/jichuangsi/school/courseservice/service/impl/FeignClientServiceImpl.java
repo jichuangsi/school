@@ -1,5 +1,6 @@
 package com.jichuangsi.school.courseservice.service.impl;
 
+import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.courseservice.Exception.FeignControllerException;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
 import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
@@ -9,9 +10,11 @@ import com.jichuangsi.school.courseservice.constant.Status;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
 import com.jichuangsi.school.courseservice.entity.StudentAnswer;
+import com.jichuangsi.school.courseservice.feign.service.IUserFeignService;
 import com.jichuangsi.school.courseservice.model.AnswerForStudent;
 import com.jichuangsi.school.courseservice.model.CourseForStudent;
 import com.jichuangsi.school.courseservice.model.Knowledge;
+import com.jichuangsi.school.courseservice.model.feign.report.*;
 import com.jichuangsi.school.courseservice.model.feign.QuestionRateModel;
 import com.jichuangsi.school.courseservice.model.feign.classType.*;
 import com.jichuangsi.school.courseservice.model.feign.statistics.KnowledgeStatisticsModel;
@@ -27,6 +30,10 @@ import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
 import com.jichuangsi.school.courseservice.service.IFeignClientService;
 import com.jichuangsi.school.courseservice.service.IStudentCourseService;
 import com.jichuangsi.school.courseservice.service.ITeacherCourseService;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -48,7 +55,10 @@ public class FeignClientServiceImpl implements IFeignClientService {
     private CourseRepository courseRepository;
     @Resource
     private CourseConsoleRepository courseConsoleRepository;
-
+    @Resource
+    private MongoTemplate mongoTemplate;
+    @Resource
+    private IUserFeignService userFeignService;
     @Override
     public TransferKnowledge getKnowledgeOfParticularQuestion(String questionId) throws StudentCourseServiceException {
         if (StringUtils.isEmpty(questionId)) throw new StudentCourseServiceException(ResultCode.PARAM_MISS_MSG);
@@ -562,4 +572,174 @@ public class FeignClientServiceImpl implements IFeignClientService {
             throw new FeignControllerException(e.getMessage());
         }
     }
+
+
+
+    @Override//每一堂课
+    public HomeworkKnoledge getCourseByCourseId(String courseId) throws FeignControllerException{
+        Course homework=mongoTemplate.findById(courseId,Course.class);
+        if (homework==null){}
+        ResponseModel<List<Student>> student=userFeignService.getStudentsForClass(homework.getClassId());
+        if (student.getData().size()==0){throw new FeignControllerException(ResultCode.SELECT_NULL_MSG);}
+        List<String> studentId=new ArrayList<String>();
+        if (student.getData().size()!=0){
+            for (int sid=0;sid<student.getData().size();sid++) {
+                studentId.add(student.getData().get(sid).getStudentId());
+            }
+        }
+        HomeworkKnoledge homeworkKnoledge=null;
+        StudentAnswer studentAnswer=null;
+        Question questions=null;
+        Long count1=0L;
+        Map<String,Integer> kkk=new HashMap<String,Integer>();
+        Map<String,Integer> konC=new HashMap<String,Integer>();
+        Map<String,Integer> konE=new HashMap<String,Integer>();
+        Map<String,Integer> konCount=new HashMap<String,Integer>();
+        int kk=0,kc=0,ke=0;
+
+        for (String s:homework.getQuestionIds()) {
+            //questions=questionRepository.findByIdAndStatus(s,Status.NOTSTART.getName());
+            questions = mongoTemplate.findById(s, Question.class);
+            if (questions != null) {
+                for (com.jichuangsi.school.courseservice.entity.Knowledge k : questions.getKnowledges()) {
+                    kkk.put(k.getKnowledge(), kk++);
+                }
+                for (String sid : studentId) {
+                    Criteria criteria = Criteria.where("questionId").is(s).and("studentId").is(sid);
+                    Query query = new Query(criteria);
+                    query.with(new Sort(Sort.Direction.DESC, "updateTime"));
+                    studentAnswer = mongoTemplate.findOne(query, StudentAnswer.class);
+                    if (studentAnswer != null) {
+                        if (studentAnswer.getResult() != null && !(studentAnswer.getResult().equals(""))) {
+                            if (studentAnswer.getResult().equalsIgnoreCase(Result.CORRECT.getName())) {
+                                //获取知识点占比
+                                Object object = konC.get(questions.getKnowledges().get(0).getKnowledge());
+                                if (null == object) {
+                                    konC.put(questions.getKnowledges().get(0).getKnowledge(), 1);
+                                } else {
+                                    konC.put(questions.getKnowledges().get(0).getKnowledge(), (int) object + 1);
+                                }
+                            }else {
+                                Object object = konE.get(questions.getKnowledges().get(0).getKnowledge());
+                                if (null == object) {
+                                    konE.put(questions.getKnowledges().get(0).getKnowledge(), 1);
+                                } else {
+                                    konE.put(questions.getKnowledges().get(0).getKnowledge(), (int) object + 1);
+                                }
+                            }
+                        }else {
+                            Object object = konE.get(questions.getKnowledges().get(0).getKnowledge());
+                            if (null == object) {
+                                konE.put(questions.getKnowledges().get(0).getKnowledge(), 1);
+                            } else {
+                                konE.put(questions.getKnowledges().get(0).getKnowledge(), (int) object + 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (String k : kkk.keySet()) {
+            Criteria criteria1 = Criteria.where("id").in(homework.getQuestionIds()).and("knowledges.0.knowledge").is(k);
+            Query query1 = new Query(criteria1);
+            count1 = mongoTemplate.count(query1, Question.class);
+            konCount.put(k, count1.intValue()*studentId.size());
+        }
+
+        List<String> kondege=new ArrayList<String>();
+        Set<Map.Entry<String,Integer>> entrySet = konCount.entrySet();//所有知识点类型
+        Set<Map.Entry<String,Integer>> entrySet1 = konC.entrySet();//知识点正确数
+        Set<Map.Entry<String,Integer>> entrySet2 = konE.entrySet();//知识点错误数
+        KnowledgePoints knowledgePoints2=null;
+        List<KnowledgePoints> knowledgePoints1=new ArrayList<KnowledgePoints>();
+        if (konC.size()!=0 && konE.size()!=0) {
+            for (Map.Entry<String, Integer> entry : entrySet) {
+                for (Map.Entry<String, Integer> entry1 : entrySet1) {
+                    for (Map.Entry<String, Integer> entry2 : entrySet2) {
+                        if (entry.getKey().equalsIgnoreCase(entry1.getKey())  && entry1.getKey().equalsIgnoreCase(entry2.getKey())){
+                            int sec = entry.getValue();
+                            int scc = entry1.getValue();
+                            int see=entry2.getValue();
+                            knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), ((double) scc / sec) * 100, (1-((double) scc / sec)) * 100);
+                            knowledgePoints1.add(knowledgePoints2);
+                            kondege.add(entry.getKey());
+                        }
+                    }
+                }
+            }
+            if (entrySet1.size()<entrySet2.size()){
+                for (Map.Entry<String, Integer> entry : entrySet) {
+                    for (Map.Entry<String, Integer> entry1 : entrySet2) {
+                        if (entry.getKey().equalsIgnoreCase(entry1.getKey()) ) {
+                            boolean ok = konC.containsKey(entry1.getKey());
+                            if (ok == false) {
+                                knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue()/studentId.size(), 0.0, 100.0);
+                                knowledgePoints1.add(knowledgePoints2);
+                                kondege.add(entry.getKey());
+                            }
+                        }
+                    }
+                }
+            }
+            if (entrySet1.size()>entrySet2.size()){
+                for (Map.Entry<String, Integer> entry : entrySet) {
+                    for (Map.Entry<String, Integer> entry1 : entrySet1) {
+                        if (entry.getKey().equalsIgnoreCase(entry1.getKey()) ) {
+                            boolean ok = konE.containsKey(entry1.getKey());
+                            if (ok == false) {
+                                knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue()/studentId.size(),  100.0, 0.0);
+                                knowledgePoints1.add(knowledgePoints2);
+                                kondege.add(entry.getKey());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (konC.size()!=0 && konE.size()==0) {
+            for (Map.Entry<String, Integer> entry : entrySet) {
+                for (Map.Entry<String, Integer> entry1 : entrySet1) {
+                    int sec = entry.getValue();
+                    int see = entry1.getValue();
+                    if (entry.getKey().equalsIgnoreCase(entry1.getKey())){
+                        knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), 0.0, ((double) see / sec) * 100);
+                        knowledgePoints1.add(knowledgePoints2);
+                        kondege.add(entry.getKey());
+                    }
+                }
+            }
+        }
+        if (konC.size()==0 && konE.size()!=0) {
+            for (Map.Entry<String, Integer> entry : entrySet) {
+                for (Map.Entry<String, Integer> entry2 : entrySet1) {
+                    int sec = entry.getValue();
+                    int scc = entry2.getValue();
+                    if (entry.getKey().equalsIgnoreCase(entry2.getKey())){
+                        knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), ((double) scc / sec) * 100, 0.0);
+                        knowledgePoints1.add(knowledgePoints2);
+                        kondege.add(entry.getKey());
+                    }
+                }
+            }
+        }
+        if (konC.size()==0 && konE.size()==0) {
+            for (Map.Entry<String, Integer> entry : entrySet) {
+                int sec = entry.getValue();
+                knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), 0.0, 0.0);
+                knowledgePoints1.add(knowledgePoints2);
+                kondege.add(entry.getKey());
+            }
+        }
+        for (Map.Entry<String, Integer> entry : entrySet){
+            boolean ok=kondege.contains(entry.getKey());
+            if (ok==false){
+                knowledgePoints2 = new KnowledgePoints(entry.getKey(), entry.getValue()/studentId.size(), 0.0, 0.0);
+                knowledgePoints1.add(knowledgePoints2);
+            }
+        }
+
+        homeworkKnoledge=new HomeworkKnoledge(homework.getName(),knowledgePoints1);
+        return homeworkKnoledge;
+    }
+
 }

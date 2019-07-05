@@ -5,13 +5,15 @@ import com.jichuangsi.school.statistics.feign.impl.CourseFallBackFeignServiceImp
 import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
+import com.jichuangsi.school.statistics.model.Report.HomworkReportRateModel;
+import com.jichuangsi.school.statistics.model.Report.StudentTestModel;
+import com.jichuangsi.school.statistics.model.Report.TestModel;
+import com.jichuangsi.school.statistics.model.Report.TestScoreModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
 import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,4 +37,9 @@ public interface ICourseFeignService {
 
     @RequestMapping("/feign/getStudentKnowledges")
     ResponseModel<List<StudentKnowledgeModel>> getStudentKnowledges(@RequestBody SearchStudentKnowledgeModel model);
+
+    @PostMapping(value="/feign/getCourseByCourseId")
+    ResponseModel<HomworkReportRateModel> getCourseByCourseId(@RequestParam("courseId") String courseId);
+
+
 }

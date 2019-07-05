@@ -1,15 +1,14 @@
 package com.jichuangsi.school.testservice.service;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
+import com.jichuangsi.school.testservice.entity.Test;
 import com.jichuangsi.school.testservice.exception.StudentTestServiceException;
 import com.jichuangsi.school.testservice.model.AnswerModelForStudent;
 import com.jichuangsi.school.testservice.model.TestModelForStudent;
 import com.jichuangsi.school.testservice.model.SearchTestModel;
 import com.jichuangsi.school.testservice.model.common.PageHolder;
 import com.jichuangsi.school.testservice.model.feign.SearchTestModelId;
-import com.jichuangsi.school.testservice.model.statistics.KnowledgeStatisticsModel;
-import com.jichuangsi.school.testservice.model.statistics.ParentStatisticsModel;
-import com.jichuangsi.school.testservice.model.statistics.ResultKnowledgeModel;
+import com.jichuangsi.school.testservice.model.statistics.*;
 import com.jichuangsi.school.testservice.model.transfer.TransferKnowledge;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,5 +38,12 @@ public interface IStudentTestService {
     TransferKnowledge getKnowledgeOfParticularQuestion(String questionId)throws  StudentTestServiceException;
     List<ResultKnowledgeModel> getQuestionKnowledges(List<String> questionIds) throws StudentTestServiceException;
     List<KnowledgeStatisticsModel> getParentStatistics(ParentStatisticsModel model) throws StudentTestServiceException;
+
+    List<Test> getTestBySubjectNameAndTestName(List<String> classId,String subjectId,long time) throws StudentTestServiceException;
+
+
+    TestScoreModel getTestByTestId(String testId) throws StudentTestServiceException;
+
+    HomeworkKnoledge getTestById(String testId)throws StudentTestServiceException;
 
 }

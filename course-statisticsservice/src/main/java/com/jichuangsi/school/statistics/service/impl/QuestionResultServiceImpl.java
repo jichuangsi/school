@@ -398,7 +398,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
 
 //统计认知能力
     @Override
-  @Cacheable(unless = "#result.empty",keyGenerator = "getClassStudentCapabilityKeyGenerator")
+  //@Cacheable(unless = "#result.empty",keyGenerator = "getClassStudentCapabilityKeyGenerator")
     public CapabilityStudentModel getClassStudentCapability(SearchStudentCapabilityModel model)throws QuestionResultException {
         //判断classID和QuestionId是否为空
 
@@ -409,7 +409,7 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
      if (responseModel1.getData()==null){//无这个月数据
          throw new QuestionResultException(ResultCode.SELECT_NULL_MSG);
      }
-      //  System.out.println(responseModel1.getData().size());
+
         List<String> questionId = new ArrayList<String>();
          for (int r = 0; r < responseModel1.getData().size(); r++) {
             questionId.add(responseModel1.getData().get(r).getId());
@@ -766,7 +766,6 @@ public class QuestionResultServiceImpl implements IQuestionResultService {
                         bg = new BigDecimal(capa.get("综合"));
                         f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                         know = new Capability(f1 * 100, "综合");
-                        System.out.println(f1);
                         knowledges1[1] = know;
                     }else {
                         know = new Capability(0.0, "综合");

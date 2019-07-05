@@ -4,11 +4,10 @@ import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.school.statistics.feign.impl.UserFallBackFeignServiceImpl;
 import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.TransferStudent;
+import com.jichuangsi.school.statistics.model.Report.Grade;
+import com.jichuangsi.school.statistics.model.Report.ClassStudentModel;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,4 +25,12 @@ public interface IUserFeignService {
 
     @GetMapping("/feign/getStudentsForClass")
     ResponseModel<List<TransferStudent>> getStudentsForClass(@RequestParam(value = "classId") String classId);
+
+
+    @GetMapping("/feign/getGradeBySchoolId")
+    ResponseModel<List<Grade>> getGradeBySchoolId(@RequestParam("schoolId") String schoolId);
+
+    @PostMapping("/feign/getStudentByClassAndGradeId")
+    ResponseModel<List<ClassStudentModel>> getStudentByGradeId(@RequestParam("gradeId") String gradeId);
+
 }
