@@ -20,5 +20,4 @@ public interface ISchoolReportService {
     HomworkReportRateModel getTestReportKnowledgeRate(String testId) throws SchoolReportException;
 
 
-
 }

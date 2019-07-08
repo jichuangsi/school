@@ -737,7 +737,6 @@ public class FeignClientServiceImpl implements IFeignClientService {
                 knowledgePoints1.add(knowledgePoints2);
             }
         }
-
         homeworkKnoledge=new HomeworkKnoledge(homework.getName(),knowledgePoints1);
         return homeworkKnoledge;
     }

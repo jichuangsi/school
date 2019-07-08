@@ -1,7 +1,6 @@
-package com.jichuangsi.school.courseservice.model.feign.report;
+package com.jichuangsi.school.homeworkservice.model.Report;
 
 public class KnowledgePoints {
-
     private String name;
     private Integer rate;
     private Double rateC;
@@ -22,21 +21,22 @@ public class KnowledgePoints {
         this.rate = rate;
     }
 
-    public void setRateE(Double rateE) {
-        this.rateE = rateE;
-    }
-
-    public void setRateC(Double rateC) {
-        this.rateC = rateC;
+    public Double getRateC() {
+        return rateC;
     }
 
     public Double getRateE() {
         return rateE;
     }
 
-    public Double getRateC() {
-        return rateC;
+    public void setRateC(Double rateC) {
+        this.rateC = rateC;
     }
+
+    public void setRateE(Double rateE) {
+        this.rateE = rateE;
+    }
+
     public KnowledgePoints(){}
     public KnowledgePoints(String name,Integer rate,Double rateC,Double rateE){
         this.name=name;

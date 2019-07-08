@@ -5,6 +5,10 @@ import com.jichuangsi.school.statistics.feign.ICourseFeignService;
 import com.jichuangsi.school.statistics.feign.model.ClassDetailModel;
 import com.jichuangsi.school.statistics.feign.model.QuestionRateModel;
 import com.jichuangsi.school.statistics.feign.model.ResultKnowledgeModel;
+import com.jichuangsi.school.statistics.model.Report.HomworkReportRateModel;
+import com.jichuangsi.school.statistics.model.Report.StudentTestModel;
+import com.jichuangsi.school.statistics.model.Report.TestModel;
+import com.jichuangsi.school.statistics.model.Report.TestScoreModel;
 import com.jichuangsi.school.statistics.model.classType.ClassStatisticsModel;
 import com.jichuangsi.school.statistics.model.classType.SearchStudentKnowledgeModel;
 import com.jichuangsi.school.statistics.model.classType.StudentKnowledgeModel;
@@ -44,4 +48,10 @@ public class CourseFallBackFeignServiceImpl implements ICourseFeignService {
     public ResponseModel<List<StudentKnowledgeModel>> getStudentKnowledges(SearchStudentKnowledgeModel model) {
         return ResponseModel.fail("");
     }
+
+    @Override
+    public ResponseModel<HomworkReportRateModel> getCourseByCourseId(String courseId) {
+        return ResponseModel.fail("");
+    }
+
 }

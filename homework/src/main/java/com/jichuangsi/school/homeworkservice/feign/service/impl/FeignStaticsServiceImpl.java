@@ -47,6 +47,7 @@ public class FeignStaticsServiceImpl implements FeignStaticsService {
         return mongoTemplate.findOne(new Query(Criteria.where("id").is(questionId)),Question.class);
     }
 
+
     @Override
     public List<StudentAnswer> getQuestionResult(List<String> questionId) {
         return mongoTemplate.find(new Query(Criteria.where("questionId").in(questionId)),StudentAnswer.class);

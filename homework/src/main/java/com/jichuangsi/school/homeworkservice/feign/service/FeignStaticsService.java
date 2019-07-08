@@ -30,4 +30,5 @@ public interface FeignStaticsService {
     List<Homework> getHomeworkBySubjectNameAndHomeworkId(List<String> classId, String subjectId, long time);
 
     TestScoreModel getHomeworkById(String HomeworkId);
+
 }

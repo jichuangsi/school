@@ -33,13 +33,5 @@ public class ClassStudentModel {
     public void setStudent(List<Student> student) {
         this.student = student;
     }
-/* private Map<String,List<Student>> classStudentModel=new HashMap<String,List<Student>>();
 
-    public Map<String, List<Student>> getClassStudentModel() {
-        return classStudentModel;
-    }
-
-    public void setClassStudentModel(Map<String, List<Student>> classStudentModel) {
-        this.classStudentModel = classStudentModel;
-    }*/
 }

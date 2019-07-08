@@ -40,4 +40,5 @@ public interface IHomeWorkStaticsService {
 
     @PostMapping("/feign/getHomeworkById")
     ResponseModel<TestScoreModel> getHomeworkById(@RequestParam("HomeworkId") String HomeworkId);
+
 }

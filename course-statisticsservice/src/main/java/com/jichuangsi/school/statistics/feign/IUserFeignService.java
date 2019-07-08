@@ -33,4 +33,5 @@ public interface IUserFeignService {
     @PostMapping("/feign/getStudentByClassAndGradeId")
     ResponseModel<List<ClassStudentModel>> getStudentByGradeId(@RequestParam("gradeId") String gradeId);
 
+
 }

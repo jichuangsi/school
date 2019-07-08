@@ -1,9 +1,9 @@
-package com.jichuangsi.school.courseservice.model.feign.report;
+package com.jichuangsi.school.homeworkservice.model.Report;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomworkReportRateModel {
+public class HomeworkKnoledge {
     private String homeWorkName;
     private List<KnowledgePoints> knowledgePoints=new ArrayList<KnowledgePoints>();
 
@@ -22,4 +22,12 @@ public class HomworkReportRateModel {
     public void setKnowledgePoints(List<KnowledgePoints> knowledgePoints) {
         this.knowledgePoints = knowledgePoints;
     }
+
+    public HomeworkKnoledge(){}
+
+    public HomeworkKnoledge(String homeWorkName,List<KnowledgePoints> knowledgePoints){
+        this.homeWorkName=homeWorkName;
+        this.knowledgePoints=knowledgePoints;
+    }
+
 }

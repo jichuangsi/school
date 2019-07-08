@@ -22,7 +22,6 @@ public class SchoolReportController {
 
     @Resource
     private ISchoolReportService schoolReportService;
-
     @ApiOperation(value = "根据学校Id查询年级", notes = "")
     @GetMapping("/getGradeBySchoolId")
     public ResponseModel<List<Grade>> getGradeBySchoolId(@RequestParam("schoolId") String schoolId){

@@ -62,7 +62,6 @@ public class FeignStaticsController {
     }
 
 
-
     //根据习题id
     @PostMapping(value="/getHomeworkByHomeworkId")
     public ResponseModel<HomeworkKnoledge> getHomeworkByHomeworkId(@RequestParam("homeworkId") String homeworkId){

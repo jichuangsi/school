@@ -41,5 +41,4 @@ public interface ICourseFeignService {
     @PostMapping(value="/feign/getCourseByCourseId")
     ResponseModel<HomworkReportRateModel> getCourseByCourseId(@RequestParam("courseId") String courseId);
 
-
 }
