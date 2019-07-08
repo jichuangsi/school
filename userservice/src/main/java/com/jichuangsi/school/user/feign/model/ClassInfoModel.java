@@ -5,6 +5,7 @@ public class ClassInfoModel {
     private String classId;
     private String className;
 
+
     public String getClassId() {
         return classId;
     }

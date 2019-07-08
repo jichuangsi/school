@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ClassStudentModel {
-
     private String classId;
     private String className;
     private List<UserInfo> student=new ArrayList<UserInfo>();
