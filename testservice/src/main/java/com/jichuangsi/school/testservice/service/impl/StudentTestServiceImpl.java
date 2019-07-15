@@ -493,7 +493,11 @@ public class StudentTestServiceImpl implements IStudentTestService {
                             int sec = entry.getValue();
                             int scc = entry1.getValue();
                             int see=entry2.getValue();
-                            knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), ((double) scc / sec) * 100, (1-((double) scc / sec)) * 100);
+                            if (studentId.size()!=0) {
+                                knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec / studentId.size(), ((double) scc / sec) * 100, (1 - ((double) scc / sec)) * 100);
+                            }else {
+                                knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec , ((double) scc / sec) * 100, (1 - ((double) scc / sec)) * 100);
+                            }
                             knowledgePoints1.add(knowledgePoints2);
                             kondege.add(entry.getKey());
                         }
@@ -506,7 +510,11 @@ public class StudentTestServiceImpl implements IStudentTestService {
                         if (entry.getKey().equalsIgnoreCase(entry1.getKey()) ) {
                             boolean ok = konC.containsKey(entry1.getKey());
                             if (ok == false) {
-                                knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue()/studentId.size(), 0.0, 100.0);
+                                if (studentId.size()!=0) {
+                                    knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue() / studentId.size(), 0.0, 100.0);
+                                }else {
+                                    knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue(), 0.0, 100.0);
+                                }
                                 knowledgePoints1.add(knowledgePoints2);
                                 kondege.add(entry.getKey());
                             }
@@ -520,7 +528,11 @@ public class StudentTestServiceImpl implements IStudentTestService {
                         if (entry.getKey().equalsIgnoreCase(entry1.getKey()) ) {
                             boolean ok = konE.containsKey(entry1.getKey());
                             if (ok == false) {
-                                knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue()/studentId.size(),  100.0, 0.0);
+                                if (studentId.size()!=0) {
+                                    knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue() / studentId.size(), 100.0, 0.0);
+                                }else {
+                                    knowledgePoints2 = new KnowledgePoints(entry1.getKey(), entry.getValue() , 100.0, 0.0);
+                                }
                                 knowledgePoints1.add(knowledgePoints2);
                                 kondege.add(entry.getKey());
                             }
@@ -535,7 +547,11 @@ public class StudentTestServiceImpl implements IStudentTestService {
                         int sec = entry.getValue();
                         int see = entry1.getValue();
                         if (entry.getKey().equalsIgnoreCase(entry1.getKey())){
-                            knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), 0.0, ((double) see / sec) * 100);
+                            if (studentId.size()!=0) {
+                                knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec / studentId.size(), 0.0, ((double) see / sec) * 100);
+                            }else {
+                                knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec, 0.0, ((double) see / sec) * 100);
+                            }
                             knowledgePoints1.add(knowledgePoints2);
                             kondege.add(entry.getKey());
                         }
@@ -548,7 +564,11 @@ public class StudentTestServiceImpl implements IStudentTestService {
                     int sec = entry.getValue();
                     int scc = entry2.getValue();
                     if (entry.getKey().equalsIgnoreCase(entry2.getKey())){
-                        knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), ((double) scc / sec) * 100, 0.0);
+                        if (studentId.size()!=0) {
+                            knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec / studentId.size(), ((double) scc / sec) * 100, 0.0);
+                        }else {
+                            knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec , ((double) scc / sec) * 100, 0.0);
+                        }
                         knowledgePoints1.add(knowledgePoints2);
                         kondege.add(entry.getKey());
                     }
@@ -558,15 +578,23 @@ public class StudentTestServiceImpl implements IStudentTestService {
         if (konC.size()==0 && konE.size()==0) {
             for (Map.Entry<String, Integer> entry : entrySet) {
                     int sec = entry.getValue();
-                        knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec/studentId.size(), 0.0, 0.0);
-                        knowledgePoints1.add(knowledgePoints2);
-                        kondege.add(entry.getKey());
+                if (studentId.size()!=0) {
+                    knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec / studentId.size(), 0.0, 0.0);
+                }else {
+                    knowledgePoints2 = new KnowledgePoints(entry.getKey(), sec / studentId.size(), 0.0, 0.0);
+                }
+                knowledgePoints1.add(knowledgePoints2);
+                kondege.add(entry.getKey());
             }
         }
        for (Map.Entry<String, Integer> entry : entrySet){
             boolean ok=kondege.contains(entry.getKey());
             if (ok==false){
-                knowledgePoints2 = new KnowledgePoints(entry.getKey(), entry.getValue()/studentId.size(), 0.0, 0.0);
+                if (studentId.size()!=0) {
+                    knowledgePoints2 = new KnowledgePoints(entry.getKey(), entry.getValue() / studentId.size(), 0.0, 0.0);
+                }else {
+                    knowledgePoints2 = new KnowledgePoints(entry.getKey(), entry.getValue() , 0.0, 0.0);
+                }
                 knowledgePoints1.add(knowledgePoints2);
             }
        }
