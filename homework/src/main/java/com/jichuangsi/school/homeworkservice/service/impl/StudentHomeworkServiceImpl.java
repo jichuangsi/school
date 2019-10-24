@@ -60,7 +60,12 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         if (StringUtils.isEmpty(userInfo.getUserId()))
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findProgressHomeworkByStudentId(userInfo.getUserId()));
+        List<HomeworkModelForStudent> homeworks2 = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentId(userInfo.getUserId(),1, 4));
+        for (HomeworkModelForStudent e:homeworks2){
+            homeworks.add(e);
+        }
         this.getHomeworkStuff(userInfo, homeworks);
+
         return homeworks;
     }
 
@@ -182,6 +187,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
             if(s!=null) h.setTotalScore(s.getHomeworks().stream().filter(
                     t->t.getHomeworkId().equalsIgnoreCase(h.getHomeworkId())).findFirst().get().getTotalScore());
         });
+
     }
 
     private List<HomeworkModelForStudent> convertHomeworkList(List<Homework> homeworks) {
