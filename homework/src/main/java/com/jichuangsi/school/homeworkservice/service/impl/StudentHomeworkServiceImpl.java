@@ -60,7 +60,7 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         if (StringUtils.isEmpty(userInfo.getUserId()))
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findProgressHomeworkByStudentId(userInfo.getUserId()));
-        List<HomeworkModelForStudent> homeworks2 = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentId(userInfo.getUserId(),1, 8));
+        List<HomeworkModelForStudent> homeworks2 = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentId(userInfo.getUserId(),1, 5));
         for (HomeworkModelForStudent e:homeworks2){
             homeworks.add(e);
         }
