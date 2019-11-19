@@ -9,6 +9,26 @@ public class SearchQuestionModel {
     private int pageIndex;
     private int pageSize;
 
+    private String subjectId;
+
+    private String gradeId;
+
+    public String getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public String getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(String gradeId) {
+        this.gradeId = gradeId;
+    }
+
     public String getSort() {
         return sort;
     }
