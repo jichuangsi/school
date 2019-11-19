@@ -1,6 +1,7 @@
 package com.jichuangsi.school.questionsrepository.repository.impl;
 
 import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
+import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferSchool;
@@ -21,8 +22,9 @@ public class SchoolQuestionsRepositoryImpl<T> implements ISchoolQuestionsReposit
     private MongoTemplate mongoTemplate;
 
     @Override
-    public List<SchoolQuestions> selectSortSchoolQuestions( SearchQuestionModel searchQuestionModel, TransferSchool school) {
-        Criteria criteria = Criteria.where("schoolId").is(school.getSchoolId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
+    public List<SchoolQuestions> selectSortSchoolQuestions(SearchQuestionModel searchQuestionModel, TransferSchool school) {
+        Criteria criteria = Criteria.where("schoolId").is(school.getSchoolId())
+            .and("subjectId").is(searchQuestionModel.getSubjectId()).and("gradeId").is(searchQuestionModel.getGradeId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
             Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
             criteria.and("difficulty").regex(diff);
@@ -47,7 +49,8 @@ public class SchoolQuestionsRepositoryImpl<T> implements ISchoolQuestionsReposit
 
     @Override
     public long selectSchoolCount(SearchQuestionModel searchQuestionModel, TransferSchool school) {
-        Criteria criteria = Criteria.where("schoolId").is(school.getSchoolId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
+        Criteria criteria = Criteria.where("schoolId").is(school.getSchoolId())
+            .and("subjectId").is(searchQuestionModel.getSubjectId()).and("gradeId").is(searchQuestionModel.getGradeId());//.and("knowledge").is(searchQuestionModel.getKnowledge())
         if(!StringUtils.isEmpty(searchQuestionModel.getDifficulty())){
             Pattern diff= Pattern.compile("^.*"+searchQuestionModel.getDifficulty()+".*$", Pattern.CASE_INSENSITIVE);
             criteria.and("difficulty").regex(diff);
@@ -76,5 +79,12 @@ public class SchoolQuestionsRepositoryImpl<T> implements ISchoolQuestionsReposit
     public void findAllAndRemove(DeleteQueryModel deleteQueryModel) {
         Criteria criteria = Criteria.where("id").in(deleteQueryModel.getIds());
         mongoTemplate.findAllAndRemove(new Query(criteria),SchoolQuestions.class);
+    }
+
+    @Override
+    public SchoolQuestions findParticularQuesitonById(String schoolId,String subjectId,String gradeId, String questionId){
+        Criteria criteria = Criteria.where("_id").is(questionId).
+            and("schoolId").is(schoolId).and("subjectId").is(subjectId).and("gradeId").is(gradeId);
+        return mongoTemplate.findOne(new Query(criteria),SchoolQuestions.class);
     }
 }

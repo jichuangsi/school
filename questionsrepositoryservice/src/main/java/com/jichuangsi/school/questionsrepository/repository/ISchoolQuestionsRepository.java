@@ -1,6 +1,7 @@
 package com.jichuangsi.school.questionsrepository.repository;
 
 import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
+import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferSchool;
@@ -16,4 +17,6 @@ public interface ISchoolQuestionsRepository<T> {
     T save(T entity);
 
     void findAllAndRemove(DeleteQueryModel deleteQueryModel);
+
+    SchoolQuestions findParticularQuesitonById(String schoolId,String subjectId,String gradeId, String questionId);
 }

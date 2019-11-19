@@ -3,12 +3,14 @@ package com.jichuangsi.school.questionsrepository.controller;
 import com.jichuangsi.microservice.common.model.ResponseModel;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
+import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.model.PageHolder;
 import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.school.SchoolQuestion;
+import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferSchool;
 import com.jichuangsi.school.questionsrepository.service.ISchoolQuestionRepositoryService;
 import com.jichuangsi.school.questionsrepository.service.IUserInfoService;
@@ -25,6 +27,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/school")
 @Api("SchoolQuestionsRepositoryController相关的api")
+@CrossOrigin
 public class SchoolQuestionsRepositoryController {
 
     @Resource
@@ -57,7 +60,7 @@ public class SchoolQuestionsRepositoryController {
         }*/
         TransferSchool school = userInfoService.getSchoolInfoById(userInfo.getUserId());
         if(school==null) throw new QuestionRepositoryServiceException(ResultCode.SCHOOL_INFO_NOT_EXISTED);
-        return ResponseModel.sucess("", schoolQuestionService.getSortSchoolQuestion(school,searchQuestionModel));
+        return ResponseModel.sucess("", schoolQuestionService.getSortSchoolQuestion(userInfo,school,searchQuestionModel));
     }
 
     //删除指定的自定义题目
@@ -118,5 +121,13 @@ public class SchoolQuestionsRepositoryController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
+    //获取指定id的自定义题
+    @ApiOperation(value = "获取指定id的自定义题", notes = "")
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    @GetMapping("/getQuestion/{questionId}")
+    public ResponseModel<SchoolQuestion> getQuestion(@ModelAttribute UserInfoForToken userInfo, @PathVariable String questionId) throws QuestionRepositoryServiceException {
 
+        return ResponseModel.sucess("",schoolQuestionService.getSelfQuestionById(userInfo,questionId));
+    }
 }

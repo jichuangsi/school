@@ -8,13 +8,14 @@ import com.jichuangsi.school.questionsrepository.model.common.DeleteQueryModel;
 import com.jichuangsi.school.questionsrepository.model.common.SearchQuestionModel;
 import com.jichuangsi.school.questionsrepository.model.common.QuestionFile;
 import com.jichuangsi.school.questionsrepository.model.school.SchoolQuestion;
+import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferSchool;
 
 public interface ISchoolQuestionRepositoryService {
 
     void addSchoolQuestion(UserInfoForToken userInfoForToken, TransferSchool school, SchoolQuestion schoolQuestion);
 
-    PageHolder<SchoolQuestion> getSortSchoolQuestion(TransferSchool school, SearchQuestionModel searchQuestionModel);
+    PageHolder<SchoolQuestion> getSortSchoolQuestion(UserInfoForToken userInfo,TransferSchool school, SearchQuestionModel searchQuestionModel);
 
     //上传问题图片
     SchoolQuestion uploadQuestionPic(UserInfoForToken userInfo, QuestionFile questionFile) throws QuestionRepositoryServiceException;
@@ -31,4 +32,9 @@ public interface ISchoolQuestionRepositoryService {
 
     //批量删除校库问题
     void deleteSchoolQuestions(UserInfoForToken userInfo, DeleteQueryModel deleteQueryModel) throws QuestionRepositoryServiceException;
+
+    //获取指定自定义题目
+    SchoolQuestion getSelfQuestionById(UserInfoForToken userInfoForToken, String questionId) throws QuestionRepositoryServiceException;
+
+
 }
