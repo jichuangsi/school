@@ -4,10 +4,7 @@ import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.homeworkservice.constant.HomeworkSort;
 import com.jichuangsi.school.homeworkservice.constant.ResultCode;
 import com.jichuangsi.school.homeworkservice.constant.Status;
-import com.jichuangsi.school.homeworkservice.entity.Homework;
-import com.jichuangsi.school.homeworkservice.entity.HomeworkSummary;
-import com.jichuangsi.school.homeworkservice.entity.Question;
-import com.jichuangsi.school.homeworkservice.entity.StudentHomeworkCollection;
+import com.jichuangsi.school.homeworkservice.entity.*;
 import com.jichuangsi.school.homeworkservice.exception.TeacherHomeworkServiceException;
 import com.jichuangsi.school.homeworkservice.model.HomeworkModelForTeacher;
 import com.jichuangsi.school.homeworkservice.model.QuestionModelForTeacher;
@@ -214,6 +211,56 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
                         update.set("publishTime",new Date().getTime());
                     }
                 }
+               /* List<Student> studentId=new ArrayList<Student>();
+                Student student=null;
+                if (updatedHomework.getStudents()!=null){
+                    for (Student s:updatedHomework.getStudents()){
+                        student=new Student(s.getStudentId(),s.getStudentName());
+                        studentId.add(student);
+                    }
+                }*/
+                update.set("updateTime",new Date().getTime());
+               /* update.set("students",studentId);*/
+                UpdateResult updateResult = mongoTemplate.updateFirst(new Query(criteria),update,Homework.class);
+                if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())&&updateResult.getModifiedCount()>0){
+                    this.assignHomework2Student(homework);
+                }else if(Status.COMPLETED.getName().equalsIgnoreCase(updatedHomework.getStatus())&&updateResult.getModifiedCount()>0){
+                    this.finishQuestionInHomework(homework);
+                }
+            }else{
+                throw new TeacherHomeworkServiceException(ResultCode.HOMEWORK_STATUS_ERROR);
+            }
+        }
+    }
+
+
+    @Override
+    public List<TransferStudent> getStudentByClassId(UserInfoForToken userInfo, String classId) {
+        return userInfoService.getStudentsForClassById(classId);
+    }
+
+    @Override
+    public void updateHomeWorkStatusAndStudent(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException{
+        if(StringUtils.isEmpty(userInfo.getUserId()) || Status.EMPTY.equals(homeworkModelForTeacher.getHomeworkStatus())) throw new TeacherHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
+        String hwId = homeworkModelForTeacher.getHomeworkId();
+        synchronized (hwId.intern()){
+            Homework homework = mongoTemplate.findOne(new Query(Criteria.where("id").is(hwId)
+                .and("teacherId").is(userInfo.getUserId())),Homework.class);
+            if(homework!=null){
+                //Homework updatedHomework = MappingModel2EntityConverter.ConvertTeacherHomework(userInfo, homeworkModelForTeacher);
+                Homework updatedHomework = MappingModel2EntityConverter.ConvertTeacherHomeworkStudent(userInfo, homeworkModelForTeacher);
+                Criteria criteria = Criteria.where("id").is(updatedHomework.getId());
+                Update update = new Update();
+                if(!StringUtils.isEmpty(updatedHomework.getStatus())){
+                    update.set("status",updatedHomework.getStatus());
+                    if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())){
+                        update.set("publishTime",new Date().getTime());
+                    }
+                }
+
+               if (updatedHomework.getStudents().size()>0){
+                   update.set("students",updatedHomework.getStudents());
+               }
                 update.set("updateTime",new Date().getTime());
                 UpdateResult updateResult = mongoTemplate.updateFirst(new Query(criteria),update,Homework.class);
                 if(Status.PROGRESS.getName().equalsIgnoreCase(updatedHomework.getStatus())&&updateResult.getModifiedCount()>0){
@@ -267,4 +314,6 @@ public class HomeworkConsoleServiceImpl implements IHomeworkConsoleService {
         });
         return questionForTeachers;
     }
+
+
 }

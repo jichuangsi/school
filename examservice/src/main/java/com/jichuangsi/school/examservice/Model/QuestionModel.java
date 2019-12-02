@@ -152,4 +152,30 @@ public class QuestionModel {
     public void setKnowledges(List<Knowledge> knowledges) {
         this.knowledges = knowledges;
     }
+
+    public QuestionModel(String questionContent,
+                         List<String> options, String answer, String answerDetail,
+                         String parse, String quesetionType, String difficulty,
+                         String subjectId, String gradeId, List<Knowledge> knowledges,
+                         String questionIdMD52, Status questionStatus, String questionPic,
+                         long createTime, long updateTime) {
+        this.questionContent = questionContent;
+        this.options = options;
+        this.answer = answer;
+        this.answerDetail = answerDetail;
+        this.parse = parse;
+        this.quesetionType = quesetionType;
+        this.difficulty = difficulty;
+        this.subjectId = subjectId;
+        this.gradeId = gradeId;
+        this.knowledges = knowledges;
+        this.questionIdMD52 = questionIdMD52;
+        this.questionStatus = questionStatus;
+        this.questionPic = questionPic;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+
+    public QuestionModel() {
+    }
 }

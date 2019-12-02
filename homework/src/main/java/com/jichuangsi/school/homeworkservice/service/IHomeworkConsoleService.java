@@ -8,6 +8,7 @@ import com.jichuangsi.school.homeworkservice.model.SearchHomeworkModel;
 import com.jichuangsi.school.homeworkservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.homeworkservice.model.common.Elements;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
+import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -34,5 +35,8 @@ public interface IHomeworkConsoleService {
 
     @Transactional
     void updateHomeWork2NewStatus(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException;
-
+    @Transactional
+    List<TransferStudent> getStudentByClassId(UserInfoForToken userInfo, String classId);
+    @Transactional
+    void updateHomeWorkStatusAndStudent(UserInfoForToken userInfo,HomeworkModelForTeacher homeworkModelForTeacher)throws TeacherHomeworkServiceException;
 }

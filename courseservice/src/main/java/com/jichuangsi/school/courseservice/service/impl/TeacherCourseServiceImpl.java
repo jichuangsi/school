@@ -6,10 +6,9 @@ import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceExcepti
 import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
 import com.jichuangsi.school.courseservice.constant.Status;
+import com.jichuangsi.school.courseservice.entity.*;
 import com.jichuangsi.school.courseservice.entity.Course;
 import com.jichuangsi.school.courseservice.entity.Question;
-import com.jichuangsi.school.courseservice.entity.StudentAnswer;
-import com.jichuangsi.school.courseservice.entity.TeacherAnswer;
 import com.jichuangsi.school.courseservice.feign.model.CourseSignModel;
 import com.jichuangsi.school.courseservice.feign.service.IStatisticsFeignService;
 import com.jichuangsi.school.courseservice.feign.service.IParentFeignService;
@@ -230,22 +229,22 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
     }
 
     @Override
-    public void publishQuestion(String courseId, String questionId) throws TeacherCourseServiceException {
-        if (StringUtils.isEmpty(courseId)
-                || StringUtils.isEmpty(questionId)) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
-        synchronized (questionId.intern()) {//需要实现分布式锁
-            Optional<Course> c = courseRepository.findById(courseId);
+    public void publishQuestion(PublishModel publishModel) throws TeacherCourseServiceException {
+        if (StringUtils.isEmpty(publishModel.getCourseId())
+                || StringUtils.isEmpty(publishModel.getQuestionId())) throw new TeacherCourseServiceException(ResultCode.PARAM_MISS_MSG);
+        synchronized (publishModel.getQuestionId().intern()) {//需要实现分布式锁
+            Optional<Course> c = courseRepository.findById(publishModel.getCourseId());
             if (!c.isPresent()) throw new TeacherCourseServiceException(ResultCode.COURSE_NOT_EXISTED);
             if (Status.FINISH.getName().equalsIgnoreCase(c.get().getStatus()))
                 throw new TeacherCourseServiceException(ResultCode.COURSE_FINISHED);
-            Optional<Question> result = questionRepository.findById(questionId);
+            Optional<Question> result = questionRepository.findById(publishModel.getQuestionId());
             if (result.isPresent()) {//需要增加判断重复发布题目
                 if (Status.NOTSTART.getName().equalsIgnoreCase(result.get().getStatus())) {
                     Question question2Update = result.get();
                     question2Update.setStatus(Status.PROGRESS.getName());
                     question2Update.setUpdateTime(new Date().getTime());
                     question2Update = questionRepository.save(question2Update);
-                    mqService.sendMsg4PublishQuestion(MappingEntity2MessageConverter.ConvertQuestion(courseId, question2Update));
+                    mqService.sendMsg4PublishQuestion(MappingEntity2MessageConverter.ConvertQuestion2(publishModel.getCourseId(), question2Update,publishModel.getStudent()));
                 } else if (Status.FINISH.getName().equalsIgnoreCase(result.get().getStatus())) {
                     throw new TeacherCourseServiceException(ResultCode.QUESTION_COMPLETE);
                 } else if (Status.PROGRESS.getName().equalsIgnoreCase(result.get().getStatus())) {
@@ -255,6 +254,15 @@ public class TeacherCourseServiceImpl implements ITeacherCourseService {
                 }
             } else {
                 throw new TeacherCourseServiceException(ResultCode.QUESTION_NOT_EXISTED);
+            }
+            if (publishModel.getStudent().size()>0){
+                QuesionStudent qs=new QuesionStudent();
+                qs.setCourseId(publishModel.getCourseId());
+                qs.setQuesionId(publishModel.getQuestionId());
+                publishModel.getStudent().forEach(s->{
+                    qs.getStudent().add(s);
+                });
+                mongoTemplate.save(qs);
             }
         }
     }

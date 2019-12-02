@@ -23,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/teacher")
 @Api("TeacherCourseController相关的api")
+@CrossOrigin
 public class TeacherCourseController {
 
     @Resource
@@ -224,15 +225,15 @@ public class TeacherCourseController {
         return ResponseModel.sucessWithEmptyData("");
     }
 
-    @ApiOperation(value = "根据id发布问题", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
-    @PostMapping("/questionPublish/{courseId}/{questionId}")
-    public ResponseModel<QuestionForTeacher> questionPublish(@ModelAttribute UserInfoForToken userInfo, @PathVariable String courseId, @PathVariable String questionId) throws TeacherCourseServiceException{
-        teacherCourseService.publishQuestion(courseId, questionId);
-        return ResponseModel.sucessWithEmptyData("");
-    }
 
+   @ApiOperation(value = "根据id发布问题", notes = "")
+   @ApiImplicitParams({
+       @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+   @PostMapping("/questionPublish")
+   public ResponseModel<QuestionForTeacher> questionPublish(@ModelAttribute UserInfoForToken userInfo, @RequestBody PublishModel publishModel) throws TeacherCourseServiceException{
+       teacherCourseService.publishQuestion(publishModel);
+      return ResponseModel.sucessWithEmptyData("");
+   }
     @ApiOperation(value = "根据id终止问题", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})

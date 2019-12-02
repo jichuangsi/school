@@ -1,6 +1,7 @@
 package com.jichuangsi.school.examservice.repository;
 
 import com.jichuangsi.school.examservice.entity.Exam;
+import com.jichuangsi.school.examservice.entity.ExamDimension;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,4 +27,23 @@ public interface IExamExtraRepository {
     @Transactional
     List<Map<String,Object>> getGroupCount(String fields, String eid);
 
+    @Transactional
+    ExamDimension save(ExamDimension exam);
+    @Transactional
+    List<ExamDimension> findExamDimensionByExamNameAndConditions(String userId, String keyword, Integer pageSize, Integer pageIndex);
+
+    @Transactional
+    long countByExamDimensionNameLike(String userId, String keyword);
+
+    @Transactional
+    void deleteExamDimensionByExamIdIsIn(List<String> eids);
+
+    @Transactional
+    List<Map<String,Object>> getGroupCounts(String fields, String eid);
+
+    @Transactional
+    List<ExamDimension> findExamDimensionByExamIdIsInAndConditions(List<String> examId, Integer pageSize, Integer pageIndex);
+
+    @Transactional
+    long countByExamDimensionExamId(List<String> examId);
 }

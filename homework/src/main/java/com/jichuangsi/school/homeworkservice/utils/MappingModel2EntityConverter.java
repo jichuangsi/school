@@ -47,6 +47,9 @@ public  final class MappingModel2EntityConverter {
         else
             homework.setCreateTime(homework.getCreateTime());
         homework.setUpdateTime(new Date().getTime());
+       /* if (homeworkModelForTeacher.getStudents()!=null){
+            homework.setStudents(homeworkModelForTeacher.getSt());
+        }*/
         return homework;
     }
 
@@ -119,6 +122,49 @@ public  final class MappingModel2EntityConverter {
             studentAnswer.setCreateTime(answerModelForStudent.getCreateTime());
         studentAnswer.setUpdateTime(new Date().getTime());
         return studentAnswer;
+    }
+
+
+
+    ///=========================================================================================//
+
+    public static final Homework ConvertTeacherHomeworkStudent(UserInfoForToken userInfo, HomeworkModelForTeacher homeworkModelForTeacher){
+        Homework homework = new Homework();
+        homework.setId(StringUtils.isEmpty(homeworkModelForTeacher.getHomeworkId())? UUID.randomUUID().toString().replaceAll("-", ""):homeworkModelForTeacher.getHomeworkId());
+        homework.setName(homeworkModelForTeacher.getHomeworkName());
+        homework.setInfo(homeworkModelForTeacher.getHomeworkInfo());
+        homework.setStatus(homeworkModelForTeacher.getHomeworkStatus()!=null?homeworkModelForTeacher.getHomeworkStatus().getName(): Status.NOTSTART.getName());
+        homework.setTeacherId(userInfo.getUserId());
+        homework.setTeacherName(userInfo.getUserName());
+        homework.setClassId(homeworkModelForTeacher.getClassId());
+        homework.setClassName(homeworkModelForTeacher.getClassName());
+        homework.setPublishTime(homeworkModelForTeacher.getHomeworkPublishTime());
+        homework.setEndTime(homeworkModelForTeacher.getHomeworkEndTime());
+        homework.setSubjectName(homeworkModelForTeacher.getSubjectName());
+        homework.setSubjectId(homeworkModelForTeacher.getSubjectId());
+        if(homeworkModelForTeacher.getQuestions()!=null&&homeworkModelForTeacher.getQuestions().size()>0){
+            homeworkModelForTeacher.getQuestions().forEach(question -> {
+                if(!StringUtils.isEmpty(question.getQuestionId()))
+                    homework.getQuestionIds().add(question.getQuestionId());
+            });
+        }
+        if(homeworkModelForTeacher.getAttachments()!=null&&homeworkModelForTeacher.getAttachments().size()>0){
+            homeworkModelForTeacher.getAttachments().forEach(attachment -> {
+                homework.getAttachments().add(new Attachment(attachment.getName(), attachment.getSub(), attachment.getContentType()));
+            });
+        }
+        if(homeworkModelForTeacher.getStudent()!=null&&homeworkModelForTeacher.getStudent().size()>0){
+               for (Students s:homeworkModelForTeacher.getStudent()) {
+                   homework.getStudents().add(s.getStudentId());
+
+           }
+        }
+        if(StringUtils.isEmpty(homeworkModelForTeacher.getHomeworkId()))
+            homework.setCreateTime(new Date().getTime());
+        else
+            homework.setCreateTime(homework.getCreateTime());
+        homework.setUpdateTime(new Date().getTime());
+        return homework;
     }
 
 }

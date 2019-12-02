@@ -3,10 +3,12 @@ package com.jichuangsi.school.questionsrepository.importword.service.impl;
 import com.jichuangsi.microservice.common.cache.ICacheService;
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.questionsrepository.constant.ResultCode;
+import com.jichuangsi.school.questionsrepository.entity.Dimension;
 import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
 import com.jichuangsi.school.questionsrepository.exception.QuestionRepositoryServiceException;
 import com.jichuangsi.school.questionsrepository.importword.repository.IImportWordRepository;
 
+import com.jichuangsi.school.questionsrepository.importword.repository.ImportDimensionRepository;
 import com.jichuangsi.school.questionsrepository.importword.service.IImportWordService;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 import com.jichuangsi.school.questionsrepository.model.transfer.TransferTeacher;
@@ -64,6 +66,10 @@ public class ImportWordServiceImpl implements IImportWordService{
     @Resource
     private IPicTranslationService picTranslationService;
 
+    @Resource
+    private ImportDimensionRepository dimensionRepository;
+
+
     @Override
     /**
      * @Author LaiJX
@@ -97,4 +103,25 @@ public class ImportWordServiceImpl implements IImportWordService{
 //        SelfQuestions selfQuestions = MappingModel2EntityConverter.ConverterSelfQuestion(userInfoForToken,selfQuestion);
 //        return null;
 //    }
+
+
+
+
+
+    /**
+     * @Author
+     * @Date
+     * @Param []
+     * @What? 保存题目
+     * @return void
+     */
+
+    @Override
+    public void savesimension(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) throws QuestionRepositoryServiceException{
+        TransferTeacher transferTeacher = userInfoService.getUserForTeacherById(userInfoForToken.getUserId());
+        if(transferTeacher==null) throw new QuestionRepositoryServiceException(ResultCode.TEACHER_INFO_NOT_EXISTED);
+        Dimension dimension = MappingModel2EntityConverter.ConverterDimension(userInfoForToken,selfQuestion);
+        dimensionRepository.addWordTitle(dimension);
+
+    }
 }

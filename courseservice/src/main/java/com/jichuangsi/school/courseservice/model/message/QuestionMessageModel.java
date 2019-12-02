@@ -3,6 +3,9 @@
  */
 package com.jichuangsi.school.courseservice.model.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author huangjiajun
  *
@@ -12,8 +15,18 @@ public class QuestionMessageModel {
 	private String courseId;// 课程ID
 	private String quType;//题目类型
 	private String content;//题目内容
+    private List<String> student=new ArrayList<String>();//学生id
 
-	public String getQuestionId() {
+
+    public List<String> getStudent() {
+        return student;
+    }
+
+    public void setStudent(List<String> student) {
+        this.student = student;
+    }
+
+    public String getQuestionId() {
 		return questionId;
 	}
 
@@ -48,7 +61,7 @@ public class QuestionMessageModel {
 	@Override
 	public String toString(){
 		StringBuffer objectInfo = new StringBuffer();
-		objectInfo.append("{courseId:" + courseId + ",questionId:" + questionId + ",quType:" + quType + ",content:" + content+"}");
+		objectInfo.append("{courseId:" + courseId + ",questionId:" + questionId + ",quType:" + quType + ",content:" + content+"，student:"+student+"}");
 		return objectInfo.toString();
 	}
 }

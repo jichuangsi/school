@@ -1,10 +1,7 @@
 package com.jichuangsi.school.questionsrepository.util;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
-import com.jichuangsi.school.questionsrepository.entity.FavorQuestions;
-import com.jichuangsi.school.questionsrepository.entity.Knowledge;
-import com.jichuangsi.school.questionsrepository.entity.SchoolQuestions;
-import com.jichuangsi.school.questionsrepository.entity.SelfQuestions;
+import com.jichuangsi.school.questionsrepository.entity.*;
 import com.jichuangsi.school.questionsrepository.model.favor.FavorQuestion;
 import com.jichuangsi.school.questionsrepository.model.school.SchoolQuestion;
 import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
@@ -103,4 +100,28 @@ public final class MappingModel2EntityConverter {
     }
 
 
+
+    public final static Dimension ConverterDimension(UserInfoForToken userInfoForToken, SelfQuestion sq){
+        Dimension dimension = new Dimension();
+        dimension.setId(StringUtils.isEmpty(sq.getQuestionId())? UUID.randomUUID().toString().replaceAll("-", ""):sq.getQuestionId());
+        dimension.setAnswer(sq.getAnswer());
+        dimension.setAnswerDetail(sq.getAnswerDetail());
+        dimension.setContent(sq.getQuestionContent());
+        dimension.setDifficulty(sq.getDifficulty());
+        sq.getKnowledges().forEach(q->{
+            dimension.getKnowledges().add(new Knowledge(q.getKnowledgeId(),
+                q.getKnowledge(),q.getCapabilityId(),q.getCapability()));
+        });
+        dimension.setOptions(sq.getOptions());
+        dimension.setParse(sq.getParse());
+        dimension.setQuestionIdMD52(StringUtils.isEmpty(sq.getQuestionIdMD52())?Md5Util.encodeByMd5(dimension.getId()):sq.getQuestionIdMD52());
+
+        dimension.setType(sq.getQuesetionType());
+        if(StringUtils.isEmpty(sq.getQuestionId()))
+            dimension.setCreateTime(new Date().getTime());
+        else
+            dimension.setCreateTime(sq.getCreateTime());
+        dimension.setUpdateTime(new Date().getTime());
+        return dimension;
+    }
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuestionRepository extends MongoRepository<Question, String>, QuestionExtraRepository{
-
+   Question findByIdAndStatus(String id,String name);
 }

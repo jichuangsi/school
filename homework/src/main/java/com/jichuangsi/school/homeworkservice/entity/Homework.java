@@ -26,6 +26,18 @@ public class Homework {
     private String subjectId;
     private List<Attachment> attachments = new ArrayList<Attachment>();
 
+    private List<String> students=new ArrayList<String>();
+
+    public List<String> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<String> students) {
+        this.students = students;
+    }
+
+
+
     public String getSubjectName() {
         return subjectName;
     }

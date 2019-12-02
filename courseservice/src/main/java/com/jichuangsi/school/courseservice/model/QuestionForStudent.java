@@ -1,5 +1,9 @@
 package com.jichuangsi.school.courseservice.model;
 
+import com.jichuangsi.school.courseservice.entity.QuesionStudent;
+
+import java.util.List;
+
 public class QuestionForStudent extends Question {
 
     //是否收藏
@@ -9,6 +13,15 @@ public class QuestionForStudent extends Question {
     private AnswerForStudent answerForStudent;
     //老师批改
     private AnswerForTeacher answerForTeacher;
+    private List<String> student;//有几个学生
+
+    public List<String> getStudent() {
+        return student;
+    }
+
+    public void setStudent(List<String> student) {
+        this.student = student;
+    }
 
     public AnswerForStudent getAnswerForStudent() {
         return answerForStudent;

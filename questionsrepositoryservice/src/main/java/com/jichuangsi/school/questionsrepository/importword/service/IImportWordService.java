@@ -11,4 +11,6 @@ import com.jichuangsi.school.questionsrepository.model.self.SelfQuestion;
 public interface IImportWordService {
     void save(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) throws QuestionRepositoryServiceException;
 //    SelfQuestions LoadingSelfQuestion(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) throws QuestionRepositoryServiceException;
+    void savesimension(UserInfoForToken userInfoForToken, SelfQuestion selfQuestion) throws QuestionRepositoryServiceException;
+
 }

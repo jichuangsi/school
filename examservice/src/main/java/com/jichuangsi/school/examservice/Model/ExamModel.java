@@ -76,4 +76,14 @@ public class ExamModel {
     public void setQuestionModels(List<QuestionModel> questionModels) {
         this.questionModels = questionModels;
     }
+
+    public ExamModel(String examId, String examName, List<QuestionModel> questionModels, String examSecondName) {
+        this.examId = examId;
+        this.examName = examName;
+        this.questionModels = questionModels;
+        this.examSecondName = examSecondName;
+    }
+    public ExamModel() {
+
+    }
 }

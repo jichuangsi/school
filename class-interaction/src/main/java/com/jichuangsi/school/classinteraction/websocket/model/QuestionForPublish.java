@@ -1,10 +1,20 @@
 package com.jichuangsi.school.classinteraction.websocket.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QuestionForPublish extends AbstractQustionNotifyForStudentModel{
 
 	private String quType;
 	private String content;
-	
+    private List<String> student=new ArrayList<String>();
+    public List<String> getStudent() {
+        return student;
+    }
+
+    public void setStudent(List<String> student) {
+        this.student = student;
+    }
 	public QuestionForPublish() {
 		this.wsType = AbstractQustionNotifyForStudentModel.WS_TYPE_QUESTION_PUBLISH;
 	}

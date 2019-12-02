@@ -1,5 +1,5 @@
 package com.jichuangsi.school.homeworkservice.model;
-
+import com.jichuangsi.school.homeworkservice.entity.Students;
 import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 
 import java.util.ArrayList;
@@ -11,6 +11,16 @@ public class HomeworkModelForTeacher extends HomeworkModel{
     private List<String> points = new ArrayList<String>();//记录分数的设置：第一个为单选题：第二个为多选题；第三个为主观题
     private int submitted;
     private int total;
+
+    private List<Students> student=new ArrayList<Students>();
+
+    public List<Students> getStudent() {
+        return student;
+    }
+
+    public void setStudent(List<Students> student) {
+        this.student = student;
+    }
 
     public List<QuestionModelForTeacher> getQuestions() {
         return questions;

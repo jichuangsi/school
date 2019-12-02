@@ -8,6 +8,7 @@ import com.jichuangsi.school.homeworkservice.model.SearchHomeworkModel;
 import com.jichuangsi.school.homeworkservice.model.common.DeleteQueryModel;
 import com.jichuangsi.school.homeworkservice.model.common.Elements;
 import com.jichuangsi.school.homeworkservice.model.common.PageHolder;
+import com.jichuangsi.school.homeworkservice.model.transfer.TransferStudent;
 import com.jichuangsi.school.homeworkservice.service.IHomeworkConsoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/console")
 @RestController
 @Api("HomeworkConsoleController测试开发相关的api")
+@CrossOrigin
 public class HomeworkConsoleController {
 
     @Resource
@@ -83,6 +85,27 @@ public class HomeworkConsoleController {
     @PostMapping("/updateHomeWorkStatus")
     public ResponseModel updateHomeWorkStatus(@ModelAttribute @NotNull UserInfoForToken userInfo, @RequestBody @NotNull HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException {
         homeworkConsoleService.updateHomeWork2NewStatus(userInfo, homeworkModelForTeacher);
+        return ResponseModel.sucessWithEmptyData("");
+    }
+
+
+    @ApiOperation(value = "根据班级id获取学生", notes = "")
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String"),
+    })
+    @PostMapping("/getStudentByClassId")
+    public ResponseModel<List<TransferStudent>> getStudentByClassId(@ModelAttribute UserInfoForToken userInfo, @RequestParam String classId) throws TeacherHomeworkServiceException{
+
+        return ResponseModel.sucess("",  homeworkConsoleService.getStudentByClassId(userInfo, classId));
+    }
+
+    @ApiOperation(value = "根据选择学生修改新建没有发布的练习", notes = "")
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")
+    })
+    @PostMapping("/updateHomeWorkStatusAndStudent")
+    public ResponseModel updateHomeWorkStatusAndStudent(@ModelAttribute @NotNull UserInfoForToken userInfo, @RequestBody @NotNull HomeworkModelForTeacher homeworkModelForTeacher) throws TeacherHomeworkServiceException {
+        homeworkConsoleService.updateHomeWorkStatusAndStudent(userInfo, homeworkModelForTeacher);
         return ResponseModel.sucessWithEmptyData("");
     }
 }

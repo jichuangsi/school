@@ -12,6 +12,7 @@ import com.jichuangsi.school.courseservice.model.message.ShareAnswerMessageModel
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 public final class MappingEntity2MessageConverter {
 
@@ -34,7 +35,19 @@ public final class MappingEntity2MessageConverter {
         questionMessageModel.setContent(null);
         return questionMessageModel;
     }
-
+    public static final QuestionMessageModel ConvertQuestion2(String courseId, Question question, List<String> student){
+        QuestionMessageModel questionMessageModel = new QuestionMessageModel();
+        questionMessageModel.setQuestionId(question.getId());
+        questionMessageModel.setCourseId(courseId);
+        questionMessageModel.setQuType(question.getType());
+        questionMessageModel.setContent(null);
+        if(student.size()>0){
+            student.forEach(s->{
+                questionMessageModel.getStudent().add(s);
+            });
+        }
+        return questionMessageModel;
+    }
     public static final AnswerMessageModel ConvertAnswer(String courseId, StudentAnswer answer){
         AnswerMessageModel answerMessageModel = new AnswerMessageModel();
         answerMessageModel.setCourseId(courseId);

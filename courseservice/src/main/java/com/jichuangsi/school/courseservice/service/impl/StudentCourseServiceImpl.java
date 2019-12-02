@@ -2,6 +2,7 @@ package com.jichuangsi.school.courseservice.service.impl;
 
 import com.jichuangsi.microservice.common.model.UserInfoForToken;
 import com.jichuangsi.school.courseservice.Exception.StudentCourseServiceException;
+import com.jichuangsi.school.courseservice.Exception.TeacherCourseServiceException;
 import com.jichuangsi.school.courseservice.constant.QuestionType;
 import com.jichuangsi.school.courseservice.constant.Result;
 import com.jichuangsi.school.courseservice.constant.ResultCode;
@@ -14,15 +15,10 @@ import com.jichuangsi.school.courseservice.model.Knowledge;
 import com.jichuangsi.school.courseservice.model.common.CustomArrayList;
 import com.jichuangsi.school.courseservice.model.repository.QuestionNode;
 import com.jichuangsi.school.courseservice.model.repository.QuestionQueryModel;
-import com.jichuangsi.school.courseservice.repository.CourseRepository;
-import com.jichuangsi.school.courseservice.repository.QuestionRepository;
-import com.jichuangsi.school.courseservice.repository.StudentAnswerRepository;
-import com.jichuangsi.school.courseservice.repository.TeacherAnswerRepository;
+import com.jichuangsi.school.courseservice.model.transfer.TransferTeacher;
+import com.jichuangsi.school.courseservice.repository.*;
 import com.jichuangsi.school.courseservice.service.*;
-import com.jichuangsi.school.courseservice.util.MappingEntity2MessageConverter;
-import com.jichuangsi.school.courseservice.util.MappingEntity2ModelConverter;
-import com.jichuangsi.school.courseservice.util.MappingModel2EntityConverter;
-import com.jichuangsi.school.courseservice.util.MappingModel2ModelConverter;
+import com.jichuangsi.school.courseservice.util.*;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -78,6 +74,10 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Resource
+    private IUserInfoService userInfoService;
+
 
     @Override
     public List<CourseForStudent> getCoursesList(UserInfoForToken userInfo) throws StudentCourseServiceException {
@@ -172,6 +172,12 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
                 if (shareAnswer != null)
                     question.setAnswerForTeacher(MappingEntity2ModelConverter.ConvertTeacherAnswer(shareAnswer));
             }
+            QuesionStudent qslist=mongoTemplate.findOne(new Query(Criteria.where("courseId").is(courseId).and("quesionId").is( question.getQuestionId())),QuesionStudent.class);
+          if (qslist!=null) {
+              if (qslist.getStudent().size() > 0) {
+                      question.setStudent(qslist.getStudent());
+              }
+          }
         });
         return courseForStudent;
     }
@@ -397,6 +403,8 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
         return convertQuestionList2(questionNodes);
     }
 
+
+
     private List<CourseForStudent> convertCourseList(List<Course> courses) {
         List<CourseForStudent> courseForTeachers = new ArrayList<CourseForStudent>();
         courses.forEach(course -> {
@@ -453,4 +461,7 @@ public class StudentCourseServiceImpl implements IStudentCourseService {
             throw new StudentCourseServiceException(exp.getMessage());
         }
     }
+
+
+
 }

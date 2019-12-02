@@ -70,4 +70,18 @@ public class ImportWordController {
         }
         return ResponseModel.sucess("", "导入成功");
     }
+
+
+    @ApiOperation(value = "保存题目到mongodb数据库", notes = "")
+    @RequestMapping("/savesimension")
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "header", name = "accessToken", value = "用户token", required = true, dataType = "String")})
+    public ResponseModel savesimension(@ModelAttribute UserInfoForToken userInfo, @RequestParam SelfQuestion[] questions) throws QuestionRepositoryServiceException {
+        for (SelfQuestion question : questions
+            ) {
+            iImportWordService.savesimension(userInfo, question);
+
+        }
+        return ResponseModel.sucess("", "导入成功");
+    }
 }

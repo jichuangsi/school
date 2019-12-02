@@ -7,11 +7,14 @@ import java.util.List;
 public interface StudentHomeworkExtraRepository {
 
     List<Homework> findProgressHomeworkByStudentId(String studentId);
-
+    List<Homework> findProgressHomeworkByStudentIds(String studentId);
     int countFinishedHomeworkByStudentId(String studentId);
 
     List<Homework> findFinishedHomeworkByStudentId(String studentId, int pageNum, int pageSize);
 
+    int countFinishedHomeworkByStudentIds(String studentId);
+
+    List<Homework> findFinishedHomeworkByStudentIds(String studentId, int pageNum, int pageSize);
     List<Homework> findFinishedHomeWorkByStudentIdAndEndTime(String studentId,long endTime,String subject);
 
 

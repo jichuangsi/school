@@ -60,9 +60,23 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
         if (StringUtils.isEmpty(userInfo.getUserId()))
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findProgressHomeworkByStudentId(userInfo.getUserId()));
+        List<HomeworkModelForStudent> homeworks1 = convertHomeworkList(homeworkRepository.findProgressHomeworkByStudentIds(userInfo.getUserId()));
         List<HomeworkModelForStudent> homeworks2 = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentId(userInfo.getUserId(),1, 5));
-        for (HomeworkModelForStudent e:homeworks2){
-            homeworks.add(e);
+        List<HomeworkModelForStudent> homeworks3 = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentIds(userInfo.getUserId(),1, 5));
+      if (homeworks2.size()>0) {
+          for (HomeworkModelForStudent e : homeworks2) {
+              homeworks.add(e);
+          }
+      }
+        if (homeworks1.size()>0) {
+            for (HomeworkModelForStudent e : homeworks1) {
+                homeworks.add(e);
+            }
+        }
+        if (homeworks3.size()>0) {
+            for (HomeworkModelForStudent e : homeworks3) {
+                homeworks.add(e);
+            }
         }
         this.getHomeworkStuff(userInfo, homeworks);
 
@@ -75,10 +89,17 @@ public class StudentHomeworkServiceImpl implements IStudentHomeworkService {
             throw new StudentHomeworkServiceException(ResultCode.PARAM_MISS_MSG);
         if (searchHomeworkModel.getPageSize() == 0) searchHomeworkModel.setPageSize(defaultPageSize);
         PageHolder<HomeworkModelForStudent> pageHolder = new PageHolder<HomeworkModelForStudent>();
-        pageHolder.setTotal(homeworkRepository.countFinishedHomeworkByStudentId(userInfo.getUserId()));
+        pageHolder.setTotal(homeworkRepository.countFinishedHomeworkByStudentId(userInfo.getUserId())+homeworkRepository.countFinishedHomeworkByStudentIds(userInfo.getUserId()));
         pageHolder.setPageNum(searchHomeworkModel.getPageIndex());
         pageHolder.setPageSize(searchHomeworkModel.getPageSize());
         List<HomeworkModelForStudent> homeworks = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentId(userInfo.getUserId(), searchHomeworkModel.getPageIndex(), searchHomeworkModel.getPageSize()));
+        List<HomeworkModelForStudent> homeworks1 = convertHomeworkList(homeworkRepository.findFinishedHomeworkByStudentIds(userInfo.getUserId(), searchHomeworkModel.getPageIndex(), searchHomeworkModel.getPageSize()));
+        if (homeworks1.size()>0){
+            for (HomeworkModelForStudent e:homeworks1
+                 ) {
+                homeworks.add(e);
+            }
+        }
         this.getHomeworkStuff(userInfo, homeworks);
         pageHolder.setContent(homeworks);
         return pageHolder;
