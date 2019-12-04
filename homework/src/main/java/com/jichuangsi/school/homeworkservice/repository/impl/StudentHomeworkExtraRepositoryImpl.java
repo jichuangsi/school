@@ -214,9 +214,11 @@ public class StudentHomeworkExtraRepositoryImpl implements StudentHomeworkExtraR
                 //match(Criteria.where("homeworks.publishTime").gte(0)),
                 lookup("school_homework", "homeworks.homeworkId", "_id", "homework"),
                 unwind("$homework", false),
-                match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(), Status.COMPLETED.getName()))
-                    .and("homework.student.0.studentId").is("")
-                    .orOperator(Criteria.where("homework.status").is(Status.PROGRESS.getName()).and("homework.students.0.studentId").is(studentId))),
+            match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(), Status.COMPLETED.getName()))
+                .orOperator(Criteria.where("homework.students").is(null),Criteria.where("homework.students").is(studentId))),
+               /* match(Criteria.where("homework.status").in(Arrays.asList(Status.FINISH.getName(), Status.COMPLETED.getName()))
+                    .and("homework.students").is(null)
+                    .orOperator(Criteria.where("homework.status").is(Status.PROGRESS.getName()).and("homework.students").is(studentId))),*/
                 match(Criteria.where("homework.endTime").gte(endTime)),
                 match(Criteria.where("homework.subjectName").is(subject)),
                 sort(DESC, "homework.publishTime"),
